@@ -1,4 +1,5 @@
-import ItemClasses.ClothingType;
+package Classes;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 

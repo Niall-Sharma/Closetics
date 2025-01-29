@@ -1,4 +1,7 @@
-import ItemClasses.Enums.*;
+import Classes.ClothingItem;
+import Classes.Enums.*;
+import Classes.User;
+
 import java.util.Date;
 import static java.util.UUID.randomUUID;
 

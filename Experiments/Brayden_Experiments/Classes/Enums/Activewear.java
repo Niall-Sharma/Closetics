@@ -1,5 +1,5 @@
-package ItemClasses.Enums;
-import ItemClasses.ClothingType;
+package Classes.Enums;
+import Classes.ClothingType;
 
 public class Activewear extends ClothingType {
     private final Types type;

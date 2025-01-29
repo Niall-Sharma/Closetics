@@ -1,4 +1,4 @@
-package ItemClasses;
+package Classes;
 
 public class ClothingType {
     private final Types category;
