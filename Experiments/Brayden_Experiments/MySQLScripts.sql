@@ -51,8 +51,9 @@ CREATE TABLE public.clothing_item_stats (
 CREATE TABLE public.outfit_stats (
     outfit_tracked_stats_id SERIAL PRIMARY KEY, -- Auto-incrementing primary key
     outfit_id INT NOT NULL,                     -- Foreign key to the outfit table
-    FOREIGN KEY (outfit_id) REFERENCES public.users(outfit_id),
+    FOREIGN KEY (outfit_id) REFERENCES public.outfit(outfit_id),
     date_worn DATE NOT NULL DEFAULT CURRENT_DATE,
     high_temp NUMERIC(10, 2),
-    low_temp NUMERIC(10, 2)
+    low_temp NUMERIC(10, 2),
+
 );
