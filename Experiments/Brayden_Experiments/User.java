@@ -4,12 +4,12 @@ import java.util.Date;
 import java.util.UUID;
 
 public class User {
-    private final UUID user_id;
-    private final String username;
+    private UUID user_id;
+    private String username;
     private String password;
-    private final String first_name;
-    private final String last_name;
-    private final Date user_created_date;
+    private String first_name;
+    private String last_name;
+    private Date user_created_date;
 
     public User(UUID user_id, String username, String password, String first_name,
                 String last_name, Date user_created_date) {

@@ -38,9 +38,9 @@ CREATE TABLE public.outfit_items (
 );
 CREATE TABLE public.clothing_item_stats (
     item_tracked_stats_id SERIAL PRIMARY KEY, -- Auto-incrementing primary key
-    item_id INT NOT NULL,
+    item_id INT NOT NULL,                     -- Foreign key to the clothing_item table
     FOREIGN KEY (item_id) REFERENCES public.users(item_id) ON DELETE CASCADE,
-    outfit_id INT,
+    outfit_id INT,                            -- Foreign key to the outfit table
     FOREIGN KEY (outfit_id) REFERENCES public.users(outfit_id) ON DELETE SET NULL,
     total_times_worn INTEGER NOT NULL,
     date_worn DATE NOT NULL DEFAULT CURRENT_DATE,
@@ -49,7 +49,7 @@ CREATE TABLE public.clothing_item_stats (
 );
 CREATE TABLE public.outfit_stats (
     outfit_tracked_stats_id SERIAL PRIMARY KEY, -- Auto-incrementing primary key
-    outfit_id INT NOT NULL,
+    outfit_id INT NOT NULL,                     -- Foreign key to the outfit table
     FOREIGN KEY (outfit_id) REFERENCES public.users(outfit_id),
     total_times_worn INTEGER NOT NULL,
     date_worn DATE NOT NULL DEFAULT CURRENT_DATE,

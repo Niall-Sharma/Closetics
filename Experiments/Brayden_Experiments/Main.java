@@ -1,14 +1,7 @@
-import ItemClasses.ClothingType;
-import ItemClasses.Enums.Accessories;
-import ItemClasses.Enums.Activewear;
-import ItemClasses.Enums.Tops;
-
+import ItemClasses.Enums.*;
 import java.util.Date;
-import java.util.UUID;
 import static java.util.UUID.randomUUID;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
         Tops tshirt = new Tops(Tops.Types.T_SHIRTS);
