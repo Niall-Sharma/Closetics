@@ -1,4 +1,4 @@
-package coms309.Entities;
+package coms309.EntityCreation;
 import jakarta.persistence.*;
 import lombok.*;
 
