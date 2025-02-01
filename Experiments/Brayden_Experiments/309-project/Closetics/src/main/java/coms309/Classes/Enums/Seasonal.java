@@ -1,6 +1,6 @@
-package Classes.Enums;
+package coms309.Classes.Enums;
 
-import Classes.ClothingType;
+import coms309.Classes.ClothingType;
 
 public class Seasonal extends ClothingType {
     private final Types type;

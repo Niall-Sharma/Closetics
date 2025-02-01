@@ -1,4 +1,4 @@
-package Classes;
+package coms309.Classes;
 
 import java.util.Date;
 import java.util.UUID;
@@ -74,3 +74,5 @@ public class User extends ConvertsToJSON {
     }
 
 }
+
+

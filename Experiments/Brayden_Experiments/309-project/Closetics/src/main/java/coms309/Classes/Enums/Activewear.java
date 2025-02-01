@@ -1,5 +1,5 @@
-package Classes.Enums;
-import Classes.ClothingType;
+package coms309.Classes.Enums;
+import coms309.Classes.ClothingType;
 
 public class Activewear extends ClothingType {
     private final Types type;

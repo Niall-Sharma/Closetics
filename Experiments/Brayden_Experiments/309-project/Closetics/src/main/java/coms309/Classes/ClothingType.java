@@ -1,4 +1,4 @@
-package Classes;
+package coms309.Classes;
 
 public class ClothingType {
     private final Types category;

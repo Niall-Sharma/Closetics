@@ -1,10 +1,12 @@
-package Classes;
+package coms309.Classes;
 
+import java.time.Year;
 import java.util.Arrays;
+import java.util.Date;
 
-public class FullClothingItemStats extends ConvertsToJSON{
-    private Integer item_id;
-    private ClothingItemStats[] combine_item_stats;
+public class FullOutfitStats extends ConvertsToJSON {
+    private Integer outfit_id;
+    private OutfitStats[] combine_outfit_stats;
     private Integer total_times_worn;
     private Float average_high_temp;
     private Float average_low_temp;
@@ -12,18 +14,18 @@ public class FullClothingItemStats extends ConvertsToJSON{
     private Integer times_worn_this_year;
     private Integer times_worn_this_month;
 
-    public FullClothingItemStats(Integer item_id, ClothingItemStats[] combine_item_stats) {
-        this.item_id = item_id;
-        this.combine_item_stats = combine_item_stats;
+    public FullOutfitStats(Integer outfit_id, OutfitStats[] combine_outfit_stats) {
+        this.outfit_id = outfit_id;
+        this.combine_outfit_stats = combine_outfit_stats;
         calcTotal_times_worn();
     }
 
-    public ClothingItemStats[] getCombine_item_stats() {
-        return combine_item_stats;
+    public OutfitStats[] getCombine_outfit_stats() {
+        return combine_outfit_stats;
     }
 
-    public void setCombine_item_stats(ClothingItemStats[] combine_item_stats) {
-        this.combine_item_stats = combine_item_stats;
+    public void setCombine_outfit_stats(OutfitStats[] combine_outfit_stats) {
+        this.combine_outfit_stats = combine_outfit_stats;
     }
 
     public Integer getTotal_times_worn() {
@@ -31,7 +33,7 @@ public class FullClothingItemStats extends ConvertsToJSON{
     }
 
     public void calcTotal_times_worn() {
-        total_times_worn = combine_item_stats.length;
+        total_times_worn = combine_outfit_stats.length;
     }
 
     public Float getAverage_high_temp() {
@@ -46,7 +48,7 @@ public class FullClothingItemStats extends ConvertsToJSON{
         return average_low_temp;
     }
 
-    public void calcAverage_low_temp(Float average_low_temp) {
+    public void calcAverage_low_temp() {
         //TODO
     }
 
@@ -54,7 +56,7 @@ public class FullClothingItemStats extends ConvertsToJSON{
         return times_worn_each_month;
     }
 
-    public void calcTimes_worn_each_month(Integer[] times_worn_each_month) {
+    public void calcTimes_worn_each_month() {
         //TODO
     }
 
@@ -63,13 +65,29 @@ public class FullClothingItemStats extends ConvertsToJSON{
     }
 
     public void calcTimes_worn_this_year() {
+        Year thisYear = Year.now();
+        int counter = 0;
+
+        for (OutfitStats worn_outfit : combine_outfit_stats) {
+            if (worn_outfit.getDate_worn().getYear() == thisYear.getValue()) {
+                counter++;
+            }
+            times_worn_this_year = counter;
+        }
+    }
+
+    public Integer getTimes_worn_this_month() {
+        return times_worn_this_month;
+    }
+
+    public void calcTimes_worn_this_month() {
         //TODO
     }
 
     @Override
     public String toJSON() {
         return "{" +
-                "\"item_id\": \"" + escapeJSON(item_id.toString()) + "\"," +
+                "\"outfit_id\": \"" + escapeJSON(outfit_id.toString()) + "\"," +
                 "\"total_times_worn\": \"" + escapeJSON(total_times_worn.toString()) + "\"," +
                 "\"average_high_temp\": \"" + escapeJSON(average_high_temp.toString()) + "\"" +
                 "\"average_low_temp\": \"" + escapeJSON(average_low_temp.toString()) + "\"" +
