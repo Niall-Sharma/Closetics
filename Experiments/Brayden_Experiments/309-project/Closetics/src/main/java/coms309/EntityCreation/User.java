@@ -14,7 +14,6 @@ public class User {
 
     @Id
     @Getter
-    @GeneratedValue
     @Column(nullable = false, updatable = false)
     private UUID user_id;
 

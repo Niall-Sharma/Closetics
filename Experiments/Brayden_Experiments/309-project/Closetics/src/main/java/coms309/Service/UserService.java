@@ -38,7 +38,7 @@ public class UserService {
        return null;
     }
 
-    public void deleteUserInfo(UUID user_id){
-        userRepo.deleteById(user_id);
+    public void deleteUserInfo(String username){
+        userRepo.deleteByUsername(username);
     }
 }

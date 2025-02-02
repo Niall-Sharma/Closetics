@@ -34,8 +34,8 @@ public class UserController {
         return user_service.updateUserInfo(user);
     }
 
-    @DeleteMapping("/deleteUser/{user_id}")
-    public void deleteUserInfo(@PathVariable UUID user_id){
-        user_service.deleteUserInfo(user_id);
+    @DeleteMapping("/deleteUser/{username}")
+    public void deleteUserInfo(@PathVariable String username){
+        user_service.deleteUserInfo(username);
     }
 }
