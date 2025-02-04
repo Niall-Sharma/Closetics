@@ -24,18 +24,13 @@ import jakarta.persistence.Table;
 
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.style.ToStringCreator;
-import org.springframework.samples.petclinic.owner.OwnerRepository;
-import org.springframework.samples.petclinic.owner.Owners;
 
-import java.util.Optional;
 
 @Entity
 @Table(name = "pets")
 public class Pet {
-    @Autowired
-    OwnerRepository ownersRepository;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,21 +54,21 @@ public class Pet {
     @NotFound(action = NotFoundAction.IGNORE)
     private String age;
 
-    @Column(name = "owner_name")
+    @Column(name = "ownerObject")
     @NotFound(action = NotFoundAction.IGNORE)
-    private String owner;
+    private owner owner;
 
     public Pet(){
 
     }
 
-    public Pet(int id, String petName, String breed, String color, String age, String ownerName){
+    public Pet(int id, String petName, String breed, String color, String age, owner owner){
         this.id = id;
         this.petName = petName;
         this.breed = breed;
         this.color = color;
         this.age = age;
-        owner = ownerName;
+        this.owner = owner;
 
     }
 
@@ -117,11 +112,11 @@ public class Pet {
         this.age = age;
     }
 
-    public String getOwnerName() {
+    public owner getOwner() {
         return owner;
     }
 
-    public void setOwnerName(String owner) {
+    public void setOwnerName(owner owner) {
         this.owner = owner;
     }
 
@@ -133,6 +128,6 @@ public class Pet {
                 .append("age", this.getAge())
                 .append("breed", this.getBreed())
                 .append("color", this.getColor())
-                .append("owner name ", this.getOwnerName()).toString();
+                .append("owner id ", this.getOwner()).toString();
     }
 }
