@@ -2,16 +2,16 @@ package coms309;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-class WelcomeController {
+public class UserController {
 
-    @RequestMapping("/")
+    @GetMapping("/users")
     public ModelAndView welcome() {
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("users.html");
+        modelAndView.setViewName("public/users.html");
         return modelAndView;
     }
+
 }
