@@ -1,4 +1,4 @@
-/*
+package coms309.pets;/*
  * Copyright 2002-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,56 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.samples.petclinic.pets;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
+import coms309.people.Person;
 import org.springframework.core.style.ToStringCreator;
 
 
-@Entity
-@Table(name = "pets")
 public class Pet {
 
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    @NotFound(action = NotFoundAction.IGNORE)
     private Integer id;
 
-    @Column(name = "pet_name")
-    @NotFound(action = NotFoundAction.IGNORE)
     private String petName;
 
-    @Column(name = "breed")
-    @NotFound(action = NotFoundAction.IGNORE)
     private String breed;
 
-    @Column(name = "color")
-    @NotFound(action = NotFoundAction.IGNORE)
+
     private String color;
 
-    @Column(name = "age")
-    @NotFound(action = NotFoundAction.IGNORE)
     private String age;
 
-    @Column(name = "ownerObject")
-    @NotFound(action = NotFoundAction.IGNORE)
-    private owner owner;
+    private Person owner;
 
     public Pet(){
 
     }
 
-    public Pet(int id, String petName, String breed, String color, String age, owner owner){
+    public Pet(int id, String petName, String breed, String color, String age, Person owner){
         this.id = id;
         this.petName = petName;
         this.breed = breed;
@@ -112,11 +88,11 @@ public class Pet {
         this.age = age;
     }
 
-    public owner getOwner() {
+    public Person getOwner() {
         return owner;
     }
 
-    public void setOwnerName(owner owner) {
+    public void setOwner(Person owner) {
         this.owner = owner;
     }
 
@@ -128,6 +104,6 @@ public class Pet {
                 .append("age", this.getAge())
                 .append("breed", this.getBreed())
                 .append("color", this.getColor())
-                .append("owner id ", this.getOwner()).toString();
+                .append("owner ", this.getOwner()).toString();
     }
 }
