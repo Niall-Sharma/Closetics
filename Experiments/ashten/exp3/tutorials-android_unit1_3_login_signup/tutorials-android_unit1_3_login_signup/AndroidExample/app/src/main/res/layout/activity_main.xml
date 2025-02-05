@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:context=".MainActivity"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/main_msg_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Home Page"
+        android:layout_gravity="center"
+        android:layout_marginTop="100dp"
+        android:layout_marginBottom="50dp"
+        android:textSize="30dp"
+        android:textColor="#fc0303">
+    </TextView>
+
+    <TextView
+        android:id="@+id/main_username_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="{{username}}"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="100dp"
+        android:textSize="30dp"
+        android:textColor="#000000">
+    </TextView>
+
+
+    <Button
+        android:id="@+id/main_login_btn"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Login"
+        android:textSize="20sp"
+        android:textColor="#ffffff">
+    </Button>
+
+    <Button
+        android:id="@+id/main_signup_btn"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Signup"
+        android:textSize="20sp"
+        android:textColor="#ffffff">
+    </Button>
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>
