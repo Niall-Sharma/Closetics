@@ -49,7 +49,7 @@ public class PetController {
 
 
     @DeleteMapping("/pets/{firstName}")
-    public HashMap<String, Pet> deletePet(@PathVariable String id) {
+    public HashMap<String, Pet> deletePet(@PathVariable("firstName") String id) {
         petsList.remove(id);
         return petsList;
     }
