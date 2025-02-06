@@ -11,9 +11,21 @@ import android.widget.TextView;
 public class CounterActivity extends AppCompatActivity {
 
     private TextView numberTxt; // define number textview variable
-    private Button increaseBtn; // define increase button variable
-    private Button decreaseBtn; // define decrease button variable
+    private Button oneBtn; // define increase button variable
+    private Button twoBtn; // define decrease button variable
     private Button backBtn;     // define back button variable
+    private Button threeBtn;
+    private Button fourBtn;
+    private Button fiveBtn;
+    private Button sixBtn;
+    private Button sevenBtn;
+    private Button eightBtn;
+    private Button nineBtn;
+    private Button zeroBtn;
+    private Button addBtn;
+    private Button subtractBtn;
+    private Button divideBtn;
+    private Button multiplyBtn;
 
     private int counter = 0;    // counter variable
 
@@ -23,13 +35,37 @@ public class CounterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_counter);
 
         /* initialize UI elements */
+
         numberTxt = findViewById(R.id.number);
-        increaseBtn = findViewById(R.id.counter_increase_btn);
-        decreaseBtn = findViewById(R.id.counter_decrease_btn);
+        oneBtn = findViewById(R.id.oneBtn);
+        twoBtn = findViewById(R.id.twoBtn);
+        threeBtn =findViewById(R.id.threeBtn);
+        fourBtn = findViewById(R.id.fourBtn);
+        fiveBtn = findViewById(R.id.fiveBtn);
+        sixBtn = findViewById(R.id.sixBtn);
+        sevenBtn = findViewById(R.id.sevenBtn);
+        eightBtn = findViewById(R.id.eightBtn);
+        nineBtn = findViewById(R.id.nineBtn);
+        zeroBtn = findViewById(R.id.zeroBtn);
+        addBtn = findViewById(R.id.additionBtn);
+        divideBtn = findViewById(R.id.divisionBtn);
+        multiplyBtn = findViewById(R.id.multiplicationBtn);
+        subtractBtn = findViewById(R.id.subtractionBtn);
         backBtn = findViewById(R.id.counter_back_btn);
+        /*
+        private void sharedClickListenerForCalculatorOperations(Button anyButton, ){
+            anyButton.setOnClickListener(new View.OnClickListener(){
+                public void onClick(View v){
+
+                }
+
+            });
+        }
+        */
+
 
         /* when increase btn is pressed, counter++, reset number textview */
-        increaseBtn.setOnClickListener(new View.OnClickListener() {
+        oneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 numberTxt.setText(String.valueOf(++counter));
@@ -37,7 +73,7 @@ public class CounterActivity extends AppCompatActivity {
         });
 
         /* when decrease btn is pressed, counter--, reset number textview */
-        decreaseBtn.setOnClickListener(new View.OnClickListener() {
+        twoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 numberTxt.setText(String.valueOf(--counter));

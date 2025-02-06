@@ -8,8 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 public class MainActivity extends AppCompatActivity {
 
     private TextView messageText;     // define message textview variable
@@ -23,21 +21,27 @@ public class MainActivity extends AppCompatActivity {
         /* initialize UI elements */
         messageText = findViewById(R.id.main_msg_txt);      // link to message textview in the Main activity XML
         counterButton = findViewById(R.id.main_counter_btn);// link to counter button in the Main activity XML
+        counterButton.setText("To the Calculator Activity");
+       // messageText.setText("Calculator Application");
 
-        /* extract data passed into this activity from another activity */
+        //A way to grab data from one activity to another (come back to this)
+        //extract data passed into this activity from another activity
         Bundle extras = getIntent().getExtras();
         if(extras == null) {
-            messageText.setText("Intent Example");
+            messageText.setText("Calculator Application");
         } else {
-            String number = extras.getString("NUM");  // this will come from LoginActivity
+            String number = extras.getString("NUM");  // this will come from CounterActivity
             messageText.setText("The number was " + number);
         }
 
-        /* click listener on counter button pressed */
+
+        //click listener on counter button pressed, "listening" for user input
+        //Uses an anonymous class: View.OnClickListener with the classes method being onClick
+
         counterButton.setOnClickListener(new View.OnClickListener() {
+            //The method that gets triggered when the button is pressed
             @Override
             public void onClick(View v) {
-
                 /* when counter button is pressed, use intent to switch to Counter Activity */
                 Intent intent = new Intent(MainActivity.this, CounterActivity.class);
                 startActivity(intent);

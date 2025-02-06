@@ -11,11 +11,41 @@
         android:id="@+id/main_msg_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_gravity="top|left"
         android:layout_marginTop="100dp"
         android:layout_marginBottom="50dp"
-        android:textSize="50dp"
-        android:textColor="#000000" >
-    </TextView>
+        android:textSize="125sp"
+        android:textColor="#000000" />
+
+
+    <Button
+        android:id="@+id/firstButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/design_default_color_secondary"
+        android:textSize="40sp"
+        />
+    <Button
+        android:id="@+id/secondButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:textColor="@color/black"
+        android:textSize="40sp"
+        android:backgroundTint="@color/material_dynamic_neutral40"
+        />
+    <Button
+        android:id="@+id/thirdButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:textColor="@color/black"
+        android:textSize="40sp"
+        android:backgroundTint="@color/material_dynamic_neutral_variant95"
+        />
+
+
 
 </androidx.appcompat.widget.LinearLayoutCompat>
