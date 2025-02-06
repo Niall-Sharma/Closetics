@@ -48,7 +48,7 @@ public class ClothesController {
     public String createPerson(@RequestBody Clothing clothing) {
         System.out.println(clothingList);
         clothingList.put(clothing.getName(), clothing);
-        return "New person "+ clothing.getName() + " Saved";
+        return "New clothing "+ clothing.getName() + " Saved";
     }
 
     // THIS IS THE READ OPERATION
@@ -57,8 +57,8 @@ public class ClothesController {
     // springboot automatically converts Person to JSON format when we return it
     // in this case because of @ResponseBody
     // Note: To READ we use GET method
-    @GetMapping("/clothing/{firstName}")
-    public Clothing getPerson(@PathVariable String firstName) {
+    @GetMapping("/clothing/{name}")
+    public Clothing getPerson(@PathVariable("name") String firstName) {
         Clothing c = clothingList.get(firstName);
         return c;
     }
@@ -70,8 +70,8 @@ public class ClothesController {
     // Here we are returning what we sent to the method
     // in this case because of @ResponseBody
     // Note: To UPDATE we use PUT method
-    @PutMapping("/clothing/{firstName}")
-    public Clothing updatePerson(@PathVariable String firstName, @RequestBody Clothing c) {
+    @PutMapping("/clothing/{name}")
+    public Clothing updatePerson(@PathVariable("name") String firstName, @RequestBody Clothing c) {
         clothingList.replace(firstName, c);
         return clothingList.get(firstName);
     }
@@ -82,8 +82,8 @@ public class ClothesController {
     // in this case because of @ResponseBody
     // Note: To DELETE we use delete method
     
-    @DeleteMapping("/clothing/{firstName}")
-    public HashMap<String, Clothing> deletePerson(@PathVariable String firstName) {
+    @DeleteMapping("/clothing/{name}")
+    public HashMap<String, Clothing> deletePerson(@PathVariable("name") String firstName) {
         clothingList.remove(firstName);
         return clothingList;
     }
