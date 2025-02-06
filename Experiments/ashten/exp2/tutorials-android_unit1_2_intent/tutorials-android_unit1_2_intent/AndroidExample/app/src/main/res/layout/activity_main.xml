@@ -23,7 +23,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
         android:layout_gravity="center"
-        android:text="To the Counter Activity"
         android:textSize="20sp"
         android:textColor="#ffffff">
     </Button>

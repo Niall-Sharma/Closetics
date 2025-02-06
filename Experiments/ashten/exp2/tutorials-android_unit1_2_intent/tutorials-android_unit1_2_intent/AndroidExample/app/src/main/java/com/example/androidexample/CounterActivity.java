@@ -26,6 +26,9 @@ public class CounterActivity extends AppCompatActivity {
     private Button subtractBtn;
     private Button divideBtn;
     private Button multiplyBtn;
+    private Button equalsBtn;
+    private String fullExpression;
+    private Boolean doubleOperation;
 
     private int counter = 0;    // counter variable
 
@@ -39,7 +42,7 @@ public class CounterActivity extends AppCompatActivity {
         numberTxt = findViewById(R.id.number);
         oneBtn = findViewById(R.id.oneBtn);
         twoBtn = findViewById(R.id.twoBtn);
-        threeBtn =findViewById(R.id.threeBtn);
+        threeBtn = findViewById(R.id.threeBtn);
         fourBtn = findViewById(R.id.fourBtn);
         fiveBtn = findViewById(R.id.fiveBtn);
         sixBtn = findViewById(R.id.sixBtn);
@@ -52,32 +55,37 @@ public class CounterActivity extends AppCompatActivity {
         multiplyBtn = findViewById(R.id.multiplicationBtn);
         subtractBtn = findViewById(R.id.subtractionBtn);
         backBtn = findViewById(R.id.counter_back_btn);
-        /*
-        private void sharedClickListenerForCalculatorOperations(Button anyButton, ){
-            anyButton.setOnClickListener(new View.OnClickListener(){
-                public void onClick(View v){
+        equalsBtn = findViewById(R.id.equal_btn);
 
-                }
+        //Because these are called inside of oncreate, it is okay to have the methods outside!
+        //intializing the buttons with their onClick logic
+        doubleOperation=false;
+        numberButtonClick(oneBtn, "1");
+        numberButtonClick(twoBtn,"2" );
+        numberButtonClick(threeBtn,"3" );
+        numberButtonClick(fourBtn,"4" );
+        numberButtonClick(fiveBtn,"5" );
+        numberButtonClick(sixBtn,"6" );
+        numberButtonClick(sevenBtn,"7" );
+        numberButtonClick(eightBtn,"8" );
+        numberButtonClick(nineBtn,"9" );
+        numberButtonClick(zeroBtn,"0" );
 
-            });
+        //intitializing the operations with their onClick logic
+        operationButtonClick(multiplyBtn, "*");
+        operationButtonClick(subtractBtn, "-");
+        operationButtonClick(addBtn, "+");
+        operationButtonClick(divideBtn, "/");
+
+        //When 
+
+        //When equals button is pressed (evaluate the expression)
+        equalsBtn.setOnClickListener(new View.OnClickListener(){;
+        @Override
+        public void onClick(View v){
+
         }
-        */
 
-
-        /* when increase btn is pressed, counter++, reset number textview */
-        oneBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                numberTxt.setText(String.valueOf(++counter));
-            }
-        });
-
-        /* when decrease btn is pressed, counter--, reset number textview */
-        twoBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                numberTxt.setText(String.valueOf(--counter));
-            }
         });
 
         /* when back btn is pressed, switch back to MainActivity */
@@ -89,6 +97,41 @@ public class CounterActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    //Methods defined outside of onClick
+
+    private void operationButtonClick (Button opButton, String operation){
+        opButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                if (doubleOperation){
+                    return;
+                }
+                //Save expression
+                fullExpression = numberTxt.getText() + operation;
+                System.out.println(fullExpression);
+                //Clear widget
+                numberTxt.setText("");
+                doubleOperation = true;
+
+            }
+
+        });
 
     }
+    //Number is true, operation is false
+    private void numberButtonClick (Button anyButton, String number){
+        anyButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                //fullExpression+=number;//Add to fullExpression
+                numberTxt.append(number); //Append the number to textView
+                doubleOperation=false;
+
+            }
+        });
+    }
+
 }
