@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ClothingItem extends ConvertsToJSON{
 
     @Getter
-    private Integer itemId;
+    private Integer itemId = 0;
 
     @Getter
     @NonNull
@@ -122,24 +122,8 @@ public class ClothingItem extends ConvertsToJSON{
     @Override
     public String toJSON() {
                 return "{" +
-                "\"userId\": \"" + escapeJSON(userId.toString()) + "\"," +
-                "\"brand\": \"" + escapeJSON(brand) + "\"," +
-                "\"color\": \"" + escapeJSON(color) + "\"," +
-                "\"dateBought\": \"" + (dateBought != null ? dateFormat.format(dateBought) : null) + "\"," +
-                "\"price\": \"" + (price != null ? price : "null") + "\"," +
-                "\"itemName\": \"" + escapeJSON(itemName) + "\"," +
-                "\"clothingCategory\": \"" + escapeJSON(clothingCategory.getCategory().toString()) + "\"," +
-                "\"clothingType\": \"" + escapeJSON(clothingType.getType().toString()) + "\"," +
-                "\"isFavorite\": \"" + isFavorite + "\"," +
-                "\"imagePath1\": \"" + escapeJSON(imagePath1) + "\"," +
-                "\"imagePath2\": \"" + escapeJSON(imagePath2) + "\"," +
-                "\"imagePath3\": \"" + escapeJSON(imagePath3) + "\"" +
-                "}";
-    }
-
-    public String toJSONUpdating() {
-        return "{" +
                 "\"itemId\": \"" + escapeJSON(itemId.toString()) + "\"," +
+                "\"userId\": \"" + escapeJSON(userId.toString()) + "\"," +
                 "\"brand\": \"" + escapeJSON(brand) + "\"," +
                 "\"color\": \"" + escapeJSON(color) + "\"," +
                 "\"dateBought\": \"" + (dateBought != null ? dateFormat.format(dateBought) : null) + "\"," +
@@ -200,7 +184,7 @@ public class ClothingItem extends ConvertsToJSON{
         try {
             OkHttpClient client = new OkHttpClient().newBuilder().build();
             MediaType mediaType = MediaType.parse("application/json");
-            RequestBody body = RequestBody.create(toJSONUpdating(), mediaType);
+            RequestBody body = RequestBody.create(toJSON(), mediaType);
             Request request = new Request.Builder().url("http://localhost:8080/updateClothingItem").put(body)
                     .addHeader("Content-Type", "application/json").build();
             Response response = client.newCall(request).execute();
