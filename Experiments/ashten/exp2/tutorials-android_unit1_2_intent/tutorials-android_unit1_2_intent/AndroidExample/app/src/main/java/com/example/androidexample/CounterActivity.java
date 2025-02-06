@@ -1,5 +1,6 @@
 package com.example.androidexample;
 
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -8,38 +9,31 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+
+
+
+
 public class CounterActivity extends AppCompatActivity {
 
-    private TextView numberTxt; // define number textview variable
-    private Button oneBtn; // define increase button variable
-    private Button twoBtn; // define decrease button variable
-    private Button backBtn;     // define back button variable
-    private Button threeBtn;
-    private Button fourBtn;
-    private Button fiveBtn;
-    private Button sixBtn;
-    private Button sevenBtn;
-    private Button eightBtn;
-    private Button nineBtn;
-    private Button zeroBtn;
-    private Button addBtn;
-    private Button subtractBtn;
-    private Button divideBtn;
-    private Button multiplyBtn;
-    private Button equalsBtn;
-    private String fullExpression;
-    private Boolean doubleOperation;
+    private TextView numberTxt;
+    private Button oneBtn, twoBtn, threeBtn, fourBtn, fiveBtn;
+    private Button sixBtn, sevenBtn, eightBtn, nineBtn, zeroBtn;
+    private Button addBtn, subtractBtn, multiplyBtn, divideBtn, equalsBtn, clearBtn;
+    private Button backButton;
 
-    private int counter = 0;    // counter variable
+    private StringBuilder currentInput = new StringBuilder();
+    private int firstOperand = 0;
+    private int secondOperand = 0;
+    private char currentOperator = ' ';
+    private boolean operationPending = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_counter);
 
-        /* initialize UI elements */
-
         numberTxt = findViewById(R.id.number);
+
         oneBtn = findViewById(R.id.oneBtn);
         twoBtn = findViewById(R.id.twoBtn);
         threeBtn = findViewById(R.id.threeBtn);
@@ -51,87 +45,125 @@ public class CounterActivity extends AppCompatActivity {
         nineBtn = findViewById(R.id.nineBtn);
         zeroBtn = findViewById(R.id.zeroBtn);
         addBtn = findViewById(R.id.additionBtn);
-        divideBtn = findViewById(R.id.divisionBtn);
-        multiplyBtn = findViewById(R.id.multiplicationBtn);
         subtractBtn = findViewById(R.id.subtractionBtn);
-        backBtn = findViewById(R.id.counter_back_btn);
+        multiplyBtn = findViewById(R.id.multiplicationBtn);
+        divideBtn = findViewById(R.id.divisionBtn);
         equalsBtn = findViewById(R.id.equal_btn);
+        clearBtn = findViewById(R.id.clearBtn);
+        backButton = findViewById(R.id.counter_back_btn);
 
-        //Because these are called inside of oncreate, it is okay to have the methods outside!
-        //intializing the buttons with their onClick logic
-        doubleOperation=false;
-        numberButtonClick(oneBtn, "1");
-        numberButtonClick(twoBtn,"2" );
-        numberButtonClick(threeBtn,"3" );
-        numberButtonClick(fourBtn,"4" );
-        numberButtonClick(fiveBtn,"5" );
-        numberButtonClick(sixBtn,"6" );
-        numberButtonClick(sevenBtn,"7" );
-        numberButtonClick(eightBtn,"8" );
-        numberButtonClick(nineBtn,"9" );
-        numberButtonClick(zeroBtn,"0" );
+        // Set up number button click listeners
+        setNumberClickListener(oneBtn, '1');
+        setNumberClickListener(twoBtn, '2');
+        setNumberClickListener(threeBtn, '3');
+        setNumberClickListener(fourBtn, '4');
+        setNumberClickListener(fiveBtn, '5');
+        setNumberClickListener(sixBtn, '6');
+        setNumberClickListener(sevenBtn, '7');
+        setNumberClickListener(eightBtn, '8');
+        setNumberClickListener(nineBtn, '9');
+        setNumberClickListener(zeroBtn, '0');
 
-        //intitializing the operations with their onClick logic
-        operationButtonClick(multiplyBtn, "*");
-        operationButtonClick(subtractBtn, "-");
-        operationButtonClick(addBtn, "+");
-        operationButtonClick(divideBtn, "/");
+        // Set up operator click listeners
+        setOperatorClickListener(addBtn, '+');
+        setOperatorClickListener(subtractBtn, '-');
+        setOperatorClickListener(multiplyBtn, '*');
+        setOperatorClickListener(divideBtn, '/');
 
-        //When 
-
-        //When equals button is pressed (evaluate the expression)
-        equalsBtn.setOnClickListener(new View.OnClickListener(){;
-        @Override
-        public void onClick(View v){
-
-        }
+        equalsBtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                evaluateExpression();
+            }
 
         });
 
-        /* when back btn is pressed, switch back to MainActivity */
-        backBtn.setOnClickListener(new View.OnClickListener() {
+        clearBtn.setOnClickListener(new View.OnClickListener(){
+           @Override
+           public void onClick(View v){
+               clearCalculator();
+           }
+        });
+
+
+        backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(CounterActivity.this, MainActivity.class);
-                intent.putExtra("NUM", String.valueOf(counter));  // key-value to pass to the MainActivity
+                intent.putExtra("NUM", numberTxt.getText());
                 startActivity(intent);
+
+            }
+        });
+
+
+
+
+    }
+    private void setNumberClickListener(Button button, char number) {
+        button.setOnClickListener(v -> {
+            currentInput.append(number);
+            numberTxt.setText(currentInput.toString());
+        });
+    }
+
+    private void setOperatorClickListener(Button button, char operator) {
+        button.setOnClickListener(v -> {
+            if (currentInput.length() > 0) {
+                if (!operationPending) {
+                    firstOperand = convertStringToInt(currentInput.toString());
+                    currentOperator = operator;
+                    operationPending = true;
+                    currentInput.setLength(0); // Clear input for next operand
+                }
+                numberTxt.setText(String.valueOf(firstOperand) + " " + currentOperator);
             }
         });
     }
 
-    //Methods defined outside of onClick
+    private void evaluateExpression() {
+        if (currentInput.length() > 0 && operationPending) {
+            secondOperand = convertStringToInt(currentInput.toString());
 
-    private void operationButtonClick (Button opButton, String operation){
-        opButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                if (doubleOperation){
+            int result = 0;
+            if (currentOperator == '+') {
+                result = firstOperand + secondOperand;
+            } else if (currentOperator == '-') {
+                result = firstOperand - secondOperand;
+            } else if (currentOperator == '*') {
+                result = firstOperand * secondOperand;
+            } else if (currentOperator == '/') {
+                if (secondOperand != 0) {
+                    result = firstOperand / secondOperand;
+                } else {
+                    numberTxt.setText("Error");
                     return;
                 }
-                //Save expression
-                fullExpression = numberTxt.getText() + operation;
-                System.out.println(fullExpression);
-                //Clear widget
-                numberTxt.setText("");
-                doubleOperation = true;
-
             }
 
-        });
-
-    }
-    //Number is true, operation is false
-    private void numberButtonClick (Button anyButton, String number){
-        anyButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                //fullExpression+=number;//Add to fullExpression
-                numberTxt.append(number); //Append the number to textView
-                doubleOperation=false;
-
-            }
-        });
+            numberTxt.setText(String.valueOf(result));
+            firstOperand = result;
+            currentInput.setLength(0);
+            operationPending = false;
+        }
     }
 
+    private int convertStringToInt(String input) {
+        int value = 0;
+        for (int i = 0; i < input.length(); i++) {
+            value = value * 10 + (input.charAt(i) - '0');
+        }
+        return value;
+    }
+
+    private void clearCalculator() {
+        currentInput.setLength(0);
+        firstOperand = 0;
+        secondOperand = 0;
+        currentOperator = ' ';
+        operationPending = false;
+        numberTxt.setText("");
+    }
 }
+
+

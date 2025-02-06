@@ -3,7 +3,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="colorPrimary">#FF6200EE</color> <!-- Purple color -->
-    <color name="colorAccent">#03DAC5</color> <!-- Teal color -->
+    <color name="cyan">#03DAC5</color> <!-- Teal color -->
     <color name="lightGray">#F1F1F1</color>
     <color name="roboto_gold">#FFD700</color>
 

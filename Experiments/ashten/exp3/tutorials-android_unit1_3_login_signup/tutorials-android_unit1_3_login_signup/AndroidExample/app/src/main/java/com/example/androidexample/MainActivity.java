@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView usernameText;  // define username textview variable
     private Button loginButton;     // define login button variable
     private Button signupButton;    // define signup button variable
+    private Button backgroundChanger;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
         usernameText = findViewById(R.id.main_username_txt);// link to username textview in the Main activity XML
         loginButton = findViewById(R.id.main_login_btn);    // link to login button in the Main activity XML
         signupButton = findViewById(R.id.main_signup_btn);  // link to signup button in the Main activity XML
+        backgroundChanger = findViewById(R.id.colorBtn);
+        backgroundChanger.setVisibility(View.INVISIBLE);
 
         /* extract data passed into this activity from another activity */
         Bundle extras = getIntent().getExtras();
@@ -38,7 +41,17 @@ public class MainActivity extends AppCompatActivity {
             usernameText.setText(extras.getString("USERNAME")); // this will come from LoginActivity
             loginButton.setVisibility(View.INVISIBLE);              // set login button invisible
             signupButton.setVisibility(View.INVISIBLE);             // set signup button invisible
+            backgroundChanger.setVisibility(View.VISIBLE);
         }
+
+        //Start background changer activity on press after login!
+        backgroundChanger.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, BackgroundChanger.class);
+                startActivity(intent);
+            }
+        });
 
         /* click listener on login button pressed */
         loginButton.setOnClickListener(new View.OnClickListener() {
