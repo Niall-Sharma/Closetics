@@ -1,16 +1,9 @@
 package coms309.Classes;
-//These 4 imports say there unused, but they are being used
-import org.apache.catalina.connector.Request.*;
-import org.apache.catalina.connector.Response.*;
-import org.springframework.http.MediaType.*;
-import org.springframework.web.bind.annotation.RequestBody.*;
 import okhttp3.*;
-import java.io.IOException;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import lombok.*;
+
+
 @AllArgsConstructor
 public class User extends ConvertsToJSON {
 

@@ -1,143 +1,221 @@
 package coms309.Classes;
-
 import java.util.Date;
 import java.util.UUID;
+import lombok.*;
+import okhttp3.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class ClothingItem extends ConvertsToJSON{
-    private Integer item_id;
-    private UUID user_id;
+
+    @Getter
+    private Integer itemId;
+
+    @Getter
+    @NonNull
+    private UUID userId;
+
+    @Getter
     private String brand;
+
+    @Getter
     private String color;
-    private Date date_bought;
-    private Float price;
-    private ClothingType clothing_category;
-    private ClothingType clothing_type;
-    private Boolean is_favorite;
-    private String image_path1;
-    private String image_path2;
-    private String image_path3;
 
-    // Constructor
-    public ClothingItem(Integer item_id, UUID user_id, String brand, String color, Date date_bought, Float price, ClothingType clothing_category, ClothingType clothing_type,
-                        Boolean is_favorite, String image_path1, String image_path2, String image_path3) {
-        this.item_id = item_id;
-        this.user_id = user_id;
-        this.brand = brand;
-        this.color = color;
-        this.date_bought = date_bought;
-        this.price = price;
-        this.clothing_category = clothing_category;
-        this.clothing_type = clothing_type;
-        this.is_favorite = is_favorite;
-        this.image_path1 = image_path1;
-        this.image_path2 = image_path2;
-        this.image_path3 = image_path3;
+    @Getter
+    private Date dateBought;
+
+    @Getter
+    private Double price;
+
+    @Getter
+    private String itemName;
+
+    @Getter
+    @NonNull
+    private ClothingType clothingCategory;
+
+    @Getter
+    @NonNull
+    private ClothingType clothingType;
+
+    @Getter
+    @NonNull
+    private Boolean isFavorite = false;
+
+    @Getter
+    private String imagePath1;
+
+    @Getter
+    private String imagePath2;
+
+    @Getter
+    private String imagePath3;
+
+    public void updateBrand(String newBrand) {
+        String oldBrand = this.brand;
+        this.brand = newBrand;
+        if (!updateClothingItem()) {this.brand = oldBrand;}
     }
 
-    public Integer getItem_id() {
-        return item_id;
+    public void updateColor(String newColor) {
+        String oldColor = this.color;
+        this.color = newColor;
+        if (!updateClothingItem()) {this.color = oldColor;}
     }
 
-    public UUID getUser_id() {
-        return user_id;
+    public void updateDateBought(Date newDateBought) {
+        Date oldDateBought = this.dateBought;
+        this.dateBought = newDateBought;
+        if (!updateClothingItem()) {this.dateBought = oldDateBought;}
     }
 
-    public String getBrand() {
-        return brand;
+    public void updatePrice(Double newPrice) {
+        Double oldPrice = this.price;
+        this.price = newPrice;
+        if (!updateClothingItem()) {this.price = oldPrice;}
     }
 
-    public void setBrand(String brand) {
-        this.brand = brand;
+    public void updateItemName(String newItemName) {
+        String oldItemName = this.itemName;
+        this.itemName = newItemName;
+        if (!updateClothingItem()) {this.itemName = oldItemName;}
     }
 
-    public String getColor() {
-        return color;
+    public void updateClothingCategory(ClothingType newCategory) {
+        ClothingType oldCategory = this.clothingCategory;
+        this.clothingCategory = newCategory;
+        if (!updateClothingItem()) {this.clothingCategory = oldCategory;}
     }
 
-    public void setColor(String color) {
-        this.color = color;
+    public void updateClothingType(ClothingType newType) {
+        ClothingType oldType = this.clothingType;
+        this.clothingType = newType;
+        if (!updateClothingItem()) {this.clothingType = oldType;}
     }
 
-    public Date getDate_bought() {
-        return date_bought;
+    public void updateIsFavorite(Boolean newIsFavorite) {
+        Boolean oldIsFavorite = this.isFavorite;
+        this.isFavorite = newIsFavorite;
+        if (!updateClothingItem()) {this.isFavorite = oldIsFavorite;}
     }
 
-    public void setDate_bought(Date date_bought) {
-        this.date_bought = date_bought;
+    public void updateImagePath1(String newPath) {
+        String oldPath = this.imagePath1;
+        this.imagePath1 = newPath;
+        if (!updateClothingItem()) {this.imagePath1 = oldPath;}
     }
 
-    public Float getPrice() {
-        return price;
+    public void updateImagePath2(String newPath) {
+        String oldPath = this.imagePath2;
+        this.imagePath2 = newPath;
+        if (!updateClothingItem()) {this.imagePath2 = oldPath;}
     }
 
-    public void setPrice(Float price) {
-        this.price = price;
-    }
-
-    public ClothingType getClothing_category() {
-        return clothing_category;
-    }
-
-    public void setClothing_category(ClothingType clothing_category) {
-        this.clothing_category = clothing_category;
-    }
-
-    public ClothingType getClothing_type() {
-        return clothing_type;
-    }
-
-    public void setClothing_type(ClothingType clothing_type) {
-        this.clothing_type = clothing_type;
-    }
-
-    public Boolean getIs_favorite() {
-        return is_favorite;
-    }
-
-    public void setFavorite(Boolean is_favorite) {
-        this.is_favorite = is_favorite;
-    }
-
-    public String getImage_path1() {
-        return image_path1;
-    }
-
-    public void setImage_path1(String image_path1) {
-        this.image_path1 = image_path1;
-    }
-
-    public String getImage_path2() {
-        return image_path2;
-    }
-
-    public void setImage_path2(String image_path2) {
-        this.image_path2 = image_path2;
-    }
-
-    public String getImage_path3() {
-        return image_path3;
-    }
-
-    public void setImage_path3(String image_path3) {
-        this.image_path3 = image_path3;
+    public void updateImagePath3(String newPath) {
+        String oldPath = this.imagePath3;
+        this.imagePath3 = newPath;
+        if (!updateClothingItem()) {this.imagePath3 = oldPath;}
     }
 
     @Override
     public String toJSON() {
                 return "{" +
-                "\"item_id\": \"" + escapeJSON(item_id.toString()) + "\"," +
-                "\"user_id\": \"" + escapeJSON(user_id.toString()) + "\"," +
+                "\"userId\": \"" + escapeJSON(userId.toString()) + "\"," +
                 "\"brand\": \"" + escapeJSON(brand) + "\"," +
                 "\"color\": \"" + escapeJSON(color) + "\"," +
-                "\"date_bought\": \"" + (date_bought != null ? dateFormat.format(date_bought) : null) + "\"," +
-                "\"price\": " + (price != null ? price : "null") + "," +
-                "\"clothing_category\": \"" + escapeJSON(clothing_category.getCategory().toString()) + "\"," +
-                "\"clothing_type\": \"" + escapeJSON(clothing_type.getType().toString()) + "\"," +
-                "\"is_favorite\": " + is_favorite + "," +
-                "\"image_path1\": \"" + escapeJSON(image_path1) + "\"," +
-                "\"image_path2\": \"" + escapeJSON(image_path2) + "\"," +
-                "\"image_path3\": \"" + escapeJSON(image_path3) + "\"" +
+                "\"dateBought\": \"" + (dateBought != null ? dateFormat.format(dateBought) : null) + "\"," +
+                "\"price\": \"" + (price != null ? price : "null") + "\"," +
+                "\"itemName\": \"" + escapeJSON(itemName) + "\"," +
+                "\"clothingCategory\": \"" + escapeJSON(clothingCategory.getCategory().toString()) + "\"," +
+                "\"clothingType\": \"" + escapeJSON(clothingType.getType().toString()) + "\"," +
+                "\"isFavorite\": \"" + isFavorite + "\"," +
+                "\"imagePath1\": \"" + escapeJSON(imagePath1) + "\"," +
+                "\"imagePath2\": \"" + escapeJSON(imagePath2) + "\"," +
+                "\"imagePath3\": \"" + escapeJSON(imagePath3) + "\"" +
                 "}";
+    }
+
+    public String toJSONUpdating() {
+        return "{" +
+                "\"itemId\": \"" + escapeJSON(itemId.toString()) + "\"," +
+                "\"brand\": \"" + escapeJSON(brand) + "\"," +
+                "\"color\": \"" + escapeJSON(color) + "\"," +
+                "\"dateBought\": \"" + (dateBought != null ? dateFormat.format(dateBought) : null) + "\"," +
+                "\"price\": \"" + (price != null ? price : "null") + "\"," +
+                "\"itemName\": \"" + escapeJSON(itemName) + "\"," +
+                "\"clothingCategory\": \"" + escapeJSON(clothingCategory.getCategory().toString()) + "\"," +
+                "\"clothingType\": \"" + escapeJSON(clothingType.getType().toString()) + "\"," +
+                "\"isFavorite\": \"" + isFavorite + "\"," +
+                "\"imagePath1\": \"" + escapeJSON(imagePath1) + "\"," +
+                "\"imagePath2\": \"" + escapeJSON(imagePath2) + "\"," +
+                "\"imagePath3\": \"" + escapeJSON(imagePath3) + "\"" +
+                "}";
+    }
+
+    public void createClothingItem() {
+        try {
+            OkHttpClient client = new OkHttpClient().newBuilder().build();
+            MediaType mediaType = MediaType.parse("application/json");
+            RequestBody body = RequestBody.create(toJSON(), mediaType);
+            Request request = new Request.Builder().url("http://localhost:8080/addClothingItem").post(body)
+                    .addHeader("Content-Type", "application/json").build();
+            Response response = client.newCall(request).execute();
+
+            if (response.isSuccessful() && response.body() != null) {
+                String jsonResponse = response.body().string();
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(jsonResponse);
+                itemId = jsonNode.get("itemId").asInt();
+                System.out.println("Response: " + jsonResponse);
+            } else {
+                System.out.println("Error: " + response.code());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteClothingItem() {
+        try {
+            OkHttpClient client = new OkHttpClient().newBuilder().build();
+            MediaType mediaType = MediaType.parse("text/plain");
+            RequestBody body = RequestBody.create(mediaType, "");
+            String url = "http://localhost:8080/deleteClothingItem/" + this.itemId;
+            Request request = new Request.Builder().url(url).method("DELETE", body).build();
+            Response response = client.newCall(request).execute();
+
+            if (response.isSuccessful() && response.body() != null) {
+                System.out.println("Response: " + response.body().string());
+            } else {
+                System.out.println("Error: " + response.code());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean updateClothingItem() {
+        try {
+            OkHttpClient client = new OkHttpClient().newBuilder().build();
+            MediaType mediaType = MediaType.parse("application/json");
+            RequestBody body = RequestBody.create(toJSONUpdating(), mediaType);
+            Request request = new Request.Builder().url("http://localhost:8080/updateClothingItem").put(body)
+                    .addHeader("Content-Type", "application/json").build();
+            Response response = client.newCall(request).execute();
+
+            if (response.isSuccessful() && response.body() != null) {
+                System.out.println("Response: " + response.body().string());
+                return true;
+            } else {
+                System.out.println("Error: " + response.code());
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }

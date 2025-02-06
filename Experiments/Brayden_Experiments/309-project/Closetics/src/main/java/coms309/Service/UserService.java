@@ -26,7 +26,7 @@ public class UserService {
     }
 
     public User updateUserInfo(User user) {
-        User updateInfo=userRepo.findById(user.getUser_id()).orElse(null);
+        User updateInfo = userRepo.findById(user.getUser_id()).orElse(null);
         if(updateInfo!=null){
             updateInfo.setUsername(user.getUsername());
             updateInfo.setPassword(user.getPassword());

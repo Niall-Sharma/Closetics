@@ -11,4 +11,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Transactional
     void deleteByUsername(String username);
+
+
 }

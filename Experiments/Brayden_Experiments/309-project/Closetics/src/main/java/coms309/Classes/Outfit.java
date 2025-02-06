@@ -64,18 +64,18 @@ public class Outfit extends ConvertsToJSON{
 
         for (ClothingItem item : getOutfit_items()) {
             JSONArray[i] = "{" +
-                    "\"item_id\": \"" + escapeJSON(item.getItem_id().toString()) + "\"," +
-                    "\"user_id\": \"" + escapeJSON(item.getUser_id().toString()) + "\"," +
+                    "\"item_id\": \"" + escapeJSON(item.getItemId().toString()) + "\"," +
+                    "\"user_id\": \"" + escapeJSON(item.getUserId().toString()) + "\"," +
                     "\"brand\": \"" + escapeJSON(item.getBrand()) + "\"," +
                     "\"color\": \"" + escapeJSON(item.getColor()) + "\"," +
-                    "\"date_bought\": \"" + (item.getDate_bought() != null ? dateFormat.format(item.getDate_bought()) : null) + "\"," +
+                    "\"date_bought\": \"" + (item.getDateBought() != null ? dateFormat.format(item.getDateBought()) : null) + "\"," +
                     "\"price\": " + (item.getPrice() != null ? item.getPrice() : "null") + "," +
-                    "\"clothing_category\": \"" + escapeJSON(item.getClothing_category().getCategory().toString()) + "\"," +
-                    "\"clothing_type\": \"" + escapeJSON(item.getClothing_type().getType().toString()) + "\"," +
-                    "\"is_favorite\": " + item.getIs_favorite() + "," +
-                    "\"image_path1\": \"" + escapeJSON(item.getImage_path1()) + "\"," +
-                    "\"image_path2\": \"" + escapeJSON(item.getImage_path2()) + "\"," +
-                    "\"image_path3\": \"" + escapeJSON(item.getImage_path3()) + "\"" +
+                    "\"clothing_category\": \"" + escapeJSON(item.getClothingCategory().getCategory().toString()) + "\"," +
+                    "\"clothing_type\": \"" + escapeJSON(item.getClothingType().getType().toString()) + "\"," +
+                    "\"is_favorite\": " + item.getIsFavorite() + "," +
+                    "\"image_path1\": \"" + escapeJSON(item.getImagePath1()) + "\"," +
+                    "\"image_path2\": \"" + escapeJSON(item.getImagePath2()) + "\"," +
+                    "\"image_path3\": \"" + escapeJSON(item.getImagePath3()) + "\"" +
                     "}";
         }
         return JSONArray;

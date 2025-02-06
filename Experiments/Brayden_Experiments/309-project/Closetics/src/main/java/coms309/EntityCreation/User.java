@@ -13,35 +13,23 @@ import java.util.UUID;
 public class User {
 
     @Id
-    @Getter
     @Column(nullable = false, updatable = false)
     private UUID user_id;
 
-    @Getter
     @Column(nullable = false)
     private String username;
 
-    @Getter
     @Column(nullable = false)
     private String password;
 
-    @Getter
     @Column(nullable = false)
     private String first_name;
 
-    @Getter
     @Column(nullable = false)
     private String last_name;
 
-    @Getter
     @Temporal(TemporalType.TIMESTAMP) // Ensures correct timestamp storage
     @Column(nullable = false, updatable = false)
     private Date user_created_date = new Date();
-
-
-
-
-
-
 
 }
