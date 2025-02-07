@@ -1,7 +1,6 @@
 package coms309.EntityCreation;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.Date;
 import java.util.UUID;
 

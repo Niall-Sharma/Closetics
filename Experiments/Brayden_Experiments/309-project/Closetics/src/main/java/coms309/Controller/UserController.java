@@ -10,30 +10,30 @@ import java.util.UUID;
 public class UserController {
 
     @Autowired
-    private UserService user_service;
+    private UserService userService;
 
     @PostMapping("/addUser")
     public User postInfo(@RequestBody User user) {
-        return user_service.postInfo(user);
+        return userService.postInfo(user);
     }
 
     @GetMapping("/getUserById/{user_id}")
-    public User getInfoByUUID(@PathVariable UUID user_id) {
-        return user_service.getInfoByUUID(user_id);
+    public User getInfoByUUID(@PathVariable UUID userId) {
+        return userService.getInfoByUUID(userId);
     }
 
     @GetMapping("/getUser/{username}")
     public User getInfoByUsername(@PathVariable String username) {
-        return user_service.getInfoByUsername(username);
+        return userService.getInfoByUsername(username);
     }
 
     @PutMapping("/updateUser")
     public User updateUserInfo(@RequestBody User user) {
-        return user_service.updateUserInfo(user);
+        return userService.updateUserInfo(user);
     }
 
     @DeleteMapping("/deleteUser/{username}")
     public void deleteUserInfo(@PathVariable String username){
-        user_service.deleteUserInfo(username);
+        userService.deleteUserInfo(username);
     }
 }
