@@ -4,16 +4,47 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.LinearLayout;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.ArrayList;
 
 public class BackgroundChanger extends AppCompatActivity {
+
+    private ArrayList<ColorWidget> colorWidgetsList = new ArrayList<>();
+    private int[] widgetImages = {R.drawable.easel_red, R.drawable.easel_olive, R.drawable.easel_orange,
+            R.drawable.easel_purple, R.drawable.easel_dark_green, R.drawable.easel_blue};
+
+    //Set up the activity/screen
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_background_changer);
+
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+
+        setUpEachColorWidget();
+
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, colorWidgetsList);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
+    }
+
+    private void setUpEachColorWidget(){
+        //Grab arrays from strings.xml
+        String [] colorNames = getResources().getStringArray(R.array.colors_full_name);
+        String [] tintNames = getResources().getStringArray(R.array.tint_values);
+
+        //Create card widgets with all the proper data
+        for (int i =0; i<colorNames.length;i++){
+            ColorWidget cardWidget = new ColorWidget(colorNames[i], tintNames[i], widgetImages[i]);
+            colorWidgetsList.add(cardWidget);
+        }
+    }
+
+
+    /*
 
     private LinearLayout topContainer;
     private RecyclerView recyclerView;
@@ -46,4 +77,6 @@ public class BackgroundChanger extends AppCompatActivity {
         });
         recyclerView.setAdapter(populateRecycler);
     }
+
+     */
 }

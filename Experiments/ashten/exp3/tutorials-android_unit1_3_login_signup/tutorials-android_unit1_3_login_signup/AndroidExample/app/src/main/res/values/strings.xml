@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">AndroidExample</string>
+    <string name="color_name">Olive</string>
+    <string name="tint_value">#82B004</string>
+
+    <string-array name="colors_full_name">
+        <item>Red</item>
+        <item>Olive</item>
+        <item>Orange</item>
+        <item>Purple</item>
+        <item>Dark Green</item>
+        <item>Blue</item>
+    </string-array>
+
+    <string-array name="tint_values">
+        <item>#002AFD</item>
+        <item>"#82B004"</item>
+        <item>"#FD3B00"</item>
+        <item>"#4800FD"</item>
+        <item>"#229906"</item>
+        <item>"#DF0606"</item>
+
+    </string-array>
 </resources>
