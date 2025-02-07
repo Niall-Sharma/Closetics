@@ -13,3 +13,4 @@
 - https://stackoverflow.com/questions/26939759/android-getintent-from-a-fragment
 - https://stackoverflow.com/questions/69417776/how-do-can-i-access-ui-elements-from-a-fragment-in-android
 - https://developer.android.com/topic/libraries/view-binding
+- https://stackoverflow.com/questions/40202294/set-selected-item-in-android-bottomnavigationview
