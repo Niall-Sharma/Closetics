@@ -1,4 +1,4 @@
-package coms309.clothing;
+package coms309.people;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.PathVariable;
 
 
@@ -18,11 +19,11 @@ import java.util.HashMap;
  */
 
 @RestController
-public class ClothesController {
+public class PeopleController {
 
     // Note that there is only ONE instance of PeopleController in 
     // Springboot system.
-    HashMap<String, Clothing> clothingList = new  HashMap<>();
+    HashMap<String, Person> peopleList = new  HashMap<>();
 
     //CRUDL (create/read/update/delete/list)
     // use POST, GET, PUT, DELETE, GET methods for CRUDL
@@ -33,9 +34,9 @@ public class ClothesController {
     // Springboot automatically converts the list to JSON format 
     // in this case because of @ResponseBody
     // Note: To LIST, we use the GET method
-    @GetMapping("/clothing")
-    public  HashMap<String,Clothing> getAllPersons() {
-        return clothingList;
+    @GetMapping("/people")
+    public  HashMap<String,Person> getAllPersons() {
+        return peopleList;
     }
 
     // THIS IS THE CREATE OPERATION
@@ -44,11 +45,11 @@ public class ClothesController {
     // It returns a string message in THIS example.
     // in this case because of @ResponseBody
     // Note: To CREATE we use POST method
-    @PostMapping("/clothing")
-    public String createPerson(@RequestBody Clothing clothing) {
-        System.out.println(clothingList);
-        clothingList.put(clothing.getName(), clothing);
-        return "New clothing "+ clothing.getName() + " Saved";
+    @PostMapping("/people")
+    public  String createPerson(@RequestBody Person person) {
+        System.out.println(person);
+        peopleList.put(person.getFirstName(), person);
+        return "New person "+ person.getFirstName() + " Saved";
     }
 
     // THIS IS THE READ OPERATION
@@ -57,10 +58,10 @@ public class ClothesController {
     // springboot automatically converts Person to JSON format when we return it
     // in this case because of @ResponseBody
     // Note: To READ we use GET method
-    @GetMapping("/clothing/{name}")
-    public Clothing getPerson(@PathVariable("name") String firstName) {
-        Clothing c = clothingList.get(firstName);
-        return c;
+    @GetMapping("/people/{firstName}")
+    public Person getPerson(@PathVariable String firstName) {
+        Person p = peopleList.get(firstName);
+        return p;
     }
 
     // THIS IS THE UPDATE OPERATION
@@ -70,10 +71,10 @@ public class ClothesController {
     // Here we are returning what we sent to the method
     // in this case because of @ResponseBody
     // Note: To UPDATE we use PUT method
-    @PutMapping("/clothing/{name}")
-    public Clothing updatePerson(@PathVariable("name") String firstName, @RequestBody Clothing c) {
-        clothingList.replace(firstName, c);
-        return clothingList.get(firstName);
+    @PutMapping("/people/{firstName}")
+    public Person updatePerson(@PathVariable String firstName, @RequestBody Person p) {
+        peopleList.replace(firstName, p);
+        return peopleList.get(firstName);
     }
 
     // THIS IS THE DELETE OPERATION
@@ -82,10 +83,10 @@ public class ClothesController {
     // in this case because of @ResponseBody
     // Note: To DELETE we use delete method
     
-    @DeleteMapping("/clothing/{name}")
-    public HashMap<String, Clothing> deletePerson(@PathVariable("name") String firstName) {
-        clothingList.remove(firstName);
-        return clothingList;
+    @DeleteMapping("/people/{firstName}")
+    public HashMap<String, Person> deletePerson(@PathVariable String firstName) {
+        peopleList.remove(firstName);
+        return peopleList;
     }
 }
 
