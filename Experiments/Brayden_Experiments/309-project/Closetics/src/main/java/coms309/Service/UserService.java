@@ -4,7 +4,6 @@ import coms309.EntityCreation.User;
 import coms309.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.UUID;
 
 @Service
@@ -17,8 +16,8 @@ public class UserService {
         return userRepo.save(user);
     }
 
-    public User getInfoByUUID(UUID user_id) {
-        return userRepo.findById(user_id).orElse(null);
+    public User getInfoByUUID(UUID userId) {
+        return userRepo.findById(userId).orElse(null);
     }
 
     public User getInfoByUsername(String username) {
@@ -26,12 +25,12 @@ public class UserService {
     }
 
     public User updateUserInfo(User user) {
-        User updateInfo = userRepo.findById(user.getUser_id()).orElse(null);
+        User updateInfo = userRepo.findById(user.getUserId()).orElse(null);
         if(updateInfo!=null){
             updateInfo.setUsername(user.getUsername());
             updateInfo.setPassword(user.getPassword());
-            updateInfo.setFirst_name(user.getFirst_name());
-            updateInfo.setLast_name(user.getLast_name());
+            updateInfo.setFirstName(user.getFirstName());
+            updateInfo.setLastName(user.getLastName());
             userRepo.save(updateInfo);
             return updateInfo;
         }

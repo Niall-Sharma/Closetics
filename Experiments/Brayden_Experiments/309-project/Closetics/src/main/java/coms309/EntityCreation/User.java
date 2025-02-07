@@ -1,7 +1,7 @@
 package coms309.EntityCreation;
+
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.Date;
 import java.util.UUID;
 
@@ -13,8 +13,8 @@ import java.util.UUID;
 public class User {
 
     @Id
-    @Column(nullable = false, updatable = false)
-    private UUID user_id;
+    @Column(nullable = false, updatable = false, name = "user_id")
+    private UUID userId;
 
     @Column(nullable = false)
     private String username;
@@ -22,14 +22,14 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    private String first_name;
+    @Column(nullable = false, name = "first_name")
+    private String firstName;
 
-    @Column(nullable = false)
-    private String last_name;
+    @Column(nullable = false, name = "last_name")
+    private String lastName;
 
     @Temporal(TemporalType.TIMESTAMP) // Ensures correct timestamp storage
-    @Column(nullable = false, updatable = false)
-    private Date user_created_date = new Date();
+    @Column(nullable = false, updatable = false, name = "user_created_date")
+    private Date userCreatedDate = new Date();
 
 }

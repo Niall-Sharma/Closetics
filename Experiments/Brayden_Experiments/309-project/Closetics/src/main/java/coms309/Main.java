@@ -1,11 +1,10 @@
 package coms309;
+
 import coms309.Classes.ClothingItem;
 import coms309.Classes.Enums.*;
 import coms309.Classes.User;
-
 import java.io.IOException;
 import java.util.Date;
-
 import static java.util.UUID.randomUUID;
 
 public class Main {
@@ -19,7 +18,7 @@ public class Main {
         //user1.deleteUser();
         Tops tshirt = new Tops(Tops.Types.T_SHIRTS);
         Tops hoodie = new Tops(Tops.Types.HOODIES);
-        ClothingItem clothes1 = new ClothingItem (0, user1.getUser_id(), "Nike", "Blue", new Date(), 9.99, "fav hoddie", tshirt, tshirt, true, "./image1", "./image2", "./image3");
+        ClothingItem clothes1 = new ClothingItem (0, user1.getUserId(), "Nike", "Blue", new Date(), 9.99, "fav hoddie", tshirt, tshirt, true, "./image1", "./image2", "./image3");
         clothes1.createClothingItem();
         clothes1.updatePrice(19.99);
         //clothes1.deleteClothingItem();

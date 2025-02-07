@@ -3,7 +3,6 @@ package coms309.Classes;
 import java.text.SimpleDateFormat;
 
 public abstract class ConvertsToJSON {
-    private String objectAsJSON = null;
     public SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); // Format the date
 
     // Escaping special characters in strings for JSON

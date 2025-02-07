@@ -1,4 +1,5 @@
 package coms309.Classes;
+
 import okhttp3.*;
 import java.util.UUID;
 import lombok.*;
@@ -9,7 +10,7 @@ public class User extends ConvertsToJSON {
 
     @Getter
     @NonNull
-    private UUID user_id;
+    private UUID userId;
 
     @Getter
     @NonNull
@@ -21,41 +22,41 @@ public class User extends ConvertsToJSON {
 
     @Getter
     @NonNull
-    private String first_name;
+    private String firstName;
 
     @Getter
     @NonNull
-    private String last_name;
+    private String lastName;
 
-    public void updateUsername(String new_username) {
-        String old_username = this.username;
-        this.username = new_username;
-        if (!updateUser()) {this.username = old_username;}
+    public void updateUsername(String newUsername) {
+        String oldUsername = this.username;
+        this.username = newUsername;
+        if (!updateUser()) {this.username = oldUsername;}
     }
-    public void updatePassword(String new_password) {
-        String old_password = this.password;
-        this.password = new_password;
-        if (!updateUser()) {this.password = old_password;}
+    public void updatePassword(String newPassword) {
+        String oldPassword = this.password;
+        this.password = newPassword;
+        if (!updateUser()) {this.password = oldPassword;}
     }
-    public void updateFirstName(String new_first_name) {
-        String old_first_name = this.first_name;
-        this.first_name = new_first_name;
-        if (!updateUser()) {this.first_name = old_first_name;}
+    public void updateFirstName(String newFirstName) {
+        String oldFirstName = this.firstName;
+        this.firstName = newFirstName;
+        if (!updateUser()) {this.firstName = oldFirstName;}
     }
-    public void updateLastName(String new_last_name) {
-        String old_last_name = this.last_name;
-        this.last_name = new_last_name;
-        if (!updateUser()) {this.last_name = old_last_name;}
+    public void updateLastName(String newLastName) {
+        String oldLastName = this.lastName;
+        this.lastName = newLastName;
+        if (!updateUser()) {this.lastName = oldLastName;}
     }
 
     @Override
     public String toJSON() {
         return "{" +
-                "\"user_id\": \"" + escapeJSON(user_id.toString()) + "\"," +
+                "\"userId\": \"" + escapeJSON(userId.toString()) + "\"," +
                 "\"username\": \"" + escapeJSON(username) + "\"," +
                 "\"password\": \"" + escapeJSON(password) + "\"," +
-                "\"first_name\": \"" + escapeJSON(first_name) + "\"," +
-                "\"last_name\": \"" + escapeJSON(last_name) + "\"" +
+                "\"firstName\": \"" + escapeJSON(firstName) + "\"," +
+                "\"lastName\": \"" + escapeJSON(lastName) + "\"" +
                 "}";
     }
 
