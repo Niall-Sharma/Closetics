@@ -2,17 +2,20 @@ package closetics.Users;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UserController {
 
+    //This error is meant to trigger whenever a duplicate entry is added into the MySql database
+    @ResponseStatus(value=HttpStatus.CONFLICT,
+            reason="Data integrity violation")  // 409
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public String conflict() {
+        return "ACCESS VIOLATION";
+    }
     @Autowired
     UserRepository userRepo;
 
@@ -26,6 +29,7 @@ public class UserController {
         return userRepo.findById(id);
     }
 
+    @ResponseStatus(value = HttpStatus.CONFLICT, reason = "Data integrity violation")
     @GetMapping(path = "/users/username/{id}")
     public User getUserByUsername(@PathVariable String id){
         return userRepo.findByUsername(id);
