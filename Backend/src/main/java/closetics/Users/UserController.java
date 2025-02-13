@@ -26,6 +26,11 @@ public class UserController {
         return userRepo.findById(id);
     }
 
+    @GetMapping(path = "/users/username/{id}")
+    public User getUserByUsername(@PathVariable String id){
+        return userRepo.findByUsername(id);
+    }
+
     @PostMapping(path = "/users")
     public User signUp(@RequestBody User user) {
         return userRepo.save(user);
