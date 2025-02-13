@@ -27,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping(path = "/users")
-    public User SignUp(@RequestBody User user) {
+    public User signUp(@RequestBody User user) {
         return userRepo.save(user);
     }
 
