@@ -14,6 +14,10 @@ public class User {
     private String name;
     private String emailId;
 
+    //Maybe implement with BCrypt library?
+    //Depends on what team says
+    private String passwordHash;
+
 
     public User(String name, String emailId) {
         this.name = name;
@@ -47,5 +51,11 @@ public class User {
         this.emailId = emailId;
     }
 
-    
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
 }

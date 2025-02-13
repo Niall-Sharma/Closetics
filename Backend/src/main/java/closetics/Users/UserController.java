@@ -31,16 +31,6 @@ public class UserController {
         return userRepo.save(user);
     }
 
-    @PutMapping(path = "/users/{id}")
-    public User updateUser(@PathVariable int id, @RequestBody User user) {
-        User u = userRepo.findById(id);
-        if(u == null) {
-            return null;
-        }
-        userRepo.save(user);
-        return userRepo.findById(id);
-    }
-
     @DeleteMapping(path = "/users/{id}")
     public void deleteUser(@PathVariable int id) {
         userRepo.deleteById(id);
