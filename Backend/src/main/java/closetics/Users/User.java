@@ -1,4 +1,4 @@
-package src.Users;
+package closetics.Users;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

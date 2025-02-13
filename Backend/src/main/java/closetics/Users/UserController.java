@@ -1,4 +1,4 @@
-package src.Users;
+package closetics.Users;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
