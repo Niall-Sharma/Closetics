@@ -22,7 +22,7 @@ class Main {
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);
     }
-
+    //test
     // Create 3 Persons with their machines
     /**
      * 
