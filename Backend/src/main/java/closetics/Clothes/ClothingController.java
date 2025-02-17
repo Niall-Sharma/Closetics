@@ -12,28 +12,32 @@ public class ClothingController {
     ClothingRepository clothingRepository;
 
     @GetMapping(path = "/clothes")
-    public List<Clothing> getAllUsers() {
+    public List<Clothing> getAllClothing() {
         return clothingRepository.findAll();
     }
 
-    @GetMapping(path = "/clothes/{id}")
-    public Clothing getUser(@PathVariable int id) {
+    @GetMapping(path = "/clothes/{id}}")
+    public Clothing getClothing(@PathVariable int id) {
         return clothingRepository.findById(id);
     }
 
-    @ResponseStatus(value = HttpStatus.CONFLICT, reason = "Data integrity violation")
-    @GetMapping(path = "/clothing/type/{id}")
-    public Clothing getUserByUsername(@PathVariable String id){
-        return clothingRepository.findByType(id);
+    @GetMapping(path = "/clothes/special_type/{type}")
+    public List<Clothing> getClothingBySpecialType(@PathVariable String type){
+        return clothingRepository.findBySpecialType(type);
+    }
+
+    @GetMapping(path = "/clothing/type/{type}")
+    public List<Clothing> getClothingByType(@PathVariable String type){
+        return clothingRepository.findByType(type);
     }
 
     @PostMapping(path = "/clothes")
-    public Clothing signUp(@RequestBody Clothing user) {
-        return clothingRepository.save(user);
+    public Clothing saveClothing(@RequestBody Clothing clothing) {
+        return clothingRepository.save(clothing);
     }
 
     @DeleteMapping(path = "/clothes/{id}")
-    public void deleteUser(@PathVariable int id) {
+    public void deleteClothing(@PathVariable int id) {
         clothingRepository.deleteById(id);
     }
 

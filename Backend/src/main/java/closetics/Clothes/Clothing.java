@@ -4,6 +4,10 @@ public class Clothing {
 
     private TYPES type;
     private SPECIALTYPES specialtype;
+    boolean isFavorite;
+
+
+
 
     public enum TYPES{
         SHOES,
