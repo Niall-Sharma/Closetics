@@ -45,4 +45,9 @@ public class UserController {
         userRepo.deleteById(id);
     }
 
+    @PutMapping(path = "/users")
+    public User updateUser(@RequestBody User user) {
+        return userRepo.save(user);
+    }
+
 }
