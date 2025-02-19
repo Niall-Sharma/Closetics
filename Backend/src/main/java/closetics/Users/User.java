@@ -14,11 +14,7 @@ public class User {
     private String name;
     private String emailId;
     private String username;
-
-    //Maybe implement with BCrypt library?
-    //Depends on what team says
     private String passwordHash;
-
 
     public User(String name, String emailId, String username) {
         this.name = name;
