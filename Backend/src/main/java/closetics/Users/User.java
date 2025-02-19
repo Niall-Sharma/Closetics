@@ -4,6 +4,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import org.mindrot.jbcrypt.*;
+
+import java.util.UUID;
 
 @Entity(name = "usersTable")
 public class User {
@@ -14,16 +17,14 @@ public class User {
     private String name;
     private String emailId;
     private String username;
-
-    //Maybe implement with BCrypt library?
-    //Depends on what team says
     private String passwordHash;
 
 
-    public User(String name, String emailId, String username) {
+    public User(String name, String emailId, String username, String password) {
         this.name = name;
         this.emailId = emailId;
         this.username = username;
+        this.passwordHash = encryptPassowrd(password);
     }
 
     public User() {
@@ -57,6 +58,14 @@ public class User {
         return passwordHash;
     }
 
+    public boolean comparePasswordHash(String checkPass){
+        return BCrypt.checkpw(checkPass, passwordHash);
+    }
+
+    public static String encryptPassowrd(String p){
+        return BCrypt.hashpw(p,BCrypt.gensalt());
+    }
+
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
     }
@@ -67,5 +76,6 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+
     }
 }
