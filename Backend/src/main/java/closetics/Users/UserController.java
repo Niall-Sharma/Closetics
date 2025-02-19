@@ -49,5 +49,17 @@ public class UserController {
     public User updateUser(@RequestBody User user) {
         return userRepo.save(user);
     }
-
+    //Was doing some testing using spring security to and json web token where this login API call would generate a token that
+    // would be saved passed to other API calls and without it you would be unable but having quite figured out the best approach for that yet
+    @GetMapping(path = "/login/{username}/{password}")
+    public String userLogin(@PathVariable String username, @PathVariable String password) {
+        User user = userRepo.findByUsername(username);
+        if (user != null && user.getPasswordHash().equals(password)) {
+            // Passwords match, login successful
+            return "Login successful for user: " + username;
+        } else {
+            // User not found or incorrect password
+            return "Invalid username or password!";
+        }
+    }
 }
