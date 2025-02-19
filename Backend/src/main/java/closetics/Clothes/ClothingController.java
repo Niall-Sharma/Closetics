@@ -32,8 +32,7 @@ public class ClothingController {
     }
 
     @PostMapping(path = "/clothes")
-    public Clothing saveClothing() {
-        Clothing clothing = new Clothing(1,Clothing.TYPES.SHOES, Clothing.SPECIALTYPES.TENNISSHOES, false);
+    public Clothing saveClothing(@RequestBody Clothing clothing) {
         return clothingRepository.save(clothing);
     }
 
