@@ -6,7 +6,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import org.mindrot.jbcrypt.*;
 
-import java.util.UUID;
 
 @Entity(name = "usersTable")
 public class User {
