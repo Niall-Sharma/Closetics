@@ -10,6 +10,8 @@ import android.widget.EditText;
 
 public class LoginActivity extends AppCompatActivity {
 
+    //Login functionality: Post requests to the backend
+
     private EditText usernameEditText;  // define username edittext variable
     private EditText passwordEditText;  // define password edittext variable
     private Button loginButton;         // define login button variable

@@ -26,7 +26,7 @@ public class JsonObjReqActivity extends AppCompatActivity {
     private TextView msgResponse;
 
     private static final String URL_JSON_OBJECT = "https://jsonplaceholder.typicode.com/users/1";
-
+    //https://jsonplaceholder.typicode.com/users/1
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
