@@ -16,7 +16,7 @@ public class ClothingController {
         return clothingRepository.findAll();
     }
 
-    @GetMapping(path = "/clothes/{id}}")
+    @GetMapping(path = "/clothes/{id}")
     public Clothing getClothing(@PathVariable int id) {
         return clothingRepository.findById(id);
     }
@@ -32,7 +32,8 @@ public class ClothingController {
     }
 
     @PostMapping(path = "/clothes")
-    public Clothing saveClothing(@RequestBody Clothing clothing) {
+    public Clothing saveClothing() {
+        Clothing clothing = new Clothing(1,Clothing.TYPES.SHOES, Clothing.SPECIALTYPES.TENNISSHOES, false);
         return clothingRepository.save(clothing);
     }
 
