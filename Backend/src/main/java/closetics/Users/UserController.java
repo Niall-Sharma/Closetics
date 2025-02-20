@@ -65,7 +65,7 @@ public class UserController {
         user.setPasswordHash(User.encryptPassword(user.getPasswordHash()));
         return userRepo.save(user);
     }
-    @RequiresAuth
+
     @DeleteMapping(path = "/users/{id}")
     public void deleteUser(@PathVariable int id) {
         tokenRepo.deleteByUserId(id);
