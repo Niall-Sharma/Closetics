@@ -15,7 +15,7 @@ public class TokenService {
 
     public Token createToken(User user) {
         // Delete any existing tokens for this user
-        tokenRepository.deleteById(user.getId());
+        tokenRepository.deleteByUserId(user.getId());
 
         // Create new token
         Token token = new Token();

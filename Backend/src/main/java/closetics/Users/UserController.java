@@ -55,7 +55,8 @@ public class UserController {
 
     @PostMapping(path = "/signup")
     public User signUp(@RequestBody User user) {
-        return userRepo.save(user);
+        User newUser = new User(user.getName(), user.getEmailId(), user.getUsername(), User.encryptPassowrd(user.getPasswordHash()), user.getUserTier());
+        return userRepo.save(newUser);
     }
 
     @DeleteMapping(path = "/users/{id}")
@@ -64,17 +65,18 @@ public class UserController {
         userRepo.deleteById(id);
     }
 
-    @PutMapping(path = "/users")
+    @PutMapping(path = "/updateUser")
     public User updateUser(@RequestBody User user) {
-        return userRepo.save(user);
+        User newUser = new User(user.getName(), user.getEmailId(), user.getUsername(), User.encryptPassowrd(user.getPasswordHash()), user.getUserTier());
+        return userRepo.save(newUser);
     }
 
-    @PostMapping("/login")
+    @PostMapping(path = "/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
             User user = userRepo.findByUsername(loginRequest.getUsername());
 
-            if (user != null && user.getPasswordHash().equals(loginRequest.getPassword())) {
+            if (user != null && user.comparePasswordHash(loginRequest.getPassword())) {
                 Token token = tokenService.createToken(user);
                 Map<String, String> response = new HashMap<>();
                 response.put("token", token.getTokenValue());

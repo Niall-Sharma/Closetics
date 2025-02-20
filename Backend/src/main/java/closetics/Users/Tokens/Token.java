@@ -15,10 +15,10 @@ public class Token {
     private String tokenValue;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "expiration_date")
+    @Column(name = "expiration_date", nullable = false)
     private LocalDateTime expirationDate;
 
     // Getters and Setters

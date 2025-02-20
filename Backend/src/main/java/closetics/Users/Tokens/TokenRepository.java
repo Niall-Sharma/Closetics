@@ -18,6 +18,6 @@ public interface TokenRepository extends JpaRepository<Token, Long> {
 
     @Modifying
     @Transactional
-    @Query("DELETE FROM Token t WHERE t.user.id = :userId")
-    void deleteByUserId(@Param("userId") int userId);
+    @Query(value = "DELETE FROM tokens WHERE user_id = :userId", nativeQuery = true)
+    void deleteByUserId(@Param("userId") long userId);
 }
