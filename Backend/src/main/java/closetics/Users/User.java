@@ -23,8 +23,12 @@ public class User {
         this.name = name;
         this.emailId = emailId;
         this.username = username;
-        this.passwordHash = passwordHash;
+<<<<<<< Backend/src/main/java/closetics/Users/User.java
+        this.passwordHash = encryptPassword(password);
+=======
+        this.passwordHash = encryptPassword(password);
         this.userTier = userTier;
+>>>>>>> Backend/src/main/java/closetics/Users/User.java
     }
 
     public User() {
@@ -60,8 +64,31 @@ public class User {
         return BCrypt.checkpw(checkPass, passwordHash);
     }
 
-    public static String encryptPassowrd(String p){
+    public static String encryptPassword(String p){
         return BCrypt.hashpw(p,BCrypt.gensalt());
+    }
+    /*
+Regex explanataion:
+    [0-9A-Za-z] contains only letters and numbers
+    {3,16} between 3 and 16 characters long
+ */
+    public static Boolean validateUsername(String username){
+        String pattern = "[0-9A-Za-z]{3,16}";
+        return username.matches(pattern);
+    }
+
+    /*
+    Regex explanataion:
+        (?=.*[0-9]) a digit must occur at least once
+        (?=.*[a-z]) a lower case letter must occur at least once
+        (?=.*[A-Z]) an upper case letter must occur at least once
+        (?=.*[@#$%^&+=]) a special character must occur at least once
+        (?=\\S+$) no whitespace allowed in the entire string
+        .{8,} at least 8 characters
+     */
+    public static boolean validatePassword(String password) {
+        String pattern = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}";
+        return password.matches(pattern);
     }
 
     public void setPasswordHash(String passwordHash) {
@@ -72,9 +99,17 @@ public class User {
         return username;
     }
 
+<<<<<<< Backend/src/main/java/closetics/Users/User.java
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+
+=======
     public void setUsername(String username) {this.username = username;}
 
     public String getUserTier() {return userTier;}
 
     public void setUserTier(String userTier) {this.userTier = userTier;}
+>>>>>>> Backend/src/main/java/closetics/Users/User.java
 }

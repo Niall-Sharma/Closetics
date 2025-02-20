@@ -11,6 +11,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -55,7 +56,13 @@ public class UserController {
 
     @PostMapping(path = "/signup")
     public User signUp(@RequestBody User user) {
-        user.setPasswordHash(User.encryptPassowrd(user.getPasswordHash()));
+        if(!User.validateUsername(user.getUsername())){
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Username does not meet criteria");
+        }
+        if(!User.validatePassword(user.getPasswordHash())){
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Password does not meet criteria");
+        }
+        user.setPasswordHash(User.encryptPassword(user.getPasswordHash()));
         return userRepo.save(user);
     }
     @RequiresAuth
