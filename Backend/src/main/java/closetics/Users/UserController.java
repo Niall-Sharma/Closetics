@@ -55,10 +55,10 @@ public class UserController {
 
     @PostMapping(path = "/signup")
     public User signUp(@RequestBody User user) {
-        User newUser = new User(user.getName(), user.getEmailId(), user.getUsername(), User.encryptPassowrd(user.getPasswordHash()), user.getUserTier());
-        return userRepo.save(newUser);
+        user.setPasswordHash(User.encryptPassowrd(user.getPasswordHash()));
+        return userRepo.save(user);
     }
-
+    @RequiresAuth
     @DeleteMapping(path = "/users/{id}")
     public void deleteUser(@PathVariable int id) {
         tokenRepo.deleteByUserId(id);
@@ -67,8 +67,8 @@ public class UserController {
 
     @PutMapping(path = "/updateUser")
     public User updateUser(@RequestBody User user) {
-        User newUser = new User(user.getName(), user.getEmailId(), user.getUsername(), User.encryptPassowrd(user.getPasswordHash()), user.getUserTier());
-        return userRepo.save(newUser);
+        user.setPasswordHash(User.encryptPassowrd(user.getPasswordHash()));
+        return userRepo.save(user);
     }
 
     @PostMapping(path = "/login")
