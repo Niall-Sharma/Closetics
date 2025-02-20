@@ -2,6 +2,7 @@ package closetics.Users;
 
 import java.util.List;
 import closetics.Users.Auth.AuthService;
+import closetics.Users.Auth.RequiresAuth;
 import closetics.Users.Tokens.Token;
 import closetics.Users.Tokens.TokenRepository;
 import closetics.Users.Tokens.TokenService;
@@ -52,13 +53,14 @@ public class UserController {
         return userRepo.findByUsername(id);
     }
 
-    @PostMapping(path = "/users")
+    @PostMapping(path = "/signup")
     public User signUp(@RequestBody User user) {
         return userRepo.save(user);
     }
 
     @DeleteMapping(path = "/users/{id}")
     public void deleteUser(@PathVariable int id) {
+        tokenRepo.deleteByUserId(id);
         userRepo.deleteById(id);
     }
 
