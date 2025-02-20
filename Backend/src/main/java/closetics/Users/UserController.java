@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 public class UserController {
@@ -16,6 +17,7 @@ public class UserController {
     public String conflict() {
         return "ACCESS VIOLATION";
     }
+
     @Autowired
     UserRepository userRepo;
 
@@ -37,8 +39,14 @@ public class UserController {
 
     @PostMapping(path = "/users")
     public User signUp(@RequestBody User user) {
-        User newUser = new User(user.getName(), user.getEmailId(), user.getUsername(), User.encryptPassowrd(user.getPasswordHash()));
-        return userRepo.save(newUser);
+        if(!User.validateUsername(user.getUsername())){
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Username does not meet criteria");
+        }
+        if(!User.validatePassword(user.getPasswordHash())){
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Password does not meet criteria");
+        }
+        user.setPasswordHash(User.encryptPassword(user.getPasswordHash()));
+        return userRepo.save(user);
     }
 
     @DeleteMapping(path = "/users/{id}")
