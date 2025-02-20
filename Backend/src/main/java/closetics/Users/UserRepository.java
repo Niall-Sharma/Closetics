@@ -7,10 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    User findById(int id);
+    User findById(long id);
 
     @Transactional
-    void deleteById(int id);
+    void deleteById(long id);
 
     @Query(value = "SELECT * FROM users_table WHERE username=?",nativeQuery = true)
     User findByUsername(String username);

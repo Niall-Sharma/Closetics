@@ -1,35 +1,40 @@
 package closetics.Users;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import org.mindrot.jbcrypt.*;
 
 
 @Entity(name = "usersTable")
+@Table(uniqueConstraints = {
+@UniqueConstraint(columnNames = "username"),
+@UniqueConstraint(columnNames = "emailId")})
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
     private String name;
     private String emailId;
     private String username;
     private String passwordHash;
+    private String userTier;
 
-
-    public User(String name, String emailId, String username, String password) {
+    public User(String name, String emailId, String username, String passwordHash, String userTier) {
         this.name = name;
         this.emailId = emailId;
         this.username = username;
+<<<<<<< Backend/src/main/java/closetics/Users/User.java
         this.passwordHash = encryptPassword(password);
+=======
+        this.passwordHash = encryptPassword(password);
+        this.userTier = userTier;
+>>>>>>> Backend/src/main/java/closetics/Users/User.java
     }
 
     public User() {
     }
 
-    public int getId(){
+    public long getId(){
         return id;
     }
 
@@ -53,9 +58,7 @@ public class User {
         this.emailId = emailId;
     }
 
-    public String getPasswordHash() {
-        return passwordHash;
-    }
+    public String getPasswordHash() {return passwordHash;}
 
     public boolean comparePasswordHash(String checkPass){
         return BCrypt.checkpw(checkPass, passwordHash);
@@ -96,9 +99,17 @@ Regex explanataion:
         return username;
     }
 
+<<<<<<< Backend/src/main/java/closetics/Users/User.java
     public void setUsername(String username) {
         this.username = username;
     }
 
 
+=======
+    public void setUsername(String username) {this.username = username;}
+
+    public String getUserTier() {return userTier;}
+
+    public void setUserTier(String userTier) {this.userTier = userTier;}
+>>>>>>> Backend/src/main/java/closetics/Users/User.java
 }
