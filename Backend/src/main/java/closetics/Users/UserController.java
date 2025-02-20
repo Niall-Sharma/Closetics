@@ -74,7 +74,7 @@ public class UserController {
 
     @PutMapping(path = "/updateUser")
     public User updateUser(@RequestBody User user) {
-        user.setPasswordHash(User.encryptPassowrd(user.getPasswordHash()));
+        user.setPasswordHash(User.encryptPassword(user.getPasswordHash()));
         return userRepo.save(user);
     }
 

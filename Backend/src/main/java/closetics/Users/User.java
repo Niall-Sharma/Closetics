@@ -23,12 +23,8 @@ public class User {
         this.name = name;
         this.emailId = emailId;
         this.username = username;
-<<<<<<< Backend/src/main/java/closetics/Users/User.java
-        this.passwordHash = encryptPassword(password);
-=======
-        this.passwordHash = encryptPassword(password);
+        this.passwordHash = encryptPassword(passwordHash);
         this.userTier = userTier;
->>>>>>> Backend/src/main/java/closetics/Users/User.java
     }
 
     public User() {
@@ -99,17 +95,10 @@ Regex explanataion:
         return username;
     }
 
-<<<<<<< Backend/src/main/java/closetics/Users/User.java
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-
-=======
     public void setUsername(String username) {this.username = username;}
+
 
     public String getUserTier() {return userTier;}
 
     public void setUserTier(String userTier) {this.userTier = userTier;}
->>>>>>> Backend/src/main/java/closetics/Users/User.java
 }
