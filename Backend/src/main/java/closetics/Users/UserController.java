@@ -37,7 +37,8 @@ public class UserController {
 
     @PostMapping(path = "/users")
     public User signUp(@RequestBody User user) {
-        return userRepo.save(user);
+        User newUser = new User(user.getName(), user.getEmailId(), user.getUsername(), User.encryptPassowrd(user.getPasswordHash()));
+        return userRepo.save(newUser);
     }
 
     @DeleteMapping(path = "/users/{id}")
