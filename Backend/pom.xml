@@ -28,6 +28,11 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
         <!-- Spring Boot Web dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -41,6 +46,13 @@
             <version>1.4.200</version>
             <scope>runtime</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version>0.4</version>
+        </dependency>
+
 
         <!-- MYSQL dependencies -->
 <!--        	<dependency>-->
