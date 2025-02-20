@@ -1,7 +1,11 @@
 package closetics.Users;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import org.mindrot.jbcrypt.*;
+
 
 @Entity(name = "usersTable")
 @Table(uniqueConstraints = {
@@ -55,6 +59,14 @@ public class User {
 
     public String getPasswordHash() {return passwordHash;}
 
+    public boolean comparePasswordHash(String checkPass){
+        return BCrypt.checkpw(checkPass, passwordHash);
+    }
+
+    public static String encryptPassowrd(String p){
+        return BCrypt.hashpw(p,BCrypt.gensalt());
+    }
+
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
     }
@@ -65,6 +77,7 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+
     }
 
     public boolean comparePasswordHash(String checkPass){
