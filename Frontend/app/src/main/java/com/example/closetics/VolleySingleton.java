@@ -10,6 +10,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
+
+//Volley Request Queue Boilerplate class
 public class VolleySingleton {
 
     private static VolleySingleton instance;
