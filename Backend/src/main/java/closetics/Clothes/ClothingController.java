@@ -36,9 +36,14 @@ public class ClothingController {
         return clothingRepository.save(clothing);
     }
 
-    @DeleteMapping(path = "/clothes/{id}")
-    public void deleteClothing(@PathVariable int id) {
-        clothingRepository.deleteById(id);
+    @DeleteMapping(path = "/clothes/{itemId}")
+    public void deleteClothing(@PathVariable int itemId) {
+        clothingRepository.deleteByClothesId(itemId);
     }
 
+    @PutMapping (path = "/clothes/{itemID}")
+    public void updateClothing(@PathVariable int itemId, @RequestBody Clothing clothing){
+        clothingRepository.findById(itemId);
+    }
 }
+
