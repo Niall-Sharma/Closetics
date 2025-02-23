@@ -2,6 +2,9 @@ package com.example.closetics;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentContainer;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -34,12 +38,12 @@ public class LoginActivity extends AppCompatActivity {
     private EditText passwordEditText;  // define password edittext variable
     private Button loginButton;         // define login button variable
     private Button signupButton;        // define signup button variable
+    private Button forgotPasswordButton;      //define forgotPassword button variable
 
-    private int userId;
     //Postman Mock Server
-    //private static final String URL = "https://803bd0f1-d0c7-422a-a0c5-06cdf909e51f.mock.pstmn.io";
-   
-    private static final String URL = "https://jsonplaceholder.typicode.com/login";
+    private static final String URL = "https://baacab8f-1ecd-41d2-b30f-cc9889421d1d.mock.pstmn.io/login";
+
+   // private static final String URL = "https://jsonplaceholder.typicode.com/login";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +55,7 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.login_password_edit);
         loginButton = findViewById(R.id.login_login_button);    // link to login button in the Login activity XML
         signupButton = findViewById(R.id.login_signup_button);  // link to signup button in the Login activity XML
+        forgotPasswordButton = findViewById(R.id.login_forgot_password); //link to forgot password button in Login activity XML
 
         //Login Button
         loginButton.setOnClickListener(v -> {
@@ -108,6 +113,23 @@ public class LoginActivity extends AppCompatActivity {
             }
 
         });
+        //Forgot password onClick logic
+        //This click will bring up the fragment
+        forgotPasswordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showFragment();
+            }
+        });
+
+
+    }
+    private void showFragment(){
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        Fragment fragment = new ForgotPasswordFragment();
+        transaction.replace(R.id.forgot_password_fragment_container, fragment);
+        transaction.commit();
+
     }
 
 
