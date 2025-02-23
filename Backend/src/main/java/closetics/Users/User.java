@@ -18,13 +18,20 @@ public class User {
     private String username;
     private String passwordHash;
     private String userTier;
+    private String securityQuestion1;
+    private String securityQuestion2;
+    private String securityQuestion3;
 
-    public User(String name, String emailId, String username, String passwordHash, String userTier) {
+    public User(long id, String name, String emailId, String username, String passwordHash, String userTier, String securityQuestion1, String securityQuestion2, String securityQuestion3) {
+        this.id = id;
         this.name = name;
         this.emailId = emailId;
         this.username = username;
-        this.passwordHash = encryptPassword(passwordHash);
+        this.passwordHash = passwordHash;
         this.userTier = userTier;
+        this.securityQuestion1 = securityQuestion1;
+        this.securityQuestion2 = securityQuestion2;
+        this.securityQuestion3 = securityQuestion3;
     }
 
     public User() {
@@ -56,11 +63,19 @@ public class User {
 
     public String getPasswordHash() {return passwordHash;}
 
-    public boolean comparePasswordHash(String checkPass){
+    public boolean compareHashedPassword(String checkPass){
         return BCrypt.checkpw(checkPass, passwordHash);
     }
 
-    public static String encryptPassword(String p){
+    public boolean compareHashedSQ(String checkSQ){
+        if(BCrypt.checkpw(checkSQ, securityQuestion1) || BCrypt.checkpw(checkSQ, securityQuestion2)
+                || BCrypt.checkpw(checkSQ, securityQuestion3)){
+            return true;
+        }
+        return false;
+    }
+
+    public static String encryptString(String p){
         return BCrypt.hashpw(p,BCrypt.gensalt());
     }
     /*
@@ -78,14 +93,15 @@ Regex explanataion:
         (?=.*[0-9]) a digit must occur at least once
         (?=.*[a-z]) a lower case letter must occur at least once
         (?=.*[A-Z]) an upper case letter must occur at least once
-        (?=.*[@#$%^&+=]) a special character must occur at least once
+        (?=.*[!@#$%^&+=]) a special character must occur at least once
         (?=\\S+$) no whitespace allowed in the entire string
         .{8,} at least 8 characters
      */
     public static boolean validatePassword(String password) {
-        String pattern = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}";
+        String pattern = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=])(?=\\S+$).{8,}";
         return password.matches(pattern);
     }
+
 
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
@@ -101,4 +117,16 @@ Regex explanataion:
     public String getUserTier() {return userTier;}
 
     public void setUserTier(String userTier) {this.userTier = userTier;}
+
+    public String getSecurityQuestion1() {return securityQuestion1;}
+
+    public void setSecurityQuestion1(String securityQuestion1) {this.securityQuestion1 = securityQuestion1;}
+
+    public String getSecurityQuestion2() {return securityQuestion2;}
+
+    public void setSecurityQuestion2(String securityQuestion2) {this.securityQuestion2 = securityQuestion2;}
+
+    public String getSecurityQuestion3() {return securityQuestion3;}
+
+    public void setSecurityQuestion3(String securityQuestion3) {this.securityQuestion3 = securityQuestion3;}
 }
