@@ -18,18 +18,16 @@ import java.net.HttpURLConnection;
 public class UserManager {
 
     private static final String SHARED_PREFERENCES_FILE_NAME = "CloseticsPreferences";
-    private static final String   TOKEN_PARAM = "logInToken";
-    private static final String    USERNAME_PARAM = "Username";
-    
-
+    private static final String TOKEN_PARAM = "logInToken";
+    private static final String USERNAME_PARAM = "Username";
 
 
     //This uses a post request to send the user's input for username and password so that
     //authentication is handled in the backend versus the frontend (more secure than get requests
     // to the frontend)
     public static void loginRequest(Context context, String username, String password, String URL,
-                                     Response.Listener<JSONObject> responseListener,
-                                     Response.ErrorListener errorListener) {
+                                    Response.Listener<JSONObject> responseListener,
+                                    Response.ErrorListener errorListener) {
 
         //Create the json object of the login data (username and password)
         JSONObject loginData = new JSONObject();
@@ -52,6 +50,40 @@ public class UserManager {
         //Add request to the volley singleton request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
+
+    public static void changePasswordRequest(Context context, String newPassword, String securityInput, String URL,
+                                             Response.Listener<JSONObject> responseListener,
+                                             Response.ErrorListener errorListener) {
+        //Create the json object of the login data (username and password)
+        JSONObject updatePasswordData = new JSONObject();
+
+        //Use try catch blocks when creating JSON objects
+        try {
+            updatePasswordData.put("newPassword", newPassword);
+            updatePasswordData.put("securityQuestionAnswer", securityInput);
+        } catch (JSONException e) {
+            Log.e("JSON Error", e.toString());
+            return;
+        }
+
+
+        //The post request
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST,
+                URL,
+                updatePasswordData, responseListener, errorListener);
+        //Add request to the volley singleton request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+
+
+
+
+
+
+
+
     //This method stores the login token in sharedPreferences (standard)
     //Shared preferences used when a value needs to persist across app sessions
 

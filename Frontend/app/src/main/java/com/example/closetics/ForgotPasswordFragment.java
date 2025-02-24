@@ -1,6 +1,7 @@
 package com.example.closetics;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,7 +89,8 @@ public class ForgotPasswordFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 //Send the securityInput data to the changePassword fragment
-                String securityInputString = securityInput.toString();
+                String securityInputString = securityInput.getText().toString();
+                Log.d("tag", securityInputString);
                 Bundle bundle = new Bundle();
                 bundle.putString("security_input", securityInputString);
                 ChangePasswordFragment fragment = new ChangePasswordFragment();
