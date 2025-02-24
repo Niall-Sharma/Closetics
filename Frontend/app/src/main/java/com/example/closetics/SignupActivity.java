@@ -29,9 +29,9 @@ public class SignupActivity extends AppCompatActivity {
 
     private static final String URL_SIGNUP = "http://10.0.2.2:8080/signup";
     private static final String URL_LOGIN = "http://10.0.2.2:8080/login";
-    private static final String URL_DELETE_USER = "http://10.0.2.2:8080/users/"; // +{{id}}
 
     private EditText usernameEditText;  // define username edittext variable
+    private EditText emailEditText;  // define email edittext variable
     private EditText passwordEditText;  // define password edittext variable
     private EditText confirmEditText;   // define confirm edittext variable
     private Button loginButton;         // define login button variable
@@ -45,6 +45,7 @@ public class SignupActivity extends AppCompatActivity {
 
         // Initialize UI elements
         usernameEditText = findViewById(R.id.signup_username_edit);
+        emailEditText = findViewById(R.id.signup_email_edit);
         passwordEditText = findViewById(R.id.signup_password_edit);
         confirmEditText = findViewById(R.id.signup_confirm_edit);
         loginButton = findViewById(R.id.signup_login_button);
@@ -64,17 +65,18 @@ public class SignupActivity extends AppCompatActivity {
 
             /* grab strings from user inputs */
             String username = usernameEditText.getText().toString().trim();
+            String email = usernameEditText.getText().toString().trim();
             String password = passwordEditText.getText().toString().trim();
             String confirm = confirmEditText.getText().toString().trim();
 
-            if (!password.equals(confirm)){
+            if (!password.equals(confirm)) {
                 setErrorMessage("Passwords must match");
                 return;
             }
 
-            Toast.makeText(getApplicationContext(), "Signing up...", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "Signing up...", Toast.LENGTH_SHORT).show();
 
-            signUp(username, password);
+            signUp(username, email, password);
         });
     }
 
@@ -83,12 +85,28 @@ public class SignupActivity extends AppCompatActivity {
         errorText.setVisibility(TextView.VISIBLE);
     }
 
-    private void signUp(String username, String password) {
-        UserManager.signupRequest(getApplicationContext(), username, password, URL_SIGNUP,
+    private void signUp(String username, String email, String password) {
+        UserManager.signupRequest(getApplicationContext(), username, email, password, URL_SIGNUP,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d("Volley Response", "Successful Signup: " + response.toString());
+
+                        // get Error if it is present
+                        String errorMessage = null;
+                        try {
+                            if (response.has("Error")) {
+                                errorMessage = response.getString("Error");
+                            }
+                        }
+                        catch (JSONException e) {
+                            Log.e("JSON Error", e.toString());
+                        }
+
+                        if (errorMessage != null) { // username, email, or password is empty
+                            setErrorMessage("Please enter username, email, and password");
+                            return;
+                        }
 
                         // log in the user if signup was successful
                         login(username, password);
@@ -104,28 +122,43 @@ public class SignupActivity extends AppCompatActivity {
                             return;
                         }
                         int statusCode = error.networkResponse.statusCode;
+                        String errorBody = "";
 
                         // display error
                         if (statusCode == HttpURLConnection.HTTP_CONFLICT) {
                             Log.e("Volley Error", "Error 409: Username already exists");
                             setErrorMessage("A user with this username already exits");
                         }
-                        else if (statusCode == HttpURLConnection.HTTP_NOT_ACCEPTABLE) {
-                            Log.e("Volley Error", "Error 406: Invalid username or password");
-                            if (!UserManager.validateUsername(username)) { // invalid username
+                        else if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                            Log.e("Volley Error", "Error 401: Invalid username or password");
+
+                            // get the error body (error message)
+                            try {
+                                if (error.networkResponse.data != null) {
+                                    errorBody = new String(error.networkResponse.data, "UTF-8");
+                                }
+                            }
+                            catch(UnsupportedEncodingException e) {
+                                Log.e("Encoding Error", e.toString());
+                            }
+
+                            if (errorBody.toLowerCase().contains("username")) { // invalid username
                                 setErrorMessage("Invalid username\n" +
                                         "Username must be 3-16 characters long and\n" +
                                         "contain only letters and numbers");
                             }
-                            else { // invalid password
+                            else if (errorBody.toLowerCase().contains("password")) { // invalid password
                                 setErrorMessage("Invalid password\n" +
                                         "Password must be at least 8 characters long and\n" +
                                         "contain a lower case letter, an upper case letter,\n" +
                                         "a digit, a special symbol (@#$%^&+=), no spaces");
                             }
+                            else { // invalid email
+                                setErrorMessage("Invalid email");
+                            }
                         }
                         else {
-                            Log.e("Volley Error", "Error " + statusCode);
+                            Log.e("Volley Error", "Error: " + statusCode);
                             setErrorMessage("Error code: " + statusCode);
                         }
                     }
@@ -164,12 +197,11 @@ public class SignupActivity extends AppCompatActivity {
                             return;
                         }
                         int statusCode = error.networkResponse.statusCode;
-                        String errorBody;
 
                         if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) { // Invalid username or password
                             Log.e("Volley Error", "Error 401: Invalid username or password");
                             try {
-                                errorBody = new String(error.networkResponse.data, "UTF-8");
+                                String errorBody = new String(error.networkResponse.data, "UTF-8");
                                 setErrorMessage(errorBody);
                             }
                             catch(UnsupportedEncodingException e){
