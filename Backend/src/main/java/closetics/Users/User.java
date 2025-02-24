@@ -18,20 +18,28 @@ public class User {
     private String username;
     private String password;
     private String userTier;
-    private String securityQuestion1;
-    private String securityQuestion2;
-    private String securityQuestion3;
+    private String sQA1;
+    private long sQID1;
+    private String sQA2;
+    private long sQID2;
+    private String sQA3;
+    private long sQID3;
 
-    public User(long userId, String name, String email, String username, String password, String userTier, String securityQuestion1, String securityQuestion2, String securityQuestion3) {
+
+    public User(long userId, String name, String email, String username, String password, String userTier, String sQA1,
+                long sQID1, String sQA2, long sQID2, String sQA3, long sQID3) {
         this.userId = userId;
         this.name = name;
         this.email = email;
         this.username = username;
         this.password = password;
         this.userTier = userTier;
-        this.securityQuestion1 = securityQuestion1;
-        this.securityQuestion2 = securityQuestion2;
-        this.securityQuestion3 = securityQuestion3;
+        this.sQA1 = sQA1;
+        this.sQID1 = sQID1;
+        this.sQA2 = sQA2;
+        this.sQID2 = sQID2;
+        this.sQA3 = sQA3;
+        this.sQID3 = sQID3;
     }
 
     public User() {}
@@ -41,12 +49,16 @@ public class User {
         return BCrypt.checkpw(checkPass, password);
     }
 
-    public boolean compareHashedSQ(String checkSQ){
-        if(BCrypt.checkpw(checkSQ, securityQuestion1) || BCrypt.checkpw(checkSQ, securityQuestion2)
-                || BCrypt.checkpw(checkSQ, securityQuestion3)){
+    public boolean compareHashedSQ(String checkSQ, long SQID){
+        if(BCrypt.checkpw(checkSQ, sQA1) && SQID == sQID1){
             return true;
+        } else if (BCrypt.checkpw(checkSQ, sQA2) && SQID == sQID2) {
+            return true;
+        } else if (BCrypt.checkpw(checkSQ, sQA3) && SQID == sQID3) {
+            return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     public static String encryptString(String p){
@@ -108,12 +120,21 @@ Regex explanataion:
     public String getUserTier() {return userTier;}
     public void setUserTier(String userTier) {this.userTier = userTier;}
 
-    public String getSecurityQuestion1() {return securityQuestion1;}
-    public void setSecurityQuestion1(String securityQuestion1) {this.securityQuestion1 = securityQuestion1;}
+    public String getsQA1() {return sQA1;}
+    public void setsQA1(String sQA1) {this.sQA1 = sQA1;}
 
-    public String getSecurityQuestion2() {return securityQuestion2;}
-    public void setSecurityQuestion2(String securityQuestion2) {this.securityQuestion2 = securityQuestion2;}
+    public String getsQA2() {return sQA2;}
+    public void setsQA2(String sQA2) {this.sQA2 = sQA2;}
 
-    public String getSecurityQuestion3() {return securityQuestion3;}
-    public void setSecurityQuestion3(String securityQuestion3) {this.securityQuestion3 = securityQuestion3;}
+    public String getsQA3() {return sQA3;}
+    public void setsQA3(String sQA3) {this.sQA3 = sQA3;}
+
+    public long getsQID1() {return sQID1;}
+    public void setsQID1(long sQID1) {this.sQID1 = sQID1;}
+
+    public long getsQID2() {return sQID2;}
+    public void setsQID2(long sQID2) {this.sQID2 = sQID2;}
+
+    public long getsQID3() {return sQID3;}
+    public void setsQID3(long sQID3) {this.sQID3 = sQID3;}
 }
