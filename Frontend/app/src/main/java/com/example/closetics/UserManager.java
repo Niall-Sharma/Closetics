@@ -76,6 +76,16 @@ public class UserManager {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
+    public static String getLoginToken(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
+        return prefs.getString(TOKEN_PARAM, null);
+    }
+
+    public static String getUsername(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
+        return prefs.getString(USERNAME_PARAM, null);
+    }
+
 
 
 
