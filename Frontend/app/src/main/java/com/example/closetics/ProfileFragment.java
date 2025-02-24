@@ -16,6 +16,7 @@ public class ProfileFragment extends Fragment {
     private TextView usernameText;  // define username textview variable
     private Button loginButton;     // define login button variable
     private Button signupButton;    // define signup button variable
+    private Button deleteUserButton;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -31,12 +32,13 @@ public class ProfileFragment extends Fragment {
         usernameText = view.findViewById(R.id.profile_username_text);
         loginButton = view.findViewById(R.id.profile_login_button);
         signupButton = view.findViewById(R.id.profile_signup_button);
+        deleteUserButton = view.findViewById(R.id.profile_delete_user_button);
 
-        Bundle extras = getActivity().getIntent().getExtras();
-        if(extras == null) {
+        String username = UserManager.getUsername(getActivity().getApplicationContext());
+        if(username == null) {
             usernameText.setText("Guest (not logged in)");
         } else {
-            usernameText.setText(extras.getString("USERNAME")); // this will come from LoginActivity
+            usernameText.setText(username);
         }
 
         loginButton.setOnClickListener(v -> {
@@ -46,6 +48,11 @@ public class ProfileFragment extends Fragment {
 
         signupButton.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), SignupActivity.class);
+            startActivity(intent);
+        });
+
+        deleteUserButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), DeleteUserActivity.class);
             startActivity(intent);
         });
 
