@@ -53,22 +53,48 @@ public class UserController {
         return userRepo.findByUsername(id);
     }
 
+
+    /*
+     * Provide a JSON request containing user info collected during signup you have to at a minimum provide a
+     * username, email and password or the request will be invalid
+     * Example:
+     * {
+     *"emailId":"test@hotmail.com",
+     *"name":"John Doe",
+     *"password":"Password!23",
+     *"userTier":"Free",
+     *"username":"user1",
+     *"securityQuestion1":"test",
+     *"securityQuestion2":"test",
+     *"securityQuestion3":"test"
+     * }
+     */
     @PostMapping(path = "/signup")
     public ResponseEntity<?> signUp(@RequestBody User user) {
-        if(!User.validateUsername(user.getUsername())){
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Username does not meet criteria");
+        Map<String, String> response = new HashMap<>();
+        if(user.getUsername()== null || user.getEmail() == null || user.getPassword() == null) {
+            response.put("Error", "Please fill out all fields");
+            return ResponseEntity.ok(response);
         }
-        if(!User.validatePassword(user.getPasswordHash())){
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Password does not meet criteria");
+        if(!User.validateUsername(user.getUsername())){
+            response.put("Error", "Username does not meet criteria");
+            return ResponseEntity.ok(response);
+        }
+        if(!User.validatePassword(user.getPassword())){
+            response.put("Error", "Password does not meet criteria");
+            return ResponseEntity.ok(response);
+        }
+        if(!User.validateEmail(user.getEmail())){
+            response.put("Error", "Please enter a valid email address");
+            return ResponseEntity.ok(response);
         }
         // Encrypt sensitive data before storing
-        user.setPasswordHash(User.encryptString(user.getPasswordHash()));
+        user.setPassword(User.encryptString(user.getPassword()));
         user.setSecurityQuestion1(User.encryptString(user.getSecurityQuestion1()));
         user.setSecurityQuestion2(User.encryptString(user.getSecurityQuestion2()));
         user.setSecurityQuestion3(User.encryptString(user.getSecurityQuestion3()));
         userRepo.save(user);
         Token token = tokenService.createToken(user);
-        Map<String, String> response = new HashMap<>();
         response.put("token", token.getTokenValue());
         response.put("message", "Login successful");
         response.put("username", user.getUsername());
@@ -88,13 +114,13 @@ public class UserController {
     * include the fields that need updated realistically only one would be updated at a time but all 3 can if need be
     * Example:
     * {
-    * "id": "24",
+    * "userId": "24",
     * "name": "new name"
     * }
     */
     @PutMapping(path = "/updateUser")
     public User updateUser(@RequestBody User updatedUser) {
-        User existingUser = userRepo.findById(updatedUser.getId());
+        User existingUser = userRepo.findById(updatedUser.getUserId());
         // Update only if the field is provided (not null)
         if (updatedUser.getUsername() != null) {
             existingUser.setUsername(updatedUser.getUsername());
@@ -102,8 +128,8 @@ public class UserController {
         if (updatedUser.getName() != null) {
             existingUser.setName(updatedUser.getName());
         }
-        if (updatedUser.getEmailId() != null) {
-            existingUser.setEmailId(updatedUser.getEmailId());
+        if (updatedUser.getEmail() != null) {
+            existingUser.setEmail(updatedUser.getEmail());
         }
         return userRepo.save(existingUser);
     }
@@ -114,7 +140,7 @@ public class UserController {
      * you provide that if not you provide an answer to a security question
      * Example:
      * {
-     * "id": "1",
+     * "userId": "1",
      * "oldPassword":"Password!23" or "securityQuestionAnswer":"value"
      * "newPassword":"Password!234"
      * }
@@ -133,14 +159,14 @@ public class UserController {
             response.put("message", "Incorrect password provided");
             return ResponseEntity.ok(response);
         } else if (oldpass != null && existingUser.compareHashedPassword(passwordRequest.getOldPassword())) {
-            existingUser.setPasswordHash(User.encryptString(passwordRequest.getNewPassword()));
+            existingUser.setPassword(User.encryptString(passwordRequest.getNewPassword()));
             userRepo.save(existingUser);
             response.put("message", "Password change successful");
             return ResponseEntity.ok(response);
         }
 
         if (securityQuestion != null && existingUser.compareHashedSQ(passwordRequest.getSecurityQuestionAnswer())) {
-            existingUser.setPasswordHash(User.encryptString(passwordRequest.getNewPassword()));
+            existingUser.setPassword(User.encryptString(passwordRequest.getNewPassword()));
             userRepo.save(existingUser);
             response.put("message", "Password change successful");
             return ResponseEntity.ok(response);
@@ -154,21 +180,45 @@ public class UserController {
     }
 
 
+    /*
+     * Provide a JSON request containing the users email or username and there password
+     * Example:
+     * {
+     * "email":"testemail@gmail.com" or "username":"user1"
+     * "password":"Password!23"
+     * }
+     */
     @PostMapping(path = "/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        Map<String, String> response = new HashMap<>();
+        User user = null;
         try {
-            User user = userRepo.findByUsername(loginRequest.getUsername());
+            if (loginRequest.getUsername() != null) {
+                user = userRepo.findByUsername(loginRequest.getUsername());
+                if(user == null){
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                            .body("Invalid Username, Email or Password"); // Username doesn't exist
+                }
+            } else if (loginRequest.getEmail() != null) {
+                user = userRepo.findByEmail(loginRequest.getEmail());
+                if(user == null){
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                            .body("Invalid Username, Email or Password"); // Email doesn't exist
+                }
+            } else {
+                response.put("message", "Invalid Request");
+                return ResponseEntity.ok(response); // Isn't provided a username or email in request
+            }
 
-            if (user != null && user.compareHashedPassword(loginRequest.getPassword())) {
+            if (user.compareHashedPassword(loginRequest.getPassword())) {
                 Token token = tokenService.createToken(user);
-                Map<String, String> response = new HashMap<>();
                 response.put("token", token.getTokenValue());
                 response.put("message", "Login successful");
-                response.put("username", user.getUsername());
+                response.put("user_id", String.valueOf(user.getUserId()));
                 return ResponseEntity.ok(response);
             }
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Invalid username or password");
+                    .body("Invalid Username, Email or Password"); // Password is Wrong
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("An error occurred during login");

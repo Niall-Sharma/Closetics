@@ -11,7 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface TokenRepository extends JpaRepository<Token, Long> {
-    Optional<Token> findByTokenValue(String tokenValue);
 
     @Transactional
     void deleteById(long id);
@@ -20,4 +19,6 @@ public interface TokenRepository extends JpaRepository<Token, Long> {
     @Transactional
     @Query(value = "DELETE FROM tokens WHERE user_id = :userId", nativeQuery = true)
     void deleteByUserId(@Param("userId") long userId);
+
+    Optional<Token> findByTokenValue(String tokenValue);
 }
