@@ -10,7 +10,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -47,7 +46,6 @@ public class UserController {
         return userRepo.findById(id);
     }
 
-    @ResponseStatus(value = HttpStatus.CONFLICT, reason = "Data integrity violation")
     @GetMapping(path = "/users/username/{id}")
     public User getUserByUsername(@PathVariable String id) {
         return userRepo.findByUsername(id);
@@ -64,9 +62,12 @@ public class UserController {
      *"password":"Password!23",
      *"userTier":"Free",
      *"username":"user1",
-     *"securityQuestion1":"test",
-     *"securityQuestion2":"test",
-     *"securityQuestion3":"test"
+     *"sQA1":"test",
+     *"sQID1":"1",
+     *"sQA2":"test",
+     *"sQID2":"3",
+     *"sQA3":"test",
+     *"sQID3":"5"
      * }
      */
     @PostMapping(path = "/signup")
@@ -77,22 +78,19 @@ public class UserController {
             return ResponseEntity.ok(response);
         }
         if(!User.validateUsername(user.getUsername())){
-            response.put("Error", "Username does not meet criteria");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Username does not meet criteria");
         }
         if(!User.validatePassword(user.getPassword())){
-            response.put("Error", "Password does not meet criteria");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Password does not meet criteria");
         }
         if(!User.validateEmail(user.getEmail())){
-            response.put("Error", "Please enter a valid email address");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Please enter a valid email address");
         }
         // Encrypt sensitive data before storing
         user.setPassword(User.encryptString(user.getPassword()));
-        user.setSecurityQuestion1(User.encryptString(user.getSecurityQuestion1()));
-        user.setSecurityQuestion2(User.encryptString(user.getSecurityQuestion2()));
-        user.setSecurityQuestion3(User.encryptString(user.getSecurityQuestion3()));
+        user.setsQA1(User.encryptString(user.getsQA1()));
+        user.setsQA2(User.encryptString(user.getsQA2()));
+        user.setsQA3(User.encryptString(user.getsQA3()));
         userRepo.save(user);
         Token token = tokenService.createToken(user);
         response.put("token", token.getTokenValue());
@@ -141,6 +139,7 @@ public class UserController {
      * Example:
      * {
      * "userId": "1",
+     * "securityQuestionId":"1" if resetting via SQ otherwise it's not needed
      * "oldPassword":"Password!23" or "securityQuestionAnswer":"value"
      * "newPassword":"Password!234"
      * }
@@ -152,12 +151,12 @@ public class UserController {
         String securityQuestion = passwordRequest.getSecurityQuestionAnswer();
         Map<String, String> response = new HashMap<>();
         if (!User.validatePassword(passwordRequest.getNewPassword())){
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Password does not meet criteria");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Password does not meet criteria");
         }
 
         if (oldpass != null && !existingUser.compareHashedPassword(passwordRequest.getOldPassword())){
-            response.put("message", "Incorrect password provided");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect old password provided");
+
         } else if (oldpass != null && existingUser.compareHashedPassword(passwordRequest.getOldPassword())) {
             existingUser.setPassword(User.encryptString(passwordRequest.getNewPassword()));
             userRepo.save(existingUser);
@@ -165,14 +164,14 @@ public class UserController {
             return ResponseEntity.ok(response);
         }
 
-        if (securityQuestion != null && existingUser.compareHashedSQ(passwordRequest.getSecurityQuestionAnswer())) {
+        if (securityQuestion != null && existingUser.compareHashedSQ(passwordRequest.getSecurityQuestionAnswer()
+                , passwordRequest.getSecurityQuestionId())) {
             existingUser.setPassword(User.encryptString(passwordRequest.getNewPassword()));
             userRepo.save(existingUser);
             response.put("message", "Password change successful");
             return ResponseEntity.ok(response);
         } else if (securityQuestion != null) {
-            response.put("message", "Incorrect security question answer provided");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect security question answer provided");
         }
 
         response.put("message", "Invalid request");
