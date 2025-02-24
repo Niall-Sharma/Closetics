@@ -5,6 +5,7 @@ import closetics.Users.Auth.AuthService;
 import closetics.Users.Tokens.Token;
 import closetics.Users.Tokens.TokenRepository;
 import closetics.Users.Tokens.TokenService;
+import org.aspectj.weaver.patterns.TypePatternQuestions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -97,7 +98,16 @@ public class UserController {
         response.put("message", "Login successful");
         response.put("username", user.getUsername());
         return ResponseEntity.ok(response);
+    }
 
+    @PutMapping(path = "/questions/{userID}")
+    public ResponseEntity<?> updateQuestions(@RequestBody String[] questions, @PathVariable int userID) {
+        Map<String, String> response = new HashMap<>();
+        User user = userRepo.findById(userID);
+        user.setsQA1(User.encryptString(questions[0]));
+        user.setsQA2(User.encryptString(questions[1]));
+        user.setsQA3(User.encryptString(questions[2]));
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping(path = "/users/{id}")
