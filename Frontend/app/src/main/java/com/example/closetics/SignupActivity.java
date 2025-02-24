@@ -11,8 +11,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
@@ -130,7 +132,11 @@ public class SignupActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         Log.e("Volley Error", error.toString());
 
-                        if (error.networkResponse == null) {
+                        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                            setErrorMessage("Connection timeout");
+                            return;
+                        }
+                        else if (error.networkResponse == null) {
                             setErrorMessage("Unknown error");
                             return;
                         }

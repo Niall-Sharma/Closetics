@@ -12,7 +12,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.android.volley.NoConnectionError;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 
 import org.json.JSONObject;
@@ -74,10 +76,14 @@ public class DeleteUserActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("Volley Error", error.toString());
+                        Log.e("Volley Error", "Deletion Error: " + error.toString());
 
-                        if (error.networkResponse != null) {
+                        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                            setErrorMessage("Connection timeout");
+                        }
+                        else if (error.networkResponse != null) {
                             setErrorMessage("Error Code: " + error.networkResponse.statusCode);
+                            Log.e("Volley Error", "Error Code: " + error.networkResponse.statusCode);
                         }
                         else {
                             setErrorMessage("Unknown deletion error");

@@ -168,18 +168,7 @@ public class UserManager {
                         }
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if (error.networkResponse != null) {
-                            Log.e("Volley Error", "Get user by username Error, Code: " + error.networkResponse.statusCode);
-                        }
-                        else {
-                            Log.e("Volley Error", "Unknown Get user by username Error");
-                        }
-                        Log.e("Volley Error", error.toString());
-                    }
-                });
+                errorListener);
         //Add request to the volley singleton request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
