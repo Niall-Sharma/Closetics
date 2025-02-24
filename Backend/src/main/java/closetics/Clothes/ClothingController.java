@@ -1,9 +1,11 @@
 package closetics.Clothes;
 import java.util.List;
 
+import closetics.Users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -42,8 +44,8 @@ public class ClothingController {
     }
 
     @PutMapping (path = "/clothes/{itemID}")
-    public void updateClothing(@PathVariable int itemId, @RequestBody Clothing clothing){
-        clothingRepository.findById(itemId);
+    public void updateClothing(@RequestBody Clothing clothing, @PathVariable String itemID){
+        clothingRepository.save(clothing);
     }
 }
 
