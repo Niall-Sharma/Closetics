@@ -38,7 +38,10 @@ public class LoginActivity extends AppCompatActivity {
     private EditText passwordEditText;  // define password edittext variable
     private Button loginButton;         // define login button variable
     private Button signupButton;        // define signup button variable
-    private Button forgotPasswordButton;      //define forgotPassword button variable
+    private Button forgotPasswordButton;  //define forgotPassword button variable
+
+
+
 
     //Postman Mock Server
     private static final String URL = "https://baacab8f-1ecd-41d2-b30f-cc9889421d1d.mock.pstmn.io/login";
@@ -69,11 +72,14 @@ public class LoginActivity extends AppCompatActivity {
                             //Response is a JSON object from the backend end
                             try {
                                 String token = response.getString("token");//This grabs the string value of JSON header
+                                //Save session token in shared preferences
                                 UserManager.saveLoginToken(getApplicationContext(), token);
-                                //Username???
+                                //Save username in shared preferences
+                                UserManager.saveUsername(getApplicationContext(), username);
 
                             } catch (JSONException e) {
-                                e.printStackTrace();
+                                Log.e("JSON Error", e.toString());
+                                return;
                             }
                         }
                     }, new Response.ErrorListener() {
@@ -90,7 +96,8 @@ public class LoginActivity extends AppCompatActivity {
                                         Log.d("Error", "401 Unauthorized");
 
                                     }catch(UnsupportedEncodingException e){
-                                        e.printStackTrace();
+                                        Log.e("JSON Error", e.toString());
+                                        return;
                                     }
                                 }
                                 //More
@@ -127,7 +134,7 @@ public class LoginActivity extends AppCompatActivity {
     private void showFragment(){
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         Fragment fragment = new ForgotPasswordFragment();
-        transaction.replace(R.id.forgot_password_fragment_container, fragment);
+        transaction.replace(R.id.forgot_password_fragment_container, fragment, "forgot_password_fragment");
         transaction.commit();
 
     }

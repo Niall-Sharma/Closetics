@@ -18,6 +18,10 @@ import java.net.HttpURLConnection;
 public class UserManager {
 
     private static final String SHARED_PREFERENCES_FILE_NAME = "CloseticsPreferences";
+    private static final String   TOKEN_PARAM = "logInToken";
+    private static final String    USERNAME_PARAM = "Username";
+    
+
 
 
     //This uses a post request to send the user's input for username and password so that
@@ -35,7 +39,8 @@ public class UserManager {
             loginData.put("username", username);
             loginData.put("password", password);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e("JSON Error", e.toString());
+            return;
         }
 
 
@@ -55,10 +60,18 @@ public class UserManager {
         //Access the shared preferences file make it private to this app
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("logInToken", token);
+        editor.putString(TOKEN_PARAM, token);
         editor.apply();
-
     }
+
+    public static void saveUsername(Context context, String username) {
+        //Access the shared preferences file make it private to this app
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(USERNAME_PARAM, username);
+        editor.apply();
+    }
+
 
 
 
