@@ -2,7 +2,6 @@ package closetics.Users;
 
 import java.util.List;
 import closetics.Users.Auth.AuthService;
-import closetics.Users.Auth.RequiresAuth;
 import closetics.Users.Tokens.Token;
 import closetics.Users.Tokens.TokenRepository;
 import closetics.Users.Tokens.TokenService;
@@ -55,15 +54,26 @@ public class UserController {
     }
 
     @PostMapping(path = "/signup")
-    public User signUp(@RequestBody User user) {
+    public ResponseEntity<?> signUp(@RequestBody User user) {
         if(!User.validateUsername(user.getUsername())){
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Username does not meet criteria");
         }
         if(!User.validatePassword(user.getPasswordHash())){
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Password does not meet criteria");
         }
-        user.setPasswordHash(User.encryptPassword(user.getPasswordHash()));
-        return userRepo.save(user);
+        // Encrypt sensitive data before storing
+        user.setPasswordHash(User.encryptString(user.getPasswordHash()));
+        user.setSecurityQuestion1(User.encryptString(user.getSecurityQuestion1()));
+        user.setSecurityQuestion2(User.encryptString(user.getSecurityQuestion2()));
+        user.setSecurityQuestion3(User.encryptString(user.getSecurityQuestion3()));
+        userRepo.save(user);
+        Token token = tokenService.createToken(user);
+        Map<String, String> response = new HashMap<>();
+        response.put("token", token.getTokenValue());
+        response.put("message", "Login successful");
+        response.put("username", user.getUsername());
+        return ResponseEntity.ok(response);
+
     }
 
     @DeleteMapping(path = "/users/{id}")
@@ -72,18 +82,84 @@ public class UserController {
         userRepo.deleteById(id);
     }
 
+
+    /*
+    * Provide a JSON request containing the id of the user your updating and fields name, username and email only
+    * include the fields that need updated realistically only one would be updated at a time but all 3 can if need be
+    * Example:
+    * {
+    * "id": "24",
+    * "name": "new name"
+    * }
+    */
     @PutMapping(path = "/updateUser")
-    public User updateUser(@RequestBody User user) {
-        user.setPasswordHash(User.encryptPassword(user.getPasswordHash()));
-        return userRepo.save(user);
+    public User updateUser(@RequestBody User updatedUser) {
+        User existingUser = userRepo.findById(updatedUser.getId());
+        // Update only if the field is provided (not null)
+        if (updatedUser.getUsername() != null) {
+            existingUser.setUsername(updatedUser.getUsername());
+        }
+        if (updatedUser.getName() != null) {
+            existingUser.setName(updatedUser.getName());
+        }
+        if (updatedUser.getEmailId() != null) {
+            existingUser.setEmailId(updatedUser.getEmailId());
+        }
+        return userRepo.save(existingUser);
     }
+
+
+    /*
+     * Provide a JSON request containing the id of the user your updating if the user remembers there old password
+     * you provide that if not you provide an answer to a security question
+     * Example:
+     * {
+     * "id": "1",
+     * "oldPassword":"Password!23" or "securityQuestionAnswer":"value"
+     * "newPassword":"Password!234"
+     * }
+     */
+    @PutMapping(path = "/updatePassword")
+    public  ResponseEntity<?> updatePassword(@RequestBody ResetPasswordRequest passwordRequest) {
+        User existingUser = userRepo.findById(passwordRequest.getId());
+        String oldpass = passwordRequest.getOldPassword();
+        String securityQuestion = passwordRequest.getSecurityQuestionAnswer();
+        Map<String, String> response = new HashMap<>();
+        if (!User.validatePassword(passwordRequest.getNewPassword())){
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Password does not meet criteria");
+        }
+
+        if (oldpass != null && !existingUser.compareHashedPassword(passwordRequest.getOldPassword())){
+            response.put("message", "Incorrect password provided");
+            return ResponseEntity.ok(response);
+        } else if (oldpass != null && existingUser.compareHashedPassword(passwordRequest.getOldPassword())) {
+            existingUser.setPasswordHash(User.encryptString(passwordRequest.getNewPassword()));
+            userRepo.save(existingUser);
+            response.put("message", "Password change successful");
+            return ResponseEntity.ok(response);
+        }
+
+        if (securityQuestion != null && existingUser.compareHashedSQ(passwordRequest.getSecurityQuestionAnswer())) {
+            existingUser.setPasswordHash(User.encryptString(passwordRequest.getNewPassword()));
+            userRepo.save(existingUser);
+            response.put("message", "Password change successful");
+            return ResponseEntity.ok(response);
+        } else if (securityQuestion != null) {
+            response.put("message", "Incorrect security question answer provided");
+            return ResponseEntity.ok(response);
+        }
+
+        response.put("message", "Invalid request");
+        return ResponseEntity.ok(response);
+    }
+
 
     @PostMapping(path = "/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
             User user = userRepo.findByUsername(loginRequest.getUsername());
 
-            if (user != null && user.comparePasswordHash(loginRequest.getPassword())) {
+            if (user != null && user.compareHashedPassword(loginRequest.getPassword())) {
                 Token token = tokenService.createToken(user);
                 Map<String, String> response = new HashMap<>();
                 response.put("token", token.getTokenValue());
