@@ -57,9 +57,9 @@ public class DeleteUserActivity extends AppCompatActivity {
 
     private void deleteUser(String username) {
         UserManager.deleteUserRequest(getApplicationContext(), username, URL_DELETE_USER, URL_GET_USER_BY_USERNAME,
-                new Response.Listener<JSONObject>() {
+                new Response.Listener<String>() {
                     @Override
-                    public void onResponse(JSONObject response) {
+                    public void onResponse(String response) {
                         Log.d("Volley Response", "Successful Delete: " + response.toString());
 
                         // remove token and username from shared prefs

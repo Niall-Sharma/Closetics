@@ -65,7 +65,7 @@ public class SignupActivity extends AppCompatActivity {
 
             /* grab strings from user inputs */
             String username = usernameEditText.getText().toString().trim();
-            String email = usernameEditText.getText().toString().trim();
+            String email = emailEditText.getText().toString().trim();
             String password = passwordEditText.getText().toString().trim();
             String confirm = confirmEditText.getText().toString().trim();
 
@@ -90,26 +90,39 @@ public class SignupActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d("Volley Response", "Successful Signup: " + response.toString());
-
-                        // get Error if it is present
-                        String errorMessage = null;
                         try {
-                            if (response.has("Error")) {
-                                errorMessage = response.getString("Error");
+                            if (response.has("Error")) { // handle error if it is present
+                                String errorMessage = response.getString("Error");
+                                Log.e("Volley Error", errorMessage);
+
+                                // currently the oly error possible here is: username, email, or password is empty
+                                setErrorMessage("Please enter username, email, and password");
+
+                                return;
                             }
+
+                            Log.d("Volley Response", "Successful Signup: " + response.toString());
+
+                            // save token and username to shared prefs
+                            String token = response.getString("token");
+                            UserManager.saveLoginToken(getApplicationContext(), token);
+                            UserManager.saveUsername(getApplicationContext(), username);
+
+                            // return to MainActivity after successful signup and login
+                            Intent intent = new Intent(SignupActivity.this, MainActivity.class);
+                            startActivity(intent);
                         }
                         catch (JSONException e) {
                             Log.e("JSON Error", e.toString());
                         }
 
-                        if (errorMessage != null) { // username, email, or password is empty
-                            setErrorMessage("Please enter username, email, and password");
-                            return;
-                        }
-
-                        // log in the user if signup was successful
-                        login(username, password);
+//                        if (errorMessage != null) { // username, email, or password is empty
+//                            setErrorMessage("Please enter username, email, and password");
+//                            return;
+//                        }
+//
+//                        // log in the user if signup was successful
+//                        login(username, password);
                     }
                 },
                 new Response.ErrorListener() {
@@ -126,11 +139,11 @@ public class SignupActivity extends AppCompatActivity {
 
                         // display error
                         if (statusCode == HttpURLConnection.HTTP_CONFLICT) {
-                            Log.e("Volley Error", "Error 409: Username already exists");
+                            Log.e("Volley Error", "Error 409: Username already exists (" + error.toString() + ")");
                             setErrorMessage("A user with this username already exits");
                         }
                         else if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                            Log.e("Volley Error", "Error 401: Invalid username or password");
+                            Log.e("Volley Error", "Error 401: Invalid username or password or email (" + error.toString() + ")");
 
                             // get the error body (error message)
                             try {
@@ -142,19 +155,20 @@ public class SignupActivity extends AppCompatActivity {
                                 Log.e("Encoding Error", e.toString());
                             }
 
+                            // display correct error message
                             if (errorBody.toLowerCase().contains("username")) { // invalid username
                                 setErrorMessage("Invalid username\n" +
                                         "Username must be 3-16 characters long and\n" +
                                         "contain only letters and numbers");
                             }
-                            else if (errorBody.toLowerCase().contains("password")) { // invalid password
+                            else if (errorBody.toLowerCase().contains("email")) { // invalid email
+                                setErrorMessage("Invalid email");
+                            }
+                            else { // invalid password
                                 setErrorMessage("Invalid password\n" +
                                         "Password must be at least 8 characters long and\n" +
                                         "contain a lower case letter, an upper case letter,\n" +
                                         "a digit, a special symbol (@#$%^&+=), no spaces");
-                            }
-                            else { // invalid email
-                                setErrorMessage("Invalid email");
                             }
                         }
                         else {
@@ -165,54 +179,54 @@ public class SignupActivity extends AppCompatActivity {
                 });
     }
 
-    private void login(String username, String password) {
-        UserManager.loginRequest(getApplicationContext(), username, password, URL_LOGIN,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            Log.d("Volley Response", "Successful Login: " + response.toString());
-
-                            // save token and username to shared prefs
-                            String token = response.getString("token");
-                            UserManager.saveLoginToken(getApplicationContext(), token);
-                            UserManager.saveUsername(getApplicationContext(), username);
-
-                            // return to MainActivity after successful signup and login
-                            Intent intent = new Intent(SignupActivity.this, MainActivity.class);
-                            startActivity(intent);
-                        }
-                        catch (JSONException e) {
-                            Log.e("JSON Error", e.toString());
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("Volley Error", error.toString());
-
-                        if (error.networkResponse == null) {
-                            setErrorMessage("Unknown login error");
-                            return;
-                        }
-                        int statusCode = error.networkResponse.statusCode;
-
-                        if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) { // Invalid username or password
-                            Log.e("Volley Error", "Error 401: Invalid username or password");
-                            try {
-                                String errorBody = new String(error.networkResponse.data, "UTF-8");
-                                setErrorMessage(errorBody);
-                            }
-                            catch(UnsupportedEncodingException e){
-                                Log.e("Encoding Error", e.toString());
-                            }
-                        }
-                        else {
-                            Log.e("Volley Error", "Error " + statusCode);
-                            setErrorMessage("Error code: " + statusCode);
-                        }
-                    }
-                });
-    }
+//    private void login(String username, String password) {
+//        UserManager.loginRequest(getApplicationContext(), username, password, URL_LOGIN,
+//                new Response.Listener<JSONObject>() {
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//                        try {
+//                            Log.d("Volley Response", "Successful Login: " + response.toString());
+//
+//                            // save token and username to shared prefs
+//                            String token = response.getString("token");
+//                            UserManager.saveLoginToken(getApplicationContext(), token);
+//                            UserManager.saveUsername(getApplicationContext(), username);
+//
+//                            // return to MainActivity after successful signup and login
+//                            Intent intent = new Intent(SignupActivity.this, MainActivity.class);
+//                            startActivity(intent);
+//                        }
+//                        catch (JSONException e) {
+//                            Log.e("JSON Error", e.toString());
+//                        }
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        Log.e("Volley Error", error.toString());
+//
+//                        if (error.networkResponse == null) {
+//                            setErrorMessage("Unknown login error");
+//                            return;
+//                        }
+//                        int statusCode = error.networkResponse.statusCode;
+//
+//                        if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) { // Invalid username or password
+//                            Log.e("Volley Error", "Error 401: Invalid username or password");
+//                            try {
+//                                String errorBody = new String(error.networkResponse.data, "UTF-8");
+//                                setErrorMessage(errorBody);
+//                            }
+//                            catch(UnsupportedEncodingException e){
+//                                Log.e("Encoding Error", e.toString());
+//                            }
+//                        }
+//                        else {
+//                            Log.e("Volley Error", "Error " + statusCode);
+//                            setErrorMessage("Error code: " + statusCode);
+//                        }
+//                    }
+//                });
+//    }
 }

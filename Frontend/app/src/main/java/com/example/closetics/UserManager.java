@@ -12,6 +12,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -144,7 +145,7 @@ public class UserManager {
      * @param errorListener
      */
     public static void deleteUserRequest(Context context, String username, String URL, String getUserByUsernameURL,
-                                     Response.Listener<JSONObject> responseListener,
+                                     Response.Listener<String> responseListener,
                                      Response.ErrorListener errorListener) {
 
         // use GET request to getUserByUsernameURL to get the user's id
@@ -176,6 +177,7 @@ public class UserManager {
                         else {
                             Log.e("Volley Error", "Unknown Get user by username Error");
                         }
+                        Log.e("Volley Error", error.toString());
                     }
                 });
         //Add request to the volley singleton request queue
@@ -183,12 +185,12 @@ public class UserManager {
     }
 
     public static void deleteUserRequest(Context context, long id, String URL,
-                                         Response.Listener<JSONObject> responseListener,
+                                         Response.Listener<String> responseListener,
                                          Response.ErrorListener errorListener) {
-        JsonObjectRequest request = new JsonObjectRequest(
+        StringRequest request = new StringRequest(
                 Request.Method.DELETE,
                 URL + id, // add id to the URL
-                null, responseListener, errorListener);
+                responseListener, errorListener);
         //Add request to the volley singleton request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
