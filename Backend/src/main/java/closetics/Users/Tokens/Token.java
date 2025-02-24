@@ -9,7 +9,7 @@ import closetics.Users.User;
 public class Token {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long tokenId;
 
     @Column(name = "token_value", unique = true)
     private String tokenValue;
@@ -22,12 +22,12 @@ public class Token {
     private LocalDateTime expirationDate;
 
     // Getters and Setters
-    public Long getId() {
-        return id;
+    public Long getTokenId() {
+        return tokenId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setTokenId(Long tokenId) {
+        this.tokenId = tokenId;
     }
 
     public String getTokenValue() {

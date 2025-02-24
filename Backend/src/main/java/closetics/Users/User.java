@@ -7,64 +7,38 @@ import org.mindrot.jbcrypt.*;
 @Entity(name = "usersTable")
 @Table(uniqueConstraints = {
 @UniqueConstraint(columnNames = "username"),
-@UniqueConstraint(columnNames = "emailId")})
+@UniqueConstraint(columnNames = "email")})
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private long userId;
     private String name;
-    private String emailId;
+    private String email;
     private String username;
-    private String passwordHash;
+    private String password;
     private String userTier;
     private String securityQuestion1;
     private String securityQuestion2;
     private String securityQuestion3;
 
-    public User(long id, String name, String emailId, String username, String passwordHash, String userTier, String securityQuestion1, String securityQuestion2, String securityQuestion3) {
-        this.id = id;
+    public User(long userId, String name, String email, String username, String password, String userTier, String securityQuestion1, String securityQuestion2, String securityQuestion3) {
+        this.userId = userId;
         this.name = name;
-        this.emailId = emailId;
+        this.email = email;
         this.username = username;
-        this.passwordHash = passwordHash;
+        this.password = password;
         this.userTier = userTier;
         this.securityQuestion1 = securityQuestion1;
         this.securityQuestion2 = securityQuestion2;
         this.securityQuestion3 = securityQuestion3;
     }
 
-    public User() {
-    }
+    public User() {}
 
-    public long getId(){
-        return id;
-    }
-
-    public void setId(int id){
-        this.id = id;
-    }
-
-    public String getName(){
-        return name;
-    }
-
-    public void setName(String name){
-        this.name = name;
-    }
-
-    public String getEmailId(){
-        return emailId;
-    }
-
-    public void setEmailId(String emailId){
-        this.emailId = emailId;
-    }
-
-    public String getPasswordHash() {return passwordHash;}
 
     public boolean compareHashedPassword(String checkPass){
-        return BCrypt.checkpw(checkPass, passwordHash);
+        return BCrypt.checkpw(checkPass, password);
     }
 
     public boolean compareHashedSQ(String checkSQ){
@@ -78,6 +52,7 @@ public class User {
     public static String encryptString(String p){
         return BCrypt.hashpw(p,BCrypt.gensalt());
     }
+
     /*
 Regex explanataion:
     [0-9A-Za-z] contains only letters and numbers
@@ -86,6 +61,19 @@ Regex explanataion:
     public static Boolean validateUsername(String username){
         String pattern = "[0-9A-Za-z]{3,16}";
         return username.matches(pattern);
+    }
+
+    /*
+Regex explanataion:
+    Don't even ask I took it from stack overflow
+ */
+    public static Boolean validateEmail(String email) {
+        String pattern = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\" +
+                "x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9]" +
+                "(?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9]" +
+                "[0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:" +
+                "[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])";
+        return email.matches(pattern);
     }
 
     /*
@@ -102,31 +90,30 @@ Regex explanataion:
         return password.matches(pattern);
     }
 
+    public long getUserId(){return userId;}
+    public void setUserId(int userId){this.userId = userId;}
 
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
-    }
+    public String getName(){return name;}
+    public void setName(String name){this.name = name;}
 
-    public String getUsername() {
-        return username;
-    }
+    public String getEmail(){return email;}
+    public void setEmail(String email){this.email = email;}
 
+    public String getPassword() {return password;}
+    public void setPassword(String password) {this.password = password;}
+
+    public String getUsername() {return username;}
     public void setUsername(String username) {this.username = username;}
 
-
     public String getUserTier() {return userTier;}
-
     public void setUserTier(String userTier) {this.userTier = userTier;}
 
     public String getSecurityQuestion1() {return securityQuestion1;}
-
     public void setSecurityQuestion1(String securityQuestion1) {this.securityQuestion1 = securityQuestion1;}
 
     public String getSecurityQuestion2() {return securityQuestion2;}
-
     public void setSecurityQuestion2(String securityQuestion2) {this.securityQuestion2 = securityQuestion2;}
 
     public String getSecurityQuestion3() {return securityQuestion3;}
-
     public void setSecurityQuestion3(String securityQuestion3) {this.securityQuestion3 = securityQuestion3;}
 }
