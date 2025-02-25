@@ -60,7 +60,7 @@ public class UserManager {
         //Use try catch blocks when creating JSON objects
         try {
             updatePasswordData.put("newPassword", newPassword);
-            updatePasswordData.put("securityQuestionAnswer", securityInput);
+            updatePasswordData.put("securityQuestionID", securityInput);
         } catch (JSONException e) {
             Log.e("JSON Error", e.toString());
             return;
@@ -75,6 +75,32 @@ public class UserManager {
         //Add request to the volley singleton request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
+
+    public static void editUsernameRequest(Context context, String currentUsername, String newUsername, String URL,
+                                           Response.Listener<JSONObject> responseListener,
+                                           Response.ErrorListener errorListener){
+
+        JSONObject updateUsernameData = new JSONObject();
+
+        try{
+            //**These fields need to be changed in the backend**
+            updateUsernameData.put("currentUsername", currentUsername);
+            updateUsernameData.put("newUsername", newUsername);
+
+
+        } catch (Exception e) {
+            Log.e("JSON Error", e.toString());
+            return;
+        }
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST,
+                URL,
+                updateUsernameData, responseListener, errorListner);
+
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
 
     public static String getLoginToken(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);

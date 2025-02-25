@@ -6,25 +6,32 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/textView7"
+        android:id="@+id/editUsernameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="95dp"
         android:layout_marginTop="176dp"
         android:layout_marginEnd="96dp"
+        android:layout_marginBottom="38dp"
         android:text="Edit Username"
         android:textSize="34sp"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="250dp"
+        android:layout_marginTop="38dp"
         android:layout_marginBottom="223dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editUsernameTextView"
+        app:layout_constraintVertical_bias="0.0">
 
         <LinearLayout
             android:id="@+id/linearLayout"
@@ -49,7 +56,7 @@
                 android:textSize="18dp"></TextView>
 
             <EditText
-                android:id="@+id/change_password_confirm_edit"
+                android:id="@+id/change_username_confirm_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:hint="Enter Username Here"
@@ -77,7 +84,7 @@
                 android:textSize="18dp"></TextView>
 
             <EditText
-                android:id="@+id/change_password_edit"
+                android:id="@+id/change_username_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:hint="Enter Username Here"
@@ -86,7 +93,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/edit_user_submit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="52dp"
@@ -98,7 +105,7 @@
             app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/edit_user_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="68dp"

@@ -57,7 +57,6 @@ public class ProfileFragment extends Fragment {
 
             @Override
             public void onClick(View view) {
-                /*
                 //This button only has functionality when the user is logged in!
                 //Safe way for fragments to get context!! (requireContext)
                 String token = UserManager.getLoginToken(requireContext());
@@ -66,8 +65,11 @@ public class ProfileFragment extends Fragment {
 
 
                 }
+                Intent intent = new Intent(getActivity(), EditUserActivity.class);
+                startActivity(intent);
 
-                 */
+
+
                 
 
 

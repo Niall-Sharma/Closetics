@@ -71,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
                         public void onResponse(JSONObject response) {
                             //Response is a JSON object from the backend end
                             try {
-                                String token = response.getString("token");//This grabs the string value of JSON header
+                                String token = response.getString("token");//This grabs the string value of token JSON header
                                 //Save session token in shared preferences
                                 UserManager.saveLoginToken(getApplicationContext(), token);
                                 //Save username in shared preferences

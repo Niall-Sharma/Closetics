@@ -73,6 +73,7 @@ public class ChangePasswordFragment extends Fragment {
 
 
          */
+        //This request is incomplete/not sure what final backend functionality will be!!
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
