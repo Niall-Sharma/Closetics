@@ -51,6 +51,8 @@ public class UserManager {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
+
+
     public static void changePasswordRequest(Context context, String newPassword, String securityInput, String URL,
                                              Response.Listener<JSONObject> responseListener,
                                              Response.ErrorListener errorListener) {
@@ -76,6 +78,10 @@ public class UserManager {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
+
+    /*
+This request needs to be updated once backend is updated
+ */
     public static void editUsernameRequest(Context context, String currentUsername, String newUsername, String URL,
                                            Response.Listener<JSONObject> responseListener,
                                            Response.ErrorListener errorListener){
@@ -96,7 +102,7 @@ public class UserManager {
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
                 URL,
-                updateUsernameData, responseListener, errorListner);
+                updateUsernameData, responseListener, errorListener);
 
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
