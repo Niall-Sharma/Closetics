@@ -38,7 +38,17 @@ public class EditUserActivity extends AppCompatActivity {
         submit = findViewById(R.id.edit_user_submit);
         cancel = findViewById(R.id.edit_user_cancel);
 
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                returnMainActivity();
+            }
+        });
 
+
+        /*
+        This method still needs updated (error implementation for request and when usernames don't match)
+         */
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,10 +79,10 @@ public class EditUserActivity extends AppCompatActivity {
                                     //Add functionality
                                 }
                             });
-                    Intent intent = new Intent(EditUserActivity.this, MainActivity.class);
-                    startActivity(intent);
+                   returnMainActivity();
 
                 }
+
 
 
                 //Add functionality for when the usernames do not match in the edit text fields
@@ -84,6 +94,12 @@ public class EditUserActivity extends AppCompatActivity {
 
 
 
+
+    }
+    
+    private void returnMainActivity(){
+        Intent intent = new Intent(EditUserActivity.this, MainActivity.class);
+        startActivity(intent);
 
     }
     private void setUsername(Boolean isRunning){
