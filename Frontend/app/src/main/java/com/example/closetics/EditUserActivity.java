@@ -96,7 +96,7 @@ public class EditUserActivity extends AppCompatActivity {
 
 
     }
-    
+
     private void returnMainActivity(){
         Intent intent = new Intent(EditUserActivity.this, MainActivity.class);
         startActivity(intent);
