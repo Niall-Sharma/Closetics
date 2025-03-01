@@ -22,7 +22,8 @@ public class StringReqActivity extends AppCompatActivity {
     private Button btnStringReq;
     private TextView msgResponse;
 
-    private static final String URL_STRING_REQ = "https://jsonplaceholder.typicode.com/users/1";
+    private static final String URL_STRING_REQ = "https://5d8ec6d0-6c92-4ac8-9c8e-67b13bc56d50.mock.pstmn.io";
+    //https://jsonplaceholder.typicode.com/users/1
     //   public static final String URL_STRING_REQ = "https://2aa87adf-ff7c-45c8-89bc-f3fbfaa16d15.mock.pstmn.io/users/1";
     //   public static final String URL_STRING_REQ = "http://10.0.2.2:8080/users/1";
 

@@ -1,6 +1,5 @@
 package com.example.closetics;
 
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.LruCache;
@@ -11,7 +10,6 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
 
-//Volley Request Queue Boilerplate class
 public class VolleySingleton {
 
     private static VolleySingleton instance;
