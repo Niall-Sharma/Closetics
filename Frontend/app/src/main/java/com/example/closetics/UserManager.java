@@ -28,6 +28,10 @@ public class UserManager {
     private static final String TOKEN_PARAM = "logInToken";
     private static final String USERNAME_PARAM = "username";
 
+
+    //These methods store the data in sharedPreferences
+    //Shared preferences used when a value needs to persist across app sessions
+
     public static void saveLoginToken(Context context, String token) {
         //Access the shared preferences file make it private to this app
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
@@ -37,6 +41,7 @@ public class UserManager {
     }
 
     public static String getLoginToken(Context context) {
+        //Access the shared preferences file make it private to this app
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
         return prefs.getString(TOKEN_PARAM, null);
     }
@@ -50,9 +55,11 @@ public class UserManager {
     }
 
     public static String getUsername(Context context) {
+        //Access the shared preferences file make it private to this app
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
         return prefs.getString(USERNAME_PARAM, null);
     }
+
 
     public static boolean validateUsername(String username){
         String pattern = "[0-9A-Za-z]{3,16}";
@@ -97,6 +104,7 @@ public class UserManager {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
+
     /**
      * This uses a post request to create a new user with given username and password
      *
@@ -134,6 +142,61 @@ public class UserManager {
         //Add request to the volley singleton request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
+
+
+    public static void changePasswordRequest(Context context, String newPassword, String securityInput, String URL,
+                                             Response.Listener<JSONObject> responseListener,
+                                             Response.ErrorListener errorListener) {
+        //Create the json object of the login data (username and password)
+        JSONObject updatePasswordData = new JSONObject();
+
+        //Use try catch blocks when creating JSON objects
+        try {
+            updatePasswordData.put("newPassword", newPassword);
+            updatePasswordData.put("securityQuestionID", securityInput);
+        } catch (JSONException e) {
+            Log.e("JSON Error", e.toString());
+            return;
+        }
+
+
+        //The post request
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST,
+                URL,
+                updatePasswordData, responseListener, errorListener);
+        //Add request to the volley singleton request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+
+    /*
+    This request needs to be updated once backend is updated
+    */
+    public static void editUsernameRequest(Context context, String currentUsername, String newUsername, String URL,
+                                           Response.Listener<JSONObject> responseListener,
+                                           Response.ErrorListener errorListener){
+
+        JSONObject updateUsernameData = new JSONObject();
+
+        try{
+            //**These fields need to be changed in the backend**
+            updateUsernameData.put("currentUsername", currentUsername);
+            updateUsernameData.put("newUsername", newUsername);
+
+        } catch (Exception e) {
+            Log.e("JSON Error", e.toString());
+            return;
+        }
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.POST,
+                URL,
+                updateUsernameData, responseListener, errorListener);
+
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
 
     /**
      * This uses a post request to create a new user with given username and password
@@ -173,6 +236,7 @@ public class UserManager {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
+
     public static void deleteUserRequest(Context context, long id, String URL,
                                          Response.Listener<String> responseListener,
                                          Response.ErrorListener errorListener) {
@@ -183,4 +247,5 @@ public class UserManager {
         //Add request to the volley singleton request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
+
 }
