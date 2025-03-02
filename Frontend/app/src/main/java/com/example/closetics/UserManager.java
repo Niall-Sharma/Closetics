@@ -1,32 +1,23 @@
 package com.example.closetics;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import androidx.annotation.Nullable;
-
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.util.HashMap;
-import java.util.Map;
-
 public class UserManager {
 
     private static final String SHARED_PREFERENCES_FILE_NAME = "CloseticsPreferences";
     private static final String TOKEN_PARAM = "logInToken";
     private static final String USERNAME_PARAM = "username";
+    private static final String USER_ID_PARAM = "userID";
 
 
     //These methods store the data in sharedPreferences
@@ -53,11 +44,23 @@ public class UserManager {
         editor.putString(USERNAME_PARAM, username);
         editor.apply();
     }
-
     public static String getUsername(Context context) {
         //Access the shared preferences file make it private to this app
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
         return prefs.getString(USERNAME_PARAM, null);
+    }
+
+    //**** Might need to store these as ints for the backend ****
+    public static String getUserID(Context context ){
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
+        return prefs.getString(USER_ID_PARAM, null);
+    }
+
+    public static void saveUserID(Context context, String userID){
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(USER_ID_PARAM, userID);
+        editor.apply();
     }
 
 
