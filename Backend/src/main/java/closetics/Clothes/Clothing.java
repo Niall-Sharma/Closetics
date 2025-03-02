@@ -1,6 +1,9 @@
 package closetics.Clothes;
 
+import closetics.Users.User;
 import jakarta.persistence.*;
+
+import java.util.Date;
 
 @Entity(name = "clothes_table")
 public class Clothing {
@@ -8,7 +11,11 @@ public class Clothing {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int clothesId;
+    private long clothesId;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Enumerated(EnumType.STRING)
     private TYPES type;
@@ -16,20 +23,20 @@ public class Clothing {
     @Enumerated(EnumType.STRING)
     private SPECIALTYPES specialtype;
 
-    boolean isFavorite;
-    String size;
-    String lastWorn;
-    int timesWorn;
-    String color;
-    String dateBought;
-    String brand;
-    String imagePath1;
-    String imagePath2;
-    String imagePath3;
-    String itemName;
-    String material;
+    private boolean isFavorite;
+    private String size;
+    private String lastWorn;
+    private int timesWorn;
+    private String color;
+    private Date dateBought;
+    private String brand;
+    private String imagePath1;
+    private String imagePath2;
+    private String imagePath3;
+    private String itemName;
+    private String material;
 
-    public Clothing(int itemId, SPECIALTYPES specialtype, TYPES type,  boolean isFavorite, String size, String lastWorn, int timesWorn, String color, String dateBought, String brand, String imagePath1, String imagePath2, String imagePath3, String itemName, String material) {
+    public Clothing(int itemId, SPECIALTYPES specialtype, TYPES type,  boolean isFavorite, String size, String lastWorn, int timesWorn, String color, Date dateBought, String brand, String imagePath1, String imagePath2, String imagePath3, String itemName, String material) {
         this.clothesId = itemId;
         this.type = type;
         this.specialtype = specialtype;
