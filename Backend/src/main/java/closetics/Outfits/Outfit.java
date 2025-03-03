@@ -14,9 +14,7 @@ public class Outfit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long outfitId;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private long userId;
 
     private String outfitName;
     private Date creationDate;
@@ -27,19 +25,22 @@ public class Outfit {
     @Column(name = "clothing_id")
     private List<Long> outfitItems = new ArrayList<>();
 
-    public Outfit(long outfitId, User user, String outfitName, Date creationDate, boolean isFavorite) {
+    public Outfit(long outfitId, long userId, String outfitName, Date creationDate, boolean isFavorite, List<Long> outfitItems) {
         this.outfitId = outfitId;
-        this.user = user;
+        this.userId = userId;
         this.outfitName = outfitName;
         this.creationDate = creationDate;
         this.isFavorite = isFavorite;
+        this.outfitItems = outfitItems;
     }
+
+    public Outfit(){}
 
     public long getOutfitId() {return outfitId;}
     public void setOutfitId(long outfitId) {this.outfitId = outfitId;}
 
-    public User getUser() {return user;}
-    public void setUser(User user) {this.user = user;}
+    public long getUserId() {return userId;}
+    public void setUserId(long userId) {this.userId = userId;}
 
     public String getOutfitName() {return outfitName;}
     public void setOutfitName(String outfitName) {this.outfitName = outfitName;}
@@ -49,4 +50,7 @@ public class Outfit {
 
     public boolean isFavorite() {return isFavorite;}
     public void setFavorite(boolean favorite) {isFavorite = favorite;}
+
+    public List<Long> getOutfitItems() {return outfitItems;}
+    public void setOutfitItems(List<Long> outfitItems) {this.outfitItems = outfitItems;}
 }

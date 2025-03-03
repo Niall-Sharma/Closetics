@@ -95,7 +95,7 @@ public class UserController {
         Token token = tokenService.createToken(user);
         response.put("token", token.getTokenValue());
         response.put("message", "Login successful");
-        response.put("username", user.getUsername());
+        response.put("user_id", String.valueOf(user.getUserId()));
         return ResponseEntity.ok(response);
 
     }
