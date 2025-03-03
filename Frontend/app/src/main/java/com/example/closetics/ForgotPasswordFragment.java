@@ -16,14 +16,21 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import java.util.ArrayList;
+
 public class ForgotPasswordFragment extends Fragment {
 
-    private TextView instructions;
     private Spinner spinner;
     private EditText securityInput;
     private String chosenQuestion;
     private Button submitButton;
     private Button cancelButton;
+    private EditText newPassword;
+    private EditText confirmPassword;
+    private int id1;
+    private int id2;
+
+    //private USERNAME
 
 
     public ForgotPasswordFragment() {
@@ -34,18 +41,30 @@ public class ForgotPasswordFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_forgot_password, container, false);
+        View view = inflater.inflate(R.layout.fragment_change_password, container, false);
                 // link to Login activity XML
 
         securityInput = view.findViewById(R.id.security_input_password);
         spinner = view.findViewById(R.id.security_3_question_spinner);
-        instructions = view.findViewById(R.id.security_instructions);
-        cancelButton = view.findViewById(R.id.cancel);
-        submitButton = view.findViewById(R.id.submit);
+        submitButton = view.findViewById(R.id.change_submit_button);
+        cancelButton = view.findViewById(R.id.change_cancel_button);
+        newPassword = view.findViewById(R.id.change_password_edit);
+        confirmPassword = view.findViewById(R.id.change_password_confirm_edit);
+
+        // Retrieve data from arguments
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            id1 = getArguments().getInt("ID1");
+            id2 = getArguments().getInt("ID2");
+        }
+
+
 
 
         //Placeholders for spinner array
         //Will come from backend eventually
+        ArrayList<String> allSecurityQuestions = UserManager.getSecurityQuestions();
+
         String[] spinnerItems = new String[]
                 {"Select One", "Security Question 1", "Security Question 2"};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, spinnerItems);
@@ -111,6 +130,17 @@ public class ForgotPasswordFragment extends Fragment {
         transaction.replace(R.id.forgot_password_fragment_container, fragment, "change_password_fragment");
         transaction.commit();
 
+    }
+
+
+    //Accepting the data from loginActivity
+    public static ForgotPasswordFragment newInstance(int data1, int data2) {
+        ForgotPasswordFragment fragment = new ForgotPasswordFragment();
+        Bundle args = new Bundle();
+        args.putInt("ID1", data1);
+        args.putInt("ID2", data2);
+        fragment.setArguments(args);
+        return fragment;
     }
 
 

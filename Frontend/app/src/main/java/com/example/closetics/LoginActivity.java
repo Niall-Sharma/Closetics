@@ -45,8 +45,11 @@ public class LoginActivity extends AppCompatActivity {
     private Button signupButton;        // define signup button variable
     private Button forgotPasswordButton;  //define forgotPassword button variable
     private TextView errorText;
+    private int id1;
+    private int id2;
 
 
+    private static final String URL_GET_USER_BY_USERNAME = "http://10.0.2.2:8080/users/username/"; // +{{username}}
 
 
     //Postman Mock Server
@@ -170,15 +173,24 @@ public class LoginActivity extends AppCompatActivity {
         forgotPasswordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showFragment();
+                String username = usernameEditText.getText().toString();
+                if (username.isEmpty()){
+                    setErrorMessage("Please enter your username to change password");
+                }
+                else{
+                    getSecurityQuestionIDs(getApplicationContext(), URL_GET_USER_BY_USERNAME + username);
+                    showFragment();
+
+                }
             }
         });
-
-
     }
+
+
     private void showFragment(){
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        Fragment fragment = new ForgotPasswordFragment();
+        //New instance of forgotpassword fragment containing the id instance variables
+        Fragment fragment = ForgotPasswordFragment.newInstance(id1, id2);
         transaction.replace(R.id.forgot_password_fragment_container, fragment, "forgot_password_fragment");
         transaction.commit();
 
@@ -186,6 +198,35 @@ public class LoginActivity extends AppCompatActivity {
     private void setErrorMessage(String message) {
         errorText.setText(message);
         errorText.setVisibility(TextView.VISIBLE);
+    }
+
+    private void getSecurityQuestionIDs(Context context, String url) {
+        // Create a JsonObjectRequest for the GET request
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url,
+                null,  // Request body is null for GET requests
+
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            // Retrieve the two IDs from the response
+                            id1 = response.getInt("sQID1");  // Assuming the first ID is named "id1"
+                            id2 = response.getInt("sQID2");// Assuming the second ID is named "id2"
+
+                        } catch (JSONException e) {
+                            Log.e("Volley Error", "Error in user/username JSON");
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(com.android.volley.VolleyError error) {
+                        // Handle error
+                        Log.e("Volley Error", error.toString());
+                    }
+                });
+        // Add the request to the Volley request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
 

@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 
@@ -192,9 +193,7 @@ public class UserManager {
     }
 
 
-    /*
-    This request needs to be updated once backend is updated
-    */
+
     public static void editUserRequest(Context context, String userid, String newUsername, String newEmail, String URL,
                                            Response.Listener<JSONObject> responseListener,
                                            Response.ErrorListener errorListener){
@@ -276,5 +275,8 @@ public class UserManager {
         //Add request to the volley singleton request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
+
+
+
 
 }
