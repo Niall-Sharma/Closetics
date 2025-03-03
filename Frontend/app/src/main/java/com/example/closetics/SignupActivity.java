@@ -29,8 +29,8 @@ import java.util.Map;
 
 public class SignupActivity extends AppCompatActivity {
 
-    private static final String URL_SIGNUP = "http://10.0.2.2:8080/signup";
-    private static final String URL_GET_USER_BY_USERNAME = "http://10.0.2.2:8080/users/username/"; // +{{username}}
+    private static final String URL_SIGNUP = MainActivity.SERVER_URL + "/signup";
+    private static final String URL_GET_USER_BY_USERNAME = MainActivity.SERVER_URL + "/users/username/"; // +{{username}}
 
     private EditText usernameEditText;  // define username edittext variable
     private EditText emailEditText;  // define email edittext variable

@@ -47,10 +47,8 @@ public class LoginActivity extends AppCompatActivity {
     private TextView errorText;
 
 
+    private static final String URL = MainActivity.SERVER_URL + "/login";
 
-
-    //Postman Mock Server
-    private static final String URL = "http://10.0.2.2:8080/login";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
