@@ -69,6 +69,15 @@ public class UserManager {
         editor.apply();
     }
 
+    public static void clearSavedData(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(TOKEN_PARAM, null);
+        editor.putString(USERNAME_PARAM, null);
+        editor.putLong(USER_ID_PARAM, -1);
+        editor.apply();
+    }
+
 
     public static String[] getSecurityQuestions(){
         return SECURITY_QUESTIONS;
