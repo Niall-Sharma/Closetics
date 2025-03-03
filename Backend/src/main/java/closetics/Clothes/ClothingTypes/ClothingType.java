@@ -12,10 +12,6 @@ public class ClothingType{
   @GeneratedValue(strategy=GenerationType.IDENTITY)
   int id;
 
-  @ManyToOne
-  @JsonIgnore
-  private Clothing clothing;
-
   private String typeName;
 
   public ClothingType(String typeName){

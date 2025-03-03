@@ -11,11 +11,6 @@ public class SpecialType{
   @Id
   @GeneratedValue(strategy=GenerationType.IDENTITY)
   int id;
-
-  @ManyToOne
-  @JsonIgnore
-  private Clothing clothing;
-
   private String specialTypeName;  
 
   public SpecialType(String specialTypeName){
