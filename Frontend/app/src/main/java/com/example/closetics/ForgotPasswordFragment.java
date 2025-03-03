@@ -47,7 +47,7 @@ public class ForgotPasswordFragment extends Fragment {
         //Placeholders for spinner array
         //Will come from backend eventually
         String[] spinnerItems = new String[]
-                {"Select One", "Security Question 1", "Security Question 2", "Security Question 3"};
+                {"Select One", "Security Question 1", "Security Question 2"};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, spinnerItems);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()

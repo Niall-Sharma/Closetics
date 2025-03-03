@@ -6,37 +6,47 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.NoConnectionError;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.HttpURLConnection;
 import java.util.InputMismatchException;
 
 public class EditUserActivity extends AppCompatActivity {
 
 
-    private EditText initialUsername;
-    private EditText confirmUsername;
+    private EditText newUsername;
+    private EditText newEmail;
+
 
     private String username;
+    private String email;
 
     private Button submit;
     private Button cancel;
-    private final String URL = "https://baacab8f-1ecd-41d2-b30f-cc9889421d1d.mock.pstmn.io/updateUser";
+    private TextView errorText;
+    private final String URL = "http://10.0.2.2:8080/updateUser";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_user);
 
-        initialUsername = findViewById(R.id.change_username_edit);
-        confirmUsername = findViewById(R.id.change_username_confirm_edit);
-        submit = findViewById(R.id.edit_user_submit);
+        newUsername = findViewById(R.id.change_username_edit);
+        newEmail = findViewById(R.id.change_email_new_edit);
+       submit = findViewById(R.id.edit_user_submit);
         cancel = findViewById(R.id.edit_user_cancel);
+        errorText = findViewById(R.id.edit_error_text);
+
+        errorText.setVisibility(TextView.GONE);
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,66 +59,82 @@ public class EditUserActivity extends AppCompatActivity {
         /*
         This method still needs updated (error implementation for request and when usernames don't match)
          */
+        //Small issue, on signup userID doesn't get updated!!!
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Boolean isRunning = true;
-                setUsername(isRunning);
-                //Request if setUsername worked!!
-                if (isRunning){
-                    String currentUsername = UserManager.getUsername(getApplicationContext());
-                    UserManager.editUsernameRequest(getApplicationContext(), currentUsername, username, URL,
+                username = newUsername.getText().toString();
+                email = newEmail.getText().toString();
+                //Do not continue
+                if (username.isEmpty() && email.isEmpty()){
+                    Log.d("User error", "No field updated");
+                    setErrorMessage("Please enter either a new email, new username, or both");
+                }
+                else {
+                if (username.isEmpty()){
+                    username = null;
+                }
+                if (email.isEmpty()){
+                    email = null;
+                }
+                    UserManager.editUserRequest(getApplicationContext(), UserManager.getUserID(getApplicationContext()), username, email, URL,
                             new Response.Listener<JSONObject>() {
                                 @Override
                                 public void onResponse(JSONObject response) {
                                     //Overwrite new username in shared preferences
-                                    String newUsername = null;
-                                    try {
-                                        newUsername = response.get("username").toString();
-                                        UserManager.saveUsername(getApplicationContext(), newUsername);
 
-                                    } catch (JSONException e) {
-                                        Log.d("JSON error", e.toString());
+                                    Log.d("Volley response", "Succesful edit user" + response.toString());
+                                    if (username != null) {
+                                        //overwrite username
+                                        UserManager.saveUsername(getApplicationContext(), username);
                                     }
+
+                                    returnMainActivity();
 
                                 }
                             },
+
                             new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
-                                    //Add functionality
+                                    //Add boilerplate volley errors
+                                    Log.e("Volley Error", "Edit user error: " + error.toString());
+
+                                    if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                                        setErrorMessage("Connection timeout");
+                                    } else if (error.networkResponse != null) {
+                                        setErrorMessage("Error Code: " + error.networkResponse.statusCode);
+                                        Log.e("Volley Error", "Error Code: " + error.networkResponse.statusCode);
+                                    } else {
+                                        setErrorMessage("Unknown edit user error");
+                                    }
+                                    int statusCode = error.networkResponse.statusCode;
+
+                                    if (statusCode == HttpURLConnection.HTTP_CONFLICT) {
+                                        Log.e("Volley Error", "Error 409:  (" + error.toString() + ")"); //"A conflict occurred with email or username"
+                                        setErrorMessage("Username or email already in use, please choose another one");
+                                    }
                                 }
                             });
-                   returnMainActivity();
-
                 }
 
 
-
-                //Add functionality for when the usernames do not match in the edit text fields
-            }
-
+                }
 
         });
-
-
-
 
 
     }
 
     private void returnMainActivity(){
         Intent intent = new Intent(EditUserActivity.this, MainActivity.class);
+        intent.putExtra("USERNAME", username);
         startActivity(intent);
 
     }
-    private void setUsername(Boolean isRunning){
-        if (initialUsername.getText().toString().equals(confirmUsername.getText().toString())){
-            username = initialUsername.getText().toString();
-        }
-        else{
-            //Do not continue with the request!!
-            isRunning = false;
-        }
+    private void setErrorMessage(String message) {
+        errorText.setText(message);
+        errorText.setVisibility(TextView.VISIBLE);
     }
+
 }

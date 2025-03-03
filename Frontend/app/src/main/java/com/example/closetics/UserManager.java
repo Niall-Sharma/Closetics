@@ -18,6 +18,11 @@ public class UserManager {
     private static final String TOKEN_PARAM = "logInToken";
     private static final String USERNAME_PARAM = "username";
     private static final String USER_ID_PARAM = "userID";
+    private static final String[] SECURITY_QUESTIONS= new String[]
+    {"What is your mother's maiden name?", "What was the name of your first pet?",
+            "What is the name of the street you grew up on?" ,"What is your favorite color?", "What was the name of your first school?", "What was your childhood nickname?"
+            , "In what city were you born?", "What is your favorite food?", "What was your first car?", "What is the name of your childhood best friend?"};
+
 
 
     //These methods store the data in sharedPreferences
@@ -63,6 +68,10 @@ public class UserManager {
         editor.apply();
     }
 
+
+    public static String[] getSecurityQuestions(){
+        return SECURITY_QUESTIONS;
+    }
 
     public static boolean validateUsername(String username){
         String pattern = "[0-9A-Za-z]{3,16}";
@@ -176,16 +185,23 @@ public class UserManager {
     /*
     This request needs to be updated once backend is updated
     */
-    public static void editUsernameRequest(Context context, String currentUsername, String newUsername, String URL,
+    public static void editUserRequest(Context context, String userid, String newUsername, String newEmail, String URL,
                                            Response.Listener<JSONObject> responseListener,
                                            Response.ErrorListener errorListener){
 
         JSONObject updateUsernameData = new JSONObject();
 
         try{
-            //**These fields need to be changed in the backend**
-            updateUsernameData.put("currentUsername", currentUsername);
-            updateUsernameData.put("newUsername", newUsername);
+            //Turn id into a long for backend
+            long id = Long.parseLong(userid);
+            updateUsernameData.put("userId", id);
+            //Do not send if null
+            if (newUsername!=null){
+                updateUsernameData.put("username", newUsername);
+            }
+            if (newEmail!= null) {
+                updateUsernameData.put("newEmail", newEmail);
+            }
 
         } catch (Exception e) {
             Log.e("JSON Error", e.toString());
@@ -193,7 +209,7 @@ public class UserManager {
         }
 
         JsonObjectRequest request = new JsonObjectRequest(
-                Request.Method.POST,
+                Request.Method.PUT,
                 URL,
                 updateUsernameData, responseListener, errorListener);
 

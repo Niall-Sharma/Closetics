@@ -13,59 +13,29 @@
         android:layout_marginTop="176dp"
         android:layout_marginEnd="96dp"
         android:layout_marginBottom="38dp"
-        android:text="Edit Username"
-        android:textSize="34sp"
+        android:gravity="center"
+        android:text="Please provide a new username, a new email, or both"
+        android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="400dp"
         android:layout_marginTop="38dp"
-        android:layout_marginBottom="223dp"
+        android:layout_marginBottom="122dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editUsernameTextView"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@+id/editUsernameTextView">
 
         <LinearLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="70dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="79dp"
-            android:layout_marginBottom="140dp"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout6">
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Confirm\nUsername: "
-                android:textSize="18dp"></TextView>
-
-            <EditText
-                android:id="@+id/change_username_confirm_edit"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:hint="Enter Username Here"
-                android:inputType="textPassword"></EditText>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/linearLayout6"
+            android:id="@+id/linearLayout1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="70dp"
@@ -88,7 +58,36 @@
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:hint="Enter Username Here"
-                android:inputType="textPassword"></EditText>
+                android:inputType="text"></EditText>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="70dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginEnd="79dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout1">
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="New\nEmail: "
+                android:textSize="18dp"></TextView>
+
+            <EditText
+                android:id="@+id/change_email_new_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:hint="Enter Email Address Here"
+                android:inputType="text|textEmailAddress"></EditText>
 
         </LinearLayout>
 
@@ -96,26 +95,39 @@
             android:id="@+id/edit_user_submit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="52dp"
+            android:layout_marginStart="81dp"
             android:layout_marginEnd="77dp"
             android:layout_marginBottom="40dp"
             android:text="Submit"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+            app:layout_constraintStart_toEndOf="@+id/edit_user_cancel" />
 
         <Button
             android:id="@+id/edit_user_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="68dp"
-            android:layout_marginTop="52dp"
+            android:layout_marginEnd="81dp"
             android:layout_marginBottom="40dp"
             android:text="Cancel"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintEnd_toStartOf="@+id/edit_user_submit"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/edit_error_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="155dp"
+            android:layout_marginEnd="155dp"
+            android:layout_marginBottom="123dp"
+            android:text="{error message}"
+            android:textColor="#d9544d"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
