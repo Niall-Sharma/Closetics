@@ -1,32 +1,28 @@
 package com.example.closetics;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import androidx.annotation.Nullable;
-
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.util.HashMap;
-import java.util.Map;
-
 public class UserManager {
 
     private static final String SHARED_PREFERENCES_FILE_NAME = "CloseticsPreferences";
     private static final String TOKEN_PARAM = "logInToken";
     private static final String USERNAME_PARAM = "username";
+    private static final String USER_ID_PARAM = "userID";
+    private static final String[] SECURITY_QUESTIONS= new String[]
+    {"What is your mother's maiden name?", "What was the name of your first pet?",
+            "What is the name of the street you grew up on?" ,"What is your favorite color?", "What was the name of your first school?", "What was your childhood nickname?"
+            , "In what city were you born?", "What is your favorite food?", "What was your first car?", "What is the name of your childhood best friend?"};
+
 
 
     //These methods store the data in sharedPreferences
@@ -53,13 +49,29 @@ public class UserManager {
         editor.putString(USERNAME_PARAM, username);
         editor.apply();
     }
-
     public static String getUsername(Context context) {
         //Access the shared preferences file make it private to this app
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
         return prefs.getString(USERNAME_PARAM, null);
     }
 
+    //**** Might need to store these as ints for the backend ****
+    public static String getUserID(Context context ){
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
+        return prefs.getString(USER_ID_PARAM, null);
+    }
+
+    public static void saveUserID(Context context, String userID){
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(USER_ID_PARAM, userID);
+        editor.apply();
+    }
+
+
+    public static String[] getSecurityQuestions(){
+        return SECURITY_QUESTIONS;
+    }
 
     public static boolean validateUsername(String username){
         String pattern = "[0-9A-Za-z]{3,16}";
@@ -173,16 +185,23 @@ public class UserManager {
     /*
     This request needs to be updated once backend is updated
     */
-    public static void editUsernameRequest(Context context, String currentUsername, String newUsername, String URL,
+    public static void editUserRequest(Context context, String userid, String newUsername, String newEmail, String URL,
                                            Response.Listener<JSONObject> responseListener,
                                            Response.ErrorListener errorListener){
 
         JSONObject updateUsernameData = new JSONObject();
 
         try{
-            //**These fields need to be changed in the backend**
-            updateUsernameData.put("currentUsername", currentUsername);
-            updateUsernameData.put("newUsername", newUsername);
+            //Turn id into a long for backend
+            long id = Long.parseLong(userid);
+            updateUsernameData.put("userId", id);
+            //Do not send if null
+            if (newUsername!=null){
+                updateUsernameData.put("username", newUsername);
+            }
+            if (newEmail!= null) {
+                updateUsernameData.put("newEmail", newEmail);
+            }
 
         } catch (Exception e) {
             Log.e("JSON Error", e.toString());
@@ -190,7 +209,7 @@ public class UserManager {
         }
 
         JsonObjectRequest request = new JsonObjectRequest(
-                Request.Method.POST,
+                Request.Method.PUT,
                 URL,
                 updateUsernameData, responseListener, errorListener);
 

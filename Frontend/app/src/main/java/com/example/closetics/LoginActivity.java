@@ -15,10 +15,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
@@ -41,14 +44,13 @@ public class LoginActivity extends AppCompatActivity {
     private Button loginButton;         // define login button variable
     private Button signupButton;        // define signup button variable
     private Button forgotPasswordButton;  //define forgotPassword button variable
+    private TextView errorText;
 
 
 
 
     //Postman Mock Server
-    private static final String URL = "https://baacab8f-1ecd-41d2-b30f-cc9889421d1d.mock.pstmn.io/login";
-
-   // private static final String URL = "https://jsonplaceholder.typicode.com/login";
+    private static final String URL = "http://10.0.2.2:8080/login";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +63,10 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.login_login_button);    // link to login button in the Login activity XML
         signupButton = findViewById(R.id.login_signup_button);  // link to signup button in the Login activity XML
         forgotPasswordButton = findViewById(R.id.login_forgot_password); //link to forgot password button in Login activity XML
+        errorText = findViewById(R.id.login_error_text);
+
+        errorText.setVisibility(TextView.GONE); // hide error message by default
+
 
         //Login Button
         loginButton.setOnClickListener(v -> {
@@ -72,45 +78,82 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(JSONObject response) {
                             //Response is a JSON object from the backend end
-                            try {
-                                String token = response.getString("token");//This grabs the string value of token JSON header
-                                //Save session token in shared preferences
-                                UserManager.saveLoginToken(getApplicationContext(), token);
-                                //Save username in shared preferences
-                                UserManager.saveUsername(getApplicationContext(), username);
 
+                            //Check if valid request, that is the only error possible onResponse
+                           String message = null;
+                            try {
+                                 message = response.getString("message");
                             } catch (JSONException e) {
                                 Log.e("JSON Error", e.toString());
-                                return;
+                            }
+
+
+                            if (message.equals("Invalid Request")){
+                                Log.e("Volley Error", "Invalid Request");
+                                setErrorMessage("Please provide both a username and email");
+
+                            }
+                            //Successful login
+                            else {
+                                Log.d("Volley Response", "Successful Login: " + response.toString());
+                                try {
+                                    String token = response.getString("token");//This grabs the string value of token JSON header
+                                    String userID = response.getString("user_id");
+                                    //Save userID in shared preferences
+                                    UserManager.saveUserID(getApplicationContext(), userID);
+                                    //Save session token in shared preferences
+                                    UserManager.saveLoginToken(getApplicationContext(), token);
+                                    //Save username in shared preferences
+                                    UserManager.saveUsername(getApplicationContext(), username);
+
+                                } catch (JSONException e) {
+                                    Log.e("JSON Error", e.toString());
+
+                                }
+                                //Switch to main page on success
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                intent.putExtra("USERNAME", username);
+                                intent.putExtra("PASSWORD", password);
+                                startActivity(intent);
+
                             }
                         }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            if (error.networkResponse != null){
-                                int statusCode = error.networkResponse.statusCode;
-                                String errorBody = null;
+                            Log.e("Volley Error", error.toString());
 
-                                //HttpStatus.UNAUTHORIZED
-                                if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED){
-                                    try{
-                                        errorBody = new String (error.networkResponse.data, "UTF-8");
-                                        Log.d("Error", "401 Unauthorized");
-
-                                    }catch(UnsupportedEncodingException e){
-                                        Log.e("JSON Error", e.toString());
-                                        return;
-                                    }
-                                }
-                                //More
+                            //Handling timeout errors and unknown errors from Volley error
+                            if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                                setErrorMessage("Connection timeout");
+                                return;
                             }
+                            else if (error.networkResponse == null) {
+                                setErrorMessage("Unknown error");
+                                return;
+                            }
+
+                            //Grab the status code ex.
+                            int statusCode = error.networkResponse.statusCode;
+
+                            //500 error
+                            if (statusCode == HttpURLConnection.HTTP_INTERNAL_ERROR) { //500 error
+                                Log.e("Volley Error", "Error 500:  (" + error.toString() + ")"); //"An error occurred during logging in"
+                                setErrorMessage(error.toString() + " , Please try again!");
+
+                            }
+                            //401 error
+                            else{
+                                if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED){ //401 error
+                                    Log.e("Volley Error", "Error 401: Invalid username, email or password  (" + error.toString() + ")");
+                                    setErrorMessage("Invalid username, email or password");
+
+                                }
+
+                            }
+
                         }
                     });
-
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            intent.putExtra("USERNAME", username);
-            intent.putExtra("PASSWORD", password);
-            startActivity(intent);
         });
 
         signupButton.setOnClickListener(new View.OnClickListener() {
@@ -139,6 +182,10 @@ public class LoginActivity extends AppCompatActivity {
         transaction.replace(R.id.forgot_password_fragment_container, fragment, "forgot_password_fragment");
         transaction.commit();
 
+    }
+    private void setErrorMessage(String message) {
+        errorText.setText(message);
+        errorText.setVisibility(TextView.VISIBLE);
     }
 
 

@@ -71,7 +71,7 @@
         android:id="@+id/login_login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="52dp"
         android:text="Login"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -95,21 +95,38 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="154dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="155dp"
         android:text="Forgot Password?"
         android:textColor="#0F0404"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.481"
+        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/login_login_button"
         tools:text="Forgot Password?" />
+
+    <TextView
+        android:id="@+id/login_error_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="155dp"
+        android:layout_marginTop="17dp"
+        android:layout_marginEnd="155dp"
+        android:text="{error message}"
+        android:textColor="#d9544d"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+
     <FrameLayout
         android:id = "@+id/forgot_password_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
+        >
+
+    </FrameLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
