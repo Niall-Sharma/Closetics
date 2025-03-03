@@ -98,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
                                 Log.d("Volley Response", "Successful Login: " + response.toString());
                                 try {
                                     String token = response.getString("token");//This grabs the string value of token JSON header
-                                    String userID = response.getString("user_id");
+                                    long userID = response.getLong("user_id");
                                     //Save userID in shared preferences
                                     UserManager.saveUserID(getApplicationContext(), userID);
                                     //Save session token in shared preferences

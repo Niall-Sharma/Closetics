@@ -56,15 +56,16 @@ public class UserManager {
     }
 
     //**** Might need to store these as ints for the backend ****
-    public static String getUserID(Context context ){
+    public static long getUserID(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
-        return prefs.getString(USER_ID_PARAM, null);
+//        prefs.edit().remove(USER_ID_PARAM).apply();
+        return prefs.getLong(USER_ID_PARAM, -1);
     }
 
-    public static void saveUserID(Context context, String userID){
+    public static void saveUserID(Context context, long userID){
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(USER_ID_PARAM, userID);
+        editor.putLong(USER_ID_PARAM, userID);
         editor.apply();
     }
 
@@ -185,24 +186,22 @@ public class UserManager {
     /*
     This request needs to be updated once backend is updated
     */
-    public static void editUserRequest(Context context, String userid, String newUsername, String newEmail, String URL,
+    public static void editUserRequest(Context context, long userId, String newUsername, String newEmail, String URL,
                                            Response.Listener<JSONObject> responseListener,
                                            Response.ErrorListener errorListener){
 
         JSONObject updateUsernameData = new JSONObject();
 
-        try{
-            //Turn id into a long for backend
-            long id = Long.parseLong(userid);
-            updateUsernameData.put("userId", id);
-            //Do not send if null
-            if (newUsername!=null){
+        try {
+            updateUsernameData.put("userId", userId);
+            Log.e("current ID", userId + "");
+            // Do not send if null
+            if (newUsername != null){
                 updateUsernameData.put("username", newUsername);
             }
-            if (newEmail!= null) {
-                updateUsernameData.put("newEmail", newEmail);
+            if (newEmail != null) {
+                updateUsernameData.put("email", newEmail);
             }
-
         } catch (Exception e) {
             Log.e("JSON Error", e.toString());
             return;
@@ -263,6 +262,22 @@ public class UserManager {
                 Request.Method.DELETE,
                 URL + id, // add id to the URL
                 responseListener, errorListener);
+        //Add request to the volley singleton request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+    public static void getUserByUsernameRequest(Context context, String username, String URL,
+                                         Response.Listener<JSONObject> responseListener,
+                                         Response.ErrorListener errorListener) {
+
+        // use GET request to getUserByUsernameURL to get the user's id
+        // to then delete user by id
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.GET,
+                URL + username, // add username to the URL
+                null,
+                responseListener,
+                errorListener);
         //Add request to the volley singleton request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
