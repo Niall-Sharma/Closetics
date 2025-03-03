@@ -12,16 +12,19 @@ import com.android.volley.toolbox.StringRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class UserManager {
 
     private static final String SHARED_PREFERENCES_FILE_NAME = "CloseticsPreferences";
     private static final String TOKEN_PARAM = "logInToken";
     private static final String USERNAME_PARAM = "username";
     private static final String USER_ID_PARAM = "userID";
-    private static final String[] SECURITY_QUESTIONS= new String[]
-    {"What is your mother's maiden name?", "What was the name of your first pet?",
+    private static final ArrayList<String> SECURITY_QUESTIONS= new ArrayList<>(Arrays.asList(
+    "What is your mother's maiden name?", "What was the name of your first pet?",
             "What is the name of the street you grew up on?" ,"What is your favorite color?", "What was the name of your first school?", "What was your childhood nickname?"
-            , "In what city were you born?", "What is your favorite food?", "What was your first car?", "What is the name of your childhood best friend?"};
+            , "In what city were you born?", "What is your favorite food?", "What was your first car?", "What is the name of your childhood best friend?"));
 
 
 
@@ -69,7 +72,7 @@ public class UserManager {
     }
 
 
-    public static String[] getSecurityQuestions(){
+    public static ArrayList<String> getSecurityQuestions(){
         return SECURITY_QUESTIONS;
     }
 
@@ -128,7 +131,9 @@ public class UserManager {
      * @param responseListener
      * @param errorListener
      */
-    public static void signupRequest(Context context, String username, String email, String password, String URL,
+    public static void signupRequest(Context context, String username, String email, String password, String securityAnswer1,
+                                     String securityAnswer2, int securityQuestion1, int securityQuestion2,
+                                     String URL,
                                     Response.Listener<JSONObject> responseListener,
                                     Response.ErrorListener errorListener) {
 
@@ -140,6 +145,11 @@ public class UserManager {
             signupData.put("username", username);
             signupData.put("email", email);
             signupData.put("password", password);
+            //Add checks for if these are null/blank? Do we want to require them?
+            signupData.put("sQA1", securityAnswer1);
+            signupData.put("sQID1", securityQuestion1);
+            signupData.put("sQA2", securityAnswer2);
+            signupData.put("sQID2", securityQuestion2);
         } catch (JSONException e) {
             Log.e("JSON Error", e.toString());
             return;
