@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface TypeRepository extends JpaRepository<Type, Long> {
+public interface TypeRepository extends JpaRepository<ClothingType, Long> {
 
 
 }

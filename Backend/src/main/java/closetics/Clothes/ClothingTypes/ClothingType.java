@@ -6,7 +6,7 @@ import closetics.Clothes.Clothing;
 import jakarta.persistence.*;
 
 @Entity(name="types")
-public class Type{
+public class ClothingType{
   
   @Id
   @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -18,8 +18,15 @@ public class Type{
 
   private String typeName;
 
-  public Type(String typeName){
-    this.typeName = typeName;    
-    
+  public ClothingType(String typeName){
+    this.typeName = typeName;        
+  }
+
+  public String GetTypename(){
+    return typeName;
+  }
+
+  public void SetTypename(String typeName){
+    this.typeName = typeName;
   }
 }

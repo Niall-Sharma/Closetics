@@ -1,5 +1,6 @@
 package closetics.Clothes;
 
+import closetics.Clothes.ClothingTypes.ClothingType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import aj.org.objectweb.asm.Type;
@@ -31,7 +32,7 @@ public class Clothing {
     @OneToOne
     @JoinColumn(name = "type_Id")
     @JsonIgnore
-    private Type type;
+    private ClothingType type;
 
     @OneToOne
     @JoinColumn(name = "specialType_Id")
@@ -39,7 +40,7 @@ public class Clothing {
     private SpecialType specialType;
   
 
-    public Clothing(Type type, SpecialType specialType, int itemId,  boolean isFavorite, String size, String lastWorn, int timesWorn, String color, String dateBought, String brand, String imagePath1, String imagePath2, String imagePath3, String itemName, String material) {
+    public Clothing(ClothingType type, SpecialType specialType, int itemId,  boolean isFavorite, String size, String lastWorn, int timesWorn, String color, String dateBought, String brand, String imagePath1, String imagePath2, String imagePath3, String itemName, String material) {
         this.clothesId = itemId;
         this.isFavorite = isFavorite;
         this.size = size;

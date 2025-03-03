@@ -22,4 +22,12 @@ public class SpecialType{
     this.specialTypeName = specialTypeName;    
     
   }
+
+  public String GetSpecialTypename(){
+    return specialTypeName;
+  }
+
+  public void SetSpecialTypename(String specialTypeName){
+    this.specialTypeName = specialTypeName;
+  }
 }
