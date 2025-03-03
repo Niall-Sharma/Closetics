@@ -1,5 +1,9 @@
 package closetics.Clothes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import aj.org.objectweb.asm.Type;
+import closetics.Clothes.ClothingTypes.SpecialType;
 import jakarta.persistence.*;
 
 @Entity(name = "clothes_table")
@@ -10,11 +14,6 @@ public class Clothing {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int clothesId;
 
-    @Enumerated(EnumType.STRING)
-    private TYPES type;
-
-    @Enumerated(EnumType.STRING)
-    private SPECIALTYPES specialtype;
 
     boolean isFavorite;
     String size;
@@ -28,11 +27,20 @@ public class Clothing {
     String imagePath3;
     String itemName;
     String material;
+    
+    @OneToOne
+    @JoinColumn(name = "type_Id")
+    @JsonIgnore
+    private Type type;
 
-    public Clothing(int itemId, SPECIALTYPES specialtype, TYPES type,  boolean isFavorite, String size, String lastWorn, int timesWorn, String color, String dateBought, String brand, String imagePath1, String imagePath2, String imagePath3, String itemName, String material) {
+    @OneToOne
+    @JoinColumn(name = "specialType_Id")
+    @JsonIgnore
+    private SpecialType specialType;
+  
+
+    public Clothing(Type type, SpecialType specialType, int itemId,  boolean isFavorite, String size, String lastWorn, int timesWorn, String color, String dateBought, String brand, String imagePath1, String imagePath2, String imagePath3, String itemName, String material) {
         this.clothesId = itemId;
-        this.type = type;
-        this.specialtype = specialtype;
         this.isFavorite = isFavorite;
         this.size = size;
         this.lastWorn = lastWorn;
@@ -45,6 +53,9 @@ public class Clothing {
         this.imagePath3 = imagePath3;
         this.itemName = itemName;
         this.material = material;
+
+        this.specialType = specialType;
+        this.type = type;
     }
     public Clothing(){
 
@@ -57,23 +68,6 @@ public class Clothing {
     public void setClothesId(int clothesId) {
         this.clothesId = clothesId;
     }
-
-    public TYPES getType() {
-        return type;
-    }
-
-    public void setType(TYPES type) {
-        this.type = type;
-    }
-
-    public SPECIALTYPES getSpecialtype() {
-        return specialtype;
-    }
-
-    public void setSpecialtype(SPECIALTYPES specialtype) {
-        this.specialtype = specialtype;
-    }
-
     public boolean isFavorite() {
         return isFavorite;
     }

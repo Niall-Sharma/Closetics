@@ -1,19 +1,25 @@
 package closetics.Clothes.ClothingTypes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import closetics.Clothes.Clothing;
 import jakarta.persistence.*;
 
-@Entity(name="special_type_table")
+@Entity(name="special_types")
 public class SpecialType{
   
   @Id
   @GeneratedValue(strategy=GenerationType.IDENTITY)
-  int specialTypeId;
+  int id;
 
-  @Enumerated(EnumType.STRING)
-  SPECIALTYPES specialType;
+  @ManyToOne
+  @JsonIgnore
+  private Clothing clothing;
 
-  public SpecialType(){
-    
+  private String specialTypeName;  
+
+  public SpecialType(String specialTypeName){
+    this.specialTypeName = specialTypeName;    
     
   }
 }
