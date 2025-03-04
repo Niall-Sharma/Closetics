@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 public interface StatRepository extends JpaRepository<Stat, Long> {
 
     @Query(value = "SELECT * FROM stats_table WHERE clothes_id=?",nativeQuery = true)
-    Stat findById(int clothesId);
+    Stat findByClothesId(long clothesId);
 
     @Query(value = "DELETE FROM stats_table WHERE clothes_Id=?",nativeQuery = true)
-    void deleteByClothesId(int clothesId);
+    void deleteByClothesId(long clothesId);
 }

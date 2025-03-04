@@ -45,7 +45,7 @@ public class Clothing {
     @JsonIgnore
     private Stat stat;
 
-    public Clothing(Stat stat, ClothingType type, SpecialType specialType, int itemId,  boolean isFavorite, String size, String lastWorn, int timesWorn, String color, String dateBought, String brand, String imagePath1, String imagePath2, String imagePath3, String itemName, String material) {
+    public Clothing(ClothingType type, SpecialType specialType, int itemId,  boolean isFavorite, String size, String lastWorn, int timesWorn, String color, String dateBought, String brand, String imagePath1, String imagePath2, String imagePath3, String itemName, String material) {
         this.clothesId = itemId;
         this.isFavorite = isFavorite;
         this.size = size;
@@ -63,12 +63,19 @@ public class Clothing {
         this.specialType = specialType;
         this.type = type;
 
-        this.stat = stat;
+        this.stat = new Stat();
     }
     public Clothing(){
 
     }
 
+    public Stat getStat(){
+      return stat;
+    }
+
+    public void setStat(Stat stat){
+      this.stat = stat;
+    }
     public int getClothesId() {
         return clothesId;
     }

@@ -2,9 +2,7 @@ package closetics.Clothes.Statistics;
 
 import java.sql.Date;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import closetics.Clothes.Clothing;
 import jakarta.persistence.*;
 
 @Entity(name = "stats_table")
@@ -14,18 +12,17 @@ public class Stat {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  int id;
+  long id;
 
-  @OneToOne
-  @JsonIgnore
-  @JoinColumn(name = "clothes_id")
-  Clothing clothesId;
-
-  public Stat(Clothing clothesId, long timesWorn, Date lastWorn){
+  public Stat(long timesWorn, Date lastWorn){
     this.timesWorn = timesWorn;
     this.lastWorn = lastWorn;
 
-    this.clothesId = clothesId;
+  }
+  
+  public Stat(){
+    lastWorn = null;
+    timesWorn = 0;
   }
 
   public long getTimesWorn(){

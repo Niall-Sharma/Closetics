@@ -1,17 +1,18 @@
 package closetics.Clothes;
 import java.util.List;
 
-import closetics.Users.User;
+import closetics.Clothes.Statistics.Stat;
+import closetics.Clothes.Statistics.StatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class ClothingController {
     @Autowired
     ClothingRepository clothingRepository;
+    
+    @Autowired  
+    StatRepository statRepository;
 
     @GetMapping(path = "/clothes")
     public List<Clothing> getAllClothing() {
@@ -33,8 +34,14 @@ public class ClothingController {
         return clothingRepository.findByType(type);
     }
 
+    @GetMapping(path = "/clothing/stats/{id}")
+    public Stat getClothingStat(@PathVariable long id){
+      return statRepository.findByClothesId(id);
+  }
+
     @PostMapping(path = "/clothes")
     public Clothing saveClothing(@RequestBody Clothing clothing) {
+        statRepository.save(clothing.getStat());
         return clothingRepository.save(clothing);
     }
 
