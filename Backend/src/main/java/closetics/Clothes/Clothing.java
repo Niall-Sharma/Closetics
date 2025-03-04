@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import aj.org.objectweb.asm.Type;
 import closetics.Clothes.ClothingTypes.SpecialType;
+import closetics.Clothes.Statistics.Stat;
 import jakarta.persistence.*;
 
 @Entity(name = "clothes_table")
@@ -39,8 +40,12 @@ public class Clothing {
     @JsonIgnore
     private SpecialType specialType;
   
+    @OneToOne
+    @JoinColumn(name = "stat_id")
+    @JsonIgnore
+    private Stat stat;
 
-    public Clothing(ClothingType type, SpecialType specialType, int itemId,  boolean isFavorite, String size, String lastWorn, int timesWorn, String color, String dateBought, String brand, String imagePath1, String imagePath2, String imagePath3, String itemName, String material) {
+    public Clothing(Stat stat, ClothingType type, SpecialType specialType, int itemId,  boolean isFavorite, String size, String lastWorn, int timesWorn, String color, String dateBought, String brand, String imagePath1, String imagePath2, String imagePath3, String itemName, String material) {
         this.clothesId = itemId;
         this.isFavorite = isFavorite;
         this.size = size;
@@ -57,6 +62,8 @@ public class Clothing {
 
         this.specialType = specialType;
         this.type = type;
+
+        this.stat = stat;
     }
     public Clothing(){
 
