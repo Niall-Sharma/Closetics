@@ -17,10 +17,10 @@ public interface ClothingRepository extends JpaRepository<Clothing, Long> {
     void deleteByClothesId(long clothesId);
 
     @Query(value = "SELECT * FROM clothes_table WHERE type=?",nativeQuery = true)
-    List<Clothing> findByType(String type);
+    List<Clothing> findByType(long type);
 
     @Query(value = "SELECT * FROM clothes_table WHERE special_type=?",nativeQuery = true)
-    List<Clothing> findBySpecialType(String specialType);
+    List<Clothing> findBySpecialType(long specialType);
 
     @Query(value = "SELECT * FROM clothes_table WHERE user_Id=?", nativeQuery = true)
     List<Clothing> findByUserId(long userId);

@@ -20,12 +20,12 @@ public class ClothingController {
     }
 
     @GetMapping(path = "/clothes/special_type/{type}")
-    public List<Clothing> getClothingBySpecialType(@PathVariable String type){
+    public List<Clothing> getClothingBySpecialType(@PathVariable long type){
         return clothingRepository.findBySpecialType(type);
     }
 
     @GetMapping(path = "/clothing/type/{type}")
-    public List<Clothing> getClothingByType(@PathVariable String type){
+    public List<Clothing> getClothingByType(@PathVariable long type){
         return clothingRepository.findByType(type);
     }
 
