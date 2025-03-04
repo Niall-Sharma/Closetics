@@ -12,19 +12,19 @@ public class Clothing {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int clothesId;
+    private long clothesId;
 
 
-    boolean isFavorite;
-    String size;
-    String color;
-    String dateBought;
-    String brand;
-    String imagePath1;
-    String imagePath2;
-    String imagePath3;
-    String itemName;
-    String material;
+    private boolean isFavorite;
+    private String size;
+    private String color;
+    private String dateBought;
+    private String brand;
+    private String imagePath1;
+    private String imagePath2;
+    private String imagePath3;
+    private String itemName;
+    private String material;
     
     @ManyToOne
     @JoinColumn(name = "type_Id")
@@ -38,7 +38,7 @@ public class Clothing {
   
     private long userId;
 
-    public Clothing(long user, ClothingType type, SpecialType specialType, int itemId,  boolean isFavorite, String size, String lastWorn, int timesWorn, String color, String dateBought, String brand, String imagePath1, String imagePath2, String imagePath3, String itemName, String material) {
+    public Clothing(long userId, ClothingType type, SpecialType specialType, int itemId,  boolean isFavorite, String size, String color, String dateBought, String brand, String imagePath1, String imagePath2, String imagePath3, String itemName, String material) {
         this.clothesId = itemId;
         this.isFavorite = isFavorite;
         this.size = size;
@@ -52,8 +52,7 @@ public class Clothing {
         this.material = material;
         this.specialType = specialType;
         this.type = type;
-
-        this.userId = user;
+        this.userId = userId;
     }
     public Clothing(){
 

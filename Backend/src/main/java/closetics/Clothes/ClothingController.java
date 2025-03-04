@@ -15,7 +15,7 @@ public class ClothingController {
     }
 
     @GetMapping(path = "/clothes/{id}")
-    public Clothing getClothing(@PathVariable int id) {
+    public Clothing getClothing(@PathVariable long id) {
         return clothingRepository.findById(id);
     }
 
@@ -29,8 +29,8 @@ public class ClothingController {
         return clothingRepository.findByType(type);
     }
 
-    @GetMapping(path = "clothing/user/{user}")
-    public List<Clothing> getClothingByUser(@PathVariable long user){
+    @GetMapping(path = "clothing/user/{userId}")
+    public List<Clothing> getClothingByUser(@PathVariable long userId){
       return clothingRepository.findByUserId(user);
     }
 
@@ -40,12 +40,12 @@ public class ClothingController {
     }
 
     @DeleteMapping(path = "/clothes/{itemId}")
-    public void deleteClothing(@PathVariable int itemId) {
+    public void deleteClothing(@PathVariable long itemId) {
         clothingRepository.deleteByClothesId(itemId);
     }
 
-    @PutMapping (path = "/clothes/{itemID}")
-    public void updateClothing(@RequestBody Clothing clothing, @PathVariable String itemID){
+    @PutMapping (path = "/clothes/")
+    public void updateClothing(@RequestBody Clothing clothing){
         clothingRepository.save(clothing);
     }
 }
