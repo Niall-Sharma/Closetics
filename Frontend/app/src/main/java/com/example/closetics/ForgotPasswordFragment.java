@@ -1,5 +1,6 @@
 package com.example.closetics;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,11 +11,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import java.util.ArrayList;
 
@@ -27,8 +26,8 @@ public class ForgotPasswordFragment extends Fragment {
     private Button cancelButton;
     private EditText newPassword;
     private EditText confirmPassword;
-    private int id1;
-    private int id2;
+    private int index1;
+    private int index2;
 
     //private USERNAME
 
@@ -54,8 +53,11 @@ public class ForgotPasswordFragment extends Fragment {
         // Retrieve data from arguments
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            id1 = getArguments().getInt("ID1");
-            id2 = getArguments().getInt("ID2");
+            Long id1 = getArguments().getLong("ID1");
+            Long id2 = getArguments().getLong("ID2");
+            //type cast to int
+            index1 = id1.intValue();
+            index2 = id2.intValue();
         }
 
 
@@ -66,7 +68,7 @@ public class ForgotPasswordFragment extends Fragment {
         ArrayList<String> allSecurityQuestions = UserManager.getSecurityQuestions();
 
         String[] spinnerItems = new String[]
-                {"Select One", "Security Question 1", "Security Question 2"};
+                {"Select One", allSecurityQuestions.get(index1), allSecurityQuestions.get(index2)};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, spinnerItems);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
@@ -94,12 +96,11 @@ public class ForgotPasswordFragment extends Fragment {
             public void onClick(View view) {
                 //Grabs the parent fragment manager, from the login activity
                 FragmentManager fragmentManager = getParentFragmentManager();
+
                 //Uses the tag from the login activity
                 Fragment fragment = fragmentManager.findFragmentByTag("forgot_password_fragment");
                 if (fragment != null) {
-                    fragmentManager.beginTransaction()
-                            .remove(fragment)
-                            .commit();
+                    fragmentManager.beginTransaction().remove(fragment).commit();
                 }
             }
         });
@@ -107,38 +108,35 @@ public class ForgotPasswordFragment extends Fragment {
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Send the securityInput data to the changePassword fragment
-                String securityInputString = securityInput.getText().toString();
-                Log.d("tag", securityInputString);
-                Bundle bundle = new Bundle();
-                bundle.putString("security_input", securityInputString);
-                ChangePasswordFragment fragment = new ChangePasswordFragment();
-                fragment.setArguments(bundle);
-                //Show the fragment
-                showFragment(fragment);
+                Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
+                startActivity(intent);
             }
         });
 
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity().getApplicationContext(), LoginActivity.class);
+                startActivity(intent);
+            }
+        });
 
         return view;
     }
 
-    private void showFragment(Fragment fragment){
-        //Changed to getParentFragmentManager
-        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-        //Fragment fragment = new ChangePasswordFragment();
-        transaction.replace(R.id.forgot_password_fragment_container, fragment, "change_password_fragment");
-        transaction.commit();
-
-    }
 
 
-    //Accepting the data from loginActivity
-    public static ForgotPasswordFragment newInstance(int data1, int data2) {
+    //Used in login activity to create a new forgotPassword fragment with proper arguments
+    public static ForgotPasswordFragment newInstance(long id1, long id2) {
+        //Create a new forgot password fragment
         ForgotPasswordFragment fragment = new ForgotPasswordFragment();
         Bundle args = new Bundle();
-        args.putInt("ID1", data1);
-        args.putInt("ID2", data2);
+        String debugid1 = String.valueOf(id1);
+        String debugid2 = String.valueOf(id2);
+        args.putLong("ID1", id1);
+        args.putLong("ID2", id2);
+        Log.d("ID1", debugid1);
+        Log.d("ID2", debugid2);
         fragment.setArguments(args);
         return fragment;
     }

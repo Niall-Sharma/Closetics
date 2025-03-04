@@ -45,8 +45,8 @@ public class LoginActivity extends AppCompatActivity {
     private Button signupButton;        // define signup button variable
     private Button forgotPasswordButton;  //define forgotPassword button variable
     private TextView errorText;
-    private int id1;
-    private int id2;
+    private long id1;
+    private long id2;
 
 
     private static final String URL_GET_USER_BY_USERNAME = "http://10.0.2.2:8080/users/username/"; // +{{username}}
@@ -178,8 +178,10 @@ public class LoginActivity extends AppCompatActivity {
                     setErrorMessage("Please enter your username to change password");
                 }
                 else{
+                    Log.d("Volley Debug", "Making request to: " + URL_GET_USER_BY_USERNAME + username);
                     getSecurityQuestionIDs(getApplicationContext(), URL_GET_USER_BY_USERNAME + username);
-                    showFragment();
+                    //Do not allow any more button presses while waiting
+                    forgotPasswordButton.setEnabled(false);
 
                 }
             }
@@ -200,6 +202,8 @@ public class LoginActivity extends AppCompatActivity {
         errorText.setVisibility(TextView.VISIBLE);
     }
 
+
+    //Get request to grab which security questions were answered
     private void getSecurityQuestionIDs(Context context, String url) {
         // Create a JsonObjectRequest for the GET request
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url,
@@ -209,9 +213,14 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
+                            Log.d("Volley Response", "Received JSON: " + response.toString());
                             // Retrieve the two IDs from the response
-                            id1 = response.getInt("sQID1");  // Assuming the first ID is named "id1"
-                            id2 = response.getInt("sQID2");// Assuming the second ID is named "id2"
+                            id1 = response.getLong("sQID1");  // Assuming the first ID is named "id1"
+                            id2 = response.getLong("sQID2");// Assuming the second ID is named "id2"
+                            //show fragment only on response!!
+                            showFragment();
+                            //Reset button functionality
+                            forgotPasswordButton.setEnabled(true);
 
                         } catch (JSONException e) {
                             Log.e("Volley Error", "Error in user/username JSON");
@@ -223,6 +232,10 @@ public class LoginActivity extends AppCompatActivity {
                     public void onErrorResponse(com.android.volley.VolleyError error) {
                         // Handle error
                         Log.e("Volley Error", error.toString());
+                        setErrorMessage("That username does not exist, please enter valid username");
+                        forgotPasswordButton.setEnabled(true);
+
+
                     }
                 });
         // Add the request to the Volley request queue

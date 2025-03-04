@@ -144,6 +144,12 @@ public class SignupActivity extends AppCompatActivity {
                 return;
             }
 
+            //Check if security questions were answered
+            if (securityAnswer1.isEmpty() || securityAnswer2.isEmpty()){
+                setErrorMessage("Please answer the security questions");
+                return;
+            }
+
             if (!password.equals(confirm)) {
                 setErrorMessage("Passwords must match");
                 return;
