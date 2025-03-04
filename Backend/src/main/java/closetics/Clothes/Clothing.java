@@ -82,7 +82,7 @@ public class Clothing {
       this.userId = user;
     }
 
-    public int getClothesId() {
+    public long getClothesId() {
         return clothesId;
     }
     public void setClothesId(int clothesId) {

@@ -31,7 +31,7 @@ public class ClothingController {
 
     @GetMapping(path = "clothing/user/{userId}")
     public List<Clothing> getClothingByUser(@PathVariable long userId){
-      return clothingRepository.findByUserId(user);
+      return clothingRepository.findByUserId(userId);
     }
 
     @PostMapping(path = "/clothes")
