@@ -37,7 +37,12 @@ public class ClothingController {
     @GetMapping(path = "/clothing/stats/{id}")
     public Stat getClothingStat(@PathVariable long id){
       return statRepository.findByClothesId(id);
-  }
+    }
+
+    @PutMapping(path = "/clothing/stats/{id}")
+    public void updateStat(@RequestBody Stat stat, @PathVariable long id){
+      statRepository.save(stat);
+    }
 
     @PostMapping(path = "/clothes")
     public Clothing saveClothing(@RequestBody Clothing clothing) {
