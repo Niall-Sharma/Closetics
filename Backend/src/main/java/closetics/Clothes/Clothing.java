@@ -3,7 +3,6 @@ package closetics.Clothes;
 import closetics.Clothes.ClothingTypes.ClothingType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import aj.org.objectweb.asm.Type;
 import closetics.Clothes.ClothingTypes.SpecialType;
 import jakarta.persistence.*;
 
@@ -13,32 +12,33 @@ public class Clothing {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int clothesId;
+    private long clothesId;
 
 
-    boolean isFavorite;
-    String size;
-    String color;
-    String dateBought;
-    String brand;
-    String imagePath1;
-    String imagePath2;
-    String imagePath3;
-    String itemName;
-    String material;
+    private boolean isFavorite;
+    private String size;
+    private String color;
+    private String dateBought;
+    private String brand;
+    private String imagePath1;
+    private String imagePath2;
+    private String imagePath3;
+    private String itemName;
+    private String material;
     
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "type_Id")
     @JsonIgnore
     private ClothingType type;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "specialType_Id")
     @JsonIgnore
     private SpecialType specialType;
   
+    private long userId;
 
-    public Clothing(ClothingType type, SpecialType specialType, int itemId,  boolean isFavorite, String size, String color, String dateBought, String brand, String imagePath1, String imagePath2, String imagePath3, String itemName, String material) {
+    public Clothing(long userId, ClothingType type, SpecialType specialType, int itemId,  boolean isFavorite, String size, String color, String dateBought, String brand, String imagePath1, String imagePath2, String imagePath3, String itemName, String material) {
         this.clothesId = itemId;
         this.isFavorite = isFavorite;
         this.size = size;
@@ -52,9 +52,34 @@ public class Clothing {
         this.material = material;
         this.specialType = specialType;
         this.type = type;
+        this.userId = userId;
     }
     public Clothing(){
 
+    }
+    
+    public ClothingType getClothingType(){
+      return type;
+    }
+
+    public void setClothingType(ClothingType clothingType){
+      type = clothingType;
+    }
+    
+    public SpecialType getSpecialType(){
+      return specialType;
+    }
+
+    public void setSpecialType(SpecialType specialType){
+      this.specialType = specialType; 
+    }
+
+    public long getUser(){
+      return userId;
+    }
+    
+    public void setUser(long user){
+      this.userId = user;
     }
 
     public int getClothesId() {

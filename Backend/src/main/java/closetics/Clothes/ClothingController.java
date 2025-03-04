@@ -1,11 +1,7 @@
 package closetics.Clothes;
 import java.util.List;
 
-import closetics.Users.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,7 +15,7 @@ public class ClothingController {
     }
 
     @GetMapping(path = "/clothes/{id}")
-    public Clothing getClothing(@PathVariable int id) {
+    public Clothing getClothing(@PathVariable long id) {
         return clothingRepository.findById(id);
     }
 
@@ -33,18 +29,23 @@ public class ClothingController {
         return clothingRepository.findByType(type);
     }
 
+    @GetMapping(path = "clothing/user/{userId}")
+    public List<Clothing> getClothingByUser(@PathVariable long userId){
+      return clothingRepository.findByUserId(user);
+    }
+
     @PostMapping(path = "/clothes")
     public Clothing saveClothing(@RequestBody Clothing clothing) {
         return clothingRepository.save(clothing);
     }
 
     @DeleteMapping(path = "/clothes/{itemId}")
-    public void deleteClothing(@PathVariable int itemId) {
+    public void deleteClothing(@PathVariable long itemId) {
         clothingRepository.deleteByClothesId(itemId);
     }
 
-    @PutMapping (path = "/clothes/{itemID}")
-    public void updateClothing(@RequestBody Clothing clothing, @PathVariable String itemID){
+    @PutMapping (path = "/clothes/")
+    public void updateClothing(@RequestBody Clothing clothing){
         clothingRepository.save(clothing);
     }
 }
