@@ -6,11 +6,15 @@ import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class UserManager {
 
@@ -18,10 +22,10 @@ public class UserManager {
     private static final String TOKEN_PARAM = "logInToken";
     private static final String USERNAME_PARAM = "username";
     private static final String USER_ID_PARAM = "userID";
-    private static final String[] SECURITY_QUESTIONS= new String[]
-    {"What is your mother's maiden name?", "What was the name of your first pet?",
+    private static final ArrayList<String> SECURITY_QUESTIONS= new ArrayList<>(Arrays.asList(
+    "What is your mother's maiden name?", "What was the name of your first pet?",
             "What is the name of the street you grew up on?" ,"What is your favorite color?", "What was the name of your first school?", "What was your childhood nickname?"
-            , "In what city were you born?", "What is your favorite food?", "What was your first car?", "What is the name of your childhood best friend?"};
+            , "In what city were you born?", "What is your favorite food?", "What was your first car?", "What is the name of your childhood best friend?"));
 
 
 
@@ -58,7 +62,6 @@ public class UserManager {
     //**** Might need to store these as ints for the backend ****
     public static long getUserID(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
-//        prefs.edit().remove(USER_ID_PARAM).apply();
         return prefs.getLong(USER_ID_PARAM, -1);
     }
 
@@ -79,7 +82,7 @@ public class UserManager {
     }
 
 
-    public static String[] getSecurityQuestions(){
+    public static ArrayList<String> getSecurityQuestions(){
         return SECURITY_QUESTIONS;
     }
 
@@ -138,7 +141,9 @@ public class UserManager {
      * @param responseListener
      * @param errorListener
      */
-    public static void signupRequest(Context context, String username, String email, String password, String URL,
+    public static void signupRequest(Context context, String username, String email, String password, String securityAnswer1,
+                                     String securityAnswer2, int securityQuestion1, int securityQuestion2,
+                                     String URL,
                                     Response.Listener<JSONObject> responseListener,
                                     Response.ErrorListener errorListener) {
 
@@ -150,6 +155,11 @@ public class UserManager {
             signupData.put("username", username);
             signupData.put("email", email);
             signupData.put("password", password);
+
+            signupData.put("sQA1", securityAnswer1);
+            signupData.put("sQID1", securityQuestion1);
+            signupData.put("sQA2", securityAnswer2);
+            signupData.put("sQID2", securityQuestion2);
         } catch (JSONException e) {
             Log.e("JSON Error", e.toString());
             return;
@@ -166,25 +176,27 @@ public class UserManager {
     }
 
 
-    public static void changePasswordRequest(Context context, String newPassword, String securityInput, String URL,
+    public static void updatePasswordRequest(Context context, long userId, long securityQuestionId, String securityQuestionAnswer,
+                                             String newPassword, String URL,
                                              Response.Listener<JSONObject> responseListener,
                                              Response.ErrorListener errorListener) {
-        //Create the json object of the login data (username and password)
+        //Create the json object of the updatePassword data
         JSONObject updatePasswordData = new JSONObject();
 
         //Use try catch blocks when creating JSON objects
         try {
+            updatePasswordData.put("id", userId);
+            updatePasswordData.put("securityQuestionId", securityQuestionId );
+            updatePasswordData.put("securityQuestionAnswer", securityQuestionAnswer);
             updatePasswordData.put("newPassword", newPassword);
-            updatePasswordData.put("securityQuestionID", securityInput);
         } catch (JSONException e) {
             Log.e("JSON Error", e.toString());
             return;
         }
 
-
         //The post request
         JsonObjectRequest request = new JsonObjectRequest(
-                Request.Method.POST,
+                Request.Method.PUT,
                 URL,
                 updatePasswordData, responseListener, errorListener);
         //Add request to the volley singleton request queue
@@ -192,9 +204,6 @@ public class UserManager {
     }
 
 
-    /*
-    This request needs to be updated once backend is updated
-    */
     public static void editUserRequest(Context context, long userId, String newUsername, String newEmail, String URL,
                                            Response.Listener<JSONObject> responseListener,
                                            Response.ErrorListener errorListener){
@@ -203,7 +212,7 @@ public class UserManager {
 
         try {
             updateUsernameData.put("userId", userId);
-            Log.e("current ID", userId + "");
+            
             // Do not send if null
             if (newUsername != null){
                 updateUsernameData.put("username", newUsername);
@@ -274,6 +283,7 @@ public class UserManager {
         //Add request to the volley singleton request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
+
 
     public static void getUserByUsernameRequest(Context context, String username, String URL,
                                          Response.Listener<JSONObject> responseListener,

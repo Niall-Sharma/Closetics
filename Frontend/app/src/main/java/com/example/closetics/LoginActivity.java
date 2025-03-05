@@ -45,8 +45,13 @@ public class LoginActivity extends AppCompatActivity {
     private Button signupButton;        // define signup button variable
     private Button forgotPasswordButton;  //define forgotPassword button variable
     private TextView errorText;
+    //To be sent to the forgot password fragment
+    private long id1;
+    private long id2;
+    private long userId;
 
 
+    private static final String URL_GET_USER_BY_USERNAME = MainActivity.SERVER_URL + "/users/username/"; // +{{username}}
     private static final String URL = MainActivity.SERVER_URL + "/login";
 
 
@@ -168,15 +173,26 @@ public class LoginActivity extends AppCompatActivity {
         forgotPasswordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showFragment();
+                String username = usernameEditText.getText().toString();
+                if (username.isEmpty()){
+                    setErrorMessage("Please enter your username to change password");
+                }
+                else{
+                    Log.d("Volley Debug", "Making request to: " + URL_GET_USER_BY_USERNAME + username);
+                    getSecurityQuestionIDs(getApplicationContext(), URL_GET_USER_BY_USERNAME + username);
+                    //Do not allow any more button presses while waiting
+                    forgotPasswordButton.setEnabled(false);
+
+                }
             }
         });
-
-
     }
+
+
     private void showFragment(){
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        Fragment fragment = new ForgotPasswordFragment();
+        //New instance of forgotpassword fragment containing the id instance variables
+        Fragment fragment = ForgotPasswordFragment.newInstance(id1, id2, userId);
         transaction.replace(R.id.forgot_password_fragment_container, fragment, "forgot_password_fragment");
         transaction.commit();
 
@@ -184,6 +200,47 @@ public class LoginActivity extends AppCompatActivity {
     private void setErrorMessage(String message) {
         errorText.setText(message);
         errorText.setVisibility(TextView.VISIBLE);
+    }
+
+
+    //Get request to grab which security questions that were answered also grabs the userID
+    private void getSecurityQuestionIDs(Context context, String url) {
+        // Create a JsonObjectRequest for the GET request
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url,
+                null,  // Request body is null for GET requests
+
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            Log.d("Volley Response", "Received JSON: " + response.toString());
+                            // Retrieve the two IDs from the response
+                            id1 = response.getLong("sQID1");  // Assuming the first ID is named "id1"
+                            id2 = response.getLong("sQID2");// Assuming the second ID is named "id2"
+                            userId = response.getLong("userId");
+                            //show fragment only on response!!
+                            showFragment();
+                            //Reset button functionality
+                            forgotPasswordButton.setEnabled(true);
+
+                        } catch (JSONException e) {
+                            Log.e("Volley Error", "Error in user/username JSON");
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(com.android.volley.VolleyError error) {
+                        // Handle error
+                        Log.e("Volley Error", error.toString());
+                        setErrorMessage("That username does not exist, please enter valid username");
+                        forgotPasswordButton.setEnabled(true);
+
+
+                    }
+                });
+        // Add the request to the Volley request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
 

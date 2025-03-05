@@ -5,8 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +28,7 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,10 +40,17 @@ public class SignupActivity extends AppCompatActivity {
     private EditText usernameEditText;  // define username edittext variable
     private EditText emailEditText;  // define email edittext variable
     private EditText passwordEditText;  // define password edittext variable
-    private EditText confirmEditText;   // define confirm edittext variable
+    private EditText confirmEditText;// define confirm edittext variable
+    private EditText securityAnswerEditText1;
+    private EditText securityAnswerEditText2;
     private Button loginButton;         // define login button variable
     private Button signupButton;        // define signup button variable
     private TextView errorText;
+    private Spinner securityAnswerSpinner1;
+    private Spinner securityAnswerSpinner2;
+
+    private int securityQuestion1;
+    private int securityQuestion2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +58,10 @@ public class SignupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_signup);
 
         // Initialize UI elements
+        securityAnswerSpinner1 = findViewById(R.id.signup_sq1_spinner);
+        securityAnswerSpinner2 = findViewById(R.id.signup_sq2_spinner);
+        securityAnswerEditText2= findViewById(R.id.editTextText2);
+        securityAnswerEditText1 = findViewById(R.id.signup_sq1_edit);
         usernameEditText = findViewById(R.id.signup_username_edit);
         emailEditText = findViewById(R.id.signup_email_edit);
         passwordEditText = findViewById(R.id.signup_password_edit);
@@ -55,6 +71,55 @@ public class SignupActivity extends AppCompatActivity {
         errorText = findViewById(R.id.signup_error_text);
 
         errorText.setVisibility(TextView.GONE); // hide error message by default
+
+        //Set up spinners
+        ArrayList<String> securityAnswerItems = UserManager.getSecurityQuestions();
+
+        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, securityAnswerItems);
+        securityAnswerSpinner1.setAdapter(adapter1);
+
+        ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, securityAnswerItems);
+        securityAnswerSpinner2.setAdapter(adapter2);
+
+
+
+        //Save the selected question to send in request
+        securityAnswerSpinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+            {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    String chosenQuestion = adapter1.getItem(position);
+                    securityQuestion1 = position;
+
+            }
+
+            //First element in list when nothing selected
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                    String chosenQuestion = securityAnswerItems.get(0);
+                    securityQuestion1 = 0;
+            }
+            });
+
+
+        securityAnswerSpinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                String chosenQuestion = adapter2.getItem(position);
+                securityQuestion2 = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                String chosenQuestion = securityAnswerItems.get(0);
+                securityQuestion2 = 0;
+            }
+        });
+
+
+
+
 
         // On click listeners
         loginButton.setOnClickListener(v -> {
@@ -70,6 +135,20 @@ public class SignupActivity extends AppCompatActivity {
             String email = emailEditText.getText().toString().trim();
             String password = passwordEditText.getText().toString().trim();
             String confirm = confirmEditText.getText().toString().trim();
+            String securityAnswer1 = securityAnswerEditText1.getText().toString().trim();
+            String securityAnswer2 = securityAnswerEditText2.getText().toString().trim();
+
+            //Check if the security questions were the same
+            if (securityQuestion2 == securityQuestion1){
+                setErrorMessage("Please choose two different security questions");
+                return;
+            }
+
+            //Check if security questions were answered
+            if (securityAnswer1.isEmpty() || securityAnswer2.isEmpty()){
+                setErrorMessage("Please answer the security questions");
+                return;
+            }
 
             if (!password.equals(confirm)) {
                 setErrorMessage("Passwords must match");
@@ -78,7 +157,7 @@ public class SignupActivity extends AppCompatActivity {
 
             //Toast.makeText(getApplicationContext(), "Signing up...", Toast.LENGTH_SHORT).show();
 
-            signUp(username, email, password);
+            signUp(username, email, password, securityAnswer1, securityAnswer2);
         });
     }
 
@@ -87,8 +166,8 @@ public class SignupActivity extends AppCompatActivity {
         errorText.setVisibility(TextView.VISIBLE);
     }
 
-    private void signUp(String username, String email, String password) {
-        UserManager.signupRequest(getApplicationContext(), username, email, password, URL_SIGNUP,
+    private void signUp(String username, String email, String password, String securityAnswer1, String securityAnswer2) {
+        UserManager.signupRequest(getApplicationContext(), username, email, password, securityAnswer1, securityAnswer2, securityQuestion1, securityQuestion2, URL_SIGNUP,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
