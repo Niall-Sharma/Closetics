@@ -60,15 +60,15 @@ public class UserManager {
     }
 
     //**** Might need to store these as ints for the backend ****
-    public static String getUserID(Context context ){
+    public static Long getUserID(Context context ){
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
-        return prefs.getString(USER_ID_PARAM, null);
+        return prefs.getLong(USER_ID_PARAM, -1);
     }
 
-    public static void saveUserID(Context context, String userID){
+    public static void saveUserID(Context context, Long userID){
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(USER_ID_PARAM, userID);
+        editor.putLong(USER_ID_PARAM, userID);
         editor.apply();
     }
 
@@ -146,7 +146,7 @@ public class UserManager {
             signupData.put("username", username);
             signupData.put("email", email);
             signupData.put("password", password);
-            //Add checks for if these are null/blank? Do we want to require them?
+
             signupData.put("sQA1", securityAnswer1);
             signupData.put("sQID1", securityQuestion1);
             signupData.put("sQA2", securityAnswer2);
@@ -167,25 +167,27 @@ public class UserManager {
     }
 
 
-    public static void changePasswordRequest(Context context, String newPassword, String securityInput, String URL,
+    public static void updatePasswordRequest(Context context, long userId, long securityQuestionId, String securityQuestionAnswer,
+                                             String newPassword, String URL,
                                              Response.Listener<JSONObject> responseListener,
                                              Response.ErrorListener errorListener) {
-        //Create the json object of the login data (username and password)
+        //Create the json object of the updatePassword data
         JSONObject updatePasswordData = new JSONObject();
 
         //Use try catch blocks when creating JSON objects
         try {
+            updatePasswordData.put("id", userId);
+            updatePasswordData.put("securityQuestionId", securityQuestionId );
+            updatePasswordData.put("securityQuestionAnswer", securityQuestionAnswer);
             updatePasswordData.put("newPassword", newPassword);
-            updatePasswordData.put("securityQuestionID", securityInput);
         } catch (JSONException e) {
             Log.e("JSON Error", e.toString());
             return;
         }
 
-
         //The post request
         JsonObjectRequest request = new JsonObjectRequest(
-                Request.Method.POST,
+                Request.Method.PUT,
                 URL,
                 updatePasswordData, responseListener, errorListener);
         //Add request to the volley singleton request queue
@@ -194,16 +196,15 @@ public class UserManager {
 
 
 
-    public static void editUserRequest(Context context, String userid, String newUsername, String newEmail, String URL,
+    public static void editUserRequest(Context context, Long userid, String newUsername, String newEmail, String URL,
                                            Response.Listener<JSONObject> responseListener,
                                            Response.ErrorListener errorListener){
 
         JSONObject updateUsernameData = new JSONObject();
 
         try{
-            //Turn id into a long for backend
-            long id = Long.parseLong(userid);
-            updateUsernameData.put("userId", id);
+
+                updateUsernameData.put("userId", userid);
             //Do not send if null
             if (newUsername!=null){
                 updateUsernameData.put("username", newUsername);

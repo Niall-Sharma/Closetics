@@ -45,8 +45,10 @@ public class LoginActivity extends AppCompatActivity {
     private Button signupButton;        // define signup button variable
     private Button forgotPasswordButton;  //define forgotPassword button variable
     private TextView errorText;
+    //To be sent to the forgot password fragment
     private long id1;
     private long id2;
+    private long userId;
 
 
     private static final String URL_GET_USER_BY_USERNAME = "http://10.0.2.2:8080/users/username/"; // +{{username}}
@@ -101,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
                                 Log.d("Volley Response", "Successful Login: " + response.toString());
                                 try {
                                     String token = response.getString("token");//This grabs the string value of token JSON header
-                                    String userID = response.getString("user_id");
+                                    Long userID = response.getLong("user_id");
                                     //Save userID in shared preferences
                                     UserManager.saveUserID(getApplicationContext(), userID);
                                     //Save session token in shared preferences
@@ -192,7 +194,7 @@ public class LoginActivity extends AppCompatActivity {
     private void showFragment(){
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         //New instance of forgotpassword fragment containing the id instance variables
-        Fragment fragment = ForgotPasswordFragment.newInstance(id1, id2);
+        Fragment fragment = ForgotPasswordFragment.newInstance(id1, id2, userId);
         transaction.replace(R.id.forgot_password_fragment_container, fragment, "forgot_password_fragment");
         transaction.commit();
 
@@ -203,7 +205,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    //Get request to grab which security questions were answered
+    //Get request to grab which security questions that were answered also grabs the userID
     private void getSecurityQuestionIDs(Context context, String url) {
         // Create a JsonObjectRequest for the GET request
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url,
@@ -217,6 +219,7 @@ public class LoginActivity extends AppCompatActivity {
                             // Retrieve the two IDs from the response
                             id1 = response.getLong("sQID1");  // Assuming the first ID is named "id1"
                             id2 = response.getLong("sQID2");// Assuming the second ID is named "id2"
+                            userId = response.getLong("userId");
                             //show fragment only on response!!
                             showFragment();
                             //Reset button functionality
