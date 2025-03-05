@@ -51,11 +51,9 @@ public class LoginActivity extends AppCompatActivity {
     private long userId;
 
 
-    private static final String URL_GET_USER_BY_USERNAME = "http://10.0.2.2:8080/users/username/"; // +{{username}}
+    private static final String URL_GET_USER_BY_USERNAME = MainActivity.SERVER_URL + "/users/username/"; // +{{username}}
+    private static final String URL = MainActivity.SERVER_URL + "/login";
 
-
-    //Postman Mock Server
-    private static final String URL = "http://10.0.2.2:8080/login";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +101,7 @@ public class LoginActivity extends AppCompatActivity {
                                 Log.d("Volley Response", "Successful Login: " + response.toString());
                                 try {
                                     String token = response.getString("token");//This grabs the string value of token JSON header
-                                    Long userID = response.getLong("user_id");
+                                    long userID = response.getLong("user_id");
                                     //Save userID in shared preferences
                                     UserManager.saveUserID(getApplicationContext(), userID);
                                     //Save session token in shared preferences

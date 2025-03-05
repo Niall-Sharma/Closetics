@@ -1,5 +1,9 @@
 package closetics.Clothes;
 
+import closetics.Clothes.ClothingTypes.ClothingType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import closetics.Clothes.ClothingTypes.SpecialType;
 import jakarta.persistence.*;
 
 @Entity(name = "clothes_table")
@@ -8,35 +12,36 @@ public class Clothing {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int clothesId;
+    private long clothesId;
 
-    @Enumerated(EnumType.STRING)
-    private TYPES type;
 
-    @Enumerated(EnumType.STRING)
-    private SPECIALTYPES specialtype;
+    private boolean isFavorite;
+    private String size;
+    private String color;
+    private String dateBought;
+    private String brand;
+    private String imagePath1;
+    private String imagePath2;
+    private String imagePath3;
+    private String itemName;
+    private String material;
+    
+    @ManyToOne
+    @JoinColumn(name = "type_Id")
+    @JsonIgnore
+    private ClothingType type;
 
-    boolean isFavorite;
-    String size;
-    String lastWorn;
-    int timesWorn;
-    String color;
-    String dateBought;
-    String brand;
-    String imagePath1;
-    String imagePath2;
-    String imagePath3;
-    String itemName;
-    String material;
+    @ManyToOne
+    @JoinColumn(name = "specialType_Id")
+    @JsonIgnore
+    private SpecialType specialType;
+  
+    private long userId;
 
-    public Clothing(int itemId, SPECIALTYPES specialtype, TYPES type,  boolean isFavorite, String size, String lastWorn, int timesWorn, String color, String dateBought, String brand, String imagePath1, String imagePath2, String imagePath3, String itemName, String material) {
+    public Clothing(long userId, ClothingType type, SpecialType specialType, int itemId,  boolean isFavorite, String size, String color, String dateBought, String brand, String imagePath1, String imagePath2, String imagePath3, String itemName, String material) {
         this.clothesId = itemId;
-        this.type = type;
-        this.specialtype = specialtype;
         this.isFavorite = isFavorite;
         this.size = size;
-        this.lastWorn = lastWorn;
-        this.timesWorn = timesWorn;
         this.color = color;
         this.dateBought = dateBought;
         this.brand = brand;
@@ -45,35 +50,44 @@ public class Clothing {
         this.imagePath3 = imagePath3;
         this.itemName = itemName;
         this.material = material;
+        this.specialType = specialType;
+        this.type = type;
+        this.userId = userId;
     }
     public Clothing(){
 
     }
-
-    public int getClothesId() {
-        return clothesId;
+    
+    public ClothingType getClothingType(){
+      return type;
     }
 
+    public void setClothingType(ClothingType clothingType){
+      type = clothingType;
+    }
+    
+    public SpecialType getSpecialType(){
+      return specialType;
+    }
+
+    public void setSpecialType(SpecialType specialType){
+      this.specialType = specialType; 
+    }
+
+    public long getUser(){
+      return userId;
+    }
+    
+    public void setUser(long user){
+      this.userId = user;
+    }
+
+    public long getClothesId() {
+        return clothesId;
+    }
     public void setClothesId(int clothesId) {
         this.clothesId = clothesId;
     }
-
-    public TYPES getType() {
-        return type;
-    }
-
-    public void setType(TYPES type) {
-        this.type = type;
-    }
-
-    public SPECIALTYPES getSpecialtype() {
-        return specialtype;
-    }
-
-    public void setSpecialtype(SPECIALTYPES specialtype) {
-        this.specialtype = specialtype;
-    }
-
     public boolean isFavorite() {
         return isFavorite;
     }
@@ -90,23 +104,7 @@ public class Clothing {
         this.size = size;
     }
 
-    public String getLastWorn() {
-        return lastWorn;
-    }
-
-    public void setLastWorn(String lastWorn) {
-        this.lastWorn = lastWorn;
-    }
-
-    public int getTimesWorn() {
-        return timesWorn;
-    }
-
-    public void setTimesWorn(int timesWorn) {
-        this.timesWorn = timesWorn;
-    }
-
-    public String getColor() {
+     public String getColor() {
         return color;
     }
 

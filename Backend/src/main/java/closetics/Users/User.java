@@ -42,7 +42,9 @@ public class User {
         this.sQID3 = sQID3;
     }
 
-    public User() {}
+    public User() {
+
+    }
 
 
     public boolean compareHashedPassword(String checkPass){

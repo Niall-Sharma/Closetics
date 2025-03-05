@@ -23,8 +23,8 @@ import java.net.HttpURLConnection;
 
 public class DeleteUserActivity extends AppCompatActivity {
 
-    private static final String URL_DELETE_USER = "http://10.0.2.2:8080/users/"; // +{{id}}
-    private static final String URL_GET_USER_BY_USERNAME = "http://10.0.2.2:8080/users/username/"; // +{{username}}
+    private static final String URL_DELETE_USER = MainActivity.SERVER_URL + "/users/"; // +{{id}}
+    private static final String URL_GET_USER_BY_USERNAME = MainActivity.SERVER_URL + "/users/username/"; // +{{username}}
 
     private Button yesButton;
     private Button noButton;
@@ -42,7 +42,7 @@ public class DeleteUserActivity extends AppCompatActivity {
         errorText.setVisibility(TextView.GONE); // hide error message by default
 
         yesButton.setOnClickListener(v -> {
-            deleteUser(UserManager.getUsername(getApplicationContext()));
+            deleteUser(UserManager.getUserID(getApplicationContext()));
         });
 
         noButton.setOnClickListener(v -> {
@@ -57,8 +57,8 @@ public class DeleteUserActivity extends AppCompatActivity {
         errorText.setVisibility(TextView.VISIBLE);
     }
 
-    private void deleteUser(String username) {
-        UserManager.deleteUserRequest(getApplicationContext(), username, URL_DELETE_USER, URL_GET_USER_BY_USERNAME,
+    private void deleteUser(long id) {
+        UserManager.deleteUserRequest(getApplicationContext(), id, URL_DELETE_USER,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {

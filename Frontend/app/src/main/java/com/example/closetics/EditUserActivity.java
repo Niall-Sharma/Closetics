@@ -34,7 +34,7 @@ public class EditUserActivity extends AppCompatActivity {
     private Button submit;
     private Button cancel;
     private TextView errorText;
-    private final String URL = "http://10.0.2.2:8080/updateUser";
+    private final String URL = MainActivity.SERVER_URL + "/updateUser";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

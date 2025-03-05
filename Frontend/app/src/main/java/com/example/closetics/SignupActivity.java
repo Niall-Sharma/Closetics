@@ -34,8 +34,8 @@ import java.util.Map;
 
 public class SignupActivity extends AppCompatActivity {
 
-    private static final String URL_SIGNUP = "http://10.0.2.2:8080/signup";
-    private static final String URL_LOGIN = "http://10.0.2.2:8080/login";
+    private static final String URL_SIGNUP = MainActivity.SERVER_URL + "/signup";
+    private static final String URL_GET_USER_BY_USERNAME = MainActivity.SERVER_URL + "/users/username/"; // +{{username}}
 
     private EditText usernameEditText;  // define username edittext variable
     private EditText emailEditText;  // define email edittext variable
@@ -189,6 +189,7 @@ public class SignupActivity extends AppCompatActivity {
                             UserManager.saveLoginToken(getApplicationContext(), token);
                             UserManager.saveUsername(getApplicationContext(), username);
 
+                            saveUserId(username);
 
                             // return to MainActivity after successful signup and login
                             Intent intent = new Intent(SignupActivity.this, MainActivity.class);
@@ -265,6 +266,40 @@ public class SignupActivity extends AppCompatActivity {
                 });
     }
 
+    private void saveUserId(String username) {
+        UserManager.getUserByUsernameRequest(getApplicationContext(), username, URL_GET_USER_BY_USERNAME,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            Log.d("Volley Response", "Successful User ID Save: " + response.toString());
+
+                            long id = response.getLong("userId");
+                            UserManager.saveUserID(getApplicationContext(), id);
+                        }
+                        catch (JSONException e) {
+                            Log.e("JSON Error", "Get user by username Error: " + e.toString());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("Volley Error", "Get user by username Error: " + error.toString());
+
+                        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                            setErrorMessage("Connection timeout");
+                        }
+                        else if (error.networkResponse != null) {
+                            setErrorMessage("Error Code: " + error.networkResponse.statusCode);
+                            Log.e("Volley Error", "Error Code: " + error.networkResponse.statusCode);
+                        }
+                        else {
+                            setErrorMessage("Unknown Get user by username Error");
+                        }
+                    }
+                });
+    }
 
 //    private void login(String username, String password) {
 //        UserManager.loginRequest(getApplicationContext(), username, password, URL_LOGIN,
