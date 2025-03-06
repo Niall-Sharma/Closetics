@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.closetics.clothes.ClothesActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class DiscoverFragment extends Fragment {
@@ -40,8 +39,8 @@ public class DiscoverFragment extends Fragment {
         String username = UserManager.getUsername(getActivity().getApplicationContext());
         if(username == null) {
             loginText.setVisibility(TextView.VISIBLE);
-            //clothesButton.setVisibility(TextView.GONE);
-            //outfitsButton.setVisibility(TextView.GONE);
+            clothesButton.setVisibility(TextView.GONE);
+            outfitsButton.setVisibility(TextView.GONE);
         } else {
             loginText.setVisibility(TextView.GONE);
             clothesButton.setVisibility(TextView.VISIBLE);

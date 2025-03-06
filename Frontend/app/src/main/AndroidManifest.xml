@@ -17,7 +17,7 @@
         android:theme="@style/Theme.Closetics"
         tools:targetApi="31">
         <activity
-            android:name=".clothes.ClothesActivity"
+            android:name=".ClothesActivity"
             android:exported="false"/>
         <activity
             android:name=".DeleteUserActivity"
