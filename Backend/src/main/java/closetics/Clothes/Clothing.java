@@ -40,7 +40,7 @@ public class Clothing {
     @JsonIgnore
     private SpecialType specialType;
   
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "stat_id")
     @JsonIgnore
     private Stat stat;

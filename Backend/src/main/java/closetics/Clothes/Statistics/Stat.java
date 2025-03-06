@@ -1,28 +1,50 @@
 package closetics.Clothes.Statistics;
 
 import java.sql.Date;
-
+import java.util.ArrayList;
 
 import jakarta.persistence.*;
 
 @Entity(name = "stats_table")
 public class Stat {
-  Date lastWorn;
+  ArrayList<Date> dateWorn;
   long timesWorn;
+  long highTemp;
+  long lowTemp;
+
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   long id;
 
-  public Stat(long timesWorn, Date lastWorn){
+  public Stat(long timesWorn, long highTemp, long lowTemp){
     this.timesWorn = timesWorn;
-    this.lastWorn = lastWorn;
-
+    this.dateWorn = new ArrayList<>();
+    this.highTemp = highTemp;
+    this.lowTemp = lowTemp;
   }
   
   public Stat(){
-    lastWorn = null;
+    dateWorn = new ArrayList<>();
     timesWorn = 0;
+    highTemp = 0;
+    lowTemp = 0;
+  }
+
+  public long getLowTemp(){
+    return lowTemp;
+  }
+
+  public void setLowTemp(long temp){
+    lowTemp = temp;
+  }
+
+  public long getHighTemp(){
+    return highTemp;
+  }
+
+  public void setHighTemp(long temp){
+    highTemp = temp;
   }
 
   public long getTimesWorn(){
@@ -41,12 +63,12 @@ public class Stat {
     timesWorn-=1;
   }
 
-  public void setLastWorn(Date lastWorn){
-    this.lastWorn = lastWorn;
+  public void addLastWorn(Date lastWorn){
+    this.dateWorn.add(lastWorn);
   }
 
-  public Date getLastWorn(){
-    return lastWorn;
+  public ArrayList<Date> getLastWorn(){
+    return dateWorn;
   }
 
 
