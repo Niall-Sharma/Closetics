@@ -1,5 +1,7 @@
 package closetics.Outfits;
 
+import closetics.Clothes.Clothing;
+import closetics.Clothes.ClothingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,9 @@ public class OutfitController {
 
     @Autowired
     OutfitRepository outfitRepo;
+
+    @Autowired
+    ClothingRepository clothingRepo;
 
     @GetMapping(path = "/getOutfit/{outfitId}")
     public Optional<Outfit> getOutfit(@PathVariable long outfitId) {
@@ -75,6 +80,39 @@ public class OutfitController {
             Outfit outfit = outfitOptional.get();
             if (outfit.getOutfitItems().contains(clothingId)) { // Check if it exists before removing
                 outfit.getOutfitItems().remove(clothingId);
+                outfitRepo.save(outfit);
+            }
+            return ResponseEntity.ok(outfit);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping(path = "/getAllOutfitItems/{outfitId}")
+    public ResponseEntity<List<Optional<Clothing>>> getAllOutfitItems(@PathVariable long outfitId) {
+        Optional<Outfit> outfitOptional = outfitRepo.findById(outfitId);
+        List<Optional<Clothing>> clothes = new ArrayList<>();
+        if (outfitOptional.isPresent()) {
+            Outfit outfit = outfitOptional.get();
+            List<Long> items = outfit.getOutfitItems();
+            for (Long itemId : items) {
+                clothes.add(clothingRepo.findById(itemId));
+            }
+        }
+        return ResponseEntity.ok(clothes);
+    }
+
+    @PutMapping("/swapFavoriteOnOutfit/{outfitId}")
+    public ResponseEntity<Outfit> swapFavorite(@PathVariable long outfitId) {
+        Optional<Outfit> outfitOptional = outfitRepo.findById(outfitId);
+
+        if (outfitOptional.isPresent()) {
+            Outfit outfit = outfitOptional.get();
+            if (outfit.getFavorite()) {
+                outfit.setFavorite(false);
+                outfitRepo.save(outfit);
+            } else {
+                outfit.setFavorite(true);
                 outfitRepo.save(outfit);
             }
             return ResponseEntity.ok(outfit);
