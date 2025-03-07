@@ -1,5 +1,6 @@
 package closetics.Clothes;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import closetics.Clothes.Statistics.Stat;
@@ -20,7 +21,7 @@ public class ClothingController {
     }
 
     @GetMapping(path = "/clothes/{id}")
-    public Clothing getClothing(@PathVariable long id) {
+    public Optional<Clothing> getClothing(@PathVariable long id) {
         return clothingRepository.findById(id);
     }
 
@@ -34,7 +35,7 @@ public class ClothingController {
         return clothingRepository.findByType(userId, type);
     }
 
-    @GetMapping(path = "clothes/user/{userId}")
+    @GetMapping(path = "/clothes/user/{userId}")
     public List<Clothing> getClothingByUser(@PathVariable long userId){
       return clothingRepository.findByUserId(userId);
     }
@@ -64,6 +65,25 @@ public class ClothingController {
     @PutMapping (path = "/clothes/")
     public void updateClothing(@RequestBody Clothing clothing){
         clothingRepository.save(clothing);
+    }
+
+    @PutMapping("/swapFavoriteOnClothing/{clothing_Id}")
+    public ResponseEntity<Clothing> swapFavorite(@PathVariable long clothing_Id) {
+        Optional<Clothing> clothingOptional = clothingRepository.findById(clothing_Id);
+
+        if (clothingOptional.isPresent()) {
+            Clothing clothing = clothingOptional.get();
+            if (clothing.getFavorite()) {
+                clothing.setFavorite(false);
+                clothingRepository.save(clothing);
+            } else {
+                clothing.setFavorite(true);
+                clothingRepository.save(clothing);
+            }
+            return ResponseEntity.ok(clothing);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 
