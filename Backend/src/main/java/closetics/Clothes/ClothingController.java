@@ -1,6 +1,8 @@
 package closetics.Clothes;
 import java.util.List;
 
+import closetics.Clothes.ClothingTypes.SpecialType;
+import closetics.Clothes.ClothingTypes.SpecialTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,17 +21,17 @@ public class ClothingController {
         return clothingRepository.findById(id);
     }
 
-    @GetMapping(path = "/clothes/special_type/{type}")
-    public List<Clothing> getClothingBySpecialType(@PathVariable long type){
-        return clothingRepository.findBySpecialType(type);
+    @GetMapping(path = "/clothes/special_type/{userId}/{type}")
+    public List<Clothing> getClothingBySpecialType(@PathVariable("userId") long userId, @PathVariable("type") long type){
+        return clothingRepository.findBySpecialType(userId, type);
     }
 
-    @GetMapping(path = "/clothing/type/{type}")
-    public List<Clothing> getClothingByType(@PathVariable long type){
-        return clothingRepository.findByType(type);
+    @GetMapping(path = "/clothes/type/{userId}/{type}")
+    public List<Clothing> getClothingByType(@PathVariable("userId") long userId, @PathVariable("type") long type){
+        return clothingRepository.findByType(userId, type);
     }
 
-    @GetMapping(path = "clothing/user/{userId}")
+    @GetMapping(path = "clothes/user/{userId}")
     public List<Clothing> getClothingByUser(@PathVariable long userId){
       return clothingRepository.findByUserId(userId);
     }
@@ -48,5 +50,7 @@ public class ClothingController {
     public void updateClothing(@RequestBody Clothing clothing){
         clothingRepository.save(clothing);
     }
+
+
 }
 
