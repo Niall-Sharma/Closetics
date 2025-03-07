@@ -8,16 +8,20 @@ import org.json.JSONObject;
 
 public class EditOutfitClothingListItem {
     private long id;
+    private long outfitId;
     private JSONObject jsonObject; // store it just in case
+    private String name;
     private String color;
     private int typeId;
     private int specialTypeId;
     private Context context;
 
-    public EditOutfitClothingListItem(Context context, JSONObject jsonObject, long id, String color, int typeId, int specialTypeId) {
+    public EditOutfitClothingListItem(Context context, JSONObject jsonObject, long id, long outfitId, String name, String color, int typeId, int specialTypeId) {
         this.context = context;
         this.jsonObject = jsonObject;
         this.id = id;
+        this.outfitId = outfitId;
+        this.name = name;
         this.color = color;
         this.typeId = typeId;
         this.specialTypeId = specialTypeId;
@@ -29,9 +33,13 @@ public class EditOutfitClothingListItem {
 
     public long getId() { return id; }
 
-    public String getColor() { return color; }
+    public long getOutfitId() { return outfitId; }
 
-    public String getType() { return MainActivity.CLOTHING_TYPES.get(typeId); };
+    public String getName() { return name == null || name.isBlank() ? "(no name)" : name; }
 
-    public String getSpecialType() { return MainActivity.CLOTHING_SPECIAL_TYPES.get(specialTypeId); };
+    public String getColor() { return color == null || color.isBlank() ? "(no color)" : color; }
+
+    public String getType() { return MainActivity.CLOTHING_TYPES.getOrDefault(typeId, "(no type)"); };
+
+    public String getSpecialType() { return MainActivity.CLOTHING_SPECIAL_TYPES.getOrDefault(specialTypeId, "(no special type)"); };
 }

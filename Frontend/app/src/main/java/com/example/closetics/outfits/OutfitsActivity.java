@@ -13,10 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.example.closetics.LoginActivity;
 import com.example.closetics.MainActivity;
 import com.example.closetics.R;
-import com.example.closetics.SignupActivity;
 import com.example.closetics.UserManager;
 
 import org.json.JSONArray;
@@ -27,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OutfitsActivity extends AppCompatActivity {
-    private final String URL_GET_OUTFITS = MainActivity.SERVER_URL + "/outfits/"; // + {{userId}}
+    private final String URL_GET_ALL_USER_OUTFITS = MainActivity.SERVER_URL + "/outfits/"; // + {{userId}}
     private final String URL_GET_ALL_OUTFIT_ITEMS = MainActivity.SERVER_URL + "/getAllOutfitItems/"; // + {{outfitId}}
 
     private Button addOutfitButton;
@@ -78,7 +76,7 @@ public class OutfitsActivity extends AppCompatActivity {
     }
 
     private void populateOutfitsList(long userId) {
-        OutfitManager.getAllOutfitsRequest(getApplicationContext(), userId, URL_GET_OUTFITS,
+        OutfitManager.getAllOutfitsRequest(getApplicationContext(), userId, URL_GET_ALL_USER_OUTFITS,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {

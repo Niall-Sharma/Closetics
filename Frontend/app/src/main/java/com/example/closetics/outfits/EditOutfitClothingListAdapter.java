@@ -1,6 +1,7 @@
 package com.example.closetics.outfits;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,13 +11,17 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.example.closetics.MainActivity;
 import com.example.closetics.R;
+
+import org.json.JSONObject;
 
 import java.util.List;
 
 public class EditOutfitClothingListAdapter extends ArrayAdapter<EditOutfitClothingListItem> {
-
-
+    private final String URL_REMOVE_ITEM = MainActivity.SERVER_URL + "/removeItemFromOutfit/"; // + {{outfitId}} + / + {{clothingId}}
 
     public EditOutfitClothingListAdapter(Context context, List<EditOutfitClothingListItem> items) {
         super(context, 0, items);
@@ -41,21 +46,37 @@ public class EditOutfitClothingListAdapter extends ArrayAdapter<EditOutfitClothi
 
         deleteButton.setOnClickListener(v -> {
             // delete this item
-            OutfitManager.removeClothingRequest();
-            remove(item);
+            OutfitManager.removeClothingRequest(item.getContext(), item.getOutfitId(), item.getId(), URL_REMOVE_ITEM,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.d("Volley Response", response.toString());
+
+                            // remove item from list if deleted successfully
+                            remove(item);
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.e("Volley Error", error.toString());
+                        }
+                    });
         });
 
         // Populate the data into the template view using the data object
         nameText.setText(item.getName());
-
-        String clothes = "Clothes: ";
-        for (int i = 0; i < item.getClothes().length() - 1; i++) { // convert an array into comma-separated string
-            clothes += item.getClothingName(i) + ", ";
-        }
-        clothes += clothesNames.get(clothesNames.size() - 1);
-        clothesText.setText(clothes);
+        colorText.setText("Color: " + item.getColor());
+        typeText.setText("Type: " + item.getType() + ",");
+        specialTypeText.setText(item.getSpecialType());
 
         // Return the completed view to render on screen
         return convertView;
+    }
+
+    // make list items not clickable
+    @Override
+    public boolean isEnabled(int position) {
+        return false;
     }
 }
