@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import org.mindrot.jbcrypt.*;
 
 
-@Entity(name = "usersTable")
+@Entity(name = "users_table")
 @Table(uniqueConstraints = {
 @UniqueConstraint(columnNames = "username"),
 @UniqueConstraint(columnNames = "email")})
@@ -68,7 +68,7 @@ public class User {
     }
 
     /*
-Regex explanataion:
+Regex explanation:
     [0-9A-Za-z] contains only letters and numbers
     {3,16} between 3 and 16 characters long
  */
@@ -78,7 +78,7 @@ Regex explanataion:
     }
 
     /*
-Regex explanataion:
+Regex explanation:
     Don't even ask I took it from stack overflow
  */
     public static Boolean validateEmail(String email) {
@@ -91,7 +91,7 @@ Regex explanataion:
     }
 
     /*
-    Regex explanataion:
+    Regex explanation:
         (?=.*[0-9]) a digit must occur at least once
         (?=.*[a-z]) a lower case letter must occur at least once
         (?=.*[A-Z]) an upper case letter must occur at least once
