@@ -51,6 +51,10 @@ public class MainActivity extends AppCompatActivity {
 //        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.bottomNavView, navController);
 
+        // FOR TEST
+//        UserManager.saveUsername(getApplicationContext(), "user1");
+//        UserManager.saveUserID(getApplicationContext(), 1);
+
 //        replaceFragment(new HomeFragment());
 
 //        binding.bottomNavigationView.setOnItemSelectedListener(item -> {

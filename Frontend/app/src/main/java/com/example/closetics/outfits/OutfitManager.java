@@ -7,6 +7,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.example.closetics.VolleySingleton;
 
 import org.json.JSONArray;
@@ -64,18 +65,31 @@ public class OutfitManager {
         VolleySingleton.getInstance(context).addToRequestQueue(jsonObjReq);
     }
 
-    public static void deleteOutfitRequest(Context context, long outfitId, String URL,
-                                        Response.Listener<JSONObject> responseListener,
-                                        Response.ErrorListener errorListener) {
+//    public static void deleteOutfitRequest(Context context, long outfitId, String URL,
+//                                        Response.Listener<JSONObject> responseListener,
+//                                        Response.ErrorListener errorListener) {
+//
+//        JsonObjectRequest jsonObjReq = new JsonObjectRequest(
+//                Request.Method.DELETE,
+//                URL + outfitId,
+//                null, // Pass null as the request body since it's a GET request
+//                responseListener, errorListener);
+//
+//        // Adding request to request queue
+//        VolleySingleton.getInstance(context).addToRequestQueue(jsonObjReq);
+//    }
 
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(
+    public static void deleteOutfitRequest(Context context, long outfitId, String URL,
+                                           Response.Listener<String> responseListener,
+                                           Response.ErrorListener errorListener) {
+
+        StringRequest StringReq = new StringRequest(
                 Request.Method.DELETE,
                 URL + outfitId,
-                null, // Pass null as the request body since it's a GET request
                 responseListener, errorListener);
 
         // Adding request to request queue
-        VolleySingleton.getInstance(context).addToRequestQueue(jsonObjReq);
+        VolleySingleton.getInstance(context).addToRequestQueue(StringReq);
     }
 
     public static void updateOutfitRequest(Context context, JSONObject outfit, String URL,
@@ -139,7 +153,7 @@ public class OutfitManager {
                                           Response.ErrorListener errorListener) {
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(
-                Request.Method.DELETE,
+                Request.Method.PUT,
                 URL + outfitId + "/" + clothingId,
                 null,
                 responseListener, errorListener);

@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OutfitsActivity extends AppCompatActivity {
-    private final String URL_GET_ALL_USER_OUTFITS = MainActivity.SERVER_URL + "/outfits/"; // + {{userId}}
+    private final String URL_GET_ALL_USER_OUTFITS = MainActivity.SERVER_URL + "/getAllUserOutfits/"; // + {{userId}}
     private final String URL_GET_ALL_OUTFIT_ITEMS = MainActivity.SERVER_URL + "/getAllOutfitItems/"; // + {{outfitId}}
 
     private Button addOutfitButton;
@@ -51,7 +51,7 @@ public class OutfitsActivity extends AppCompatActivity {
         outfitsList.setAdapter(adapter);
 
         addOutfitButton.setOnClickListener(v -> {
-            Intent intent = new Intent(OutfitsActivity.this, AddOutfitActivity.class);
+            Intent intent = new Intent(OutfitsActivity.this, EditOutfitActivity.class);
             startActivity(intent);
         });
 

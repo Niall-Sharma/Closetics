@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,8 @@ import com.android.volley.VolleyError;
 import com.example.closetics.MainActivity;
 import com.example.closetics.R;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -42,7 +45,7 @@ public class EditOutfitClothingListAdapter extends ArrayAdapter<EditOutfitClothi
         TextView colorText = convertView.findViewById(R.id.edit_outfit_clothing_list_item_color_text);
         TextView typeText = convertView.findViewById(R.id.edit_outfit_clothing_list_item_type_text);
         TextView specialTypeText = convertView.findViewById(R.id.edit_outfit_clothing_list_item_special_type_text);
-        Button deleteButton = convertView.findViewById(R.id.edit_outfit_clothing_list_item_delete_button);
+        ImageButton deleteButton = convertView.findViewById(R.id.edit_outfit_clothing_list_item_delete_button);
 
         deleteButton.setOnClickListener(v -> {
             // delete this item
@@ -53,6 +56,15 @@ public class EditOutfitClothingListAdapter extends ArrayAdapter<EditOutfitClothi
                             Log.d("Volley Response", response.toString());
 
                             // remove item from list if deleted successfully
+//                            try { // this doesn't work
+//                                item.getJsonObject().put("outfitItems", response.getJSONArray("outfitItems"));
+////                                JSONArray clothingIds = item.getJsonObject().getJSONArray("outfitItems");
+////                                int ind = 0;
+////                                while (ind < clothingIds.length() && )
+//                            } catch (JSONException e) {
+//                                Log.e("Clothing deletion Error", e.toString());
+//                            }
+
                             remove(item);
                         }
                     },

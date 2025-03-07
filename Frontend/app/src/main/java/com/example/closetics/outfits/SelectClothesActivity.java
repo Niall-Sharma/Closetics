@@ -50,7 +50,10 @@ public class SelectClothesActivity extends AppCompatActivity {
         clothesList.setAdapter(adapter);
 
         Bundle extras = getIntent().getExtras();
-        outfitId = extras.getLong("OUTFIT_ID", -1);
+        outfitId = -1;
+        if (extras != null) {
+            outfitId = extras.getLong("OUTFIT_ID", -1);
+        }
         initialOutfitClothes = new HashSet<>();
 
         doneButton.setOnClickListener(v -> {
@@ -107,6 +110,10 @@ public class SelectClothesActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONArray response) {
                         Log.d("Volley Response", response.toString());
+
+                        if (response.length() > 0) {
+                            noClothesText.setVisibility(TextView.GONE);
+                        }
 
                         for (int i = 0; i < response.length(); i++) {
                             try {

@@ -36,10 +36,10 @@ public class OutfitsListAdapter  extends ArrayAdapter<OutfitsListItem> {
         nameText.setText(item.getName());
 
         String clothes = "Clothes: ";
-        for (int i = 0; i < item.getClothes().size() - 1; i++) { // convert an list into comma-separated string
-            clothes += item.getClothingName(i) + ", ";
+        for (int i = 0; i < item.getClothes().size(); i++) { // convert an list into comma-separated string
+            clothes += item.getClothingName(i) + "; ";
         }
-        clothes += item.getClothingName(item.getClothes().size() - 1);
+//        clothes += item.getClothingName(item.getClothes().size() - 1);
         clothesText.setText(clothes);
 
         // Return the completed view to render on screen
