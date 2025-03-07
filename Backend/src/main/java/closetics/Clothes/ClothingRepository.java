@@ -10,15 +10,18 @@ import java.util.List;
 @Repository
 public interface ClothingRepository extends JpaRepository<Clothing, Long> {
 
-    @Query(value = "SELECT * FROM users_table WHERE clothesId=?",nativeQuery = true)
-    Clothing findById(int clothesId);
+    @Query(value = "SELECT * FROM clothes_table WHERE clothesId=?",nativeQuery = true)
+    Clothing findById(long clothesId);
 
-    @Query(value = "DELETE FROM users_table WHERE clothesId=?",nativeQuery = true)
-    void deleteByClothesId(int clothesId);
+    @Query(value = "DELETE FROM clothes_table WHERE clothesId=?",nativeQuery = true)
+    void deleteByClothesId(long clothesId);
 
-    @Query(value = "SELECT * FROM users_table WHERE type=?",nativeQuery = true)
-    List<Clothing> findByType(String type);
+    @Query(value = "SELECT * FROM clothes_table WHERE user_id=? AND type=?",nativeQuery = true)
+    List<Clothing> findByType(long user_id, long type);
+    //CHANGE THIS SO USERS CAN'T SEE EACH OTHER
+    @Query(value = "SELECT * FROM clothes_table WHERE special_type=? AND user_id=?",nativeQuery = true)
+    List<Clothing> findBySpecialType(long user_id, long special_type);
 
-    @Query(value = "SELECT * FROM users_table WHERE special_type=?",nativeQuery = true)
-    List<Clothing> findBySpecialType(String specialType);
+    @Query(value = "SELECT * FROM clothes_table WHERE user_Id=?", nativeQuery = true)
+    List<Clothing> findByUserId(long userId);
 }
