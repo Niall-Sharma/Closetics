@@ -10,10 +10,11 @@ import java.util.List;
 @Repository
 public interface ClothingRepository extends JpaRepository<Clothing, Long> {
 
-    @Query(value = "SELECT * FROM clothes_table WHERE clothesId=?",nativeQuery = true)
+    @Query(value = "SELECT * FROM clothes_table WHERE clothes_id=?",nativeQuery = true)
     Clothing findById(long clothesId);
 
-    @Query(value = "DELETE FROM clothes_table WHERE clothesId=?",nativeQuery = true)
+    @Transactional
+    @Query(value = "DELETE FROM clothes_table WHERE clothes_id=?",nativeQuery = true)
     void deleteByClothesId(long clothesId);
 
     @Query(value = "SELECT * FROM clothes_table WHERE user_id=? AND type=?",nativeQuery = true)

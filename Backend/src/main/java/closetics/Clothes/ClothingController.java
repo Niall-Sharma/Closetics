@@ -51,12 +51,14 @@ public class ClothingController {
 
     @PostMapping(path = "/clothes")
     public Clothing saveClothing(@RequestBody Clothing clothing) {
+        clothing.setStat(new Stat());
+        statRepository.save(clothing.getStat());
         return clothingRepository.save(clothing);
     }
 
     @DeleteMapping(path = "/clothes/{itemId}")
     public void deleteClothing(@PathVariable long itemId) {
-        clothingRepository.deleteByClothesId(itemId);
+        clothingRepository.deleteById(itemId);
     }
 
     @PutMapping (path = "/clothes/")
