@@ -7,10 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SpecialTypeRepository extends JpaRepository<SpecialType, Long> {
-    @Query(value = "SELECT * FROM special_types WHERE special_type_name=?",nativeQuery = true)
-    SpecialType findBySpecialType(String specialTypeName);
-
-
     @Query(value = "SELECT * FROM special_types WHERE id = ?", nativeQuery = true)
-    SpecialType findBSpecialTypeId(int specialTypeId);
+    SpecialType findBSpecialTypeId(long specialTypeId);
 }

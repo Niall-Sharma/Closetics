@@ -10,12 +10,14 @@ public class SpecialType{
   
   @Id
   @GeneratedValue(strategy=GenerationType.IDENTITY)
-  int id;
+  long id;
   private String specialTypeName;  
 
   public SpecialType(String specialTypeName){
-    this.specialTypeName = specialTypeName;    
-    
+    this.specialTypeName = specialTypeName;
+  }
+
+  public SpecialType() {
   }
 
   public String GetSpecialTypename(){

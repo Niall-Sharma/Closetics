@@ -1,9 +1,12 @@
 package closetics.Clothes;
 
 import closetics.Clothes.ClothingTypes.ClothingType;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import closetics.Clothes.ClothingTypes.SpecialType;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
 @Entity(name = "clothes_table")
@@ -13,7 +16,6 @@ public class Clothing {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long clothesId;
-
 
     private boolean isFavorite;
     private String size;
@@ -25,20 +27,13 @@ public class Clothing {
     private String imagePath3;
     private String itemName;
     private String material;
-    
-    @ManyToOne
-    @JoinColumn(name = "type_Id")
-    @JsonIgnore
-    private ClothingType type;
-
-    @ManyToOne
-    @JoinColumn(name = "specialType_Id")
-    @JsonIgnore
-    private SpecialType specialType;
-  
+    private String price;
     private long userId;
+    private long type;
+    private long specialType;
+  
 
-    public Clothing(long userId, ClothingType type, SpecialType specialType, int itemId,  boolean isFavorite, String size, String color, String dateBought, String brand, String imagePath1, String imagePath2, String imagePath3, String itemName, String material) {
+    public Clothing(long itemId,  boolean isFavorite, String size, String color, String dateBought, String brand, String imagePath1, String imagePath2, String imagePath3, String itemName, String material, String price, long specialType, long type, long userId ) {
         this.clothesId = itemId;
         this.isFavorite = isFavorite;
         this.size = size;
@@ -53,24 +48,25 @@ public class Clothing {
         this.specialType = specialType;
         this.type = type;
         this.userId = userId;
+        this.price = price;
     }
     public Clothing(){
 
     }
     
-    public ClothingType getClothingType(){
+    public long getClothingType(){
       return type;
     }
 
-    public void setClothingType(ClothingType clothingType){
+    public void setClothingType(long clothingType){
       type = clothingType;
     }
     
-    public SpecialType getSpecialType(){
+    public long getSpecialType(){
       return specialType;
     }
 
-    public void setSpecialType(SpecialType specialType){
+    public void setSpecialType(long specialType){
       this.specialType = specialType; 
     }
 
@@ -166,5 +162,13 @@ public class Clothing {
 
     public void setMaterial(String material) {
         this.material = material;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
     }
 }
