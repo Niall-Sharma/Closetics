@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import closetics.Users.User;
 
 @Entity
-@Table(name = "tokens")
+@Table(name = "token_table")
 public class Token {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
