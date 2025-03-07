@@ -1,10 +1,7 @@
 package closetics.Clothes;
 
-import closetics.Clothes.ClothingTypes.ClothingType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import aj.org.objectweb.asm.Type;
-import closetics.Clothes.ClothingTypes.SpecialType;
 import closetics.Clothes.Statistics.Stat;
 import jakarta.persistence.*;
 
@@ -14,43 +11,32 @@ public class Clothing {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int clothesId;
+    private long clothesId;
 
-
-    boolean isFavorite;
-    String size;
-    String lastWorn;
-    int timesWorn;
-    String color;
-    String dateBought;
-    String brand;
-    String imagePath1;
-    String imagePath2;
-    String imagePath3;
-    String itemName;
-    String material;
-    
-    @OneToOne
-    @JoinColumn(name = "type_Id")
-    @JsonIgnore
-    private ClothingType type;
-
-    @OneToOne
-    @JoinColumn(name = "specialType_Id")
-    @JsonIgnore
-    private SpecialType specialType;
+    private boolean isFavorite;
+    private String size;
+    private String color;
+    private String dateBought;
+    private String brand;
+    private String imagePath1;
+    private String imagePath2;
+    private String imagePath3;
+    private String itemName;
+    private String material;
+    private String price;
+    private long userId;
+    private long type;
+    private long specialType;
   
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "stat_id")
     @JsonIgnore
     private Stat stat;
 
-    public Clothing(ClothingType type, SpecialType specialType, int itemId,  boolean isFavorite, String size, String lastWorn, int timesWorn, String color, String dateBought, String brand, String imagePath1, String imagePath2, String imagePath3, String itemName, String material) {
+    public Clothing(long itemId,  boolean isFavorite, String size, String color, String dateBought, String brand, String imagePath1, String imagePath2, String imagePath3, String itemName, String material, String price, long specialType, long type, long userId ) {
         this.clothesId = itemId;
         this.isFavorite = isFavorite;
         this.size = size;
-        this.lastWorn = lastWorn;
-        this.timesWorn = timesWorn;
         this.color = color;
         this.dateBought = dateBought;
         this.brand = brand;
@@ -64,9 +50,15 @@ public class Clothing {
         this.type = type;
 
         this.stat = new Stat();
+        this.userId = userId;
+        this.price = price;
     }
     public Clothing(){
 
+    }
+
+    public long getClothingType(){
+      return type;
     }
 
     public Stat getStat(){
@@ -76,10 +68,29 @@ public class Clothing {
     public void setStat(Stat stat){
       this.stat = stat;
     }
-    public int getClothesId() {
-        return clothesId;
+    public void setClothingType(long clothingType){
+      type = clothingType;
     }
 
+    public long getSpecialType(){
+      return specialType;
+    }
+
+    public void setSpecialType(long specialType){
+      this.specialType = specialType;
+    }
+
+    public long getUser(){
+      return userId;
+    }
+
+    public void setUser(long user){
+      this.userId = user;
+    }
+
+    public long getClothesId() {
+        return clothesId;
+    }
     public void setClothesId(int clothesId) {
         this.clothesId = clothesId;
     }
@@ -99,23 +110,7 @@ public class Clothing {
         this.size = size;
     }
 
-    public String getLastWorn() {
-        return lastWorn;
-    }
-
-    public void setLastWorn(String lastWorn) {
-        this.lastWorn = lastWorn;
-    }
-
-    public int getTimesWorn() {
-        return timesWorn;
-    }
-
-    public void setTimesWorn(int timesWorn) {
-        this.timesWorn = timesWorn;
-    }
-
-    public String getColor() {
+     public String getColor() {
         return color;
     }
 
@@ -177,5 +172,13 @@ public class Clothing {
 
     public void setMaterial(String material) {
         this.material = material;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
     }
 }

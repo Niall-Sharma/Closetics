@@ -10,14 +10,16 @@ public class ClothingType{
   
   @Id
   @GeneratedValue(strategy=GenerationType.IDENTITY)
-  int id;
+  long id;
 
   private String typeName;
 
   public ClothingType(String typeName){
     this.typeName = typeName;        
   }
+  public ClothingType(){
 
+  }
   public String GetTypename(){
     return typeName;
   }

@@ -1,17 +1,17 @@
 package closetics.Clothes;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import closetics.Clothes.Statistics.Stat;
 import closetics.Clothes.Statistics.StatRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class ClothingController {
     @Autowired
     ClothingRepository clothingRepository;
-    
-    @Autowired  
+
+    @Autowired
     StatRepository statRepository;
 
     @GetMapping(path = "/clothes")
@@ -20,18 +20,23 @@ public class ClothingController {
     }
 
     @GetMapping(path = "/clothes/{id}")
-    public Clothing getClothing(@PathVariable int id) {
+    public Clothing getClothing(@PathVariable long id) {
         return clothingRepository.findById(id);
     }
 
-    @GetMapping(path = "/clothes/special_type/{type}")
-    public List<Clothing> getClothingBySpecialType(@PathVariable String type){
-        return clothingRepository.findBySpecialType(type);
+    @GetMapping(path = "/clothes/special_type/{userId}/{type}")
+    public List<Clothing> getClothingBySpecialType(@PathVariable("userId") long userId, @PathVariable("type") long type){
+        return clothingRepository.findBySpecialType(userId, type);
     }
 
-    @GetMapping(path = "/clothing/type/{type}")
-    public List<Clothing> getClothingByType(@PathVariable String type){
-        return clothingRepository.findByType(type);
+    @GetMapping(path = "/clothes/type/{userId}/{type}")
+    public List<Clothing> getClothingByType(@PathVariable("userId") long userId, @PathVariable("type") long type){
+        return clothingRepository.findByType(userId, type);
+    }
+
+    @GetMapping(path = "clothes/user/{userId}")
+    public List<Clothing> getClothingByUser(@PathVariable long userId){
+      return clothingRepository.findByUserId(userId);
     }
 
     @GetMapping(path = "/clothing/stats/{id}")
@@ -46,18 +51,19 @@ public class ClothingController {
 
     @PostMapping(path = "/clothes")
     public Clothing saveClothing(@RequestBody Clothing clothing) {
-        statRepository.save(clothing.getStat());
         return clothingRepository.save(clothing);
     }
 
     @DeleteMapping(path = "/clothes/{itemId}")
-    public void deleteClothing(@PathVariable int itemId) {
+    public void deleteClothing(@PathVariable long itemId) {
         clothingRepository.deleteByClothesId(itemId);
     }
 
-    @PutMapping (path = "/clothes/{itemID}")
-    public void updateClothing(@RequestBody Clothing clothing, @PathVariable String itemID){
+    @PutMapping (path = "/clothes/")
+    public void updateClothing(@RequestBody Clothing clothing){
         clothingRepository.save(clothing);
     }
+
+
 }
 
