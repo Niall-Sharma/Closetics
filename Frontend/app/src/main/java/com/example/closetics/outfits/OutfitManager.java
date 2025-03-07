@@ -106,19 +106,19 @@ public class OutfitManager {
         VolleySingleton.getInstance(context).addToRequestQueue(jsonObjReq);
     }
 
-//    public static void getClothingRequest(Context context, long clothingId, String URL,
-//                                            Response.Listener<JSONObject> responseListener,
-//                                            Response.ErrorListener errorListener) {
-//
-//        JsonObjectRequest jsonObjReq = new JsonObjectRequest(
-//                Request.Method.GET,
-//                URL + clothingId,
-//                null, // Pass null as the request body since it's a GET request
-//                responseListener, errorListener);
-//
-//        // Adding request to request queue
-//        VolleySingleton.getInstance(context).addToRequestQueue(jsonObjReq);
-//    }
+    public static void getAllUserClothesRequest(Context context, long userId, String URL,
+                                            Response.Listener<JSONArray> responseListener,
+                                            Response.ErrorListener errorListener) {
+
+        JsonArrayRequest jsonArrReq = new JsonArrayRequest(
+                Request.Method.GET,
+                URL + userId,
+                null, // Pass null as the request body since it's a GET request
+                responseListener, errorListener);
+
+        // Adding request to request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(jsonArrReq);
+    }
 
     public static void addClothingRequest(Context context, long outfitId, long clothingId, String URL,
                                           Response.Listener<JSONObject> responseListener,
