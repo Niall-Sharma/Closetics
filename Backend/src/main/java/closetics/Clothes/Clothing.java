@@ -1,12 +1,8 @@
 package closetics.Clothes;
 
-import closetics.Clothes.ClothingTypes.ClothingType;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import closetics.Clothes.ClothingTypes.SpecialType;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import closetics.Clothes.Statistics.Stat;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -34,6 +30,10 @@ public class Clothing {
     private long type;
     private long specialType;
   
+    @OneToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "stat_id")
+    @JsonIgnore
+    private Stat stat;
 
     public Clothing(long itemId,  boolean isFavorite, String size, String color, String dateBought, String brand, String imagePath1, String imagePath2, String imagePath3, String itemName, String material, String price, long specialType, long type, long userId ) {
         this.clothesId = itemId;
@@ -47,35 +47,45 @@ public class Clothing {
         this.imagePath3 = imagePath3;
         this.itemName = itemName;
         this.material = material;
+
         this.specialType = specialType;
         this.type = type;
+
+        this.stat = new Stat();
         this.userId = userId;
         this.price = price;
     }
     public Clothing(){
 
     }
-    
+
     public long getClothingType(){
       return type;
     }
 
+    public Stat getStat(){
+      return stat;
+    }
+
+    public void setStat(Stat stat){
+      this.stat = stat;
+    }
     public void setClothingType(long clothingType){
       type = clothingType;
     }
-    
+
     public long getSpecialType(){
       return specialType;
     }
 
     public void setSpecialType(long specialType){
-      this.specialType = specialType; 
+      this.specialType = specialType;
     }
 
     public long getUser(){
       return userId;
     }
-    
+
     public void setUser(long user){
       this.userId = user;
     }
