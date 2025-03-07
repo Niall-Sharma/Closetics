@@ -1,10 +1,8 @@
 package closetics.Outfits;
 
-import closetics.Users.User;
 import jakarta.persistence.*;
-
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity(name = "outfit_table")
@@ -17,20 +15,20 @@ public class Outfit {
     private long userId;
 
     private String outfitName;
-    private Date creationDate;
-    private boolean isFavorite;
+    private LocalDateTime creationDate;
+    private boolean favorite;
 
     @ElementCollection
     @CollectionTable(name = "outfit_items", joinColumns = @JoinColumn(name = "outfit_id"))
     @Column(name = "clothing_id")
     private List<Long> outfitItems = new ArrayList<>();
 
-    public Outfit(long outfitId, long userId, String outfitName, Date creationDate, boolean isFavorite, List<Long> outfitItems) {
+    public Outfit(long outfitId, long userId, String outfitName, LocalDateTime creationDate, boolean favorite, List<Long> outfitItems) {
         this.outfitId = outfitId;
         this.userId = userId;
         this.outfitName = outfitName;
         this.creationDate = creationDate;
-        this.isFavorite = isFavorite;
+        this.favorite = favorite;
         this.outfitItems = outfitItems;
     }
 
@@ -45,11 +43,12 @@ public class Outfit {
     public String getOutfitName() {return outfitName;}
     public void setOutfitName(String outfitName) {this.outfitName = outfitName;}
 
-    public Date getCreationDate() {return creationDate;}
-    public void setCreationDate(Date creationDate) {this.creationDate = creationDate;}
+    public LocalDateTime getCreationDate() {return creationDate;}
+    public void setCreationDate(LocalDateTime creationDate) {this.creationDate = creationDate;}
 
-    public boolean isFavorite() {return isFavorite;}
-    public void setFavorite(boolean favorite) {isFavorite = favorite;}
+    public boolean getFavorite() {return favorite;}
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;}
 
     public List<Long> getOutfitItems() {return outfitItems;}
     public void setOutfitItems(List<Long> outfitItems) {this.outfitItems = outfitItems;}
