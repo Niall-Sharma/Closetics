@@ -3,13 +3,17 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import closetics.Clothes.Statistics.Stat;
+import closetics.Clothes.Statistics.StatRepository;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class ClothingController {
     @Autowired
     ClothingRepository clothingRepository;
+
+    @Autowired
+    StatRepository statRepository;
 
     @GetMapping(path = "/clothes")
     public List<Clothing> getAllClothing() {
@@ -36,14 +40,26 @@ public class ClothingController {
       return clothingRepository.findByUserId(userId);
     }
 
+    @GetMapping(path = "/clothing/stats/{id}")
+    public Stat getClothingStat(@PathVariable long id){
+      return statRepository.findByClothesId(id);
+    }
+
+    @PutMapping(path = "/clothing/stats/{id}")
+    public void updateStat(@RequestBody Stat stat, @PathVariable long id){
+      statRepository.save(stat);
+    }
+
     @PostMapping(path = "/clothes")
     public Clothing saveClothing(@RequestBody Clothing clothing) {
+        clothing.setStat(new Stat());
+        statRepository.save(clothing.getStat());
         return clothingRepository.save(clothing);
     }
 
     @DeleteMapping(path = "/clothes/{itemId}")
     public void deleteClothing(@PathVariable long itemId) {
-        clothingRepository.deleteByClothesId(itemId);
+        clothingRepository.deleteById(itemId);
     }
 
     @PutMapping (path = "/clothes/")
