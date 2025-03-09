@@ -18,6 +18,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.closetics.ForgotPasswordFragment;
 import com.example.closetics.R;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 
@@ -35,29 +36,25 @@ public class ClothesCreationBaseFragment extends Fragment{
             "What color is it?", "What date was it bought?",
             "What is the brand?", "What material is it?"
     };
-    private ArrayList<String> answerInputs = new ArrayList<>();
-
 
     public ClothesCreationBaseFragment(){
 
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        Log.d(TAG, "Fragment attached to activity");
     }
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_add_clothes, container, false);
 
         submit = view.findViewById(R.id.add_button);
-        clothesTextView = view.findViewById(R.id.input_textview);
+        clothesTextView = view.findViewById(R.id.question_text);
         inputField = view.findViewById(R.id.input_edit);
+        clothesTextView.setText("pooooooooooo");
 
+
+        /*
         if (getArguments() != null) {
             int count = getArguments().getInt("count");
             String question = getArguments().getString("question");
@@ -100,8 +97,7 @@ public class ClothesCreationBaseFragment extends Fragment{
                 });
             }
         }
-
-
+        */
 
         return view;
     }
@@ -118,13 +114,12 @@ public class ClothesCreationBaseFragment extends Fragment{
         return fragment;
     }
 
-    public static ClothesCreationBaseFragment newInstance(String question, String answer, int fragmentCount) {
+    public static ClothesCreationBaseFragment newInstance(String question, int fragmentCount) {
         //Create a new forgot password fragment
         ClothesCreationBaseFragment fragment = new ClothesCreationBaseFragment();
         Bundle args = new Bundle();
         args.putInt("count", fragmentCount);
         args.putString("question", question);
-        args.putString("answer", answer);
         //Log.d("ID1", debugid1);
         //Log.d("ID2", debugid2);
         fragment.setArguments(args);
@@ -133,7 +128,7 @@ public class ClothesCreationBaseFragment extends Fragment{
     private void loadNextFragment(String question, String answer, int fragmentCount){
         ClothesCreationBaseFragment fragment = newInstance(createClothesQuestions[fragmentCount], answer, fragmentCount);
         FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.add_clothes_fragment_container, fragment);
+        //transaction.replace(R.id.add_clothes_fragment_container, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
 
