@@ -7,9 +7,11 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.closetics.VolleySingleton;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,9 +40,9 @@ public class ClothesManager {
         String color = fragments.get(2).getValue();
         String dateBought = fragments.get(3).getValue();
         String brand = fragments.get(4).getValue();
-        String itemName = fragments.get(5).getValue();
+        String itemName = fragments.get(7).getValue();
         String material = fragments.get(6).getValue();
-        String price = fragments.get(7).getValue();
+        String price = fragments.get(5).getValue();
 
 
         //Create the json object of the saveClothing data
@@ -52,10 +54,12 @@ public class ClothesManager {
 
         //Basic check will need to fix
         try {
-            if (favorite.toLowerCase().trim() == "yes"){
-                nullCheck("favorite", true, saveClothing);
-            }else{
-                nullCheck("favorite", false, saveClothing);
+            if (favorite!=null) {
+                if (favorite.toLowerCase().trim() == "yes") {
+                    nullCheck("favorite", true, saveClothing);
+                } else {
+                    nullCheck("favorite", false, saveClothing);
+                }
             }
 
             nullCheck("size", size, saveClothing);
@@ -80,6 +84,69 @@ public class ClothesManager {
         //Add request to the volley singleton request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
+
+    public static void deleteClothingRequest(Context context, Long clothingId, String URL,
+                                             Response.Listener<JSONObject> responseListener,
+                                             Response.ErrorListener errorListener) {
+        String deleteUrl = URL + "/" + clothingId;
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.DELETE,
+                deleteUrl,
+                null,
+                responseListener,
+                errorListener
+        );
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+    public static void updateClothingRequest(Context context, Long clothingId,
+                                             Map<String, Object> updatedFields,
+                                             String URL,
+                                             Response.Listener<JSONObject> responseListener,
+                                             Response.ErrorListener errorListener) {
+        String updateUrl = URL + "/" + clothingId;
+        JSONObject updateData = new JSONObject(updatedFields);
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.PUT,
+                updateUrl,
+                updateData,
+                responseListener,
+                errorListener
+        );
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+    public static void getClothingByUserRequest(Context context, Long userId, String URL,
+                                                Response.Listener<JSONObject> responseListener,
+                                                Response.ErrorListener errorListener) {
+        String getUrl = URL + "/user/" + userId;
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, URL, null,
+                response -> {
+                    try {
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject jsonObject = response.getJSONObject(i);
+
+                            //Add more
+                            long id = jsonObject.getLong("userId");
+                            String name = jsonObject.getString("itemName");
+                            
+                            Log.d("Clothing", "ID: " + id + ", Name: " + name);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                },
+                error -> Log.e("API Error", error.toString())
+        );
+
+        VolleySingleton.getInstance(context).addToRequestQueue(jsonArrayRequest);
+    }
+
+
+
 
     private static void nullCheck(String header, Object parameter, JSONObject object) throws JSONException {
         if (parameter != null){

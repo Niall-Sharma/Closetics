@@ -19,6 +19,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.example.closetics.ForgotPasswordFragment;
 import com.example.closetics.MainActivity;
 import com.example.closetics.R;
 import com.example.closetics.UserManager;
@@ -100,15 +101,29 @@ public class ClothesActivity extends AppCompatActivity {
                 } )).attach();
 
             }
+        });
 
+        viewClothes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+
+            }
+        });
+
+
+        viewClothes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getClothing(getApplicationContext(), UserManager.getUserID(getApplicationContext()), URL);
+            }
         });
         finalSubmission.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ArrayList<MutableLiveData<String>> fragments = clothesDataViewModel.getFragments();
                 saveClothing(getApplicationContext(), fragments, URL, UserManager.getUserID(getApplicationContext()));
-
-
 
             }
         });
@@ -123,6 +138,25 @@ public class ClothesActivity extends AppCompatActivity {
         tabLayout.setVisibility(View.VISIBLE);
         finalSubmission.setVisibility(View.VISIBLE);
     }
+    private void getClothing(Context context, Long userId, String URL){
+        ClothesManager.getClothingByUserRequest(context, userId, URL, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d("Volley Response", response.toString());
+                showFragment(response.toString());
+
+
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Volley Error", error.toString());
+
+            }
+        });
+    }
 
     private void saveClothing(Context context, ArrayList<MutableLiveData<String>> fragments, String URL, Long userId){
         ClothesManager.saveClothingRequest(context, fragments, userId,URL, new Response.Listener<JSONObject>() {
@@ -132,7 +166,7 @@ public class ClothesActivity extends AppCompatActivity {
                 Log.d("Volley Response", response.toString());
 
                 //Just send back to main for now!
-                Intent intent = new Intent(context, MainActivity.class);
+                Intent intent = new Intent(context, ClothesActivity.class);
                 startActivity(intent);
 
             }
@@ -145,6 +179,13 @@ public class ClothesActivity extends AppCompatActivity {
 
 
 
+    }
+    private void showFragment(String get){
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        Fragment fragment = ViewClothesFragment.newInstance(get);
+        transaction.replace(R.id.pager, fragment, "view_clothes_fragment");
+        transaction.commit();
+        //Log.d("Fragment debug", String.valueOf(fragment.isAdded()));
     }
 
 
@@ -166,6 +207,7 @@ public class ClothesActivity extends AppCompatActivity {
             return NUM_FRAGMENTS;
         }
     }
+
 }
 
 
