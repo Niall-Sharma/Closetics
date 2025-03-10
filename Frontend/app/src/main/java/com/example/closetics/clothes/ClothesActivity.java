@@ -21,6 +21,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.closetics.MainActivity;
 import com.example.closetics.R;
+import com.example.closetics.UserManager;
 import com.example.closetics.clothes.ClothesCreationBaseFragment;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -43,7 +44,7 @@ public class ClothesActivity extends AppCompatActivity {
     private ClothesDataViewModel clothesDataViewModel;
 
     private TabLayout tabLayout;
-    private static final String URL = "";
+    private static final String URL = MainActivity.SERVER_URL + "/clothes";
 
 
     //For the view pager
@@ -105,7 +106,7 @@ public class ClothesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ArrayList<MutableLiveData<String>> fragments = clothesDataViewModel.getFragments();
-                saveClothing(getApplicationContext(), fragments, URL);
+                saveClothing(getApplicationContext(), fragments, URL, UserManager.getUserID(getApplicationContext()));
 
 
 
@@ -123,13 +124,14 @@ public class ClothesActivity extends AppCompatActivity {
         finalSubmission.setVisibility(View.VISIBLE);
     }
 
-    private void saveClothing(Context context, ArrayList<MutableLiveData<String>> fragments, String URL){
-        ClothesManager.saveClothingRequest(context, fragments, URL, new Response.Listener<JSONObject>() {
+    private void saveClothing(Context context, ArrayList<MutableLiveData<String>> fragments, String URL, Long userId){
+        ClothesManager.saveClothingRequest(context, fragments, userId,URL, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
 
-                Log.d("need", response.toString());
+                Log.d("Volley Response", response.toString());
 
+                //Just send back to main for now!
                 Intent intent = new Intent(context, MainActivity.class);
                 startActivity(intent);
 
@@ -137,7 +139,7 @@ public class ClothesActivity extends AppCompatActivity {
         },new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                Log.e("Volley Error Response", error.toString());
             }
         });
 

@@ -16,8 +16,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
-//    public static final String SERVER_URL = "http://coms-3090-008.class.las.iastate.edu:8080";
-    public static final String SERVER_URL = "http://10.0.2.2:8080";
+    public static final String SERVER_URL = "http://coms-3090-008.class.las.iastate.edu:8080";
+    //public static final String SERVER_URL = "http://10.0.2.2:8080";
 
     private ActivityMainBinding binding;
     private BottomNavigationView bottomNavView;

@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.closetics.ForgotPasswordFragment;
 import com.example.closetics.R;
@@ -31,6 +32,8 @@ public class ClothesCreationBaseFragment extends Fragment{
     private TextView clothesTextView;
     private EditText inputField;
     private ClothesDataViewModel clothesDataViewModel;
+
+    private ViewPager2 viewPager;
 
     //Add camera functionality
     //Likely will need to add more fields to this and more fragments!!!
@@ -59,7 +62,11 @@ public class ClothesCreationBaseFragment extends Fragment{
         inputField = view.findViewById(R.id.input_edit);
         clothesTextView.setText(createClothesQuestions[index]);
 
+        //Grab the viewpager
+        viewPager = requireActivity().findViewById(R.id.pager);
+
         inputField.addTextChangedListener(new TextWatcher() {
+
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -67,12 +74,22 @@ public class ClothesCreationBaseFragment extends Fragment{
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+
             }
 
             @Override
             public void afterTextChanged(Editable s) {
                 //Update the arrayList when text is changed
                 clothesDataViewModel.setFragment(index, inputField.getText().toString().trim());
+            }
+        });
+        submit.setOnClickListener(new View.OnClickListener() {
+            //Swipe on next button
+            @Override
+            public void onClick(View v) {
+                if (viewPager!=null){
+                    viewPager.setCurrentItem(viewPager.getCurrentItem()+1, true);
+                }
             }
         });
 
@@ -89,42 +106,6 @@ public class ClothesCreationBaseFragment extends Fragment{
         args.putInt("count", fragmentCount);
         fragment.setArguments(args);
         return fragment;
-    }
-
-
-    private void loadNextFragment(String question, String answer, int fragmentCount){
-        //ClothesCreationBaseFragment fragment = newInstance(createClothesQuestions[fragmentCount], answer, fragmentCount);
-        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-        //transaction.replace(R.id.add_clothes_fragment_container, fragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-
-    }
-
-
-    //Debugging methods
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.d(TAG, "Fragment is visible (started)");
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(TAG, "Fragment is now interactive (resumed)");
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Log.d(TAG, "Fragment view destroyed");
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        Log.d(TAG, "Fragment detached from activity");
     }
 
 

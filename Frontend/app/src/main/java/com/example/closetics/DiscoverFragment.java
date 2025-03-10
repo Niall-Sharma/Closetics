@@ -40,8 +40,8 @@ public class DiscoverFragment extends Fragment {
         String username = UserManager.getUsername(getActivity().getApplicationContext());
         if(username == null) {
             loginText.setVisibility(TextView.VISIBLE);
-            //clothesButton.setVisibility(TextView.GONE);
-            //outfitsButton.setVisibility(TextView.GONE);
+            clothesButton.setVisibility(TextView.GONE);
+            outfitsButton.setVisibility(TextView.GONE);
         } else {
             loginText.setVisibility(TextView.GONE);
             clothesButton.setVisibility(TextView.VISIBLE);
