@@ -3,6 +3,8 @@ package com.example.closetics.clothes;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,16 +30,17 @@ public class ClothesCreationBaseFragment extends Fragment{
     private Button submit;
     private TextView clothesTextView;
     private EditText inputField;
+    private ClothesDataViewModel clothesDataViewModel;
 
     //Add camera functionality
     //Likely will need to add more fields to this and more fragments!!!
-    public static String[] createClothesQuestions= {"Size of this item?", "Would you like to favorite this item?",
-            "When did you last wear this item?", "How many times worn?",
-            "What color is it?", "What date was it bought?",
+    public static String[] createClothesQuestions= { "Would you like to favorite this item?","Size of this item?","What color is it?","What date was it bought?",
+            "What is its price?", "What would you like to call this piece of clothing?",
             "What is the brand?", "What material is it?"
     };
 
-    public ClothesCreationBaseFragment(){
+    public ClothesCreationBaseFragment(ClothesDataViewModel clothesDataViewModel){
+        this.clothesDataViewModel = clothesDataViewModel;
 
     }
 
@@ -47,86 +50,50 @@ public class ClothesCreationBaseFragment extends Fragment{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_add_clothes, container, false);
+        super.onCreate(savedInstanceState);
+
+        int index = getArguments().getInt("count");
 
         submit = view.findViewById(R.id.add_button);
         clothesTextView = view.findViewById(R.id.question_text);
         inputField = view.findViewById(R.id.input_edit);
-        clothesTextView.setText("pooooooooooo");
+        clothesTextView.setText(createClothesQuestions[index]);
 
-
-        /*
-        if (getArguments() != null) {
-            int count = getArguments().getInt("count");
-            String question = getArguments().getString("question");
-            String answer = getArguments().getString("answer");
-            //Set the textview with the question
-            clothesTextView.setText(question);
-
-            //If not first fragment, send answer
-            if (!(count<1)){
-                ClothesActivity.inputArray.add(answer);
-            }
-
-
-            if (count < createClothesQuestions.length - 1){
-                count ++;
-                submit.setText("Next Question");
-
-                int finalCount = count;
-                submit.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        loadNextFragment(createClothesQuestions[finalCount], answer, finalCount);
-                    }
-                });
+        inputField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
             }
-            else{
-                submit.setText("Finish");
 
-                submit.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //Still need to save the answer
-                        ClothesActivity.inputArray.add(inputField.getText().toString());
-
-                        //Go back to activity
-                        Intent intent  = new Intent(getActivity().getApplicationContext(), ClothesActivity.class);
-                        startActivity(intent);
-                    }
-                });
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
-        }
-        */
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //Update the arrayList when text is changed
+                clothesDataViewModel.setFragment(index, inputField.getText().toString().trim());
+            }
+        });
+
 
         return view;
     }
 
-    public static ClothesCreationBaseFragment newInstance(String question, int fragmentCount) {
+
+
+    public static ClothesCreationBaseFragment newInstance(int fragmentCount, ClothesDataViewModel clothesDataViewModel) {
         //Create a new forgot password fragment
-        ClothesCreationBaseFragment fragment = new ClothesCreationBaseFragment();
+        ClothesCreationBaseFragment fragment = new ClothesCreationBaseFragment(clothesDataViewModel);
         Bundle args = new Bundle();
         args.putInt("count", fragmentCount);
-        args.putString("question", question);
-        //Log.d("ID1", debugid1);
-        //Log.d("ID2", debugid2);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public static ClothesCreationBaseFragment newInstance(String question, int fragmentCount) {
-        //Create a new forgot password fragment
-        ClothesCreationBaseFragment fragment = new ClothesCreationBaseFragment();
-        Bundle args = new Bundle();
-        args.putInt("count", fragmentCount);
-        args.putString("question", question);
-        //Log.d("ID1", debugid1);
-        //Log.d("ID2", debugid2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+
     private void loadNextFragment(String question, String answer, int fragmentCount){
-        ClothesCreationBaseFragment fragment = newInstance(createClothesQuestions[fragmentCount], answer, fragmentCount);
+        //ClothesCreationBaseFragment fragment = newInstance(createClothesQuestions[fragmentCount], answer, fragmentCount);
         FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
         //transaction.replace(R.id.add_clothes_fragment_container, fragment);
         transaction.addToBackStack(null);
