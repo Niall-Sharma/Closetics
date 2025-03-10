@@ -11,7 +11,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.closetics.clothes.ClothesActivity;
 import com.example.closetics.outfits.OutfitsActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class DiscoverFragment extends Fragment {
 
@@ -46,7 +48,8 @@ public class DiscoverFragment extends Fragment {
         }
 
         clothesButton.setOnClickListener(v -> {
-            // open a new activity here
+            Intent intent = new Intent(getActivity(), ClothesActivity.class);
+            startActivity(intent);
         });
 
         outfitsButton.setOnClickListener(v -> {

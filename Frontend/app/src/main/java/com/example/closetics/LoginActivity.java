@@ -195,6 +195,7 @@ public class LoginActivity extends AppCompatActivity {
         Fragment fragment = ForgotPasswordFragment.newInstance(id1, id2, userId);
         transaction.replace(R.id.forgot_password_fragment_container, fragment, "forgot_password_fragment");
         transaction.commit();
+        Log.d("Fragment debug", String.valueOf(fragment.isAdded()));
 
     }
     private void setErrorMessage(String message) {

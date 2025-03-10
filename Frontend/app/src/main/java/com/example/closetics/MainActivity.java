@@ -19,8 +19,8 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-//    public static final String SERVER_URL = "http://coms-3090-008.class.las.iastate.edu:8080";
-    public static final String SERVER_URL = "http://10.0.2.2:8080";
+    public static final String SERVER_URL = "http://coms-3090-008.class.las.iastate.edu:8080";
+    //public static final String SERVER_URL = "http://10.0.2.2:8080";
 
     public static final Map<Integer, String> CLOTHING_TYPES = new HashMap<Integer, String>() {{
         put(1, "accessories");put(2, "activewear");put(3, "bottoms");put(4, "dresses");put(5, "footwear");put(6, "formalwear");put(7, "outerwear");put(8, "seasonal");put(9, "sleepwear");put(10, "tops");put(11, "undergarments");put(12, "workwear");
