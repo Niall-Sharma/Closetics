@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.closetics.clothes.ClothesActivity;
+import com.example.closetics.outfits.OutfitsActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class DiscoverFragment extends Fragment {
@@ -49,15 +48,13 @@ public class DiscoverFragment extends Fragment {
         }
 
         clothesButton.setOnClickListener(v -> {
-            // open a new activity here
             Intent intent = new Intent(getActivity(), ClothesActivity.class);
             startActivity(intent);
         });
 
         outfitsButton.setOnClickListener(v -> {
-            // you can comment this out bc you won't have OutfitsActivity
-            //Intent intent = new Intent(getActivity(), OutfitsActivity.class);
-            //startActivity(intent);
+            Intent intent = new Intent(getActivity(), OutfitsActivity.class);
+            startActivity(intent);
         });
 
         return view;
