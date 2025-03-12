@@ -1,5 +1,6 @@
 package com.example.closetics.clothes;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +15,10 @@ import com.example.closetics.R;
 public class ClothesByTypeAdapter extends RecyclerView.Adapter<ClothesByTypeAdapter.MyViewHolder>{
 
 
-
     String[] objects;
-    TypeGridRecyclerViewAdapter.OnItemClickListener clickListener;
+    OnItemClickListener clickListener;
 
-    public ClothesByTypeAdapter(String[] objects, TypeGridRecyclerViewAdapter.OnItemClickListener clickListener) {
+    public ClothesByTypeAdapter(String[] objects, OnItemClickListener clickListener) {
         String [] testArray = {"1"};
         this.objects = objects;
         /*
@@ -27,6 +27,7 @@ public class ClothesByTypeAdapter extends RecyclerView.Adapter<ClothesByTypeAdap
         if (objects == null){
             this.objects = testArray;
         }
+        this.clickListener = clickListener;
     }
 
 
@@ -40,18 +41,20 @@ public class ClothesByTypeAdapter extends RecyclerView.Adapter<ClothesByTypeAdap
 
     @Override
     public void onBindViewHolder(@NonNull ClothesByTypeAdapter.MyViewHolder holder, int position) {
-        holder.object.setText(objects[position]);
+        int realPosition = holder.getBindingAdapterPosition();
+        String jsonObject = objects[realPosition];
+        holder.object.setText(jsonObject);
         holder.editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clickListener.onItemClick(position);
+                clickListener.onItemClick(realPosition, v, jsonObject);
             }
         });
 
         holder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clickListener.onItemClick(position);
+                clickListener.onItemClick(realPosition, v, jsonObject);
             }
         });
 
@@ -75,6 +78,13 @@ public class ClothesByTypeAdapter extends RecyclerView.Adapter<ClothesByTypeAdap
 
         }
     }
+
+    //Inner interface
+    public interface OnItemClickListener{
+        //Send the view to differentiate between which button view is being pressed
+        void onItemClick(int position, View view, String jsonObject);
+    }
+
 
 
 

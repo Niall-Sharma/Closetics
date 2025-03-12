@@ -40,6 +40,7 @@ public class ClothesActivity extends AppCompatActivity {
 
     private String[] responseStringArray;
     private HashMap<Long,Long> clothingTypeCounts = new HashMap<>();
+    public static HashMap<Integer, Long> clothingIdandIndex = new HashMap<>();
     private Button addClothes;
     private Button editClothes;
     private Button viewClothes;
@@ -65,7 +66,7 @@ public class ClothesActivity extends AppCompatActivity {
     private ClothesDataViewModel clothesDataViewModel;
 
     private TabLayout tabLayout;
-    private static final String URL = MainActivity.SERVER_URL + "/clothes";
+    public static final String URL = MainActivity.SERVER_URL + "/clothes";
 
 
     //For the view pager
@@ -190,11 +191,19 @@ public class ClothesActivity extends AppCompatActivity {
                  */
                 Log.d("Volley Response", response.toString());
                 responseStringArray = new String[response.length()];
+                //Clear the static hashmap when this is called
+                clothingIdandIndex.clear();
 
                 try {
                     for (int i = 0; i < response.length(); i++) {
                         JSONObject jsonObject = response.getJSONObject(i);
+
                         responseStringArray[i] = jsonObject.toString();
+
+                       //Check
+                        long clothingId = jsonObject.getLong("itemId");
+                        clothingIdandIndex.put(i, clothingId);
+
                         Log.d("JSON Object", jsonObject.toString());
                     }
                 } catch (JSONException e) {

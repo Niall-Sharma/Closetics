@@ -40,13 +40,14 @@ public class TypeGridRecyclerViewAdapter extends RecyclerView.Adapter<TypeGridRe
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+        int realPosition = holder.getBindingAdapterPosition();
         //Sets the changing views from the innerclass
 
         //holder.imageView.setImageResource(imageResource[position]);
         //Note: 1 based indexing for the hashmap keys
-        String type = MainActivity.CLOTHING_TYPES.get(position+1);
-        holder.typeText.setText(MainActivity.CLOTHING_TYPES.get(position+1));
-        String count = String.valueOf(counts.get(position+1));
+        String type = MainActivity.CLOTHING_TYPES.get(realPosition+1);
+        holder.typeText.setText(MainActivity.CLOTHING_TYPES.get(realPosition+1));
+        String count = String.valueOf(counts.get(realPosition+1));
 
         if (count.equals("null")){
             count = "0";
@@ -61,7 +62,7 @@ public class TypeGridRecyclerViewAdapter extends RecyclerView.Adapter<TypeGridRe
                 @Override
                 public void onClick(View v) {
                     //Send over the position of the item in list + 1 for the hashmap
-                    clickListener.onItemClick(position + 1);
+                    clickListener.onItemClick(realPosition + 1);
                 }
             });
        // }
