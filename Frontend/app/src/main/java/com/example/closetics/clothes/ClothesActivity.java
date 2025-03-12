@@ -14,6 +14,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -41,7 +43,21 @@ public class ClothesActivity extends AppCompatActivity {
     private Button editClothes;
     private Button viewClothes;
     private Button finalSubmission;
+    private Button deleteClothes;
+
     private String[] inputArray = new String[NUM_FRAGMENTS];
+
+    private Button clothesActivityBack;
+    private Button mainActivityBack;
+
+    /*
+    Recycler View
+     */
+    private RecyclerView gridRecyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private TypeGridRecyclerViewAdapter gridRecyclerViewAdapter;
+
+
     private static final int NUM_FRAGMENTS = 8;
     //Shared data for the fragments
     private ClothesDataViewModel clothesDataViewModel;
@@ -71,6 +87,12 @@ public class ClothesActivity extends AppCompatActivity {
         tabLayout = findViewById(R.id.tabLayout);
         tabLayout.setVisibility(View.GONE);
         finalSubmission.setVisibility(View.GONE);
+
+        gridRecyclerView = findViewById(R.id.type_grid);
+        //Makes the layout a grid
+        layoutManager = new GridLayoutManager(this, 2);
+        gridRecyclerViewAdapter = new TypeGridRecyclerViewAdapter()
+
 
 
 
@@ -204,7 +226,9 @@ public class ClothesActivity extends AppCompatActivity {
      */
 
 
-    //Inner class
+    /*
+    Inner class for screen sliding
+     */
     private class ScreenSlidePagerAdapter extends FragmentStateAdapter {
 
         public ScreenSlidePagerAdapter(ClothesActivity clothesActivity) {
