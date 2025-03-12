@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import closetics.Users.User;
 
-@Entity
-@Table(name = "token_table")
+@Entity(name = "token_table")
 public class Token {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

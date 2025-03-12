@@ -1,6 +1,8 @@
 package com.example.closetics;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.session.MediaSession;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -16,6 +18,9 @@ public class ProfileFragment extends Fragment {
     private TextView usernameText;  // define username textview variable
     private Button loginButton;     // define login button variable
     private Button signupButton;    // define signup button variable
+    private Button logoutButton;
+    private Button editButton;
+    private Button deleteUserButton;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -31,12 +36,25 @@ public class ProfileFragment extends Fragment {
         usernameText = view.findViewById(R.id.profile_username_text);
         loginButton = view.findViewById(R.id.profile_login_button);
         signupButton = view.findViewById(R.id.profile_signup_button);
+        editButton = view.findViewById(R.id.profile_edit_user_button);
+        deleteUserButton = view.findViewById(R.id.profile_delete_user_button);
+        logoutButton = view.findViewById(R.id.profile_logout_button);
 
-        Bundle extras = getActivity().getIntent().getExtras();
-        if(extras == null) {
+        String username = UserManager.getUsername(getActivity().getApplicationContext());
+        if(username == null) {
             usernameText.setText("Guest (not logged in)");
+            loginButton.setVisibility(TextView.VISIBLE);
+            signupButton.setVisibility(TextView.VISIBLE);
+            logoutButton.setVisibility(TextView.GONE);
+            editButton.setVisibility(TextView.GONE);
+            deleteUserButton.setVisibility(TextView.GONE);
         } else {
-            usernameText.setText(extras.getString("USERNAME")); // this will come from LoginActivity
+            usernameText.setText(username);
+            loginButton.setVisibility(TextView.GONE);
+            signupButton.setVisibility(TextView.GONE);
+            logoutButton.setVisibility(TextView.VISIBLE);
+            editButton.setVisibility(TextView.VISIBLE);
+            deleteUserButton.setVisibility(TextView.VISIBLE);
         }
 
         loginButton.setOnClickListener(v -> {
@@ -46,6 +64,41 @@ public class ProfileFragment extends Fragment {
 
         signupButton.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), SignupActivity.class);
+            startActivity(intent);
+        });
+
+        logoutButton.setOnClickListener(v -> {
+            UserManager.clearSavedData(view.getContext());
+
+            usernameText.setText("Guest (not logged in)");
+            loginButton.setVisibility(TextView.VISIBLE);
+            signupButton.setVisibility(TextView.VISIBLE);
+            logoutButton.setVisibility(TextView.GONE);
+            editButton.setVisibility(TextView.GONE);
+            deleteUserButton.setVisibility(TextView.GONE);
+        });
+
+        // Edit user name
+        editButton.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                //This button only has functionality when the user is logged in!
+                //Safe way for fragments to get context!! (requireContext)
+                String token = UserManager.getLoginToken(requireContext());
+                //No functionality if token does equal null normally
+                if (token != null){
+
+
+                }
+                Intent intent = new Intent(getActivity(), EditUserActivity.class);
+                startActivity(intent);
+
+            }
+        });
+
+        deleteUserButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), DeleteUserActivity.class);
             startActivity(intent);
         });
 

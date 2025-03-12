@@ -25,6 +25,10 @@ public class JsonObjReqActivity extends AppCompatActivity {
     private Button btnJsonObjReq;
     private TextView msgResponse;
 
+
+    //10.0.2.2 instead of local host for web address because of the android emulator
+    //(Standard for android studio)
+    //https://10.0.2.2:8080/Persons/1
     private static final String URL_JSON_OBJECT = "https://jsonplaceholder.typicode.com/users/1";
     //https://jsonplaceholder.typicode.com/users/1
     @Override
