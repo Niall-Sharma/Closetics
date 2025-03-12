@@ -33,6 +33,8 @@ public class ClothesCreationBaseFragment extends Fragment{
     private EditText inputField;
     private ClothesDataViewModel clothesDataViewModel;
 
+    //int index;
+
     private ViewPager2 viewPager;
 
     //Add camera functionality
@@ -60,6 +62,7 @@ public class ClothesCreationBaseFragment extends Fragment{
         submit = view.findViewById(R.id.add_button);
         clothesTextView = view.findViewById(R.id.question_text);
         inputField = view.findViewById(R.id.input_edit);
+
         clothesTextView.setText(createClothesQuestions[index]);
 
         //Grab the viewpager
@@ -80,7 +83,12 @@ public class ClothesCreationBaseFragment extends Fragment{
             @Override
             public void afterTextChanged(Editable s) {
                 //Update the arrayList when text is changed
-                clothesDataViewModel.setFragment(index, inputField.getText().toString().trim());
+
+                //If there is a change set it in the arrayList
+                if (!(s.toString().equals(""))) {
+                    clothesDataViewModel.setFragment(index, inputField.getText().toString().trim());
+                    Log.d("check", String.valueOf(index));
+                }
             }
         });
         submit.setOnClickListener(new View.OnClickListener() {

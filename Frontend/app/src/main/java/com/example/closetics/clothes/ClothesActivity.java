@@ -76,20 +76,18 @@ public class ClothesActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.pager);
         //This needs an innner class
         pagerAdapter = new ScreenSlidePagerAdapter(this);
-
-        //Initialize view model
-        clothesDataViewModel = new ViewModelProvider(this).get(ClothesDataViewModel.class);
-
-
+        ClothesActivity clothesActivity = this;
 
 
         //Set these invisible for now
-
 
         addClothes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 activityItemsVisibility();
+                //Initialize view model with a new instance every time add clothes is clicked
+                clothesDataViewModel = new ViewModelProvider(clothesActivity).get(ClothesDataViewModel.class);
+
                 //Initialize the fragments list
                 clothesDataViewModel.setFragmentsSize(NUM_FRAGMENTS);
 
@@ -199,6 +197,7 @@ public class ClothesActivity extends AppCompatActivity {
         @NonNull
         @Override
         public Fragment createFragment(int position) {
+            Log.d("Check", String.valueOf(position));
             return ClothesCreationBaseFragment.newInstance(position, clothesDataViewModel);
         }
 
