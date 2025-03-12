@@ -10,6 +10,7 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.MutableLiveData;
@@ -34,16 +35,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 //This activity holds the viewpager container, this
 
 public class ClothesActivity extends AppCompatActivity {
 
+    private HashMap<Long,Long> clothingTypeCounts = new HashMap<>();
     private Button addClothes;
     private Button editClothes;
     private Button viewClothes;
     private Button finalSubmission;
     private Button deleteClothes;
+    private CardView card;
 
     private String[] inputArray = new String[NUM_FRAGMENTS];
 
@@ -83,6 +88,7 @@ public class ClothesActivity extends AppCompatActivity {
         editClothes = findViewById(R.id.edit_clothes);
         viewClothes = findViewById(R.id.view_clothes);
         finalSubmission = findViewById(R.id.final_submission);
+        card = findViewById(R.id.card_view);
 
         tabLayout = findViewById(R.id.tabLayout);
         tabLayout.setVisibility(View.GONE);
@@ -91,7 +97,15 @@ public class ClothesActivity extends AppCompatActivity {
         gridRecyclerView = findViewById(R.id.type_grid);
         //Makes the layout a grid
         layoutManager = new GridLayoutManager(this, 2);
-        gridRecyclerViewAdapter = new TypeGridRecyclerViewAdapter()
+        //Set layout manager
+        gridRecyclerView.setLayoutManager(layoutManager);
+        //Call get clothing before constructing adapter so that we can update the counts
+        getClothing(getApplicationContext(), UserManager.getUserID(getApplicationContext()), URL);
+        gridRecyclerViewAdapter = new TypeGridRecyclerViewAdapter(clothingTypeCounts);
+
+        gridRecyclerView.setAdapter(gridRecyclerViewAdapter);
+
+        gridRecyclerView.setHasFixedSize(true);
 
 
 
@@ -125,15 +139,6 @@ public class ClothesActivity extends AppCompatActivity {
             }
         });
 
-        viewClothes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-
-            }
-        });
-
 
         viewClothes.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -160,6 +165,9 @@ public class ClothesActivity extends AppCompatActivity {
         viewClothes.setVisibility(View.GONE);
         tabLayout.setVisibility(View.VISIBLE);
         finalSubmission.setVisibility(View.VISIBLE);
+        gridRecyclerView.setVisibility(View.GONE);
+        card.setVisibility(View.GONE);
+
     }
 
     private void getClothing(Context context, long userId, String URL){
@@ -174,6 +182,8 @@ public class ClothesActivity extends AppCompatActivity {
                 try {
                     for (int i = 0; i < response.length(); i++) {
                         JSONObject jsonObject = response.getJSONObject(i);
+                        long key = jsonObject.getLong("clothingType");
+                        incrementKeyValue(clothingTypeCounts, key);
                         Log.d("JSON Object", jsonObject.toString());
                     }
                 } catch (JSONException e) {
@@ -211,9 +221,19 @@ public class ClothesActivity extends AppCompatActivity {
             }
         });
 
-
-
     }
+
+    private void incrementKeyValue(HashMap<Long, Long> map, Long key){
+        //If the map has the key, increment its value (the count)
+        if (map.containsKey((key))){
+            map.put(key, map.get(key) +1);
+        }
+        //If not put the new key with count of 1
+        else{
+            map.put(key,Long.valueOf(1));
+        }
+    }
+
     /*
     private void showFragment(String get){
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

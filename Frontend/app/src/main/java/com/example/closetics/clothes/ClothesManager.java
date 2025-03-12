@@ -9,6 +9,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.closetics.MainActivity;
 import com.example.closetics.VolleySingleton;
 
 import org.json.JSONArray;
@@ -66,6 +67,10 @@ public class ClothesManager {
             Note: Small naming error, user instead of userId for JSON object
              */
             saveClothing.put("user", userId);
+            /*
+            This is for testing only! Remember to remove!
+             */
+            saveClothing.put("clothingType", 1);
 
         } catch (JSONException e) {
             Log.e("JSON Error", e.toString());
