@@ -27,6 +27,8 @@ import com.example.closetics.clothes.ClothesCreationBaseFragment;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -114,6 +116,7 @@ public class ClothesActivity extends AppCompatActivity {
         viewClothes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("UserId", String.valueOf(UserManager.getUserID(getApplicationContext())));
                 getClothing(getApplicationContext(), UserManager.getUserID(getApplicationContext()), URL);
             }
         });
@@ -136,25 +139,36 @@ public class ClothesActivity extends AppCompatActivity {
         tabLayout.setVisibility(View.VISIBLE);
         finalSubmission.setVisibility(View.VISIBLE);
     }
-    private void getClothing(Context context, Long userId, String URL){
-        ClothesManager.getClothingByUserRequest(context, userId, URL, new Response.Listener<JSONObject>() {
+
+    private void getClothing(Context context, long userId, String URL){
+        ClothesManager.getClothingByUserRequest(context, userId, URL, new Response.Listener<JSONArray>() {
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(JSONArray response) {
+                /*
+                Note on the response we need to parse the JSON array
+                 */
                 Log.d("Volley Response", response.toString());
-                showFragment(response.toString());
+
+                try {
+                    for (int i = 0; i < response.length(); i++) {
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        Log.d("JSON Object", jsonObject.toString());
+                    }
+                } catch (JSONException e) {
+                    Log.d("JSON exception", e.toString());
+                }
 
 
 
+        }}, new Response.ErrorListener() {
 
-            }
-        }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("Volley Error", error.toString());
 
             }
         });
-    }
+        }
 
     private void saveClothing(Context context, ArrayList<MutableLiveData<String>> fragments, String URL, Long userId){
         ClothesManager.saveClothingRequest(context, fragments, userId,URL, new Response.Listener<JSONObject>() {
@@ -178,6 +192,7 @@ public class ClothesActivity extends AppCompatActivity {
 
 
     }
+    /*
     private void showFragment(String get){
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         Fragment fragment = ViewClothesFragment.newInstance(get);
@@ -185,6 +200,8 @@ public class ClothesActivity extends AppCompatActivity {
         transaction.commit();
         //Log.d("Fragment debug", String.valueOf(fragment.isAdded()));
     }
+
+     */
 
 
     //Inner class

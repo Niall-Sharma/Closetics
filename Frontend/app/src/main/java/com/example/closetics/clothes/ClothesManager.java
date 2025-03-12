@@ -72,7 +72,10 @@ public class ClothesManager {
             nullCheck("itemName", itemName, saveClothing);
             nullCheck("material", material, saveClothing);
             nullCheck("price", price, saveClothing);
-            saveClothing.put("userId", userId);
+            /*
+            Note: Small naming error, user instead of userId for JSON object
+             */
+            saveClothing.put("user", userId);
 
         } catch (JSONException e) {
             Log.e("JSON Error", e.toString());
@@ -121,31 +124,20 @@ public class ClothesManager {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-    public static void getClothingByUserRequest(Context context, Long userId, String URL,
-                                                Response.Listener<JSONObject> responseListener,
+    /*
+    Note: This method is not for a JSON object but for an array
+     */
+
+    public static void getClothingByUserRequest(Context context, long userId, String URL,
+                                                Response.Listener<JSONArray> responseListener,
                                                 Response.ErrorListener errorListener) {
         String getUrl = URL + "/user/" + userId;
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
+                getUrl, null, responseListener, errorListener);
 
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, URL, null,
-                response -> {
-                    try {
-                        for (int i = 0; i < response.length(); i++) {
-                            JSONObject jsonObject = response.getJSONObject(i);
 
-                            //Add more
-                            long id = jsonObject.getLong("userId");
-                            String name = jsonObject.getString("itemName");
 
-                            Log.d("Clothing", "ID: " + id + ", Name: " + name);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                },
-                error -> Log.e("API Error", error.toString())
-        );
-
-        VolleySingleton.getInstance(context).addToRequestQueue(jsonArrayRequest);
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
 
