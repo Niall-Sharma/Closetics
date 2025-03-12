@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
@@ -22,11 +21,9 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.example.closetics.ForgotPasswordFragment;
 import com.example.closetics.MainActivity;
 import com.example.closetics.R;
 import com.example.closetics.UserManager;
-import com.example.closetics.clothes.ClothesCreationBaseFragment;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -36,12 +33,12 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 //This activity holds the viewpager container, this
 
 public class ClothesActivity extends AppCompatActivity {
 
+    private String[] responseStringArray;
     private HashMap<Long,Long> clothingTypeCounts = new HashMap<>();
     private Button addClothes;
     private Button editClothes;
@@ -100,8 +97,14 @@ public class ClothesActivity extends AppCompatActivity {
         //Set layout manager
         gridRecyclerView.setLayoutManager(layoutManager);
         //Call get clothing before constructing adapter so that we can update the counts
-        getClothing(getApplicationContext(), UserManager.getUserID(getApplicationContext()), URL);
-        gridRecyclerViewAdapter = new TypeGridRecyclerViewAdapter(clothingTypeCounts);
+        getUserClothing(getApplicationContext(), UserManager.getUserID(getApplicationContext()), URL);
+        gridRecyclerViewAdapter = new TypeGridRecyclerViewAdapter(clothingTypeCounts, new TypeGridRecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                getClothingByType(getApplicationContext(), UserManager.getUserID(getApplicationContext()), URL, position);
+                showFragment(responseStringArray);
+            }
+        });
 
         gridRecyclerView.setAdapter(gridRecyclerViewAdapter);
 
@@ -144,7 +147,7 @@ public class ClothesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d("UserId", String.valueOf(UserManager.getUserID(getApplicationContext())));
-                getClothing(getApplicationContext(), UserManager.getUserID(getApplicationContext()), URL);
+                getUserClothing(getApplicationContext(), UserManager.getUserID(getApplicationContext()), URL);
             }
         });
         finalSubmission.setOnClickListener(new View.OnClickListener() {
@@ -152,6 +155,12 @@ public class ClothesActivity extends AppCompatActivity {
             public void onClick(View v) {
                 ArrayList<MutableLiveData<String>> fragments = clothesDataViewModel.getFragments();
                 saveClothing(getApplicationContext(), fragments, URL, UserManager.getUserID(getApplicationContext()));
+                //Call get clothing before constructing adapter so that we can update the counts
+                getUserClothing(getApplicationContext(), UserManager.getUserID(getApplicationContext()), URL);
+                //Just send back to main for now!
+                Intent intent = new Intent(getApplicationContext(), ClothesActivity.class);
+                startActivity(intent);
+
 
             }
         });
@@ -170,7 +179,39 @@ public class ClothesActivity extends AppCompatActivity {
 
     }
 
-    private void getClothing(Context context, long userId, String URL){
+    private void getClothingByType(Context context, long userId, String URL, long type){
+
+
+        ClothesManager.getClothingByTypeRequest(context, userId, URL, type, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                 /*
+                Note on the response we need to parse the JSON array
+                 */
+                Log.d("Volley Response", response.toString());
+                responseStringArray = new String[response.length()];
+
+                try {
+                    for (int i = 0; i < response.length(); i++) {
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        responseStringArray[i] = jsonObject.toString();
+                        Log.d("JSON Object", jsonObject.toString());
+                    }
+                } catch (JSONException e) {
+                    Log.d("JSON exception", e.toString());
+                }
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Volley Error", error.toString());
+            }
+        });
+    }
+
+    private void getUserClothing(Context context, long userId, String URL){
         ClothesManager.getClothingByUserRequest(context, userId, URL, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -196,7 +237,7 @@ public class ClothesActivity extends AppCompatActivity {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("Volley Error", error.toString());
+                Log.e("Volley Error user clothing", error.toString());
 
             }
         });
@@ -209,9 +250,6 @@ public class ClothesActivity extends AppCompatActivity {
 
                 Log.d("Volley Response", response.toString());
 
-                //Just send back to main for now!
-                Intent intent = new Intent(context, ClothesActivity.class);
-                startActivity(intent);
 
             }
         },new Response.ErrorListener() {
@@ -234,16 +272,16 @@ public class ClothesActivity extends AppCompatActivity {
         }
     }
 
-    /*
-    private void showFragment(String get){
+
+    private void showFragment(String[] JSONObject){
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        Fragment fragment = ViewClothesFragment.newInstance(get);
-        transaction.replace(R.id.pager, fragment, "view_clothes_fragment");
+        Fragment fragment = ViewClothesFragment.newInstance(JSONObject);
+        transaction.replace(R.id.view_clothes_container, fragment, "view_clothes_fragment");
         transaction.commit();
         //Log.d("Fragment debug", String.valueOf(fragment.isAdded()));
     }
 
-     */
+
 
 
     /*
@@ -258,7 +296,6 @@ public class ClothesActivity extends AppCompatActivity {
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-            Log.d("Check", String.valueOf(position));
             return ClothesCreationBaseFragment.newInstance(position, clothesDataViewModel);
         }
 

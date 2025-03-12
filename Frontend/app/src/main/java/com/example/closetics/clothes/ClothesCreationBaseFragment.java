@@ -87,7 +87,6 @@ public class ClothesCreationBaseFragment extends Fragment{
                 //If there is a change set it in the arrayList
                 if (!(s.toString().equals(""))) {
                     clothesDataViewModel.setFragment(index, inputField.getText().toString().trim());
-                    Log.d("check", String.valueOf(index));
                 }
             }
         });

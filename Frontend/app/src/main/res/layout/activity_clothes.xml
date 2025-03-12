@@ -28,6 +28,7 @@
         android:id="@+id/card_view"
         android:layout_width="match_parent"
         android:layout_height="440dp"
+        app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -83,6 +84,15 @@
 
     </LinearLayout>
 
-    <!-- TabLayout for page indicators (dots) -->
+    <FrameLayout
+        android:id="@+id/view_clothes_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -22,9 +22,11 @@ public class TypeGridRecyclerViewAdapter extends RecyclerView.Adapter<TypeGridRe
     OnItemClickListener clickListener;
 
 
-    public TypeGridRecyclerViewAdapter(HashMap<Long,Long> counts) {
+    public TypeGridRecyclerViewAdapter(HashMap<Long,Long> counts, OnItemClickListener clickListener) {
         //this.imageResource = imageResource;
         this.counts = counts;
+        this.clickListener = clickListener;
+
 
     }
 
@@ -45,12 +47,24 @@ public class TypeGridRecyclerViewAdapter extends RecyclerView.Adapter<TypeGridRe
         String type = MainActivity.CLOTHING_TYPES.get(position+1);
         holder.typeText.setText(MainActivity.CLOTHING_TYPES.get(position+1));
         String count = String.valueOf(counts.get(position+1));
-        Log.d("need", count);
+
         if (count.equals("null")){
             count = "0";
         }
         Log.d("need", count);
         holder.countText.setText(count);
+
+        //Only if not zero
+        //if (count != "0") {
+            //This sets the clicklistener on the entire item in the list
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Send over the position of the item in list + 1 for the hashmap
+                    clickListener.onItemClick(position + 1);
+                }
+            });
+       // }
 
 
     }
@@ -81,8 +95,11 @@ public class TypeGridRecyclerViewAdapter extends RecyclerView.Adapter<TypeGridRe
     Must implement click listener to instantiate the class
      */
 
+
+
+    //Inner interface
     public interface OnItemClickListener{
-        void onItemClick();
+        void onItemClick(int position);
     }
 
 }

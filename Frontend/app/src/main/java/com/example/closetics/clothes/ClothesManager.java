@@ -134,6 +134,16 @@ public class ClothesManager {
 
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
+    public static void getClothingByTypeRequest(Context context, long userId, String URL, long type, Response.Listener<JSONArray> responseListener,
+                                                Response.ErrorListener errorListener){
+        //clothes/type/{userId}/{type}
+        String getUrl = URL + "/type/" + userId +"/"+type;
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, getUrl, null, responseListener, errorListener);
+
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+
+
+    }
 
 
 
