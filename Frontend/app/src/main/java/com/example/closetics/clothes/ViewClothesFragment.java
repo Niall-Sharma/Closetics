@@ -45,13 +45,14 @@ public class ViewClothesFragment extends Fragment {
                  if (view.getId() == R.id.delete_button){
                      long clothingId = ClothesActivity.clothingIdandIndex.get(position);
                      deleteClothing(getActivity().getApplicationContext(), clothingId, ClothesActivity.URL);
+                     //Clothes
 
                  }
                  //Edit button on click logic
                  else{
-                     //Basic roundtrip 
+                     //Basic roundtrip
                      long clothingId = ClothesActivity.clothingIdandIndex.get(position);
-                     updateClothing(getActivity().getApplicationContext(), clothingId, null, ClothesActivity.URL);
+                     //updateClothing(getActivity().getApplicationContext(), clothingId, null, ClothesActivity.URL);
 
                  }
             }
@@ -94,6 +95,7 @@ public class ViewClothesFragment extends Fragment {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d("Volley Update Response", response.toString());
+
 
                     }
                 }, new Response.ErrorListener() {

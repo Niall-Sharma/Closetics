@@ -97,13 +97,13 @@ public class ClothesActivity extends AppCompatActivity {
         layoutManager = new GridLayoutManager(this, 2);
         //Set layout manager
         gridRecyclerView.setLayoutManager(layoutManager);
-        //Call get clothing before constructing adapter so that we can update the counts
-        getUserClothing(getApplicationContext(), UserManager.getUserID(getApplicationContext()), URL);
+
+
         gridRecyclerViewAdapter = new TypeGridRecyclerViewAdapter(clothingTypeCounts, new TypeGridRecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
                 getClothingByType(getApplicationContext(), UserManager.getUserID(getApplicationContext()), URL, position);
-                showFragment(responseStringArray);
+
             }
         });
 
@@ -201,11 +201,12 @@ public class ClothesActivity extends AppCompatActivity {
                         responseStringArray[i] = jsonObject.toString();
 
                        //Check
-                        long clothingId = jsonObject.getLong("itemId");
+                        long clothingId = jsonObject.getLong("clothingType");
                         clothingIdandIndex.put(i, clothingId);
 
                         Log.d("JSON Object", jsonObject.toString());
                     }
+                    showFragment(responseStringArray);
                 } catch (JSONException e) {
                     Log.d("JSON exception", e.toString());
                 }
@@ -220,7 +221,7 @@ public class ClothesActivity extends AppCompatActivity {
         });
     }
 
-    private void getUserClothing(Context context, long userId, String URL){
+    public void getUserClothing(Context context, long userId, String URL){
         ClothesManager.getClothingByUserRequest(context, userId, URL, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {

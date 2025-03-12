@@ -24,9 +24,6 @@ public class ClothesByTypeAdapter extends RecyclerView.Adapter<ClothesByTypeAdap
         /*
         Note: Remove later
          */
-        if (objects == null){
-            this.objects = testArray;
-        }
         this.clickListener = clickListener;
     }
 
@@ -44,6 +41,7 @@ public class ClothesByTypeAdapter extends RecyclerView.Adapter<ClothesByTypeAdap
         int realPosition = holder.getBindingAdapterPosition();
         String jsonObject = objects[realPosition];
         holder.object.setText(jsonObject);
+
         holder.editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,7 +60,8 @@ public class ClothesByTypeAdapter extends RecyclerView.Adapter<ClothesByTypeAdap
 
     @Override
     public int getItemCount() {
-        return objects.length;
+        return 0;
+        //return objects.length;
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
