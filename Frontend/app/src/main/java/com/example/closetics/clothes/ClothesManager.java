@@ -9,6 +9,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.RequestFuture;
 import com.example.closetics.MainActivity;
 import com.example.closetics.VolleySingleton;
 
@@ -123,6 +124,21 @@ public class ClothesManager {
     Note: This method is not for a JSON object but for an array
      */
 
+    /*
+    Overloaded method for when wanting to wait for a response, synchrnous get
+     */
+    public static void getClothingByUserRequest(Context context, long userId, String URL,
+                                                RequestFuture<JSONArray> future, Response.ErrorListener errorListener
+                                                ) {
+        String getUrl = URL + "/user/" + userId;
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
+                getUrl, null, future, errorListener);
+
+
+
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
     public static void getClothingByUserRequest(Context context, long userId, String URL,
                                                 Response.Listener<JSONArray> responseListener,
                                                 Response.ErrorListener errorListener) {
@@ -134,6 +150,8 @@ public class ClothesManager {
 
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
+
+
     public static void getClothingByTypeRequest(Context context, long userId, String URL, long type, Response.Listener<JSONArray> responseListener,
                                                 Response.ErrorListener errorListener){
         //clothes/type/{userId}/{type}

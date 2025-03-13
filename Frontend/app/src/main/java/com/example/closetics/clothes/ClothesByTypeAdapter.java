@@ -19,28 +19,26 @@ public class ClothesByTypeAdapter extends RecyclerView.Adapter<ClothesByTypeAdap
     OnItemClickListener clickListener;
 
     public ClothesByTypeAdapter(String[] objects, OnItemClickListener clickListener) {
-        String [] testArray = {"1"};
         this.objects = objects;
-        /*
-        Note: Remove later
-         */
+        Log.d("length", String.valueOf(objects.length));
         this.clickListener = clickListener;
     }
 
 
     @NonNull
     @Override
-    public ClothesByTypeAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_list_clothing_item, parent, false);
         MyViewHolder myViewHolder = new MyViewHolder(view);
         return myViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ClothesByTypeAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         int realPosition = holder.getBindingAdapterPosition();
         String jsonObject = objects[realPosition];
         holder.object.setText(jsonObject);
+        Log.d("JSON object binding", jsonObject);
 
         holder.editButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,7 +58,7 @@ public class ClothesByTypeAdapter extends RecyclerView.Adapter<ClothesByTypeAdap
 
     @Override
     public int getItemCount() {
-        return 0;
+        return objects.length;
         //return objects.length;
     }
 

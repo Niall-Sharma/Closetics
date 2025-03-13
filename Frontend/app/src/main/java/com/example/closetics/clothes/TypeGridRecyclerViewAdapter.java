@@ -40,23 +40,23 @@ public class TypeGridRecyclerViewAdapter extends RecyclerView.Adapter<TypeGridRe
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+        long longRealPosition = holder.getBindingAdapterPosition();
         int realPosition = holder.getBindingAdapterPosition();
         //Sets the changing views from the innerclass
 
         //holder.imageView.setImageResource(imageResource[position]);
         //Note: 1 based indexing for the hashmap keys
-        String type = MainActivity.CLOTHING_TYPES.get(realPosition+1);
+        String type = MainActivity.CLOTHING_TYPES.get((realPosition+1));
         holder.typeText.setText(MainActivity.CLOTHING_TYPES.get(realPosition+1));
-        String count = String.valueOf(counts.get(realPosition+1));
+        String count = String.valueOf(counts.get(longRealPosition+1));
 
         if (count.equals("null")){
             count = "0";
         }
-        Log.d("need", count);
         holder.countText.setText(count);
 
         //Only if not zero
-        //if (count != "0") {
+        if (count != "0") {
             //This sets the clicklistener on the entire item in the list
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -65,7 +65,7 @@ public class TypeGridRecyclerViewAdapter extends RecyclerView.Adapter<TypeGridRe
                     clickListener.onItemClick(realPosition + 1);
                 }
             });
-       // }
+       }
 
 
     }
@@ -100,7 +100,7 @@ public class TypeGridRecyclerViewAdapter extends RecyclerView.Adapter<TypeGridRe
 
     //Inner interface
     public interface OnItemClickListener{
-        void onItemClick(int position);
+        void onItemClick(long position);
     }
 
 }

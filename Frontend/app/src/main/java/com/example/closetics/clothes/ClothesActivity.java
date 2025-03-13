@@ -21,6 +21,8 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.RequestFuture;
 import com.example.closetics.MainActivity;
 import com.example.closetics.R;
 import com.example.closetics.UserManager;
@@ -33,13 +35,16 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 //This activity holds the viewpager container, this
 
 public class ClothesActivity extends AppCompatActivity {
 
     private String[] responseStringArray;
-    private HashMap<Long,Long> clothingTypeCounts = new HashMap<>();
+    private static HashMap<Long,Long> clothingTypeCounts = new HashMap<>();
     public static HashMap<Integer, Long> clothingIdandIndex = new HashMap<>();
     private Button addClothes;
     private Button editClothes;
@@ -98,10 +103,11 @@ public class ClothesActivity extends AppCompatActivity {
         //Set layout manager
         gridRecyclerView.setLayoutManager(layoutManager);
 
+        //Wait until we get a reponse to execute more code
 
         gridRecyclerViewAdapter = new TypeGridRecyclerViewAdapter(clothingTypeCounts, new TypeGridRecyclerViewAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(int position) {
+            public void onItemClick(long position) {
                 getClothingByType(getApplicationContext(), UserManager.getUserID(getApplicationContext()), URL, position);
 
             }
@@ -197,11 +203,9 @@ public class ClothesActivity extends AppCompatActivity {
                 try {
                     for (int i = 0; i < response.length(); i++) {
                         JSONObject jsonObject = response.getJSONObject(i);
-
                         responseStringArray[i] = jsonObject.toString();
-
                        //Check
-                        long clothingId = jsonObject.getLong("clothingType");
+                        long clothingId = jsonObject.getLong("clothesId");
                         clothingIdandIndex.put(i, clothingId);
 
                         Log.d("JSON Object", jsonObject.toString());
@@ -210,7 +214,6 @@ public class ClothesActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     Log.d("JSON exception", e.toString());
                 }
-
 
             }
         }, new Response.ErrorListener() {
@@ -221,7 +224,8 @@ public class ClothesActivity extends AppCompatActivity {
         });
     }
 
-    public void getUserClothing(Context context, long userId, String URL){
+
+    public static void getUserClothing(Context context, long userId, String URL ){
         ClothesManager.getClothingByUserRequest(context, userId, URL, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -237,13 +241,14 @@ public class ClothesActivity extends AppCompatActivity {
                         incrementKeyValue(clothingTypeCounts, key);
                         Log.d("JSON Object", jsonObject.toString());
                     }
+                    Intent intent = new Intent(context, ClothesActivity.class);
+                    context.startActivity(intent);
                 } catch (JSONException e) {
                     Log.d("JSON exception", e.toString());
                 }
 
 
-
-        }}, new Response.ErrorListener() {
+            }}, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -251,7 +256,7 @@ public class ClothesActivity extends AppCompatActivity {
 
             }
         });
-        }
+    }
 
     private void saveClothing(Context context, ArrayList<MutableLiveData<String>> fragments, String URL, Long userId){
         ClothesManager.saveClothingRequest(context, fragments, userId,URL, new Response.Listener<JSONObject>() {
@@ -271,10 +276,15 @@ public class ClothesActivity extends AppCompatActivity {
 
     }
 
-    private void incrementKeyValue(HashMap<Long, Long> map, Long key){
+    private static void incrementKeyValue(HashMap<Long, Long> map, Long key){
         //If the map has the key, increment its value (the count)
+        if (key == 0){
+            return;
+        }
         if (map.containsKey((key))){
             map.put(key, map.get(key) +1);
+            Log.d("check", map.get(key).toString());
+
         }
         //If not put the new key with count of 1
         else{

@@ -33,7 +33,7 @@ public class ViewClothesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_view_clothes, container, false);
 
         recyclerView = view.findViewById(R.id.recycler_view);
-        layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         super.onCreate(savedInstanceState);
         String[] objects = getArguments().getStringArray("JSONObject");
@@ -58,6 +58,7 @@ public class ViewClothesFragment extends Fragment {
             }
         });
         recyclerView.setAdapter(adapter);
+        recyclerView.setHasFixedSize(true);
 
         return view;
     }
