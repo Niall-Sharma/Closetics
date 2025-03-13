@@ -43,9 +43,7 @@ import java.util.concurrent.TimeoutException;
 
 public class ClothesActivity extends AppCompatActivity {
 
-    private String[] responseStringArray;
     private static HashMap<Long,Long> clothingTypeCounts = new HashMap<>();
-    public static HashMap<Integer, Long> clothingIdandIndex = new HashMap<>();
     private Button addClothes;
     private Button editClothes;
     private Button viewClothes;
@@ -149,25 +147,14 @@ public class ClothesActivity extends AppCompatActivity {
             }
         });
 
-
-        viewClothes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("UserId", String.valueOf(UserManager.getUserID(getApplicationContext())));
-                getUserClothing(getApplicationContext(), UserManager.getUserID(getApplicationContext()), URL);
-            }
-        });
+        Context context = this;
         finalSubmission.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ArrayList<MutableLiveData<String>> fragments = clothesDataViewModel.getFragments();
                 saveClothing(getApplicationContext(), fragments, URL, UserManager.getUserID(getApplicationContext()));
                 //Call get clothing before constructing adapter so that we can update the counts
-                getUserClothing(getApplicationContext(), UserManager.getUserID(getApplicationContext()), URL);
-                //Just send back to main for now!
-                Intent intent = new Intent(getApplicationContext(), ClothesActivity.class);
-                startActivity(intent);
-
+                ClothesActivity.getUserClothing(context, UserManager.getUserID(getApplicationContext()), URL);
 
             }
         });
@@ -188,7 +175,6 @@ public class ClothesActivity extends AppCompatActivity {
 
     private void getClothingByType(Context context, long userId, String URL, long type){
 
-
         ClothesManager.getClothingByTypeRequest(context, userId, URL, type, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -196,21 +182,18 @@ public class ClothesActivity extends AppCompatActivity {
                 Note on the response we need to parse the JSON array
                  */
                 Log.d("Volley Response", response.toString());
-                responseStringArray = new String[response.length()];
-                //Clear the static hashmap when this is called
-                clothingIdandIndex.clear();
-
+                ArrayList<String> responseStringArray = new ArrayList<>();
+                long[] clothingIds = new long[response.length()];
                 try {
                     for (int i = 0; i < response.length(); i++) {
                         JSONObject jsonObject = response.getJSONObject(i);
-                        responseStringArray[i] = jsonObject.toString();
+                        responseStringArray.add(jsonObject.toString());
                        //Check
                         long clothingId = jsonObject.getLong("clothesId");
-                        clothingIdandIndex.put(i, clothingId);
-
+                        clothingIds[i] = clothingId;
                         Log.d("JSON Object", jsonObject.toString());
                     }
-                    showFragment(responseStringArray);
+                    showFragment(responseStringArray, clothingIds);
                 } catch (JSONException e) {
                     Log.d("JSON exception", e.toString());
                 }
@@ -225,7 +208,7 @@ public class ClothesActivity extends AppCompatActivity {
     }
 
 
-    public static void getUserClothing(Context context, long userId, String URL ){
+    public static void getUserClothing(Context context, long userId, String URL){
         ClothesManager.getClothingByUserRequest(context, userId, URL, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -233,7 +216,7 @@ public class ClothesActivity extends AppCompatActivity {
                 Note on the response we need to parse the JSON array
                  */
                 Log.d("Volley Response", response.toString());
-
+                clothingTypeCounts.clear();
                 try {
                     for (int i = 0; i < response.length(); i++) {
                         JSONObject jsonObject = response.getJSONObject(i);
@@ -292,10 +275,9 @@ public class ClothesActivity extends AppCompatActivity {
         }
     }
 
-
-    private void showFragment(String[] JSONObject){
+    private void showFragment(ArrayList<String> JSONObject, long[] clothingIds){
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        Fragment fragment = ViewClothesFragment.newInstance(JSONObject);
+        Fragment fragment = ViewClothesFragment.newInstance(JSONObject, clothingIds);
         transaction.replace(R.id.view_clothes_container, fragment, "view_clothes_fragment");
         transaction.commit();
         //Log.d("Fragment debug", String.valueOf(fragment.isAdded()));

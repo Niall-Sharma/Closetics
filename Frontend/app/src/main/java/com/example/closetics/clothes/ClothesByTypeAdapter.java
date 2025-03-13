@@ -12,15 +12,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.closetics.R;
 
+import java.util.ArrayList;
+
 public class ClothesByTypeAdapter extends RecyclerView.Adapter<ClothesByTypeAdapter.MyViewHolder>{
 
 
-    String[] objects;
+    ArrayList<String> objects;
     OnItemClickListener clickListener;
 
-    public ClothesByTypeAdapter(String[] objects, OnItemClickListener clickListener) {
+    public ClothesByTypeAdapter(ArrayList<String> objects, OnItemClickListener clickListener) {
         this.objects = objects;
-        Log.d("length", String.valueOf(objects.length));
         this.clickListener = clickListener;
     }
 
@@ -36,7 +37,7 @@ public class ClothesByTypeAdapter extends RecyclerView.Adapter<ClothesByTypeAdap
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         int realPosition = holder.getBindingAdapterPosition();
-        String jsonObject = objects[realPosition];
+        String jsonObject = objects.get(realPosition);
         holder.object.setText(jsonObject);
         Log.d("JSON object binding", jsonObject);
 
@@ -58,7 +59,7 @@ public class ClothesByTypeAdapter extends RecyclerView.Adapter<ClothesByTypeAdap
 
     @Override
     public int getItemCount() {
-        return objects.length;
+        return objects.size();
         //return objects.length;
     }
 

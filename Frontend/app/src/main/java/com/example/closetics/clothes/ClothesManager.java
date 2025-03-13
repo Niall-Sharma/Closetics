@@ -10,12 +10,14 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
+import com.android.volley.toolbox.StringRequest;
 import com.example.closetics.MainActivity;
 import com.example.closetics.VolleySingleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONStringer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -87,18 +89,20 @@ public class ClothesManager {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
+    /*
+    The delete mapping sends a string response back, that is why this request is handled differently
+     */
     public static void deleteClothingRequest(Context context, Long clothingId, String URL,
-                                             Response.Listener<JSONObject> responseListener,
+                                             Response.Listener<String> responseListener,
                                              Response.ErrorListener errorListener) {
         String deleteUrl = URL + "/" + clothingId;
 
-        JsonObjectRequest request = new JsonObjectRequest(
+        StringRequest request = new StringRequest(
                 Request.Method.DELETE,
                 deleteUrl,
-                null,
                 responseListener,
-                errorListener
-        );
+                errorListener);
+
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
@@ -123,21 +127,6 @@ public class ClothesManager {
     /*
     Note: This method is not for a JSON object but for an array
      */
-
-    /*
-    Overloaded method for when wanting to wait for a response, synchrnous get
-     */
-    public static void getClothingByUserRequest(Context context, long userId, String URL,
-                                                RequestFuture<JSONArray> future, Response.ErrorListener errorListener
-                                                ) {
-        String getUrl = URL + "/user/" + userId;
-        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
-                getUrl, null, future, errorListener);
-
-
-
-        VolleySingleton.getInstance(context).addToRequestQueue(request);
-    }
 
     public static void getClothingByUserRequest(Context context, long userId, String URL,
                                                 Response.Listener<JSONArray> responseListener,
