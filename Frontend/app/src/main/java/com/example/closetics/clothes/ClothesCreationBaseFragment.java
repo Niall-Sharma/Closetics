@@ -1,11 +1,8 @@
 package com.example.closetics.clothes;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,14 +13,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.closetics.ForgotPasswordFragment;
 import com.example.closetics.R;
-import com.google.android.material.tabs.TabLayout;
-
-import java.util.ArrayList;
 
 public class ClothesCreationBaseFragment extends Fragment{
     private static final String TAG = "MyFragment";
@@ -32,8 +24,8 @@ public class ClothesCreationBaseFragment extends Fragment{
     private TextView clothesTextView;
     private EditText inputField;
     private ClothesDataViewModel clothesDataViewModel;
-
-    //int index;
+    //If true this is an edit fragment
+    private boolean edit;
 
     private ViewPager2 viewPager;
 
@@ -46,6 +38,12 @@ public class ClothesCreationBaseFragment extends Fragment{
 
     public ClothesCreationBaseFragment(ClothesDataViewModel clothesDataViewModel){
         this.clothesDataViewModel = clothesDataViewModel;
+
+    }
+    /*
+    Second constructor for editing viewpager
+     */
+    public ClothesCreationBaseFragment(ClothesDataViewModel clothesDataViewModel, String answeredQuestions ){
 
     }
 
@@ -66,7 +64,7 @@ public class ClothesCreationBaseFragment extends Fragment{
         clothesTextView.setText(createClothesQuestions[index]);
 
         //Grab the viewpager
-        viewPager = requireActivity().findViewById(R.id.pager);
+        viewPager = requireActivity().findViewById(R.id.edit_pager);
 
         inputField.addTextChangedListener(new TextWatcher() {
 
@@ -114,6 +112,7 @@ public class ClothesCreationBaseFragment extends Fragment{
         fragment.setArguments(args);
         return fragment;
     }
+
 
 
 }

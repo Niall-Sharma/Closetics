@@ -57,7 +57,6 @@ public class ViewClothesFragment extends Fragment {
                  }
                  //Edit button on click logic
                  else{
-
                      long clothingId = clothingIds[position];
                      //updateClothing(getActivity(), clothingId, null, ClothesActivity.URL);
 

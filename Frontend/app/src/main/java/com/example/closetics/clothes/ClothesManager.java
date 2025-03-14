@@ -36,10 +36,10 @@ public class ClothesManager {
         String size = fragments.get(1).getValue();
         String color = fragments.get(2).getValue();
         String dateBought = fragments.get(3).getValue();
-        String brand = fragments.get(4).getValue();
-        String itemName = fragments.get(7).getValue();
-        String material = fragments.get(6).getValue();
-        String price = fragments.get(5).getValue();
+        String brand = fragments.get(6).getValue();
+        String itemName = fragments.get(5).getValue();
+        String material = fragments.get(7).getValue();
+        String price = fragments.get(4).getValue();
 
 
         //Create the json object of the saveClothing data

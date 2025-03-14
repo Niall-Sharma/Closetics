@@ -21,8 +21,6 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.RequestFuture;
 import com.example.closetics.MainActivity;
 import com.example.closetics.R;
 import com.example.closetics.UserManager;
@@ -35,9 +33,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 //This activity holds the viewpager container, this
 
@@ -116,10 +111,7 @@ public class ClothesActivity extends AppCompatActivity {
         gridRecyclerView.setHasFixedSize(true);
 
 
-
-
-
-        viewPager = findViewById(R.id.pager);
+        viewPager = findViewById(R.id.edit_pager);
         //This needs an innner class
         pagerAdapter = new ScreenSlidePagerAdapter(this);
         ClothesActivity clothesActivity = this;
@@ -281,6 +273,12 @@ public class ClothesActivity extends AppCompatActivity {
         transaction.replace(R.id.view_clothes_container, fragment, "view_clothes_fragment");
         transaction.commit();
         //Log.d("Fragment debug", String.valueOf(fragment.isAdded()));
+    }
+    /*
+    This is used to edit a clothing item
+     */
+    public static void addButtonPerformClick(){
+
     }
 
 
