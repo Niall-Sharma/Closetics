@@ -3,6 +3,10 @@ package closetics.Users;
 import jakarta.persistence.*;
 import org.mindrot.jbcrypt.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import closetics.Users.UserProfile.UserProfile;
+
 
 @Entity(name = "users_table")
 @Table(uniqueConstraints = {
@@ -25,6 +29,10 @@ public class User {
     private String sQA3;
     private long sQID3;
 
+    @OneToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "userProfile_id")
+    @JsonIgnore
+    private UserProfile userProfile;
 
     public User(long userId, String name, String email, String username, String password, String userTier, String sQA1,
                 long sQID1, String sQA2, long sQID2, String sQA3, long sQID3) {
@@ -40,6 +48,7 @@ public class User {
         this.sQID2 = sQID2;
         this.sQA3 = sQA3;
         this.sQID3 = sQID3;
+        userProfile = new UserProfile(false, username,userId);
     }
 
     public User() {
