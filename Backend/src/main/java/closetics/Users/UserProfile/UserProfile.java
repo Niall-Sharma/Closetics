@@ -26,6 +26,7 @@ public class UserProfile{
   @JoinColumn(name = "outfit_id")
   private List<Outfit> outfits;
 
+
   @OneToMany
   @JoinColumn(name = "following_id")
   private List<UserProfile> following_id;
