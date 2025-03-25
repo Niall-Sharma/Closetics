@@ -104,8 +104,13 @@ public class ChatServer {
             String actualMessage = actualMessageBuilder.toString();
             sendMessageToPArticularUser(destUserName, "[DM from " + username + "]: " + actualMessage);
             sendMessageToPArticularUser(username, "[DM from " + username + "]: " + actualMessage);
-        }
-        else { // Message to whole chat
+        } else if (message.startsWith("/")) {
+            if(message.contains("/fun")){
+                broadcast("SERVER: PARTY!!!");
+            } else if (message.contains("/delete")) {
+                sendMessageToPArticularUser(username, "SERVER: You wish you could do that!");
+            }
+        } else { // Message to whole chat
             broadcast(username + ": " + message);
         }
     }
