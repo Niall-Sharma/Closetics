@@ -78,8 +78,9 @@ public class ChatSocket {
 			sendMessageToPArticularUser(destUsername, "[DM] " + username + ": " + message);
 			sendMessageToPArticularUser(username, "[DM] " + username + ": " + message);
 
-		} 
-    else { // broadcast
+		} else if (message.startsWith("/delete")) {
+			msgRepo.deleteByUserName(username);
+		} else { // broadcast
 			broadcast(username + ": " + message);
 		}
 
