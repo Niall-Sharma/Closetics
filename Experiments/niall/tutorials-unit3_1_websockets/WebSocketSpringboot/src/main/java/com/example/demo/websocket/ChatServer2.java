@@ -99,8 +99,9 @@ public class ChatServer2 {
             String actualMessage = actualMessageBuilder.toString();
             sendMessageToPArticularUser(destUserName, "[DM from " + username + "]: " + actualMessage);
             sendMessageToPArticularUser(username, "[DM from " + username + "]: " + actualMessage);
-        }
-        else { // Message to whole chat
+        } else if (message.startsWith("/users")) {
+            sendMessageToPArticularUser(username, "USERS: " + usernameSessionMap.toString());   
+        } else { // Message to whole chat
             broadcast(username + ": " + message);
         }
     }

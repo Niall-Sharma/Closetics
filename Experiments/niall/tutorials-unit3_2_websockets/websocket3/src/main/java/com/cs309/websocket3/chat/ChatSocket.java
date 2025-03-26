@@ -80,6 +80,11 @@ public class ChatSocket {
 
 		} else if (message.startsWith("/delete")) {
 			msgRepo.deleteByUserName(username);
+		} else if (message.startsWith("/chat")) {
+			List<Message> messages = msgRepo.GetMesseges();
+			for(Message message1 : messages){
+				broadcast(message1.getContent());
+			}
 		} else { // broadcast
 			broadcast(username + ": " + message);
 		}
