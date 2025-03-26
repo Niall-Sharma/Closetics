@@ -5,45 +5,49 @@ import java.util.ArrayList;
 
 import jakarta.persistence.*;
 
-@Entity(name = "stats_table")
-public class Stat {
+@Entity(name = "clothing_stats_table")
+public class ClothingStats {
   ArrayList<Date> dateWorn;
   long timesWorn;
-  long highTemp;
-  long lowTemp;
+  float highTemp;
+  float lowTemp;
+  long numberOfOutfitsIn;
 
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  long id;
+  long clothingStatsId;
 
-  public Stat(long timesWorn, long highTemp, long lowTemp){
+  public ClothingStats(long timesWorn, float highTemp, float lowTemp, long numberOfOutfitsIn){
     this.timesWorn = timesWorn;
     this.dateWorn = new ArrayList<>();
     this.highTemp = highTemp;
     this.lowTemp = lowTemp;
+    this.numberOfOutfitsIn =numberOfOutfitsIn;
+
   }
   
-  public Stat(){
+  public ClothingStats(){
     dateWorn = new ArrayList<>();
     timesWorn = 0;
     highTemp = 0;
     lowTemp = 0;
+    numberOfOutfitsIn = 0;
   }
 
-  public long getLowTemp(){
+  public float getLowTemp(){
     return lowTemp;
   }
 
-  public void setLowTemp(long temp){
+  public void setLowTemp(float temp){
     lowTemp = temp;
   }
 
-  public long getHighTemp(){
+  public float getHighTemp(){
     return highTemp;
   }
 
-  public void setHighTemp(long temp){
+  public void setHighTemp(float temp){
     highTemp = temp;
   }
 
@@ -71,8 +75,13 @@ public class Stat {
     return dateWorn;
   }
 
+  public long numberOfOutfitsIn() {
+    return numberOfOutfitsIn;
+  }
 
-
+  public void setNumberOfOutfitsIn(long numberOfOutfitsIn) {
+    this.numberOfOutfitsIn = numberOfOutfitsIn;
+  }
 }
 
 
