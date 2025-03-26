@@ -6,7 +6,7 @@ import java.util.Optional;
 import closetics.Users.User;
 import closetics.Users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import closetics.Clothes.Statistics.StatRepository;
+import closetics.Clothes.Statistics.ClothingStatRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +17,7 @@ public class ClothingController {
     ClothingRepository clothingRepository;
 
     @Autowired
-    StatRepository statRepository;
+    ClothingStatRepository clothingStatRepository;
 
     @Autowired
     UserRepository userRepository;
