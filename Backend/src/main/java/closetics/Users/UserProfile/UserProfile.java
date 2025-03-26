@@ -27,15 +27,16 @@ public class UserProfile{
   @Column(name = "UID")
   long UUID;
   
+  //SEPERATE ENDPOINT
   @OneToMany
   @JoinColumn(name = "outfit_id")
   private List<Outfit> outfits;
 
-
+  //SEPERATE ENDPOINT
   @OneToMany
   @JoinColumn(name = "following_id")
   private List<UserProfile> following_id;
-
+  //SEPERATE ENDPOINT
   @ManyToOne
   @JoinColumn(name = "followers_id")
   private List<UserProfile> followers_id;
