@@ -133,6 +133,10 @@ public class ClothesManager {
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
                 getUrl, null, responseListener, errorListener);
 
+        //if (request.getBody() == null){
+           // responseListener.onResponse(new JSONArray());
+        //}
+
 
 
         VolleySingleton.getInstance(context).addToRequestQueue(request);
@@ -144,6 +148,9 @@ public class ClothesManager {
         String getUrl = URL + "/" + clothingId;
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
                 getUrl, null, responseListener, errorListener);
+
+
+
 
 
         VolleySingleton.getInstance(context).addToRequestQueue(request);

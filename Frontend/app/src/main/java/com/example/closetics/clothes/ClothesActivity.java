@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.android.volley.NetworkResponse;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.closetics.MainActivity;
@@ -220,6 +221,10 @@ public class ClothesActivity extends AppCompatActivity {
                 /*
                 Note on the response we need to parse the JSON array
                  */
+                //if (response == null) {
+                    //Log.e("Volley", "Null response received");
+                //}
+
                 Log.d("Volley Response", response.toString());
                 clothingTypeCounts.clear();
                 try {
@@ -241,6 +246,7 @@ public class ClothesActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("Volley Error user clothing", error.toString());
+
 
             }
         });
