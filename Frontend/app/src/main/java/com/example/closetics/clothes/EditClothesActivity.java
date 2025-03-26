@@ -1,7 +1,9 @@
 package com.example.closetics.clothes;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -9,15 +11,23 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.example.closetics.MainActivity;
 import com.example.closetics.R;
+import com.example.closetics.UserManager;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Map;
 
 public class EditClothesActivity extends AppCompatActivity {
     private Button finalSubmission;
@@ -27,6 +37,7 @@ public class EditClothesActivity extends AppCompatActivity {
     private FragmentStateAdapter pagerAdapter;
     private long clothingId;
     private ClothingItem clothingItem;
+
 
 
 
@@ -64,9 +75,37 @@ public class EditClothesActivity extends AppCompatActivity {
         clothingId = intent.getLongExtra("clothingId", 0);
         clothingItem = (ClothingItem) intent.getSerializableExtra("clothingItem");
 
+        finalSubmission.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                ArrayList<MutableLiveData<String>> fragments = clothesDataViewModel.getFragments();
+                //udpateClothing(getApplicationContext(), clothingId, ClothesActivity.URL, UserManager.getUserID(getApplicationContext()));
+
+
+            }
+        });
 
 
 
+
+    }
+
+    private void updateClothing(Context context, long clothingId, Map<String, Object> updatedFields, String URL) {
+        ClothesManager.updateClothingRequest(context, clothingId, updatedFields, URL, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("Volley Update Response", response.toString());
+
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("Volley Update Error", error.toString());
+                    }
+                }
+        );
     }
 
     /*

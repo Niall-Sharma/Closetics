@@ -113,22 +113,6 @@ public class ViewClothesFragment extends Fragment {
 
         );
     }
-    private void updateClothing(Context context, long clothingId, Map<String, Object> updatedFields, String URL) {
-        ClothesManager.updateClothingRequest(context, clothingId, updatedFields, URL, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d("Volley Update Response", response.toString());
-
-
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d("Volley Update Error", error.toString());
-                    }
-                }
-        );
-    }
     private void deleteItem(ArrayList<String> objects, int position){
         objects.remove(position);
         adapter.notifyItemRemoved(position);
