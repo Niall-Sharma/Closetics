@@ -2,6 +2,9 @@ package closetics.Outfits;
 
 import closetics.Clothes.Clothing;
 import closetics.Clothes.ClothingRepository;
+import closetics.Users.UserProfile.UserProfile;
+import closetics.Users.UserProfile.UserProfileRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +24,9 @@ public class OutfitController {
     @Autowired
     ClothingRepository clothingRepo;
 
+    @Autowired
+    UserProfileRepository uProfileRepository;
+
     @GetMapping(path = "/getOutfit/{outfitId}")
     public Optional<Outfit> getOutfit(@PathVariable long outfitId) {
         return outfitRepo.findById(outfitId);
@@ -34,11 +40,13 @@ public class OutfitController {
 
     @PostMapping(path = "/createOutfit")
     public Outfit saveClothing(@RequestBody Outfit outfit) {
-        if (outfit.getOutfitItems() == null) {
-            outfit.setOutfitItems(new ArrayList<>()); // Ensure the list is initialized
-        }
-        outfit.setCreationDate(LocalDateTime.now());
-        return outfitRepo.save(outfit);
+      if (outfit.getOutfitItems() == null) {
+          outfit.setOutfitItems(new ArrayList<>()); // Ensure the list is initialized
+      }
+      outfit.setCreationDate(LocalDateTime.now());
+      UserProfile uProfile = uProfileRepository.findByUID(outfit.getUserId());
+      uProfile.AddOutfit(outfit);
+      return outfitRepo.save(outfit);
     }
 
     @PutMapping(path = "/updateOutfit")

@@ -12,9 +12,9 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, Long> 
     @Transactional
     void deleteById(long id);
 
-    @Query(value = "SELECT * FROM users_table WHERE username=?",nativeQuery = true)
+    @Query(value = "SELECT * FROM user_profiles_table WHERE username=?",nativeQuery = true)
     UserProfile findByUsername(String username);
-
-    @Query(value = "SELECT * FROM users_table WHERE email= :email",nativeQuery = true)
-    UserProfile findByEmail(String email);
+    
+    @Query(value = "SELECT * FROM user_profiles_table WHERE UID=?")
+    UserProfile findByUID(long UID);
 }

@@ -148,4 +148,8 @@ Regex explanation:
 
     public long getsQID3() {return sQID3;}
     public void setsQID3(long sQID3) {this.sQID3 = sQID3;}
+
+    public UserProfile GetUserProfile(){
+    return userProfile;
+  }
 }
