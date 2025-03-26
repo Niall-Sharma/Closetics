@@ -46,7 +46,6 @@ public class ClothesActivity extends AppCompatActivity {
     private Button deleteClothes;
     private CardView card;
 
-    private String[] inputArray = new String[NUM_FRAGMENTS];
 
     private Button clothesActivityBack;
     private Button mainActivityBack;
@@ -59,7 +58,7 @@ public class ClothesActivity extends AppCompatActivity {
     private TypeGridRecyclerViewAdapter gridRecyclerViewAdapter;
 
 
-    private static final int NUM_FRAGMENTS = 8;
+    public static final int NUM_FRAGMENTS = 8;
     //Shared data for the fragments
     private ClothesDataViewModel clothesDataViewModel;
 
@@ -175,17 +174,19 @@ public class ClothesActivity extends AppCompatActivity {
                  */
                 Log.d("Volley Response", response.toString());
                 ArrayList<String> responseStringArray = new ArrayList<>();
+                ArrayList<ClothingItem> responseClothingItems = new ArrayList<>();
                 long[] clothingIds = new long[response.length()];
                 try {
                     for (int i = 0; i < response.length(); i++) {
                         JSONObject jsonObject = response.getJSONObject(i);
                         responseStringArray.add(jsonObject.toString());
+                        responseClothingItems.add(createClothingItem(jsonObject));
                        //Check
                         long clothingId = jsonObject.getLong("clothesId");
                         clothingIds[i] = clothingId;
                         Log.d("JSON Object", jsonObject.toString());
                     }
-                    showFragment(responseStringArray, clothingIds);
+                    showFragment(responseStringArray, clothingIds, responseClothingItems);
                 } catch (JSONException e) {
                     Log.d("JSON exception", e.toString());
                 }
@@ -197,6 +198,18 @@ public class ClothesActivity extends AppCompatActivity {
                 Log.d("Volley Error", error.toString());
             }
         });
+    }
+    private ClothingItem createClothingItem(JSONObject response) throws JSONException {
+        String favorite = String.valueOf(response.getBoolean("favorite"));
+        String brand = response.getString("brand");
+        String color = response.getString ("color");
+        String dateBought = response.getString("dateBought");
+        String itemName = response.getString("itemName");
+        String material = response.getString("material");
+        String size = response.getString("size");
+        String price = response.getString("price");
+        return new ClothingItem(favorite, size, color, dateBought,  brand,
+                 itemName, material, price);
     }
 
 
@@ -267,21 +280,13 @@ public class ClothesActivity extends AppCompatActivity {
         }
     }
 
-    private void showFragment(ArrayList<String> JSONObject, long[] clothingIds){
+    private void showFragment(ArrayList<String> JSONObject, long[] clothingIds, ArrayList<ClothingItem> clothingItems){
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        Fragment fragment = ViewClothesFragment.newInstance(JSONObject, clothingIds);
+        Fragment fragment = ViewClothesFragment.newInstance(JSONObject, clothingIds, clothingItems);
         transaction.replace(R.id.view_clothes_container, fragment, "view_clothes_fragment");
         transaction.commit();
-        //Log.d("Fragment debug", String.valueOf(fragment.isAdded()));
-    }
-    /*
-    This is used to edit a clothing item
-     */
-    public static void addButtonPerformClick(){
 
     }
-
-
 
 
     /*

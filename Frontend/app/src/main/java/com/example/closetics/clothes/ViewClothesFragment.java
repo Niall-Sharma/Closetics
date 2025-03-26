@@ -1,6 +1,7 @@
 package com.example.closetics.clothes;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +23,7 @@ import com.example.closetics.R;
 
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,6 +43,7 @@ public class ViewClothesFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         super.onCreate(savedInstanceState);
         ArrayList<String> objects = getArguments().getStringArrayList("JSONObject");
+        ArrayList<ClothingItem> clothingItems = (ArrayList<ClothingItem>)getArguments().getSerializable("ClothingItems");
         long [] clothingIds = getArguments().getLongArray("clothingIds");
 
         adapter = new ClothesByTypeAdapter(objects, new ClothesByTypeAdapter.OnItemClickListener() {
@@ -58,7 +61,15 @@ public class ViewClothesFragment extends Fragment {
                  //Edit button on click logic
                  else{
                      long clothingId = clothingIds[position];
-                     //updateClothing(getActivity(), clothingId, null, ClothesActivity.URL);
+                     ClothingItem clothingItem = clothingItems.get(position);
+
+                     //Switch to editActivity
+                     Intent intent = new Intent(getActivity(), EditClothesActivity.class);
+                     intent.putExtra("clothingId", clothingId);
+                     //Serializable
+                     intent.putExtra("clothingItem", clothingItem);
+                     startActivity(intent);
+
 
                  }
             }
@@ -70,15 +81,17 @@ public class ViewClothesFragment extends Fragment {
     }
 
 
-    public static Fragment newInstance(ArrayList<String> object, long[] clothingIds) {
+    public static Fragment newInstance(ArrayList<String> object, long[] clothingIds, ArrayList<ClothingItem> clothingItem) {
         //Create a new forgot password fragment
         Fragment fragment = new ViewClothesFragment();
         Bundle args = new Bundle();
         args.putStringArrayList("JSONObject", object);
         args.putLongArray("clothingIds", clothingIds);
+        args.putSerializable("ClothingItems", clothingItem);
         fragment.setArguments(args);
         return fragment;
     }
+
 
     private void deleteClothing(Context context,long clothingId, String URL){
         ClothesManager.deleteClothingRequest(context, clothingId, URL, new Response.Listener<String>() {

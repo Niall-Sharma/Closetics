@@ -18,23 +18,17 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.example.closetics.R;
 
 public class ClothesCreationBaseFragment extends Fragment{
-    private static final String TAG = "MyFragment";
-
     private Button submit;
     private TextView clothesTextView;
     private EditText inputField;
     private ClothesDataViewModel clothesDataViewModel;
-    //If true this is an edit fragment
-    private boolean edit;
-
     private ViewPager2 viewPager;
+    private int position;
+
 
     //Add camera functionality
     //Likely will need to add more fields to this and more fragments!!!
-    public static String[] createClothesQuestions= { "Would you like to favorite this item?","Size of this item?","What color is it?","What date was it bought?",
-            "What is its price?", "What would you like to call this piece of clothing?",
-            "What is the brand?", "What material is it?"
-    };
+
 
     public ClothesCreationBaseFragment(ClothesDataViewModel clothesDataViewModel){
         this.clothesDataViewModel = clothesDataViewModel;
@@ -55,13 +49,14 @@ public class ClothesCreationBaseFragment extends Fragment{
         View view = inflater.inflate(R.layout.fragment_add_clothes, container, false);
         super.onCreate(savedInstanceState);
 
-        int index = getArguments().getInt("count");
+        position = getArguments().getInt("count");
+        int index = position;
 
         submit = view.findViewById(R.id.add_button);
         clothesTextView = view.findViewById(R.id.question_text);
         inputField = view.findViewById(R.id.input_edit);
 
-        clothesTextView.setText(createClothesQuestions[index]);
+        clothesTextView.setText(ClothingItem.createClothesQuestions[index]);
 
         //Grab the viewpager
         viewPager = requireActivity().findViewById(R.id.edit_pager);
@@ -102,7 +97,12 @@ public class ClothesCreationBaseFragment extends Fragment{
         return view;
     }
 
-
+    public EditText getInputField() {
+        return inputField;
+    }
+    public int getPosition(){
+        return position;
+    }
 
     public static ClothesCreationBaseFragment newInstance(int fragmentCount, ClothesDataViewModel clothesDataViewModel) {
         //Create a new forgot password fragment
