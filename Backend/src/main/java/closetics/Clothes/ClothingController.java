@@ -1,11 +1,11 @@
 package closetics.Clothes;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import closetics.Users.User;
 import closetics.Users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import closetics.Clothes.Statistics.Stat;
 import closetics.Clothes.Statistics.StatRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,33 +22,33 @@ public class ClothingController {
     @Autowired
     UserRepository userRepository;
 
-    @GetMapping(path = "/clothing")
+    @GetMapping(path = "/getAllClothing")
     public List<Clothing> getAllClothing() {
         return clothingRepository.findAll();
     }
 
-    @GetMapping(path = "/clothing/{id}")
+    @GetMapping(path = "/getClothing/{id}")
     public Optional<Clothing> getClothing(@PathVariable long id) {
         return clothingRepository.findById(id);
     }
 
-    @GetMapping(path = "/clothing/special_type/{userId}/{type}")
+    @GetMapping(path = "/getClothing/special_type/{userId}/{type}")
     public List<Clothing> getClothingBySpecialType(@PathVariable("userId") long userId, @PathVariable("type") long type){
         return clothingRepository.findBySpecialType(userId, type);
     }
 
-    @GetMapping(path = "/clothing/type/{userId}/{type}")
+    @GetMapping(path = "/getClothing/type/{userId}/{type}")
     public List<Clothing> getClothingByType(@PathVariable("userId") long userId, @PathVariable("type") long type){
         return clothingRepository.findByType(userId, type);
     }
 
-    @GetMapping(path = "/clothing/user/{userId}")
+    @GetMapping(path = "/getClothing/user/{userId}")
     public List<Clothing> getClothingByUser(@PathVariable long userId){
       return clothingRepository.findByUserId(userId);
     }
 
-    @PostMapping(path = "/clothing")
-    public ResponseEntity<Clothing> createClothing(@RequestBody clothingMinimal request) {
+    @PostMapping(path = "/createClothing")
+    public ResponseEntity<Clothing> createClothing(@RequestBody ClothingMinimal request) {
         long user_id = request.getUserId();
         User user = userRepository.findById(user_id).orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -64,19 +64,20 @@ public class ClothingController {
         clothing.setSize(request.getSize());
         clothing.setSpecialType(request.getSpecialType());
         clothing.setClothingType(request.getClothingType());
+        clothing.setCreationDate(LocalDateTime.now());
         clothing.setUser(user);
 
         Clothing savedClothing = clothingRepository.save(clothing);
         return ResponseEntity.ok(savedClothing);
     }
 
-    @DeleteMapping(path = "/clothing/{itemId}")
+    @DeleteMapping(path = "/deleteClothing/{itemId}")
     public void deleteClothing(@PathVariable long itemId) {
         clothingRepository.deleteById(itemId);
     }
 
     @PutMapping (path = "/updateClothing")
-    public ResponseEntity<Clothing> updateClothing(@RequestBody clothingMinimal request){
+    public ResponseEntity<Clothing> updateClothing(@RequestBody ClothingMinimal request){
         try {
             Clothing clothing = clothingRepository.findById(request.getClothingId())
                     .orElseThrow(() -> new RuntimeException("Clothing Item not found"));

@@ -7,6 +7,8 @@ import closetics.Clothes.Statistics.Stat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 
 @Entity(name = "clothing_table")
 public class Clothing {
@@ -27,6 +29,7 @@ public class Clothing {
     private String price;
     private long type;
     private long specialType;
+    private LocalDateTime creationDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -156,4 +159,7 @@ public class Clothing {
     public void setPrice(String price) {
         this.price = price;
     }
+
+    public LocalDateTime getCreationDate() { return creationDate; }
+    public void setCreationDate(LocalDateTime creationDate) { this.creationDate = creationDate; }
 }

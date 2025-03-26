@@ -1,6 +1,7 @@
 package closetics.Outfits;
 
 import closetics.Users.User;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,6 +16,8 @@ public class Outfit {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties({"email", "password", "userTier",
+            "sQA1", "sQID1", "sQA2", "sQID2", "sQA3", "sQID3"})
     private User user;
 
     private String outfitName;

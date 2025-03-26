@@ -1,8 +1,8 @@
 package closetics.Clothes;
 
-public class clothingMinimal {
+public class ClothingMinimal {
     private long clothingId;
-    private Long userId; // Accept userId directly instead of needing whole object
+    private long userId; // Accept userId directly instead of needing whole object
     private String brand;
     private String color;
     private String dateBought;
