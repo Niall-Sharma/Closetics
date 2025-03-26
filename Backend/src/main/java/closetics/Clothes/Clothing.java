@@ -1,8 +1,10 @@
 package closetics.Clothes;
 
+import closetics.Users.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import closetics.Clothes.Statistics.Stat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 
@@ -19,39 +21,38 @@ public class Clothing {
     private String color;
     private String dateBought;
     private String brand;
-    private String imagePath1;
-    private String imagePath2;
-    private String imagePath3;
+    private String imagePath;
     private String itemName;
     private String material;
     private String price;
-    private long userId;
     private long type;
     private long specialType;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties({"email", "password", "userTier",
+            "sQA1", "sQID1", "sQA2", "sQID2", "sQA3", "sQID3"})
+    private User user;
   
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "stat_id")
     @JsonIgnore
     private Stat stat;
 
-    public Clothing(long itemId, boolean favorite, String size, String color, String dateBought, String brand, String imagePath1, String imagePath2, String imagePath3, String itemName, String material, String price, long specialType, long type, long userId ) {
+    public Clothing(long itemId, boolean favorite, String size, String color, String dateBought, String brand, String imagePath, String itemName, String material, String price, long specialType, long type, User user ) {
         this.clothesId = itemId;
         this.favorite = favorite;
         this.size = size;
         this.color = color;
         this.dateBought = dateBought;
         this.brand = brand;
-        this.imagePath1 = imagePath1;
-        this.imagePath2 = imagePath2;
-        this.imagePath3 = imagePath3;
+        this.imagePath = imagePath;
         this.itemName = itemName;
         this.material = material;
-
         this.specialType = specialType;
         this.type = type;
-
         this.stat = new Stat();
-        this.userId = userId;
+        this.user = user;
         this.price = price;
     }
     public Clothing(){
@@ -61,32 +62,29 @@ public class Clothing {
     public long getClothingType(){
       return type;
     }
+    public void setClothingType(long clothingType){
+        type = clothingType;
+    }
 
     public Stat getStat(){
       return stat;
     }
-
     public void setStat(Stat stat){
       this.stat = stat;
-    }
-    public void setClothingType(long clothingType){
-      type = clothingType;
     }
 
     public long getSpecialType(){
       return specialType;
     }
-
     public void setSpecialType(long specialType){
       this.specialType = specialType;
     }
 
-    public long getUser(){
-      return userId;
+    public User getUser(){
+      return user;
     }
-
-    public void setUser(long user){
-      this.userId = user;
+    public void setUser(User user){
+      this.user = user;
     }
 
     public long getClothesId() {
@@ -95,10 +93,10 @@ public class Clothing {
     public void setClothesId(int clothesId) {
         this.clothesId = clothesId;
     }
+
     public boolean getFavorite() {
         return favorite;
     }
-
     public void setFavorite(boolean favorite) {
         this.favorite = favorite;
     }
@@ -106,7 +104,6 @@ public class Clothing {
     public String getSize() {
         return size;
     }
-
     public void setSize(String size) {
         this.size = size;
     }
@@ -114,7 +111,6 @@ public class Clothing {
      public String getColor() {
         return color;
     }
-
     public void setColor(String color) {
         this.color = color;
     }
@@ -122,7 +118,6 @@ public class Clothing {
     public String getDateBought() {
         return dateBought;
     }
-
     public void setDateBought(String dateBought) {
         this.dateBought = dateBought;
     }
@@ -130,39 +125,20 @@ public class Clothing {
     public String getBrand() {
         return brand;
     }
-
     public void setBrand(String brand) {
         this.brand = brand;
     }
 
-    public String getImagePath1() {
-        return imagePath1;
+    public String getImagePath() {
+        return imagePath;
     }
-
-    public void setImagePath1(String imagePath1) {
-        this.imagePath1 = imagePath1;
-    }
-
-    public String getImagePath2() {
-        return imagePath2;
-    }
-
-    public void setImagePath2(String imagePath2) {
-        this.imagePath2 = imagePath2;
-    }
-
-    public String getImagePath3() {
-        return imagePath3;
-    }
-
-    public void setImagePath3(String imagePath3) {
-        this.imagePath3 = imagePath3;
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public String getItemName() {
         return itemName;
     }
-
     public void setItemName(String itemName) {
         this.itemName = itemName;
     }
@@ -170,7 +146,6 @@ public class Clothing {
     public String getMaterial() {
         return material;
     }
-
     public void setMaterial(String material) {
         this.material = material;
     }
@@ -178,7 +153,6 @@ public class Clothing {
     public String getPrice() {
         return price;
     }
-
     public void setPrice(String price) {
         this.price = price;
     }

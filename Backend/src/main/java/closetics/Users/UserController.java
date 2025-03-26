@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Optional;
 
 @RestController
 public class UserController {
@@ -42,7 +43,7 @@ public class UserController {
     }
 
     @GetMapping(path = "/users/{id}")
-    public User getUser(@PathVariable int id) {
+    public Optional<User> getUser(@PathVariable long id) {
         return userRepo.findById(id);
     }
 
@@ -118,7 +119,8 @@ public class UserController {
     */
     @PutMapping(path = "/updateUser")
     public User updateUser(@RequestBody User updatedUser) {
-        User existingUser = userRepo.findById(updatedUser.getUserId());
+        long user_id = updatedUser.getUserId();
+        User existingUser = userRepo.findById(user_id).orElseThrow(() -> new RuntimeException("User not found"));
         // Update only if the field is provided (not null)
         if (updatedUser.getUsername() != null) {
             existingUser.setUsername(updatedUser.getUsername());
@@ -146,7 +148,8 @@ public class UserController {
      */
     @PutMapping(path = "/updatePassword")
     public  ResponseEntity<?> updatePassword(@RequestBody ResetPasswordRequest passwordRequest) {
-        User existingUser = userRepo.findById(passwordRequest.getId());
+        long user_id = passwordRequest.getUserId();
+        User existingUser = userRepo.findById(user_id).orElseThrow(() -> new RuntimeException("User not found"));
         String oldpass = passwordRequest.getOldPassword();
         String securityQuestion = passwordRequest.getSecurityQuestionAnswer();
         Map<String, String> response = new HashMap<>();

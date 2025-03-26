@@ -1,5 +1,6 @@
 package closetics.Outfits;
 
+import closetics.Users.User;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,7 +13,9 @@ public class Outfit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long outfitId;
 
-    private long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     private String outfitName;
     private LocalDateTime creationDate;
@@ -23,9 +26,9 @@ public class Outfit {
     @Column(name = "clothing_id")
     private List<Long> outfitItems = new ArrayList<>();
 
-    public Outfit(long outfitId, long userId, String outfitName, LocalDateTime creationDate, boolean favorite, List<Long> outfitItems) {
+    public Outfit(long outfitId, User user, String outfitName, LocalDateTime creationDate, boolean favorite, List<Long> outfitItems) {
         this.outfitId = outfitId;
-        this.userId = userId;
+        this.user = user;
         this.outfitName = outfitName;
         this.creationDate = creationDate;
         this.favorite = favorite;
@@ -37,8 +40,8 @@ public class Outfit {
     public long getOutfitId() {return outfitId;}
     public void setOutfitId(long outfitId) {this.outfitId = outfitId;}
 
-    public long getUserId() {return userId;}
-    public void setUserId(long userId) {this.userId = userId;}
+    public User getUser() {return user;}
+    public void setUser(User user) {this.user = user;}
 
     public String getOutfitName() {return outfitName;}
     public void setOutfitName(String outfitName) {this.outfitName = outfitName;}
