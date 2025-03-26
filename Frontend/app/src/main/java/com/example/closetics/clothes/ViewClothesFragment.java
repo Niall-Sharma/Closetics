@@ -68,6 +68,7 @@ public class ViewClothesFragment extends Fragment {
                      intent.putExtra("clothingId", clothingId);
                      //Serializable
                      intent.putExtra("clothingItem", clothingItem);
+
                      startActivity(intent);
 
 

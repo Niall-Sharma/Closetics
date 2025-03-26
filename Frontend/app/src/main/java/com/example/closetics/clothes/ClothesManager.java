@@ -106,18 +106,16 @@ public class ClothesManager {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-    public static void updateClothingRequest(Context context, Long clothingId,
-                                             Map<String, Object> updatedFields,
-                                             String URL,
+    public static void updateClothingRequest(Context context, JSONObject updateObject, String URL,
                                              Response.Listener<JSONObject> responseListener,
                                              Response.ErrorListener errorListener) {
-        String updateUrl = URL + "/" + clothingId;
-        JSONObject updateData = new JSONObject(updatedFields);
+        String updateUrl = URL + "/";
+
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.PUT,
                 updateUrl,
-                updateData,
+                updateObject,
                 responseListener,
                 errorListener
         );
@@ -139,6 +137,18 @@ public class ClothesManager {
 
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
+    public static void getClothingRequest(Context context, long clothingId, String URL,
+                                          Response.Listener<JSONObject> responseListener,
+                                          Response.ErrorListener errorListener){
+
+        String getUrl = URL + "/" + clothingId;
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
+                getUrl, null, responseListener, errorListener);
+
+
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+
+    }
 
 
     public static void getClothingByTypeRequest(Context context, long userId, String URL, long type, Response.Listener<JSONArray> responseListener,
@@ -155,7 +165,7 @@ public class ClothesManager {
 
 
 
-    private static void nullCheck(String header, Object parameter, JSONObject object) throws JSONException {
+    public static void nullCheck(String header, Object parameter, JSONObject object) throws JSONException {
         if (parameter != null){
             object.put(header, parameter);
         }

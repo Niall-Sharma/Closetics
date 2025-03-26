@@ -24,6 +24,8 @@ import com.example.closetics.UserManager;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -37,6 +39,7 @@ public class EditClothesActivity extends AppCompatActivity {
     private FragmentStateAdapter pagerAdapter;
     private long clothingId;
     private ClothingItem clothingItem;
+
 
 
 
@@ -80,7 +83,7 @@ public class EditClothesActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 ArrayList<MutableLiveData<String>> fragments = clothesDataViewModel.getFragments();
-                //udpateClothing(getApplicationContext(), clothingId, ClothesActivity.URL, UserManager.getUserID(getApplicationContext()));
+                getAndUpdateClothing(getApplicationContext(), ClothesActivity.URL, fragments);
 
 
             }
@@ -91,26 +94,80 @@ public class EditClothesActivity extends AppCompatActivity {
 
     }
 
-    private void updateClothing(Context context, long clothingId, Map<String, Object> updatedFields, String URL) {
-        ClothesManager.updateClothingRequest(context, clothingId, updatedFields, URL, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d("Volley Update Response", response.toString());
+    private void getAndUpdateClothing(Context context, String URL, ArrayList<MutableLiveData<String>> fragments) {
+        ClothesManager.getClothingRequest(context, clothingId, URL, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d("Volley Response", response.toString());
+                JSONObject updateObject;
+                try {
+                    updateObject = putUpdatedFields(response, fragments);
 
-
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d("Volley Update Error", error.toString());
-                    }
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
                 }
-        );
+                updateClothing(context, updateObject, URL);
+
+            }
+
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Volley Error", error.toString());
+            }
+        });
     }
 
-    /*
-Inner class for screen sliding
- */
+
+
+
+    private void updateClothing(Context context, JSONObject object, String URL){
+        ClothesManager.updateClothingRequest(context, object, URL, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d("Volley Response", response.toString());
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Volley Error", error.toString());
+            }
+        });
+
+
+    }
+
+
+    private JSONObject putUpdatedFields(JSONObject response, ArrayList<MutableLiveData<String>> fragments) throws JSONException {
+        String favorite = fragments.get(0).getValue();
+        String size = fragments.get(1).getValue();
+        String color = fragments.get(2).getValue();
+        String dateBought = fragments.get(3).getValue();
+        String brand = fragments.get(6).getValue();
+        String itemName = fragments.get(5).getValue();
+        String material = fragments.get(7).getValue();
+        String price = fragments.get(4).getValue();
+
+        if (favorite!=null) {
+            if (favorite.toLowerCase().trim().equals("true")) {
+                ClothesManager.nullCheck("favorite", true, response);
+            } else if (favorite.toLowerCase().trim().equals("false")){
+                ClothesManager.nullCheck("favorite", false, response);
+            }
+        }
+
+        ClothesManager.nullCheck("size", size, response);
+        ClothesManager.nullCheck("color", color, response);
+        ClothesManager.nullCheck("dateBought", dateBought, response);
+        ClothesManager.nullCheck("brand", brand, response);
+        ClothesManager.nullCheck("itemName", itemName, response);
+        ClothesManager.nullCheck("material", material, response);
+        ClothesManager.nullCheck("price", price, response);
+
+        return response;
+
+    }
+
     private class ScreenSlidePagerAdapter extends FragmentStateAdapter {
 
         public ScreenSlidePagerAdapter(EditClothesActivity editClothesActivity) {
