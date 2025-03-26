@@ -12,7 +12,15 @@ public class OutfitStats {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long outfitStatsId;
 
+    @OneToOne
+    @JoinColumn(name = "outfit_id", nullable = false)
+    long outfitId;
+
+    @ElementCollection
+    @CollectionTable(name = "outfit_days_worn", joinColumns = @JoinColumn(name = "outfit_stats_id"))
+    @Column(name = "outfit_stats_id")
     ArrayList<Date> datesWorn;
+
     long timesWorn;
     float highTemp;
     float lowTemp;
