@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity{
         serverEtx2 = (EditText) findViewById(R.id.serverEdt2);
         usernameEtx2 = (EditText) findViewById(R.id.unameEdt2);
 
+        // Connect on Enter press
         usernameEtx1.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
@@ -47,6 +48,10 @@ public class MainActivity extends AppCompatActivity{
             String username = usernameEtx1.getText().toString();
             if (username.isEmpty()) {
                 Toast.makeText(MainActivity.this, "Username cannot be empty", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (!validateUsername(username)) {
+                Toast.makeText(MainActivity.this, "Invalid username", Toast.LENGTH_SHORT).show();
                 return;
             }
             String serverUrl = serverEtx1.getText().toString() + username;
@@ -109,4 +114,10 @@ public class MainActivity extends AppCompatActivity{
             startActivity(intent);
         });
     }
+
+    public static boolean validateUsername(String username){
+        String pattern = "[0-9A-Za-z]{3,16}";
+        return username.matches(pattern);
+    }
+
 }
