@@ -5,6 +5,8 @@ import closetics.Users.Auth.AuthService;
 import closetics.Users.Tokens.Token;
 import closetics.Users.Tokens.TokenRepository;
 import closetics.Users.Tokens.TokenService;
+import closetics.Users.UserProfile.UserProfileRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,11 @@ public class UserController {
 
     @Autowired
     private AuthService authService;
+    
+
+    //Maybe move this in the future so that User doesn't have to deal with it and only makes a call towards UserProfile
+    @Autowired
+    private UserProfileRepository userProfileRepository;
 
     //This error is meant to trigger whenever a duplicate entry is added into the MySql database
     @ResponseStatus(value = HttpStatus.CONFLICT,
@@ -92,7 +99,8 @@ public class UserController {
         user.setsQA1(User.encryptString(user.getsQA1()));
         user.setsQA2(User.encryptString(user.getsQA2()));
         user.setsQA3(User.encryptString(user.getsQA3()));
-        userRepository.save(user);
+        userRepo.save(user);
+        userProfileRepository.save(user.GetUserProfile());
         Token token = tokenService.createToken(user);
         response.put("token", token.getTokenValue());
         response.put("message", "Login successful");

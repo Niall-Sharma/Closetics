@@ -2,8 +2,10 @@ package closetics.Outfits;
 
 import closetics.Clothes.Clothing;
 import closetics.Clothes.ClothingRepository;
-import closetics.Users.User;
 import closetics.Users.UserRepository;
+import closetics.Users.UserProfile.UserProfile;
+import closetics.Users.UserProfile.UserProfileRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,9 @@ public class OutfitController {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    UserProfileRepository uProfileRepository;
+
     @GetMapping(path = "/getOutfit/{outfitId}")
     public Optional<Outfit> getOutfit(@PathVariable long outfitId) {
         return outfitRepository.findById(outfitId);
@@ -38,22 +43,14 @@ public class OutfitController {
     }
 
     @PostMapping(path = "/createOutfit")
-    public ResponseEntity<Outfit> createOutfit(@RequestBody OutfitMinimal request) {
-        long user_id = request.getUserId();
-        User user = userRepository.findById(user_id).orElseThrow(() -> new RuntimeException("User not found"));
-
-        Outfit outfit = new Outfit();
-        outfit.setUser(user);
-        outfit.setCreationDate(LocalDateTime.now());
-        outfit.setOutfitName(request.getOutfitName());
-        outfit.setFavorite(request.getFavorite());
-        outfit.setOutfitItems(request.getOutfitItems());
-        if (outfit.getOutfitItems() == null) {
-            outfit.setOutfitItems(new ArrayList<>()); // Ensure the list is initialized
-        }
-
-        Outfit savedOutfit =  outfitRepository.save(outfit);
-        return ResponseEntity.ok(savedOutfit);
+    public Outfit saveClothing(@RequestBody Outfit outfit) {
+      if (outfit.getOutfitItems() == null) {
+          outfit.setOutfitItems(new ArrayList<>()); // Ensure the list is initialized
+      }
+      outfit.setCreationDate(LocalDateTime.now());
+      UserProfile uProfile = uProfileRepository.findByUID(outfit.getUserId());
+      uProfile.AddOutfit(outfit);
+      return outfitRepo.save(outfit);
     }
 
     @PutMapping(path = "/updateOutfit")
