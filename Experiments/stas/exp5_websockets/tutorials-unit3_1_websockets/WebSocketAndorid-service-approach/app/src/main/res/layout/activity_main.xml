@@ -30,9 +30,11 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="10dp"
+        android:background="@android:drawable/editbox_background"
         android:hint="Enter username"
-        android:textSize="16sp"
-        android:background="@android:drawable/editbox_background"/>
+        android:imeOptions="actionDone"
+        android:inputType="text"
+        android:textSize="16sp" />
 
     <Button
         android:id="@+id/connectBtn"

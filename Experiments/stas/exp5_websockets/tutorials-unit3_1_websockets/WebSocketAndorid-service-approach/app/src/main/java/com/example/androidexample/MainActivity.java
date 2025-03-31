@@ -4,8 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity{
@@ -27,6 +30,17 @@ public class MainActivity extends AppCompatActivity{
         usernameEtx1 = (EditText) findViewById(R.id.unameEdt);
         serverEtx2 = (EditText) findViewById(R.id.serverEdt2);
         usernameEtx2 = (EditText) findViewById(R.id.unameEdt2);
+
+        usernameEtx1.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_DONE) {
+                    connectBtn1.performClick();
+                    return true;
+                }
+                return false;
+            }
+        });
 
         /* connect1 button listener */
         connectBtn1.setOnClickListener(view -> {
