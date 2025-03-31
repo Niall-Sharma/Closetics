@@ -99,7 +99,7 @@ public class UserController {
         user.setsQA1(User.encryptString(user.getsQA1()));
         user.setsQA2(User.encryptString(user.getsQA2()));
         user.setsQA3(User.encryptString(user.getsQA3()));
-        userRepo.save(user);
+        userRepository.save(user);
         userProfileRepository.save(user.GetUserProfile());
         Token token = tokenService.createToken(user);
         response.put("token", token.getTokenValue());
