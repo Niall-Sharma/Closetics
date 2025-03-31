@@ -34,11 +34,11 @@ public class UserProfile{
 
   //SEPERATE ENDPOINT
   @OneToMany
-  @JoinColumn(name = "following_id")
+  @JoinColumn(name = "following_user_id")
   private List<UserProfile> following_id;
   //SEPERATE ENDPOINT
   @ManyToOne
-  @JoinColumn(name = "followers_id")
+  @JoinColumn(name = "user_followers_id")
   private List<UserProfile> followers_id;
 
   public UserProfile(boolean isPublic, String username, long UUID){
