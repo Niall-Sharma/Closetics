@@ -77,7 +77,8 @@ public class ChatSocket {
       // send the message to the sender and receiver
 			sendMessageToPArticularUser(destUsername, "[DM] " + username + ": " + message);
 			sendMessageToPArticularUser(username, "[DM] " + username + ": " + message);
-
+      
+		  msgRepo.save(new Message(username, message));
 		} else if (message.startsWith("/delete")) {
 			msgRepo.deleteByUserName(username);
 		} else if (message.startsWith("/chat")) {
@@ -87,10 +88,10 @@ public class ChatSocket {
 			}
 		} else { // broadcast
 			broadcast(username + ": " + message);
-		}
+		  msgRepo.save(new Message(username, message));
+    }
 
 		// Saving chat history to repository
-		msgRepo.save(new Message(username, message));
 	}
 
 
