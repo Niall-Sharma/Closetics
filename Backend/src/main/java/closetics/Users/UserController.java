@@ -14,15 +14,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Optional;
 
 @RestController
 public class UserController {
 
     @Autowired
-    private UserRepository userRepo;
+    private UserRepository userRepository;
 
     @Autowired
-    private TokenRepository tokenRepo;
+    private TokenRepository tokenRepository;
 
     @Autowired
     private TokenService tokenService;
@@ -45,17 +46,17 @@ public class UserController {
 
     @GetMapping(path = "/users")
     public List<User> getAllUsers() {
-        return userRepo.findAll();
+        return userRepository.findAll();
     }
 
     @GetMapping(path = "/users/{id}")
-    public User getUser(@PathVariable int id) {
-        return userRepo.findById(id);
+    public Optional<User> getUser(@PathVariable long id) {
+        return userRepository.findById(id);
     }
 
     @GetMapping(path = "/users/username/{id}")
     public User getUserByUsername(@PathVariable String id) {
-        return userRepo.findByUsername(id);
+        return userRepository.findByUsername(id);
     }
 
 
@@ -110,8 +111,8 @@ public class UserController {
 
     @DeleteMapping(path = "/users/{id}")
     public void deleteUser(@PathVariable int id) {
-        tokenRepo.deleteByUserId(id);
-        userRepo.deleteById(id);
+        tokenRepository.deleteByUserId(id);
+        userRepository.deleteById(id);
     }
 
 
@@ -126,7 +127,8 @@ public class UserController {
     */
     @PutMapping(path = "/updateUser")
     public User updateUser(@RequestBody User updatedUser) {
-        User existingUser = userRepo.findById(updatedUser.getUserId());
+        long user_id = updatedUser.getUserId();
+        User existingUser = userRepository.findById(user_id).orElseThrow(() -> new RuntimeException("User not found"));
         // Update only if the field is provided (not null)
         if (updatedUser.getUsername() != null) {
             existingUser.setUsername(updatedUser.getUsername());
@@ -137,7 +139,7 @@ public class UserController {
         if (updatedUser.getEmail() != null) {
             existingUser.setEmail(updatedUser.getEmail());
         }
-        return userRepo.save(existingUser);
+        return userRepository.save(existingUser);
     }
 
 
@@ -154,7 +156,8 @@ public class UserController {
      */
     @PutMapping(path = "/updatePassword")
     public  ResponseEntity<?> updatePassword(@RequestBody ResetPasswordRequest passwordRequest) {
-        User existingUser = userRepo.findById(passwordRequest.getId());
+        long user_id = passwordRequest.getUserId();
+        User existingUser = userRepository.findById(user_id).orElseThrow(() -> new RuntimeException("User not found"));
         String oldpass = passwordRequest.getOldPassword();
         String securityQuestion = passwordRequest.getSecurityQuestionAnswer();
         Map<String, String> response = new HashMap<>();
@@ -167,7 +170,7 @@ public class UserController {
 
         } else if (oldpass != null && existingUser.compareHashedPassword(passwordRequest.getOldPassword())) {
             existingUser.setPassword(User.encryptString(passwordRequest.getNewPassword()));
-            userRepo.save(existingUser);
+            userRepository.save(existingUser);
             response.put("message", "Password change successful");
             return ResponseEntity.ok(response);
         }
@@ -175,7 +178,7 @@ public class UserController {
         if (securityQuestion != null && existingUser.compareHashedSQ(passwordRequest.getSecurityQuestionAnswer()
                 , passwordRequest.getSecurityQuestionId())) {
             existingUser.setPassword(User.encryptString(passwordRequest.getNewPassword()));
-            userRepo.save(existingUser);
+            userRepository.save(existingUser);
             response.put("message", "Password change successful");
             return ResponseEntity.ok(response);
         } else if (securityQuestion != null) {
@@ -201,13 +204,13 @@ public class UserController {
         User user = null;
         try {
             if (loginRequest.getUsername() != null) {
-                user = userRepo.findByUsername(loginRequest.getUsername());
+                user = userRepository.findByUsername(loginRequest.getUsername());
                 if(user == null){
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                             .body("Invalid Username, Email or Password"); // Username doesn't exist
                 }
             } else if (loginRequest.getEmail() != null) {
-                user = userRepo.findByEmail(loginRequest.getEmail());
+                user = userRepository.findByEmail(loginRequest.getEmail());
                 if(user == null){
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                             .body("Invalid Username, Email or Password"); // Email doesn't exist

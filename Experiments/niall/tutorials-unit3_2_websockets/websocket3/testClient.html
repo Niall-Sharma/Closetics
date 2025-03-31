@@ -1,0 +1,57 @@
+<html>
+
+<head>
+  <title>Chat</title>
+</head>
+
+<body>
+  <table>
+    <tr>
+      <td colspan="2">
+        <input type="text" id="username" placeholder="Username" />
+        <button type="button" onclick="connect();">Connect</button>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <textarea readonly="true" rows="10" cols="80" id="log"></textarea>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <input type="text" size="51" id="msg" placeholder="Message" />
+        <button type="button" onclick="send();">Send</button>
+      </td>
+    </tr>
+  </table>
+</body>
+<script> 
+var ws;
+
+function connect() {
+    var username = document.getElementById("username").value;
+    var url = "ws://localhost:8080/chat/" + username;
+
+    ws = new WebSocket(url);
+
+    ws.onmessage = function(event) {
+        console.log(event.data);
+
+        // display on browser
+        var log = document.getElementById("log");
+        log.innerHTML += event.data + "\n";
+    };
+
+    ws.onopen = function(event) {
+        var log = document.getElementById("log");
+        log.innerHTML += "Connected to " + event.currentTarget.url + "\n";
+    };
+}
+
+function send() {  // this is how to send messages
+    var content = document.getElementById("msg").value;
+    ws.send(content);
+}
+</script>
+
+</html>

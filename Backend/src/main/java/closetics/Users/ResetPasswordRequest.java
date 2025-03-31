@@ -1,7 +1,7 @@
 package closetics.Users;
 
 public class ResetPasswordRequest {
-    private long id;
+    private long userId;
     private String oldPassword;
     private String newPassword;
     private String securityQuestionAnswer;
@@ -16,8 +16,8 @@ public class ResetPasswordRequest {
     public String getSecurityQuestionAnswer() {return securityQuestionAnswer;}
     public void setSecurityQuestionAnswer(String securityQuestionAnswer) {this.securityQuestionAnswer = securityQuestionAnswer;}
 
-    public long getId() {return id;}
-    public void setId(long id) {this.id = id;}
+    public long getUserId() {return userId;}
+    public void setUserId(long userId) {this.userId = userId;}
 
     public long getSecurityQuestionId() {return securityQuestionId;}
     public void setSecurityQuestionId(long securityQuestionId) {this.securityQuestionId = securityQuestionId;}
