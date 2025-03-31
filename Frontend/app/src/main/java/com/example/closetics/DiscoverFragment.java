@@ -48,8 +48,8 @@ public class DiscoverFragment extends Fragment {
         }
 
         clothesButton.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), ClothesActivity.class);
-            startActivity(intent);
+            ClothesActivity.getUserClothing(getActivity(), UserManager.getUserID(getActivity()), ClothesActivity.URL);
+
         });
 
         outfitsButton.setOnClickListener(v -> {

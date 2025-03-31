@@ -8,44 +8,63 @@ import android.view.View;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.android.volley.NetworkResponse;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.example.closetics.ForgotPasswordFragment;
 import com.example.closetics.MainActivity;
 import com.example.closetics.R;
 import com.example.closetics.UserManager;
-import com.example.closetics.clothes.ClothesCreationBaseFragment;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 //This activity holds the viewpager container, this
 
 public class ClothesActivity extends AppCompatActivity {
 
+    private static HashMap<Long,Long> clothingTypeCounts = new HashMap<>();
     private Button addClothes;
     private Button editClothes;
     private Button viewClothes;
     private Button finalSubmission;
-    private String[] inputArray = new String[NUM_FRAGMENTS];
-    private static final int NUM_FRAGMENTS = 8;
+    private Button deleteClothes;
+    private CardView card;
+
+
+    private Button clothesActivityBack;
+    private Button mainActivityBack;
+
+    /*
+    Recycler View
+     */
+    private RecyclerView gridRecyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private TypeGridRecyclerViewAdapter gridRecyclerViewAdapter;
+
+
+    public static final int NUM_FRAGMENTS = 8;
     //Shared data for the fragments
     private ClothesDataViewModel clothesDataViewModel;
 
     private TabLayout tabLayout;
-    private static final String URL = MainActivity.SERVER_URL + "/clothes";
+    public static final String URL = MainActivity.SERVER_URL + "/clothes";
 
 
     //For the view pager
@@ -65,31 +84,48 @@ public class ClothesActivity extends AppCompatActivity {
         editClothes = findViewById(R.id.edit_clothes);
         viewClothes = findViewById(R.id.view_clothes);
         finalSubmission = findViewById(R.id.final_submission);
+        card = findViewById(R.id.card_view);
 
         tabLayout = findViewById(R.id.tabLayout);
         tabLayout.setVisibility(View.GONE);
         finalSubmission.setVisibility(View.GONE);
 
+        gridRecyclerView = findViewById(R.id.type_grid);
+        //Makes the layout a grid
+        layoutManager = new GridLayoutManager(this, 2);
+        //Set layout manager
+        gridRecyclerView.setLayoutManager(layoutManager);
+
+        //Wait until we get a reponse to execute more code
+
+        gridRecyclerViewAdapter = new TypeGridRecyclerViewAdapter(clothingTypeCounts, new TypeGridRecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(long position) {
+                getClothingByType(getApplicationContext(), UserManager.getUserID(getApplicationContext()), URL, position);
+
+            }
+        });
+
+        gridRecyclerView.setAdapter(gridRecyclerViewAdapter);
+
+        gridRecyclerView.setHasFixedSize(true);
 
 
-
-        viewPager = findViewById(R.id.pager);
+        viewPager = findViewById(R.id.edit_pager);
         //This needs an innner class
         pagerAdapter = new ScreenSlidePagerAdapter(this);
-
-        //Initialize view model
-        clothesDataViewModel = new ViewModelProvider(this).get(ClothesDataViewModel.class);
-
-
+        ClothesActivity clothesActivity = this;
 
 
         //Set these invisible for now
-
 
         addClothes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 activityItemsVisibility();
+                //Initialize view model with a new instance every time add clothes is clicked
+                clothesDataViewModel = new ViewModelProvider(clothesActivity).get(ClothesDataViewModel.class);
+
                 //Initialize the fragments list
                 clothesDataViewModel.setFragmentsSize(NUM_FRAGMENTS);
 
@@ -103,27 +139,14 @@ public class ClothesActivity extends AppCompatActivity {
             }
         });
 
-        viewClothes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-
-            }
-        });
-
-
-        viewClothes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getClothing(getApplicationContext(), UserManager.getUserID(getApplicationContext()), URL);
-            }
-        });
+        Context context = this;
         finalSubmission.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ArrayList<MutableLiveData<String>> fragments = clothesDataViewModel.getFragments();
                 saveClothing(getApplicationContext(), fragments, URL, UserManager.getUserID(getApplicationContext()));
+                //Call get clothing before constructing adapter so that we can update the counts
+                ClothesActivity.getUserClothing(context, UserManager.getUserID(getApplicationContext()), URL);
 
             }
         });
@@ -137,22 +160,93 @@ public class ClothesActivity extends AppCompatActivity {
         viewClothes.setVisibility(View.GONE);
         tabLayout.setVisibility(View.VISIBLE);
         finalSubmission.setVisibility(View.VISIBLE);
+        gridRecyclerView.setVisibility(View.GONE);
+        card.setVisibility(View.GONE);
+
     }
-    private void getClothing(Context context, Long userId, String URL){
-        ClothesManager.getClothingByUserRequest(context, userId, URL, new Response.Listener<JSONObject>() {
+
+    private void getClothingByType(Context context, long userId, String URL, long type){
+
+        ClothesManager.getClothingByTypeRequest(context, userId, URL, type, new Response.Listener<JSONArray>() {
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(JSONArray response) {
+                 /*
+                Note on the response we need to parse the JSON array
+                 */
                 Log.d("Volley Response", response.toString());
-                showFragment(response.toString());
-
-
-
+                ArrayList<String> responseStringArray = new ArrayList<>();
+                ArrayList<ClothingItem> responseClothingItems = new ArrayList<>();
+                long[] clothingIds = new long[response.length()];
+                try {
+                    for (int i = 0; i < response.length(); i++) {
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        responseStringArray.add(jsonObject.toString());
+                        responseClothingItems.add(createClothingItem(jsonObject));
+                       //Check
+                        long clothingId = jsonObject.getLong("clothesId");
+                        clothingIds[i] = clothingId;
+                        Log.d("JSON Object", jsonObject.toString());
+                    }
+                    showFragment(responseStringArray, clothingIds, responseClothingItems);
+                } catch (JSONException e) {
+                    Log.d("JSON exception", e.toString());
+                }
 
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("Volley Error", error.toString());
+                Log.d("Volley Error", error.toString());
+            }
+        });
+    }
+    private ClothingItem createClothingItem(JSONObject response) throws JSONException {
+        String favorite = String.valueOf(response.getBoolean("favorite"));
+        String brand = response.getString("brand");
+        String color = response.getString ("color");
+        String dateBought = response.getString("dateBought");
+        String itemName = response.getString("itemName");
+        String material = response.getString("material");
+        String size = response.getString("size");
+        String price = response.getString("price");
+        return new ClothingItem(favorite, size, color, dateBought,  brand,
+                 itemName, material, price);
+    }
+
+
+    public static void getUserClothing(Context context, long userId, String URL){
+        ClothesManager.getClothingByUserRequest(context, userId, URL, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                /*
+                Note on the response we need to parse the JSON array
+                 */
+                //if (response == null) {
+                    //Log.e("Volley", "Null response received");
+                //}
+
+                Log.d("Volley Response", response.toString());
+                clothingTypeCounts.clear();
+                try {
+                    for (int i = 0; i < response.length(); i++) {
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        long key = jsonObject.getLong("clothingType");
+                        incrementKeyValue(clothingTypeCounts, key);
+                        Log.d("JSON Object", jsonObject.toString());
+                    }
+                    Intent intent = new Intent(context, ClothesActivity.class);
+                    context.startActivity(intent);
+                } catch (JSONException e) {
+                    Log.d("JSON exception", e.toString());
+                }
+
+
+            }}, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Volley Error user clothing", error.toString());
+
 
             }
         });
@@ -165,9 +259,6 @@ public class ClothesActivity extends AppCompatActivity {
 
                 Log.d("Volley Response", response.toString());
 
-                //Just send back to main for now!
-                Intent intent = new Intent(context, ClothesActivity.class);
-                startActivity(intent);
 
             }
         },new Response.ErrorListener() {
@@ -177,19 +268,36 @@ public class ClothesActivity extends AppCompatActivity {
             }
         });
 
-
-
     }
-    private void showFragment(String get){
+
+    private static void incrementKeyValue(HashMap<Long, Long> map, Long key){
+        //If the map has the key, increment its value (the count)
+        if (key == 0){
+            return;
+        }
+        if (map.containsKey((key))){
+            map.put(key, map.get(key) +1);
+            Log.d("check", map.get(key).toString());
+
+        }
+        //If not put the new key with count of 1
+        else{
+            map.put(key,Long.valueOf(1));
+        }
+    }
+
+    private void showFragment(ArrayList<String> JSONObject, long[] clothingIds, ArrayList<ClothingItem> clothingItems){
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        Fragment fragment = ViewClothesFragment.newInstance(get);
-        transaction.replace(R.id.pager, fragment, "view_clothes_fragment");
+        Fragment fragment = ViewClothesFragment.newInstance(JSONObject, clothingIds, clothingItems);
+        transaction.replace(R.id.view_clothes_container, fragment, "view_clothes_fragment");
         transaction.commit();
-        //Log.d("Fragment debug", String.valueOf(fragment.isAdded()));
+
     }
 
 
-    //Inner class
+    /*
+    Inner class for screen sliding
+     */
     private class ScreenSlidePagerAdapter extends FragmentStateAdapter {
 
         public ScreenSlidePagerAdapter(ClothesActivity clothesActivity) {

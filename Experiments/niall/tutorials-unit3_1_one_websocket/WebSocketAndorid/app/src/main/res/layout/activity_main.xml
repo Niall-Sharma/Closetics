@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:context=".MainActivity"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Server URL (default to):"/>
+
+    <EditText
+        android:layout_height="50dp"
+        android:layout_width="match_parent"
+        android:text="ws://10.0.2.2:8080/chat/"
+        android:textSize="20dp"
+        android:id="@+id/serverEdt" />
+    <EditText
+        android:layout_marginTop="20dp"
+        android:layout_height="50dp"
+        android:layout_width="match_parent"
+        android:hint="username"
+        android:textSize="20dp"
+        android:id="@+id/unameEdt" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Connect"
+        android:id="@+id/connectBtn" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>
