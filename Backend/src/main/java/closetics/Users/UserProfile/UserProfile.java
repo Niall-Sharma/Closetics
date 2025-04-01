@@ -47,6 +47,8 @@ public class UserProfile{
     this.isPublic = isPublic;
   }
 
+  public UserProfile(){}
+
   public List<Outfit> GetOutfits(){
     return outfits;
   }
@@ -76,5 +78,11 @@ public class UserProfile{
   public void RemoveFollowing(UserProfile following){
     following_id.remove(following_id.indexOf(following));
   }
-
+  public boolean GetIsPublic()
+  {
+    return isPublic;
+  }
+  public void SetIsPublic(boolean b){
+    isPublic = b;
+  }
 }

@@ -2,11 +2,14 @@ package closetics.Users.UserProfile;
 
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -43,4 +46,15 @@ public class UserProfileController{
   public List<Outfit> GetOutfits(String userName){
     return uRepository.findByUsername(userName).GetOutfits();
   }
+    @PutMapping("/userprofile/swappublicsetting/{id}")
+    public UserProfile swapFavorite(@PathVariable long id) {
+      UserProfile userProfile = uRepository.findById(id); 
+      if (userProfile != null) {
+        userProfile.SetIsPublic(!userProfile.GetIsPublic());
+        uRepository.save(userProfile);
+        return userProfile;
+      }else{
+        throw new RuntimeException();
+      }
+    }
 }

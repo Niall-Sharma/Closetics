@@ -48,7 +48,7 @@ public class OutfitController {
           outfit.setOutfitItems(new ArrayList<>()); // Ensure the list is initialized
       }
       outfit.setCreationDate(LocalDateTime.now());
-      UserProfile uProfile = uProfileRepository.findByUID(outfit.getUser().getUserId());
+      UserProfile uProfile = uProfileRepository.findById(outfit.getUser().getUserId());
       uProfile.AddOutfit(outfit);
       return outfitRepository.save(outfit);
     }
