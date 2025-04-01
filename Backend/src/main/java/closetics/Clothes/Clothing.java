@@ -3,7 +3,7 @@ package closetics.Clothes;
 import closetics.Users.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import closetics.Clothes.Statistics.ClothingStats;
+import closetics.Statistics.ClothingStats;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
@@ -37,9 +37,8 @@ public class Clothing {
             "sQA1", "sQID1", "sQA2", "sQID2", "sQA3", "sQID3"})
     private User user;
   
-    @OneToOne(cascade = CascadeType.REMOVE)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "stat_id")
-    @JsonIgnore
     private ClothingStats clothingStats;
 
     public Clothing(long itemId, boolean favorite, String size, String color, String dateBought, String brand, String imagePath, String itemName, String material, String price, long specialType, long type, User user ) {
@@ -54,7 +53,6 @@ public class Clothing {
         this.material = material;
         this.specialType = specialType;
         this.type = type;
-        this.clothingStats = new ClothingStats();
         this.user = user;
         this.price = price;
     }

@@ -2,6 +2,8 @@ package closetics.Outfits;
 
 import closetics.Clothes.Clothing;
 import closetics.Clothes.ClothingRepository;
+import closetics.Statistics.OutfitStatRepository;
+import closetics.Statistics.OutfitStats;
 import closetics.Users.User;
 import closetics.Users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,9 @@ public class OutfitController {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    OutfitStatRepository outfitStatRepository;
 
     @GetMapping(path = "/getOutfit/{outfitId}")
     public Optional<Outfit> getOutfit(@PathVariable long outfitId) {
@@ -53,6 +58,7 @@ public class OutfitController {
         }
 
         Outfit savedOutfit =  outfitRepository.save(outfit);
+        OutfitStats outfitStats = outfitStatRepository.save(new OutfitStats(savedOutfit.getOutfitId()));
         return ResponseEntity.ok(savedOutfit);
     }
 
@@ -77,6 +83,7 @@ public class OutfitController {
     @DeleteMapping(path = "/deleteOutfit/{outfitId}")
     public void deleteClothing(@PathVariable long outfitId) {
         outfitRepository.deleteById(outfitId);
+        outfitStatRepository.deleteById(outfitId);
     }
 
     @PutMapping(path = "/addItemToOutfit/{outfitId}")

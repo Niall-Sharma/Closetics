@@ -1,5 +1,6 @@
 package closetics.Outfits;
 
+import closetics.Statistics.OutfitStats;
 import closetics.Users.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -20,14 +21,18 @@ public class Outfit {
             "sQA1", "sQID1", "sQA2", "sQID2", "sQA3", "sQID3"})
     private User user;
 
-    private String outfitName;
-    private LocalDateTime creationDate;
-    private boolean favorite;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "stat_id")
+    private OutfitStats outfitStats;
 
     @ElementCollection
     @CollectionTable(name = "outfit_items", joinColumns = @JoinColumn(name = "outfit_id"))
     @Column(name = "clothing_id")
     private List<Long> outfitItems = new ArrayList<>();
+
+    private String outfitName;
+    private LocalDateTime creationDate;
+    private boolean favorite;
 
     public Outfit(long outfitId, User user, String outfitName, LocalDateTime creationDate, boolean favorite, List<Long> outfitItems) {
         this.outfitId = outfitId;

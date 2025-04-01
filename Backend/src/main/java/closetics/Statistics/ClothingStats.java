@@ -1,7 +1,7 @@
-package closetics.Clothes.Statistics;
+package closetics.Statistics;
 
-import java.sql.Date;
 import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.*;
 
@@ -9,56 +9,32 @@ import jakarta.persistence.*;
 public class ClothingStats {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     long clothingStatsId;
-
-    @OneToOne
-    @JoinColumn(name = "clothing_id", nullable = false)
-    long clothingId;
 
     @ElementCollection
     @CollectionTable(name = "clothing_item_days_worn", joinColumns = @JoinColumn(name = "clothing_stats_id"))
-    @Column(name = "clothing_stats_id")
-    ArrayList<Date> datesWorn;
+    @Column(name = "date_worn")
+    private List<WornRecord> datesWorn;
 
     long timesWorn;
-    float highTemp;
-    float lowTemp;
     long numberOfOutfitsIn;
 
 
-    public ClothingStats(long timesWorn, float highTemp, float lowTemp, long numberOfOutfitsIn) {
+    public ClothingStats(long timesWorn, long numberOfOutfitsIn) {
         this.timesWorn = timesWorn;
         this.datesWorn = new ArrayList<>();
-        this.highTemp = highTemp;
-        this.lowTemp = lowTemp;
         this.numberOfOutfitsIn = numberOfOutfitsIn;
 
     }
 
-    public ClothingStats() {
+    public ClothingStats(long clothingStatsId) {
+        this.clothingStatsId = clothingStatsId;
         datesWorn = new ArrayList<>();
         timesWorn = 0;
-        highTemp = 0;
-        lowTemp = 0;
         numberOfOutfitsIn = 0;
     }
 
-    public float getLowTemp() {
-        return lowTemp;
-    }
-
-    public void setLowTemp(float temp) {
-        lowTemp = temp;
-    }
-
-    public float getHighTemp() {
-        return highTemp;
-    }
-
-    public void setHighTemp(float temp) {
-        highTemp = temp;
-    }
+    public ClothingStats(){}
 
     public long getTimesWorn() {
         return timesWorn;
@@ -74,14 +50,6 @@ public class ClothingStats {
 
     public void decrementTimesWorn() {
         timesWorn -= 1;
-    }
-
-    public void addLastWorn(Date lastWorn) {
-        this.datesWorn.add(lastWorn);
-    }
-
-    public ArrayList<Date> getLastWorn() {
-        return datesWorn;
     }
 
     public long numberOfOutfitsIn() {
