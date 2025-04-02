@@ -30,6 +30,31 @@ public class UserProfileController{
     return userProfile;
   }
 
+  @PutMapping(path = "/addFollowing/{id}/{followingId}")
+  public UserProfile AddFollowingToProfile(@PathVariable("id") long id, @PathVariable("followingId") long followingId){
+    UserProfile userProfile = uRepository.findById(id);
+    UserProfile followingUser = uRepository.findById(followingId);
+    if(id != followingId){
+      userProfile.AddFollowing(followingUser);
+      followingUser.AddFollower(userProfile);
+      uRepository.save(userProfile);
+      uRepository.save(followingUser);
+
+    }
+    return userProfile;
+  }
+  @PutMapping(path = "/addFollowing/{id}/{followingId}")
+  public UserProfile RemoveFollowingFromProfile(@PathVariable("id") long id, @PathVariable("followingId") long followingId){
+    UserProfile userProfile = uRepository.findById(id);
+    UserProfile followingUser = uRepository.findById(followingId);
+    userProfile.RemoveFollowing(followingUser);
+    followingUser.RemoveFollower(userProfile);
+    uRepository.save(userProfile);
+    uRepository.save(followingUser);
+    return userProfile;
+  }
+
+
   @GetMapping("/userprofile/followers/{userName}")
   public List<UserProfile> GetFollowers(String userName){
     return uRepository.findByUsername(userName).GetFollowers();
@@ -44,15 +69,15 @@ public class UserProfileController{
   public List<Outfit> GetOutfits(String userName){
     return uRepository.findByUsername(userName).GetOutfits();
   }
-    @PutMapping("/userprofile/swappublicsetting/{id}")
-    public UserProfile swapFavorite(@PathVariable long id) {
-      UserProfile userProfile = uRepository.findById(id); 
-      if (userProfile != null) {
-        userProfile.SetIsPublic(!userProfile.GetIsPublic());
-        uRepository.save(userProfile);
-        return userProfile;
-      }else{
-        throw new RuntimeException();
+  @PutMapping("/userprofile/swappublicsetting/{id}")
+  public UserProfile swapFavorite(@PathVariable long id) {
+    UserProfile userProfile = uRepository.findById(id); 
+    if (userProfile != null) {
+      userProfile.SetIsPublic(!userProfile.GetIsPublic());
+      uRepository.save(userProfile);
+      return userProfile;
+    }else{
+      throw new RuntimeException();
       }
     }
 }
