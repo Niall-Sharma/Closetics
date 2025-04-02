@@ -38,8 +38,8 @@ public class WeatherFetcher {
                     .getJSONObject(0)
                     .getJSONObject("day");
 
-            Float minTemp = dayData.getFloat("mintemp_f");
-            Float maxTemp = dayData.getFloat("maxtemp_f");
+            Float minTemp = dayData.getFloat("maxtemp_f"); // Not sure why but they come in swapped
+            Float maxTemp = dayData.getFloat("mintemp_f");
 
             return new WornRecord(date, minTemp, maxTemp);
         } catch (Exception e) {

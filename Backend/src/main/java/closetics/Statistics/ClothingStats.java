@@ -61,6 +61,7 @@ public class ClothingStats {
         this.numberOfOutfitsIn = numberOfOutfitsIn;
     }
 
+
     public List<WornRecord> getDatesWorn() {
         return datesWorn;
     }

@@ -16,4 +16,6 @@ public interface OutfitRepository extends JpaRepository<Outfit, Long> {
     @Query(value = "SELECT * FROM outfit_table WHERE user_id = :userId ",nativeQuery = true)
     List<Outfit> findAllByUserId(@Param("userId") long userId);
 
+    @Query(value = "SELECT COUNT(DISTINCT outfit_id) FROM outfit_items WHERE clothing_id = :clothingId", nativeQuery = true)
+    long countDistinctOutfitsContainingClothing(@Param("clothingId") Long clothingId);
 }
