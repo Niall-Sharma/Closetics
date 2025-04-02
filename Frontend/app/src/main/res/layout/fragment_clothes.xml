@@ -32,6 +32,16 @@
             app:layout_constraintStart_toStartOf="@+id/discover_clothes_button"
             app:layout_constraintTop_toBottomOf="@+id/discover_clothes_button" />
 
+        <Button
+            android:id="@+id/cameraTest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="321dp"
+            android:text="Button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/discover_login_text"
             android:layout_width="wrap_content"
