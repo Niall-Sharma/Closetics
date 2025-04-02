@@ -2,13 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:title="Home"
+        android:title="Dashboard"
         android:icon="@drawable/baseline_home_24"
-        android:id="@+id/navigation_home"/>
+        android:id="@+id/navigation_dashboard"/>
     <item
         android:title="Discover"
-        android:icon="@drawable/baseline_adjust_24"
-        android:id="@+id/navigation_discover"/>
+        android:icon="@drawable/compass"
+        android:id="@+id/navigation_recommendations"/>
+    <item
+        android:title="Clothes"
+        android:icon="@drawable/hanger"
+        android:id="@+id/navigation_clothes"/>
     <item
         android:title="Profile"
         android:icon="@drawable/baseline_person_24"

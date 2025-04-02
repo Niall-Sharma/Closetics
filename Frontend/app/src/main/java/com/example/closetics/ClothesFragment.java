@@ -13,15 +13,14 @@ import android.widget.TextView;
 
 import com.example.closetics.clothes.ClothesActivity;
 import com.example.closetics.outfits.OutfitsActivity;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class DiscoverFragment extends Fragment {
+public class ClothesFragment extends Fragment {
 
     private Button clothesButton;
     private Button outfitsButton;
     private TextView loginText;
 
-    public DiscoverFragment() {
+    public ClothesFragment() {
         // Required empty public constructor
     }
 
@@ -29,7 +28,7 @@ public class DiscoverFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_discover, container, false);
+        View view = inflater.inflate(R.layout.fragment_clothes, container, false);
 
         clothesButton = view.findViewById(R.id.discover_clothes_button);
         outfitsButton = view.findViewById(R.id.discover_outfits_button);
