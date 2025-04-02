@@ -6,18 +6,18 @@ import closetics.Statistics.OutfitStatRepository;
 import closetics.Statistics.OutfitStats;
 import closetics.Users.User;
 import closetics.Users.UserRepository;
+import closetics.Users.UserProfile.UserProfile;
+import closetics.Users.UserProfile.UserProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-
 public class OutfitController {
 
     @Autowired
@@ -31,6 +31,9 @@ public class OutfitController {
 
     @Autowired
     OutfitStatRepository outfitStatRepository;
+
+    @Autowired
+    UserProfileRepository uProfileRepository;
 
     @GetMapping(path = "/getOutfit/{outfitId}")
     public Optional<Outfit> getOutfit(@PathVariable long outfitId) {
@@ -58,6 +61,8 @@ public class OutfitController {
         }
 
         Outfit savedOutfit =  outfitRepository.save(outfit);
+        UserProfile uProfile = uProfileRepository.findByUID(outfit.getUser().getUserId());
+        uProfile.AddOutfit(savedOutfit);
         OutfitStats outfitStats = outfitStatRepository.save(new OutfitStats(savedOutfit.getOutfitId()));
         return ResponseEntity.ok(savedOutfit);
     }

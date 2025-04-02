@@ -20,6 +20,9 @@
             android:name=".clothes.ClothesActivity"
             android:exported="false"/>
         <activity
+            android:name=".clothes.EditClothesActivity"
+            android:exported="false"/>
+        <activity
             android:name=".outfits.SelectClothesActivity"
             android:exported="false" />
         <activity

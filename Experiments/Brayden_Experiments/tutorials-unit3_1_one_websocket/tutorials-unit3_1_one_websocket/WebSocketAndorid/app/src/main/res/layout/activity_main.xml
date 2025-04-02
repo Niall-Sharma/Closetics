@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:context=".MainActivity"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:gravity="center_horizontal"
+    android:background="?android:attr/colorBackground">
+
+    <!-- Server URL Label -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Server URL (default to):"
+        android:textSize="16sp"
+        android:textColor="?android:textColorPrimary"
+        android:layout_marginBottom="5dp"/>
+
+    <!-- Server URL Input -->
+    <EditText
+        android:id="@+id/serverEdt"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="ws://10.0.2.2:8080/chat/"
+        android:textSize="16sp"
+        android:padding="10dp"
+        android:background="@android:drawable/edit_text"
+        android:elevation="2dp"/>
+
+    <!-- Username Input -->
+    <EditText
+        android:id="@+id/unameEdt"
+        android:layout_marginTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="Username"
+        android:textSize="16sp"
+        android:padding="10dp"
+        android:background="@android:drawable/edit_text"
+        android:elevation="2dp" />
+
+    <!-- Connect Button -->
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Connect"
+        android:id="@+id/connectBtn" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>
