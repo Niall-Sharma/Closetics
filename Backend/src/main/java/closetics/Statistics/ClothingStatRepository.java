@@ -8,9 +8,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ClothingStatRepository extends JpaRepository<ClothingStats, Long> {
 
-    @Query(value = "SELECT * FROM stats_table WHERE clothes_id=?",nativeQuery = true)
-    ClothingStats findByClothesId(long clothesId);
-
-    @Query(value = "DELETE FROM stats_table WHERE clothes_Id=?",nativeQuery = true)
-    void deleteByClothesId(long clothesId);
 }

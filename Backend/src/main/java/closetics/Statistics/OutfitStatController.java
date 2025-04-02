@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @RestController
@@ -23,12 +24,13 @@ public class OutfitStatController {
     @PutMapping(path = "/wornOutfitToday/{id}")
     public ResponseEntity<OutfitStats> addWornOutfitToday(@PathVariable long id) {
         try {
-            OutfitStats clothingStats = outfitStatRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("ClothingStats Item not found"));
-            //clothingStats.addLastWornToday();
-            clothingStats.incrementTimesWorn();
-            outfitStatRepository.save(clothingStats);
-            return ResponseEntity.ok(clothingStats);
+            OutfitStats outfitStats = outfitStatRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("OutfitStats Item not found"));
+            outfitStats.incrementTimesWorn();
+            WornRecord record = WeatherFetcher.fetchWeatherData(LocalDate.now());
+            outfitStats.addWornRecord(record);
+            outfitStatRepository.save(outfitStats);
+            return ResponseEntity.ok(outfitStats);
         } catch(RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }

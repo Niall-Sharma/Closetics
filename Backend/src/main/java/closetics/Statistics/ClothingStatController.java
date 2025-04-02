@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @RestController
@@ -26,8 +27,9 @@ public class ClothingStatController {
         try {
             ClothingStats clothingStats = clothingStatRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("ClothingStats Item not found"));
-            //clothingStats.addLastWornToday();
             clothingStats.incrementTimesWorn();
+            WornRecord record = WeatherFetcher.fetchWeatherData(LocalDate.now());
+            clothingStats.addWornRecord(record);
             clothingStatRepository.save(clothingStats);
             return ResponseEntity.ok(clothingStats);
         } catch(RuntimeException e) {

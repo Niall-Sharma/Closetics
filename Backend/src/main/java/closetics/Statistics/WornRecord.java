@@ -1,29 +1,28 @@
 package closetics.Statistics;
 
 import jakarta.persistence.Embeddable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Embeddable
 public class WornRecord {
-    private LocalDateTime dateWorn;
-    private float highTemp;
-    private float lowTemp;
+    private LocalDate dateWorn;
+    private Float highTemp;
+    private Float lowTemp;
 
-    // Constructors
     public WornRecord() {}
 
-    public WornRecord(LocalDateTime dateWorn, float highTemp, float lowTemp) {
+    public WornRecord(LocalDate dateWorn, Float highTemp, Float lowTemp) {
         this.dateWorn = dateWorn;
         this.highTemp = highTemp;
         this.lowTemp = lowTemp;
     }
 
     // Getters and Setters
-    public LocalDateTime getDateWorn() {
+    public LocalDate getDateWorn() {
         return dateWorn;
     }
 
-    public void setDateWorn(LocalDateTime dateWorn) {
+    public void setDateWorn(LocalDate dateWorn) {
         this.dateWorn = dateWorn;
     }
 
@@ -31,7 +30,7 @@ public class WornRecord {
         return highTemp;
     }
 
-    public void setHighTemp(float highTemp) {
+    public void setHighTemp(Float highTemp) {
         this.highTemp = highTemp;
     }
 
@@ -39,7 +38,7 @@ public class WornRecord {
         return lowTemp;
     }
 
-    public void setLowTemp(float lowTemp) {
+    public void setLowTemp(Float lowTemp) {
         this.lowTemp = lowTemp;
     }
 }

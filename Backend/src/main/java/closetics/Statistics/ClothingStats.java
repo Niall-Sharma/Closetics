@@ -1,5 +1,6 @@
 package closetics.Statistics;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,14 +23,14 @@ public class ClothingStats {
 
     public ClothingStats(long timesWorn, long numberOfOutfitsIn) {
         this.timesWorn = timesWorn;
-        this.datesWorn = new ArrayList<>();
+        this.datesWorn = new ArrayList<WornRecord>();
         this.numberOfOutfitsIn = numberOfOutfitsIn;
 
     }
 
     public ClothingStats(long clothingStatsId) {
         this.clothingStatsId = clothingStatsId;
-        datesWorn = new ArrayList<>();
+        datesWorn = new ArrayList<WornRecord>();
         timesWorn = 0;
         numberOfOutfitsIn = 0;
     }
@@ -59,6 +60,15 @@ public class ClothingStats {
     public void setNumberOfOutfitsIn(long numberOfOutfitsIn) {
         this.numberOfOutfitsIn = numberOfOutfitsIn;
     }
+
+    public List<WornRecord> getDatesWorn() {
+        return datesWorn;
+    }
+
+    public void addWornRecord(WornRecord record) {
+        this.datesWorn.add(record);
+    }
+
 }
 
 
