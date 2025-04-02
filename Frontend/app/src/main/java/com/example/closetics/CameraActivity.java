@@ -2,9 +2,13 @@ package com.example.closetics;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.ImageFormat;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
+import android.hardware.camera2.params.OutputConfiguration;
+import android.hardware.camera2.params.SessionConfiguration;
+import android.media.ImageReader;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,6 +20,12 @@ import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraManager;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Surface;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class CameraActivity extends AppCompatActivity {
 
@@ -66,7 +76,9 @@ public class CameraActivity extends AppCompatActivity {
             cameraManager.openCamera(cameraId, new CameraDevice.StateCallback() {
                 @Override
                 public void onOpened(@NonNull CameraDevice camera) {
+
                     camera.createCaptureSession();
+
 
 
                 }
@@ -84,5 +96,41 @@ public class CameraActivity extends AppCompatActivity {
         } catch (CameraAccessException e) {
             Log.e("Camera Access Exception", e.toString());
         }
+    }
+    private void createCaptureSession(CameraDevice cameraDevice){
+        /*
+        Note:
+        Surfaces are Output configurations for the camera
+        Preview Surface used for rendering to the screen
+        Image Reader used for saving images
+         */
+        //Note add a preview configuration with a texture view to display the picture in the UI
+
+        ImageReader imageReader= ImageReader.newInstance(1920, 1080, ImageFormat.JPEG, 3);
+
+        OutputConfiguration imageConfiguration = new OutputConfiguration(imageReader.getSurface());
+        ArrayList<OutputConfiguration> surfaces = new ArrayList<OutputConfiguration>();
+        surfaces.add(imageConfiguration);
+        //Creates a new thread for the camera
+        Executor executor = Executors.newSingleThreadExecutor();
+
+        CameraCaptureSession.StateCallback sessionCallback = new CameraCaptureSession.StateCallback() {
+
+            @Override
+            public void onConfigured(@NonNull CameraCaptureSession session) {
+
+            }
+
+            @Override
+            public void onConfigureFailed(@NonNull CameraCaptureSession session) {
+
+            }
+        }
+
+
+
+            //SessionConfiguration sessionConfiguration = new SessionConfiguration(SessionConfiguration.SESSION_REGULAR,
+               // surfaces, executor, );
+
     }
 }
