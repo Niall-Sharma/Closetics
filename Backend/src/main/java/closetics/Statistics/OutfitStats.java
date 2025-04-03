@@ -12,18 +12,22 @@ import jakarta.persistence.*;
 public class OutfitStats {
 
     @Id
-    long outfitStatsId;
+    private long outfitStatsId;
 
     @ElementCollection
     @CollectionTable(name = "outfit_days_worn", joinColumns = @JoinColumn(name = "outfit_stats_id"))
     private List<WornRecord> datesWorn;
 
-    long timesWorn;
+    private long timesWorn;
+    private Float avgHighTemp;
+    private Float avgLowTemp;
 
     public OutfitStats(long outfitStatsId){
         this.outfitStatsId = outfitStatsId;
         datesWorn = new ArrayList<WornRecord>();
         timesWorn = 0;
+        avgLowTemp = -1000f;
+        avgHighTemp = -1000f;
     }
 
     public OutfitStats(){}
@@ -50,6 +54,22 @@ public class OutfitStats {
 
     public void addWornRecord(WornRecord record) {
         this.datesWorn.add(record);
+    }
+
+    public Float getAvgLowTemp() {
+        return avgLowTemp;
+    }
+
+    public void setAvgLowTemp(Float avgLowTemp) {
+        this.avgLowTemp = avgLowTemp;
+    }
+
+    public Float getAvgHighTemp() {
+        return avgHighTemp;
+    }
+
+    public void setAvgHighTemp(Float avgHighTemp) {
+        this.avgHighTemp = avgHighTemp;
     }
 }
 
