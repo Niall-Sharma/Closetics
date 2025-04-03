@@ -68,7 +68,7 @@ public class RecSocket {
 	}
 
 	@OnMessage
-	public void onMessage(Session session) throws IOException {
+	public void onMessage(String message, Session session) throws IOException {
 
 		long UID = sessionUsernameMap.get(session);
     
