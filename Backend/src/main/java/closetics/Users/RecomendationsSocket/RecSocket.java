@@ -16,8 +16,6 @@ import jakarta.websocket.Session;
 import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -26,22 +24,14 @@ import closetics.Outfits.OutfitRepository;
 import closetics.Users.UserProfile.UserProfile;
 import closetics.Users.UserProfile.UserProfileRepository;
 
-@Controller      // this is needed for this to be an endpoint to springboot
-@ServerEndpoint(value = "/recomendation/{uid}")  // this is Websocket url
+@Controller    
+@ServerEndpoint(value = "/recomendation/{uid}") 
 public class RecSocket {
 
-  // cannot autowire static directly (instead we do it by the below
-  // method
 	private static UserProfileRepository UserProfileRepository; 
   private static OutfitRepository OutfitRepository;
 
-	/*
-   * Grabs the MessageRepository singleton from the Spring Application
-   * Context.  This works because of the @Controller annotation on this
-   * class and because the variable is declared as static.
-   * There are other ways to set this. However, this approach is
-   * easiest.
-	 */
+
 	@Autowired
 	public void setUserProfileRepository(UserProfileRepository repo) {
 		UserProfileRepository = repo;  // we are setting the static variable
@@ -57,13 +47,11 @@ public class RecSocket {
 	private static Map<Long, Session> uidSessionMap = new Hashtable<>();
   private static Map<Long, List<Outfit>> followingOutfitMap = new Hashtable<>();
 
-	private final Logger logger = LoggerFactory.getLogger(RecSocket.class);
 
 	@OnOpen
 	public void onOpen(Session session, @PathParam("UID") long UID) 
       throws IOException {
 
-		logger.info("Entered into Open");
 
     // store connecting user information
 		sessionUsernameMap.put(session, UID);
@@ -104,11 +92,10 @@ public class RecSocket {
 
 	@OnError
 	public void onError(Session session, Throwable throwable) {
-		logger.info("Entered into Error");
 		throwable.printStackTrace();
 	}
 
-
+  //Maybe take stats into consideration when deciding on what recomendations to pick
 	private void sendRec(long UID) {
     int recSize = 30;
     List<Outfit> RecList = new ArrayList<>();
@@ -127,11 +114,9 @@ public class RecSocket {
         uidSessionMap.get(UID).getBasicRemote().sendObject(RecList);
 		} 
     catch (IOException e) {
-			logger.info("Exception: " + e.getMessage().toString());
 			e.printStackTrace();
 		}
     catch(EncodeException encodeException){
-      logger.info("Exception: " + encodeException.getMessage().toString());
       encodeException.printStackTrace();
     }
 	}
