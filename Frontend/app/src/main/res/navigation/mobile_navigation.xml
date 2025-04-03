@@ -3,18 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@id/navigation_home">
+    app:startDestination="@id/navigation_dashboard">
 
     <fragment
-        android:id="@+id/navigation_home"
-        android:name="com.example.closetics.HomeFragment"
-        android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        android:id="@+id/navigation_dashboard"
+        android:name="com.example.closetics.DashboardFragment"
+        android:label="fragment_dashboard"
+        tools:layout="@layout/fragment_dashboard" />
     <fragment
-        android:id="@+id/navigation_discover"
-        android:name="com.example.closetics.DiscoverFragment"
-        android:label="fragment_discover"
-        tools:layout="@layout/fragment_discover" />
+        android:id="@+id/navigation_recommendations"
+        android:name="com.example.closetics.RecommendationsFragment"
+        android:label="fragment_recommendations"
+        tools:layout="@layout/fragment_recommendations" />
+    <fragment
+        android:id="@+id/navigation_clothes"
+        android:name="com.example.closetics.ClothesFragment"
+        android:label="fragment_clothes"
+        tools:layout="@layout/fragment_clothes" />
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.example.closetics.ProfileFragment"
