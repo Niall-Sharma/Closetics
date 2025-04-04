@@ -41,7 +41,7 @@ public class ClothesActivity extends AppCompatActivity {
 
     private static HashMap<Long,Long> clothingTypeCounts = new HashMap<>();
     private Button addClothes;
-    private Button editClothes;
+    private Button testCamera;
     private Button viewClothes;
     private Button finalSubmission;
     private Button deleteClothes;
@@ -81,7 +81,7 @@ public class ClothesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_clothes);
 
         addClothes = findViewById(R.id.add_clothes);
-        editClothes = findViewById(R.id.edit_clothes);
+        testCamera = findViewById(R.id.edit_clothes);
         viewClothes = findViewById(R.id.view_clothes);
         finalSubmission = findViewById(R.id.final_submission);
         card = findViewById(R.id.card_view);
@@ -150,13 +150,17 @@ public class ClothesActivity extends AppCompatActivity {
 
             }
         });
+        testCamera.setOnClickListener(v -> {
+            Intent intent = new Intent(this, CameraActivity.class);
+            startActivity(intent);
+        });
 
     }
 
     //Add more items if more added to activity
     private void activityItemsVisibility(){
         addClothes.setVisibility(View.GONE);
-        editClothes.setVisibility(View.GONE);
+        testCamera.setVisibility(View.GONE);
         viewClothes.setVisibility(View.GONE);
         tabLayout.setVisibility(View.VISIBLE);
         finalSubmission.setVisibility(View.VISIBLE);

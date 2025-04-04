@@ -1,10 +1,8 @@
-package com.example.closetics;
+package com.example.closetics.clothes;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -29,7 +27,6 @@ import androidx.core.app.ActivityCompat;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraManager;
 import android.os.Environment;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Surface;
@@ -37,12 +34,13 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.closetics.R;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 

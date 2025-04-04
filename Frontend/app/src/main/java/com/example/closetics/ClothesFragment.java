@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.closetics.clothes.CameraActivity;
 import com.example.closetics.clothes.ClothesActivity;
 import com.example.closetics.outfits.OutfitsActivity;
 
@@ -19,7 +20,6 @@ public class ClothesFragment extends Fragment {
     private Button clothesButton;
     private Button outfitsButton;
     private TextView loginText;
-    private Button cameraTest;
 
     public ClothesFragment() {
         // Required empty public constructor
@@ -34,7 +34,6 @@ public class ClothesFragment extends Fragment {
         clothesButton = view.findViewById(R.id.discover_clothes_button);
         outfitsButton = view.findViewById(R.id.discover_outfits_button);
         loginText = view.findViewById(R.id.discover_login_text);
-        cameraTest = view.findViewById(R.id.cameraTest);
 
         // show/hide elements depending if user is logged in
         String username = UserManager.getUsername(getActivity().getApplicationContext());
@@ -57,10 +56,7 @@ public class ClothesFragment extends Fragment {
             Intent intent = new Intent(getActivity(), OutfitsActivity.class);
             startActivity(intent);
         });
-        cameraTest.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), CameraActivity.class);
-            startActivity(intent);
-        });
+
 
 
         return view;
