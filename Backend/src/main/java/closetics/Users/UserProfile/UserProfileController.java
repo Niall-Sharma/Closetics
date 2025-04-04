@@ -12,12 +12,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import closetics.Outfits.Outfit;
+import closetics.Users.UserRepository;
 
 @RestController
 public class UserProfileController{
 
   @Autowired
   UserProfileRepository uRepository;
+
+  @Autowired
+  UserRepository userRepository;
 
   @GetMapping(path = "/userprofile/{id}")
   public UserProfile GetUserProfile(@PathVariable long id){

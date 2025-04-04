@@ -21,16 +21,10 @@ public class UserProfile{
   @Column(name = "UID")
   long UUID;
   
-
-  @ManyToOne(fetch = FetchType.EAGER)
-  @JoinTable(
-          name = "user_outfits",
-          joinColumns = @JoinColumn(name = "UID"),
-          inverseJoinColumns = @JoinColumn(name = "outfit_id")
-  )
+  @ElementCollection
+  @CollectionTable(name = "users_outfits", joinColumns = @JoinColumn(name = "UID"))
+  @JoinColumn(name = "outfit_id")
   private List<Outfit> outfits;
-
-
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
