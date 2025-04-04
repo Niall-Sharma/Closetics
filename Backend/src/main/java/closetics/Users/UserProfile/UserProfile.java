@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import closetics.Outfits.Outfit;
+import closetics.Users.User;
 import jakarta.persistence.*;
 
 @Entity(name = "user_profiles_table")
@@ -13,19 +14,22 @@ public class UserProfile{
   
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  long userProfileId;
+  long id;
 
   boolean isPublic;
   String username;
 
-  @Column(name = "UID")
-  long UUID;
-  
-  @ElementCollection
-  @CollectionTable(name = "users_outfits", joinColumns = @JoinColumn(name = "UID"))
-  @JoinColumn(name = "outfit_id")
-  private List<Outfit> outfits;
+  @OneToOne
+  @JoinColumn(name = "user_id")
+  User user;
 
+  @OneToMany
+  @JoinTable(
+          name = "users_outfits",
+          joinColumns = @JoinColumn(name = "UID"),
+          inverseJoinColumns = @JoinColumn(name = "outfit_id")
+  )
+  private List<Outfit> outfits;
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
           name = "user_following",
@@ -43,8 +47,7 @@ public class UserProfile{
   private List<UserProfile> followers_id;
 
 
-  public UserProfile(boolean isPublic, String username, long UUID){
-    this.UUID = UUID;
+  public UserProfile(boolean isPublic, String username){
     this.username = username;
     this.isPublic = isPublic;
   }
@@ -86,5 +89,8 @@ public class UserProfile{
   }
   public void SetIsPublic(boolean b){
     isPublic = b;
+  }
+  public void SetUser(User user){
+    this.user = user;
   }
 }

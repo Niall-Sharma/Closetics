@@ -25,7 +25,11 @@ public class UserProfileController{
 
   @GetMapping(path = "/userprofile/{id}")
   public UserProfile GetUserProfile(@PathVariable long id){
-    return uRepository.findById(id);
+    return userRepository.findById(id).get().GetUserProfile();
+  }
+  @GetMapping(path = "/userprofile")
+  public List<UserProfile> GetAllUserProfiles(){
+    return uRepository.findAll();
   }
 
   @PostMapping(path = "/userprofile")
@@ -36,8 +40,8 @@ public class UserProfileController{
 
   @PutMapping(path = "/addFollowing/{id}/{followingId}")
   public UserProfile AddFollowingToProfile(@PathVariable("id") long id, @PathVariable("followingId") long followingId){
-    UserProfile userProfile = uRepository.findById(id);
-    UserProfile followingUser = uRepository.findById(followingId);
+    UserProfile userProfile = userRepository.findById(id).get().GetUserProfile();
+    UserProfile followingUser = userRepository.findById(followingId).get().GetUserProfile();
     if(id != followingId){
       userProfile.AddFollowing(followingUser);
       followingUser.AddFollower(userProfile);
@@ -49,8 +53,8 @@ public class UserProfileController{
   }
   @PutMapping(path = "/removeFollowing/{id}/{followingId}")
   public UserProfile RemoveFollowingFromProfile(@PathVariable("id") long id, @PathVariable("followingId") long followingId){
-    UserProfile userProfile = uRepository.findById(id);
-    UserProfile followingUser = uRepository.findById(followingId);
+    UserProfile userProfile = userRepository.findById(id).get().GetUserProfile();
+    UserProfile followingUser = userRepository.findById(followingId).get().GetUserProfile();
     userProfile.RemoveFollowing(followingUser);
     followingUser.RemoveFollower(userProfile);
     uRepository.save(userProfile);
@@ -75,7 +79,7 @@ public class UserProfileController{
   }
   @PutMapping("/userprofile/swappublicsetting/{id}")
   public UserProfile swapFavorite(@PathVariable long id) {
-    UserProfile userProfile = uRepository.findById(id); 
+    UserProfile userProfile = uRepository.findById(id).get();
     if (userProfile != null) {
       userProfile.SetIsPublic(!userProfile.GetIsPublic());
       uRepository.save(userProfile);

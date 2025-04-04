@@ -48,7 +48,7 @@ public class User {
         this.sQID2 = sQID2;
         this.sQA3 = sQA3;
         this.sQID3 = sQID3;
-        userProfile = new UserProfile(false, username,userId);
+        userProfile = new UserProfile(false, username);
     }
 
     public User() {

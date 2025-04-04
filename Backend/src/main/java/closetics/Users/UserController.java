@@ -100,10 +100,12 @@ public class UserController {
         user.setsQA1(User.encryptString(user.getsQA1()));
         user.setsQA2(User.encryptString(user.getsQA2()));
         user.setsQA3(User.encryptString(user.getsQA3()));
-        UserProfile userProfile = new UserProfile(false, user.getUsername(), user.getUserId());
+        UserProfile userProfile = new UserProfile(false, user.getUsername());
         userProfileRepository.save(userProfile);
         user.SetUserProfile(userProfile);
         userRepository.save(user);
+        userProfile.SetUser(user);
+        userProfileRepository.save(userProfile);
         Token token = tokenService.createToken(user);
         response.put("token", token.getTokenValue());
         response.put("message", "Login successful");

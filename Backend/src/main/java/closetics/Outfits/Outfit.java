@@ -2,6 +2,7 @@ package closetics.Outfits;
 
 import closetics.Statistics.OutfitStats;
 import closetics.Users.User;
+import closetics.Users.UserProfile.UserProfile;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
