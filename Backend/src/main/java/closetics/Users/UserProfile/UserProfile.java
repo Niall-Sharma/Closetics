@@ -27,15 +27,22 @@ public class UserProfile{
   private List<Outfit> outfits;
 
 
-  @ElementCollection
-  @CollectionTable(name = "user_following", joinColumns = @JoinColumn(name = "UID"))
-  @Column(name = "following_id")
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(
+          name = "user_following",
+          joinColumns = @JoinColumn(name = "UID"),
+          inverseJoinColumns = @JoinColumn(name = "following_id")
+  )
   private List<UserProfile> following_id;
 
-  @ElementCollection
-  @CollectionTable(name = "user_followers", joinColumns = @JoinColumn(name = "UID"))
-  @Column(name = "follower_id")
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(
+          name = "user_followers",
+          joinColumns = @JoinColumn(name = "UID"),
+          inverseJoinColumns = @JoinColumn(name = "follower_id")
+  )
   private List<UserProfile> followers_id;
+  
 
   public UserProfile(boolean isPublic, String username, long UUID){
     this.UUID = UUID;

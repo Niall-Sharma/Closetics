@@ -7,6 +7,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import closetics.Users.UserRepository;
 import jakarta.websocket.EncodeException;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnError;
@@ -30,7 +31,7 @@ public class RecSocket {
 
 	private static UserProfileRepository UserProfileRepository; 
   private static OutfitRepository OutfitRepository;
-
+  private static UserRepository UserRepository;
 
 	@Autowired
 	public void setUserProfileRepository(UserProfileRepository repo) {
@@ -42,6 +43,11 @@ public class RecSocket {
     OutfitRepository = repo;
   }
 
+  @Autowired
+  public void setUserRepository(UserRepository repo){
+        UserRepository = repo;
+    }
+
 	// Store all socket session and their corresponding username.
 	private static Map<Session, Long> sessionUsernameMap = new Hashtable<>();
 	private static Map<Long, Session> uidSessionMap = new Hashtable<>();
@@ -49,14 +55,15 @@ public class RecSocket {
 
 
 	@OnOpen
-	public void onOpen(Session session, @PathParam("UID") long UID) 
+	public void onOpen(Session session, @PathParam("uid") long UID)
       throws IOException {
 
 
     // store connecting user information
 		sessionUsernameMap.put(session, UID);
 		uidSessionMap.put(UID, session);
-    UserProfile uProfile = UserProfileRepository.findById(UID);
+    UserProfile uProfile = UserRepository.findById(UID).get().GetUserProfile();
+    System.out.println(uProfile.toString());
     List<UserProfile> following = uProfile.GetFollowing();
     List<Outfit> followingOutfits = new ArrayList<>();
     for(int i = 0; i < following.size();i++){

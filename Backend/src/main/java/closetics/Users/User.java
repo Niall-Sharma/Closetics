@@ -152,4 +152,5 @@ Regex explanation:
     public UserProfile GetUserProfile(){
     return userProfile;
   }
+    public void SetUserProfile(UserProfile userProfile){this.userProfile = userProfile;}
 }

@@ -5,6 +5,7 @@ import closetics.Users.Auth.AuthService;
 import closetics.Users.Tokens.Token;
 import closetics.Users.Tokens.TokenRepository;
 import closetics.Users.Tokens.TokenService;
+import closetics.Users.UserProfile.UserProfile;
 import closetics.Users.UserProfile.UserProfileRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,8 +100,10 @@ public class UserController {
         user.setsQA1(User.encryptString(user.getsQA1()));
         user.setsQA2(User.encryptString(user.getsQA2()));
         user.setsQA3(User.encryptString(user.getsQA3()));
+        UserProfile userProfile = new UserProfile(false, user.getUsername(), user.getUserId());
+        userProfileRepository.save(userProfile);
+        user.SetUserProfile(userProfile);
         userRepository.save(user);
-        userProfileRepository.save(user.GetUserProfile());
         Token token = tokenService.createToken(user);
         response.put("token", token.getTokenValue());
         response.put("message", "Login successful");
