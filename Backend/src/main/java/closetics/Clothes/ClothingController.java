@@ -1,9 +1,12 @@
 package closetics.Clothes;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import closetics.Outfits.Outfit;
 import closetics.Statistics.ClothingStats;
+import closetics.Statistics.OutfitStats;
 import closetics.Users.User;
 import closetics.Users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,12 +68,14 @@ public class ClothingController {
         clothing.setSize(request.getSize());
         clothing.setSpecialType(request.getSpecialType());
         clothing.setClothingType(request.getClothingType());
-        clothing.setCreationDate(LocalDateTime.now());
+        clothing.setCreationDate(LocalDate.now());
         clothing.setUser(user);
 
         Clothing savedClothing = clothingRepository.save(clothing);
         ClothingStats clothingStats = clothingStatRepository.save(new ClothingStats(savedClothing.getClothesId()));
-        return ResponseEntity.ok(savedClothing);
+        Clothing statClothing = savedClothing.setClothingStats(clothingStats);
+        Clothing clothingWithStats = clothingRepository.save(statClothing);
+        return ResponseEntity.ok(clothingWithStats);
     }
 
     @DeleteMapping(path = "/deleteClothing/{itemId}")

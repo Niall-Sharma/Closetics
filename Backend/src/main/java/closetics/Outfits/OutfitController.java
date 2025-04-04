@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,10 +51,9 @@ public class OutfitController {
     public ResponseEntity<Outfit> createOutfit(@RequestBody OutfitMinimal request) {
         long user_id = request.getUserId();
         User user = userRepository.findById(user_id).orElseThrow(() -> new RuntimeException("User not found"));
-
         Outfit outfit = new Outfit();
         outfit.setUser(user);
-        outfit.setCreationDate(LocalDateTime.now());
+        outfit.setCreationDate(LocalDate.now());
         outfit.setOutfitName(request.getOutfitName());
         outfit.setFavorite(request.getFavorite());
         outfit.setOutfitItems(request.getOutfitItems());
@@ -64,7 +65,9 @@ public class OutfitController {
         UserProfile uProfile = uProfileRepository.findById(outfit.getUser().getUserId());
         uProfile.AddOutfit(savedOutfit);
         OutfitStats outfitStats = outfitStatRepository.save(new OutfitStats(savedOutfit.getOutfitId()));
-        return ResponseEntity.ok(savedOutfit);
+        Outfit statOutfit = savedOutfit.setOutfitStats(outfitStats);
+        Outfit outfitWithStats =  outfitRepository.save(statOutfit);
+        return ResponseEntity.ok(outfitWithStats);
     }
 
     @PutMapping(path = "/updateOutfit")

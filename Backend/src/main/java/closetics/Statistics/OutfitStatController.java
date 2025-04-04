@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 public class OutfitStatController {
@@ -29,10 +31,32 @@ public class OutfitStatController {
             outfitStats.incrementTimesWorn();
             WornRecord record = WeatherFetcher.fetchWeatherData(LocalDate.now());
             outfitStats.addWornRecord(record);
+            calculateAvgTemps(outfitStats);
             outfitStatRepository.save(outfitStats);
             return ResponseEntity.ok(outfitStats);
         } catch(RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
+    }
+
+    private void calculateAvgTemps(OutfitStats outfitStats) {
+        List<WornRecord> validRecords = outfitStats.getDatesWorn().stream()
+                .filter(record -> record.getHighTemp() != -1000 && record.getLowTemp() != -1000)
+                .collect(Collectors.toList());
+
+        // Prevent division by zero
+        if (validRecords.isEmpty()) {
+            outfitStats.setAvgHighTemp(-1000f);
+            outfitStats.setAvgLowTemp(-1000f);
+            return;
+        }
+
+        // Calculate new averages
+        double avgHighTemp = validRecords.stream().mapToDouble(WornRecord::getHighTemp).average().orElse(0);
+        double avgLowTemp = validRecords.stream().mapToDouble(WornRecord::getLowTemp).average().orElse(0);
+
+        // Set updated values
+        outfitStats.setAvgHighTemp((float) avgHighTemp);
+        outfitStats.setAvgLowTemp((float) avgLowTemp);
     }
 }

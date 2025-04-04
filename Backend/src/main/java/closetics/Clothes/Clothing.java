@@ -5,8 +5,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import closetics.Statistics.ClothingStats;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -29,7 +31,7 @@ public class Clothing {
     private String price;
     private long type;
     private long specialType;
-    private LocalDateTime creationDate;
+    private LocalDate creationDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -39,6 +41,7 @@ public class Clothing {
   
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "stat_id")
+    @JsonIgnoreProperties("datesWorn")
     private ClothingStats clothingStats;
 
     public Clothing(long itemId, boolean favorite, String size, String color, String dateBought, String brand, String imagePath, String itemName, String material, String price, long specialType, long type, User user ) {
@@ -65,13 +68,6 @@ public class Clothing {
     }
     public void setClothingType(long clothingType){
         type = clothingType;
-    }
-
-    public ClothingStats getStat(){
-      return clothingStats;
-    }
-    public void setStat(ClothingStats clothingStats){
-      this.clothingStats = clothingStats;
     }
 
     public long getSpecialType(){
@@ -158,6 +154,15 @@ public class Clothing {
         this.price = price;
     }
 
-    public LocalDateTime getCreationDate() { return creationDate; }
-    public void setCreationDate(LocalDateTime creationDate) { this.creationDate = creationDate; }
+    public LocalDate getCreationDate() { return creationDate; }
+    public void setCreationDate(LocalDate creationDate) { this.creationDate = creationDate; }
+
+    public ClothingStats getClothingStats() {
+        return clothingStats;
+    }
+
+    public Clothing setClothingStats(ClothingStats clothingStats) {
+        this.clothingStats = clothingStats;
+        return this;
+    }
 }
