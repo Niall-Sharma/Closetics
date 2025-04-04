@@ -61,7 +61,7 @@ public class OutfitController {
         }
 
         Outfit savedOutfit =  outfitRepository.save(outfit);
-        UserProfile uProfile = uProfileRepository.findByUID(outfit.getUser().getUserId());
+        UserProfile uProfile = uProfileRepository.findById(outfit.getUser().getUserId());
         uProfile.AddOutfit(savedOutfit);
         OutfitStats outfitStats = outfitStatRepository.save(new OutfitStats(savedOutfit.getOutfitId()));
         return ResponseEntity.ok(savedOutfit);

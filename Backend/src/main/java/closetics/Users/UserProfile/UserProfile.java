@@ -2,17 +2,11 @@ package closetics.Users.UserProfile;
 
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import closetics.Outfits.Outfit;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
 @Entity(name = "user_profiles_table")
 public class UserProfile{
@@ -27,18 +21,20 @@ public class UserProfile{
   @Column(name = "UID")
   long UUID;
   
-  //SEPERATE ENDPOINT
-  @OneToMany
+  @ElementCollection
+  @CollectionTable(name = "users_outfits", joinColumns = @JoinColumn(name = "UID"))
   @JoinColumn(name = "outfit_id")
   private List<Outfit> outfits;
 
-  //SEPERATE ENDPOINT
-  @OneToMany
-  @JoinColumn(name = "following_user_id")
+
+  @ElementCollection
+  @CollectionTable(name = "user_following", joinColumns = @JoinColumn(name = "UID"))
+  @Column(name = "following_id")
   private List<UserProfile> following_id;
-  //SEPERATE ENDPOINT
-  @ManyToOne
-  @JoinColumn(name = "user_followers_id")
+
+  @ElementCollection
+  @CollectionTable(name = "user_followers", joinColumns = @JoinColumn(name = "UID"))
+  @Column(name = "follower_id")
   private List<UserProfile> followers_id;
 
   public UserProfile(boolean isPublic, String username, long UUID){
@@ -46,6 +42,8 @@ public class UserProfile{
     this.username = username;
     this.isPublic = isPublic;
   }
+
+  public UserProfile(){}
 
   public List<Outfit> GetOutfits(){
     return outfits;
@@ -74,7 +72,13 @@ public class UserProfile{
     following_id.add(following);
   }
   public void RemoveFollowing(UserProfile following){
-    following_id.remove(following_id.indexOf(following));
+    following_id.remove(following);
   }
-
+  public boolean GetIsPublic()
+  {
+    return isPublic;
+  }
+  public void SetIsPublic(boolean b){
+    isPublic = b;
+  }
 }
