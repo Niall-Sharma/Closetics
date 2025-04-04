@@ -26,7 +26,7 @@ import closetics.Users.UserProfile.UserProfile;
 import closetics.Users.UserProfile.UserProfileRepository;
 
 @Controller    
-@ServerEndpoint(value = "/recomendation/{uid}") 
+@ServerEndpoint(value = "/recommendation/{uid}")
 public class RecSocket {
 
 	private static UserProfileRepository UserProfileRepository; 

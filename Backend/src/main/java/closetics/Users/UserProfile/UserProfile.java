@@ -42,7 +42,7 @@ public class UserProfile{
           inverseJoinColumns = @JoinColumn(name = "follower_id")
   )
   private List<UserProfile> followers_id;
-  
+
 
   public UserProfile(boolean isPublic, String username, long UUID){
     this.UUID = UUID;
