@@ -16,6 +16,9 @@ public class StatisticsManager {
 
 
 
+    /*
+    Get an outfit's statistics!
+     */
     public static void getOutfitsStatsRequest(Context context, long outfitId, String URL, Response.Listener<JSONObject> responseListener,
                                               Response.ErrorListener errorListener){
 

@@ -4,7 +4,11 @@ package com.example.closetics;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,14 +22,13 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.closetics.dashboard.LeaderboardActivity;
+import com.example.closetics.dashboard.SetTodaysOutfitFragment;
 import com.example.closetics.dashboard.StatisticsActivity;
 
-import com.example.closetics.R;
 import com.example.closetics.dashboard.StatisticsManager;
+import com.example.closetics.outfits.OutfitManager;
 
 import org.json.JSONObject;
-
-import java.util.Queue;
 
 public class DashboardFragment extends Fragment {
 
@@ -57,6 +60,15 @@ public class DashboardFragment extends Fragment {
         setTomorrow = view.findViewById(R.id.setTomorrowButton);
         login = view.findViewById(R.id.loginPageButton);
         outfitImage = view.findViewById(R.id.imageView2);
+
+        if (OutfitManager.getCurrentDailyOutfit(getActivity()) == null){
+            /*
+            This means that there is no outfit set for today!!
+            So show a different fragment!
+             */
+            //showFragment();
+        }
+
 
 
 
@@ -96,6 +108,8 @@ public class DashboardFragment extends Fragment {
     }
 
 
+
+
     /*
     Note: this needs to be updated to work for TODAY'S outfit not just some random outfit
     Possibly add something to the outfit controller or outfit stat controller in the backend
@@ -114,6 +128,15 @@ public class DashboardFragment extends Fragment {
             }
         });
     }
+
+    private void showFragment(){
+        //NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment_activity_main);
+        //navController.navigate(R.id.set_todays_outfit_action);
+
+    }
+
+
+
 
     //Requests on this page:
     //getOutfit worn today
