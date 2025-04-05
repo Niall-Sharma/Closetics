@@ -15,10 +15,15 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.example.closetics.dashboard.LeaderboardActivity;
 import com.example.closetics.dashboard.StatisticsActivity;
 
 import com.example.closetics.R;
+import com.example.closetics.dashboard.StatisticsManager;
+
+import org.json.JSONObject;
 
 public class DashboardFragment extends Fragment {
 
@@ -30,6 +35,7 @@ public class DashboardFragment extends Fragment {
     private TextView outfitInsights;
     private TextView todaysDate;
     private ImageView outfitImage;
+    private int holdCount;
 
 
     public DashboardFragment() {
@@ -46,6 +52,11 @@ public class DashboardFragment extends Fragment {
         setTomorrow = view.findViewById(R.id.setTomorrowButton);
         login = view.findViewById(R.id.loginPageButton);
         outfitImage = view.findViewById(R.id.imageView2);
+
+
+
+        //getOutfitStats();
+
 
 
 
@@ -78,4 +89,33 @@ public class DashboardFragment extends Fragment {
 
         return view;
     }
+
+
+    /*
+    Note: this needs to be updated to work for TODAY'S outfit not just some random outfit
+    Possibly add something to the outfit controller or outfit stat controller in the backend
+
+     */
+    private void getOutfitStats(long outfitId){
+        StatisticsManager.getOutfitsStatsRequest(getActivity(), outfitId, MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d("check", response.toString());
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("check", error.toString());
+            }
+        });
+    }
+
+    //Requests on this page:
+    //getOutfit
+    //getOutfit stats
+    //get overall statistics
+
+
+
+
 }
