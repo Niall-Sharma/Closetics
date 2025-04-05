@@ -64,7 +64,7 @@ public class ClothesActivity extends AppCompatActivity {
     private ClothesDataViewModel clothesDataViewModel;
 
     private TabLayout tabLayout;
-    public static final String URL = MainActivity.SERVER_URL + "/clothes";
+    public static final String URL = MainActivity.SERVER_URL;
 
 
     //For the view pager

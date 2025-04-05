@@ -45,6 +45,7 @@ public class DashboardFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
         leaderboard = view.findViewById(R.id.leaderboardButton);
@@ -111,9 +112,10 @@ public class DashboardFragment extends Fragment {
     }
 
     //Requests on this page:
-    //getOutfit
-    //getOutfit stats
-    //get overall statistics
+    //getOutfit worn today
+    //getOutfit stats, and getOutfit for grabbing the image
+
+    //get overall statistics when pressing user statistics
 
 
 

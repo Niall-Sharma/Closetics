@@ -70,9 +70,9 @@ public class ClothesByTypeAdapter extends RecyclerView.Adapter<ClothesByTypeAdap
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            editButton = itemView.findViewById(R.id.edit_button);
+            editButton = itemView.findViewById(R.id.view_profile);
             deleteButton = itemView.findViewById(R.id.delete_button);
-            object = itemView.findViewById(R.id.object_text);
+            object = itemView.findViewById(R.id.rank_value);
 
         }
     }
