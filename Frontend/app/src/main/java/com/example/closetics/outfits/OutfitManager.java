@@ -1,6 +1,9 @@
 package com.example.closetics.outfits;
 
+import static com.example.closetics.UserManager.SHARED_PREFERENCES_FILE_NAME;
+
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -14,6 +17,45 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class OutfitManager {
+
+private static final String CURRENT_OUTFIT_PARAM = "currentOutfitId";
+private static final String TOMORROW_OUTFIT_PARAM = "tomorrowOutfitId";
+
+
+    public static void saveCurrentDailyOutfit(Context context, String outfitId) {
+        //Access the shared preferences file make it private to this app
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(CURRENT_OUTFIT_PARAM, outfitId);
+        editor.apply();
+    }
+
+    public static String getCurrentDailyOutfit(Context context) {
+        //Access the shared preferences file make it private to this app
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
+        return prefs.getString(CURRENT_OUTFIT_PARAM, null);
+    }
+
+    public static void saveTomorrowDailyOutfit(Context context, String outfitId) {
+        //Access the shared preferences file make it private to this app
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(TOMORROW_OUTFIT_PARAM, outfitId);
+        editor.apply();
+    }
+    public static String getTomorrowDailyOutfit(Context context) {
+        //Access the shared preferences file make it private to this app
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
+        return prefs.getString(TOMORROW_OUTFIT_PARAM, null);
+    }
+    /*
+    Replace with "null" for string if there is no outfit being added!!
+     */
+
+
+
+
+
     public static void getAllOutfitsRequest(Context context, long userId, String URL,
                                             Response.Listener<JSONArray> responseListener,
                                             Response.ErrorListener errorListener) {

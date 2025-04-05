@@ -129,7 +129,7 @@ public class ClothesManager {
     public static void getClothingByUserRequest(Context context, long userId, String URL,
                                                 Response.Listener<JSONArray> responseListener,
                                                 Response.ErrorListener errorListener) {
-        String getUrl = URL + "/user/" + userId;
+        String getUrl = URL + "/getClothing/user/" + userId;
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
                 getUrl, null, responseListener, errorListener);
 
