@@ -23,7 +23,7 @@ public class UserProfile{
   @JoinColumn(name = "user_id")
   User user;
 
-  @OneToMany
+  @OneToMany(fetch = FetchType.EAGER)
   @JoinTable(
           name = "users_outfits",
           joinColumns = @JoinColumn(name = "UID"),

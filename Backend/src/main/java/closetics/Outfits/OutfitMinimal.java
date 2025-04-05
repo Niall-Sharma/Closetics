@@ -1,5 +1,7 @@
 package closetics.Outfits;
 
+import closetics.Clothes.Clothing;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +12,7 @@ public class OutfitMinimal {
     private String outfitName;
     private LocalDateTime creationDate;
     private boolean favorite;
-    private List<Long> outfitItems = new ArrayList<>();
+    private List<Clothing> outfitItems = new ArrayList<>();
 
 
     public long getOutfitId() {
@@ -33,7 +35,7 @@ public class OutfitMinimal {
         return favorite;
     }
 
-    public List<Long> getOutfitItems() {
+    public List<Clothing> getOutfitItems() {
         return outfitItems;
     }
 }

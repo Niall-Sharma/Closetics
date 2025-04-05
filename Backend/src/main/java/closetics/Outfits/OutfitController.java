@@ -62,8 +62,9 @@ public class OutfitController {
         }
 
         Outfit savedOutfit =  outfitRepository.save(outfit);
-        UserProfile uProfile = uProfileRepository.findById(outfit.getUser().getUserId()).get();
+        UserProfile uProfile = outfit.getUser().GetUserProfile();
         uProfile.AddOutfit(savedOutfit);
+        uProfileRepository.save(uProfile);
         OutfitStats outfitStats = outfitStatRepository.save(new OutfitStats(savedOutfit.getOutfitId()));
         Outfit statOutfit = savedOutfit.setOutfitStats(outfitStats);
         Outfit outfitWithStats =  outfitRepository.save(statOutfit);
@@ -100,15 +101,15 @@ public class OutfitController {
     }
 
     @PutMapping("/addItemToOutfit/{outfitId}/{clothingId}")
-    public ResponseEntity<Outfit> addItemToOutfit(@PathVariable long outfitId, @PathVariable long clothingId) {
+    public ResponseEntity<Outfit> addItemToOutfit(@PathVariable long outfitId, @PathVariable Clothing clothingId) {
         Optional<Outfit> outfitOptional = outfitRepository.findById(outfitId);
 
         if (outfitOptional.isPresent()) {
             Outfit outfit = outfitOptional.get();
-            if (!outfit.getOutfitItems().contains(clothingId)) { // Prevent duplicate entries
+//            if (!outfit.getOutfitItems().contains(clothingId)) { // Prevent duplicate entries
                 outfit.getOutfitItems().add(clothingId);
                 outfitRepository.save(outfit);
-            }
+//            }
             return ResponseEntity.ok(outfit);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -137,10 +138,7 @@ public class OutfitController {
         List<Optional<Clothing>> clothes = new ArrayList<>();
         if (outfitOptional.isPresent()) {
             Outfit outfit = outfitOptional.get();
-            List<Long> items = outfit.getOutfitItems();
-            for (Long itemId : items) {
-                clothes.add(clothingRepository.findById(itemId));
-            }
+            List<Clothing> items = outfit.getOutfitItems();
         }
         return ResponseEntity.ok(clothes);
     }
