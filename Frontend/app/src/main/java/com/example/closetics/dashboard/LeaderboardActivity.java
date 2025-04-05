@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.net.URI;
 
@@ -70,45 +72,12 @@ public class LeaderboardActivity extends AppCompatActivity {
         /*
         Creating the websocket client/handshake
          */
-
-        try {
-
-            URI uri = new URI(WEB_SOCKET_URL + UserManager.getUsername(this));
-
-            webSocketClient = new WebSocketClient(uri) {
-                @Override
-                public void onOpen(ServerHandshake handshakedata) {
-                    Log.d("Websocket", "Connected to Websocket server!");
-                }
-
-                @Override
-                public void onMessage(String message) {
-                    Log.d("Websocket", "Message received: " + message);
-                }
-
-                @Override
-                public void onClose(int code, String reason, boolean remote) {
-                    Log.d("Websocket", "Closed with reason: " + reason);
-
-                }
-
-                @Override
-                public void onError(Exception ex) {
-                    Log.e("Websocket", "Error: " + ex.getMessage());
-                }
-            };
-        } catch (URISyntaxException e) {
-            //throw new RuntimeException(e);
-            Log.e("error", e.toString());
-        }
-
-
+        setWebSocketClient();
         try {
             webSocketClient.connect();
         } catch (Exception e) {
             Log.e("WebSocket", "Connection failed: " + e.getMessage());
         }
-
 
 
         /*
@@ -133,6 +102,7 @@ public class LeaderboardActivity extends AppCompatActivity {
 
             }
         });
+        
 
 
 
@@ -179,6 +149,65 @@ public class LeaderboardActivity extends AppCompatActivity {
 
 
 
+    }
+    private void setWebSocketClient(){
+        try {
+
+            URI uri = new URI(WEB_SOCKET_URL + UserManager.getUsername(this));
+
+            webSocketClient = new WebSocketClient(uri) {
+                @Override
+                public void onOpen(ServerHandshake handshakedata) {
+                    Log.d("Websocket", "Connected to Websocket server!");
+                    //Loading UI?
+                    //Connected UI?
+
+
+                }
+
+                @Override
+                public void onMessage(String message) {
+                    Log.d("Websocket", "Message received: " + message);
+
+                    if (message.equals("Username already exists")){
+                        //print an error message
+
+                    }
+                    else{
+                        //Grab the JSONArray
+                        try {
+                            JSONArray leaderboardArray = new JSONArray(message);
+                            //Parse the array and grab the fields needed for the recycler view
+                            for (int i = 0; i < leaderboardArray.length(); i++){
+                                Log.d("Object", leaderboardArray.get(i).toString());
+                            }
+
+                        } catch (JSONException e) {
+                            Log.e("JSONArray Error", e.toString());
+                        }
+
+                    }
+                }
+
+                @Override
+                public void onClose(int code, String reason, boolean remote) {
+                    Log.d("Websocket", "Closed with reason: " + reason);
+                    //Handle UI updates or reconnection attempts if needed
+
+
+                }
+
+                @Override
+                public void onError(Exception ex) {
+                    Log.e("Websocket", "Error: " + ex.getMessage());
+                    //Show error dialog or retry connection
+
+                }
+            };
+        } catch (URISyntaxException e) {
+            //throw new RuntimeException(e);
+            Log.e("error", e.toString());
+        }
     }
 
 
