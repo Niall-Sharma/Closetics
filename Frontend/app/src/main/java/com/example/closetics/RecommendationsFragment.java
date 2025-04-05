@@ -92,7 +92,7 @@ public class RecommendationsFragment extends Fragment {
     }
 
     private void populateRecommendations() {
-        RecOutfitsListItem mockOutfit = new RecOutfitsListItem(1, "My old shoes", "bob002", Arrays.asList(1, 2, 3), "Very expensive", "February 3, 1976", false);
+        RecOutfitsListItem mockOutfit = new RecOutfitsListItem(1, "My old shoes", "bob002", Arrays.asList(R.drawable.clothing_mock_img, R.drawable.clothing_mock_img, R.drawable.clothing_mock_img), "Very expensive", "February 3, 1976", false);
         for (int i = 0; i < 10; i++) {
             outfitsAdapter.addItem(mockOutfit);
         }

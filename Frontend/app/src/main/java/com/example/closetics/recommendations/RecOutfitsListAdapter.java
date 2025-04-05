@@ -9,12 +9,14 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.closetics.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class RecOutfitsListAdapter extends RecyclerView.Adapter<RecOutfitsListAdapter.RecOutfitsViewHolder> {
+public class RecOutfitsListAdapter extends RecyclerView.Adapter<RecOutfitsListAdapter.ViewHolder> {
     private List<RecOutfitsListItem> items;
 
     public RecOutfitsListAdapter(List<RecOutfitsListItem> items) {
@@ -23,13 +25,13 @@ public class RecOutfitsListAdapter extends RecyclerView.Adapter<RecOutfitsListAd
 
     @NonNull
     @Override
-    public RecOutfitsListAdapter.RecOutfitsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_rec_outfits, parent, false);
-        return new RecOutfitsViewHolder(itemView);
+        return new ViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecOutfitsListAdapter.RecOutfitsViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         RecOutfitsListItem item = items.get(position);
 
         long id = item.getId();
@@ -43,13 +45,21 @@ public class RecOutfitsListAdapter extends RecyclerView.Adapter<RecOutfitsListAd
         holder.usernameText.setText(username);
         holder.statsText.setText(stats);
         holder.dateText.setText("Posted on " + date);
-        // holder.image.setImageResource(imageIds.get(0)); // TODO: set images here
-        holder.image.setImageResource(R.drawable.clothing_mock_img);
         if (item.isLiked()) {
             holder.likeButton.setImageResource(R.drawable.heart);
         } else {
             holder.likeButton.setImageResource(R.drawable.heart_outline);
         }
+
+        // set images
+        // TODO: set proper images format here
+        // holder.image.setImageResource(imageIds.get(0));
+        ArrayList<RecImagesListItem> imagesListItems = new ArrayList<>();
+        for (int imageId : item.getImageIds()) {
+            imagesListItems.add(new RecImagesListItem(imageId));
+        }
+        RecImagesListAdapter imagesListAdapter = new RecImagesListAdapter(imagesListItems);
+        holder.viewPager2.setAdapter(imagesListAdapter);
 
         holder.usernameText.setOnClickListener(v -> {
             // TODO: open public profile by username
@@ -76,19 +86,19 @@ public class RecOutfitsListAdapter extends RecyclerView.Adapter<RecOutfitsListAd
         notifyItemInserted(items.size() - 1);
     }
 
-    public class RecOutfitsViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView nameText, usernameText, statsText, dateText;
-        private ImageView image; // TODO: Replace with ViewPager2
+        private ViewPager2 viewPager2;
         private ImageButton likeButton;
 
-        public RecOutfitsViewHolder(final View itemView) {
+        public ViewHolder(final View itemView) {
             super(itemView);
 
             nameText = itemView.findViewById(R.id.rec_outfit_list_item_outfit_name_text);
             usernameText = itemView.findViewById(R.id.rec_outfit_list_item_username_text);
             statsText = itemView.findViewById(R.id.rec_outfit_list_item_stats_text);
             dateText = itemView.findViewById(R.id.rec_outfit_list_item_date_text);
-            image = itemView.findViewById(R.id.rec_outfit_list_item_image);
+            viewPager2 = itemView.findViewById(R.id.rec_outfit_list_item_viewPager2);
             likeButton = itemView.findViewById(R.id.rec_outfit_list_item_like_button);
         }
     }
