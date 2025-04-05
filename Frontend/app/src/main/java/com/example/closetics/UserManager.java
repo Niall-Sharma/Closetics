@@ -7,9 +7,11 @@ import android.util.Log;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -292,6 +294,21 @@ public class UserManager {
         // use GET request to getUserByUsernameURL to get the user's id
         // to then delete user by id
         JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.GET,
+                URL + username, // add username to the URL
+                null,
+                responseListener,
+                errorListener);
+        //Add request to the volley singleton request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+
+    public static void searchUsersByUsernameRequest(Context context, String username, String URL,
+                                                Response.Listener<JSONArray> responseListener,
+                                                Response.ErrorListener errorListener) {
+
+        JsonArrayRequest request = new JsonArrayRequest(
                 Request.Method.GET,
                 URL + username, // add username to the URL
                 null,

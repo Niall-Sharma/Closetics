@@ -49,6 +49,19 @@ public class RecUsersListAdapter extends RecyclerView.Adapter<RecUsersListAdapte
         notifyItemInserted(items.size() - 1);
     }
 
+    public void setNewItems(List<RecUsersListItem> newItems) {
+        int oldSize = items.size();
+        items.clear();
+        items.addAll(newItems);
+        notifyItemRangeChanged(0, Math.max(oldSize, newItems.size()));
+    }
+
+    public void clearItems() {
+        int oldSize = items.size();
+        items.clear();
+        notifyItemRangeRemoved(0, oldSize);
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView usernameText;
 
