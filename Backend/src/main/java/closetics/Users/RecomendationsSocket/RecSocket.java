@@ -112,7 +112,7 @@ public class RecSocket {
 
   //Maybe take stats into consideration when deciding on what recomendations to pick
 	private void sendRec(long UID) {
-        int recSize = 1;
+        int recSize = 5;
         List<Outfit> recList = new ArrayList<>();
         Session userSession = uidSessionMap.get(UID);
         try {
