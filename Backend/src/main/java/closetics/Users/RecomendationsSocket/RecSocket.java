@@ -9,8 +9,6 @@ import java.util.Map;
 
 import closetics.Users.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import jakarta.websocket.EncodeException;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnError;
 import jakarta.websocket.OnMessage;
@@ -130,7 +128,6 @@ public class RecSocket {
       }
         List<Outfit> recList = recommendationService.getRecommendations(UID, followingOutfitMap.get(UID));
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
         String json = objectMapper.writeValueAsString(RecList);
         uidSessionMap.get(UID).getBasicRemote().sendText(json);
 		} 

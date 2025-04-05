@@ -38,8 +38,8 @@ public class OutfitController {
     UserProfileRepository uProfileRepository;
 
     @GetMapping(path = "/getOutfit/{outfitId}")
-    public Optional<Outfit> getOutfit(@PathVariable long outfitId) {
-        return outfitRepository.findById(outfitId);
+    public Outfit getOutfit(@PathVariable long outfitId) {
+        return outfitRepository.findById(outfitId).get();
     }
 
     @GetMapping(path = "/getAllUserOutfits/{userId}")
