@@ -239,4 +239,8 @@ public class UserController {
                     .body("An error occurred during login");
         }
     }
+    @GetMapping(path = "/searchUsersByUsername/{username}")
+    public List<User> searchUsersByUsername(@PathVariable String username) {
+        return userRepository.findByUsernameIgnoreCaseContaining(username);
+    }
 }
