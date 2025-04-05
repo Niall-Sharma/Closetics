@@ -117,11 +117,10 @@ public class RecSocket {
 		try {
       for(int i = 0; i < recSize; i++){
           int randomChoice = (int)((Math.random()*10)+1);
-          if(randomChoice > 5){
+          if(randomChoice > 5 && !followingOutfitMap.get(UID).isEmpty()){
             int randomOutfitInteger = (int)((Math.random()*followingOutfitMap.get(UID).size()));
             RecList.add(followingOutfitMap.get(UID).remove(randomOutfitInteger));
           }else{
-
             Long randomOutfit = Math.round(Math.random()*OutfitRepository.count());
             RecList.add(OutfitRepository.findById(randomOutfit).get());
           }
