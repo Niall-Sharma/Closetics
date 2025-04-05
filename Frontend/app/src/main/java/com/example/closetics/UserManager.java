@@ -18,7 +18,7 @@ import java.util.Arrays;
 
 public class UserManager {
 
-    private static final String SHARED_PREFERENCES_FILE_NAME = "CloseticsPreferences";
+    public static final String SHARED_PREFERENCES_FILE_NAME = "CloseticsPreferences";
     private static final String TOKEN_PARAM = "logInToken";
     private static final String USERNAME_PARAM = "username";
     private static final String USER_ID_PARAM = "userID";

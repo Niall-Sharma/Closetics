@@ -25,7 +25,11 @@ import com.example.closetics.dashboard.StatisticsManager;
 
 import org.json.JSONObject;
 
+import java.util.Queue;
+
 public class DashboardFragment extends Fragment {
+
+
 
     private Button leaderboard;
     private Button userStatistics;
