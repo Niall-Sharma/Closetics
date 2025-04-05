@@ -63,20 +63,21 @@ public class UserProfileController{
   }
 
 
-  @GetMapping("/userprofile/followers/{userName}")
-  public List<UserProfile> GetFollowers(String userName){
-    return uRepository.findByUsername(userName).GetFollowers();
+  @GetMapping("/userprofile/followers/{id}")
+  public List<UserProfile> GetFollowers(Long id){
+    return uRepository.findById(id).get().GetFollowers();
   }
 
-  @GetMapping("/userprofile/following/{userName}")
-  public List<UserProfile> GetFollowing(String userName){
-    return uRepository.findByUsername(userName).GetFollowing();
+  @GetMapping("/userprofile/following/{id}")
+  public List<UserProfile> GetFollowing(Long id){
+    return uRepository.findById(id).get().GetFollowing();
   }
 
-  @GetMapping("/userprofile/outfits/{userName}")
-  public List<Outfit> GetOutfits(String userName){
-    return uRepository.findByUsername(userName).GetOutfits();
+  @GetMapping("/userprofile/outfits/{id}")
+  public List<Outfit> GetOutfits(Long id){
+    return uRepository.findById(id).get().GetOutfits();
   }
+
   @PutMapping("/userprofile/swappublicsetting/{id}")
   public UserProfile swapFavorite(@PathVariable long id) {
     UserProfile userProfile = uRepository.findById(id).get();

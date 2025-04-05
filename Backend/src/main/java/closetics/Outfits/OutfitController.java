@@ -56,7 +56,6 @@ public class OutfitController {
         outfit.setCreationDate(LocalDate.now());
         outfit.setOutfitName(request.getOutfitName());
         outfit.setFavorite(request.getFavorite());
-        outfit.setOutfitItems(request.getOutfitItems());
         if (outfit.getOutfitItems() == null) {
             outfit.setOutfitItems(new ArrayList<>()); // Ensure the list is initialized
         }
@@ -101,15 +100,16 @@ public class OutfitController {
     }
 
     @PutMapping("/addItemToOutfit/{outfitId}/{clothingId}")
-    public ResponseEntity<Outfit> addItemToOutfit(@PathVariable long outfitId, @PathVariable Clothing clothingId) {
+    public ResponseEntity<Outfit> addItemToOutfit(@PathVariable long outfitId, @PathVariable long clothingId) {
         Optional<Outfit> outfitOptional = outfitRepository.findById(outfitId);
 
         if (outfitOptional.isPresent()) {
             Outfit outfit = outfitOptional.get();
-//            if (!outfit.getOutfitItems().contains(clothingId)) { // Prevent duplicate entries
-                outfit.getOutfitItems().add(clothingId);
+            if (!outfit.getOutfitItems().contains(clothingId)) { // Prevent duplicate entries
+                Clothing clothing = clothingRepository.findById(clothingId).get();
+                outfit.getOutfitItems().add(clothing);
                 outfitRepository.save(outfit);
-//            }
+            }
             return ResponseEntity.ok(outfit);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -123,7 +123,8 @@ public class OutfitController {
         if (outfitOptional.isPresent()) {
             Outfit outfit = outfitOptional.get();
             if (outfit.getOutfitItems().contains(clothingId)) { // Check if it exists before removing
-                outfit.getOutfitItems().remove(clothingId);
+                Clothing clothing = clothingRepository.findById(clothingId).get();
+                outfit.getOutfitItems().remove(clothing);
                 outfitRepository.save(outfit);
             }
             return ResponseEntity.ok(outfit);

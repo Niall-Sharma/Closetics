@@ -37,6 +37,8 @@ public class Outfit {
             joinColumns = @JoinColumn(name = "outfit_id"),
             inverseJoinColumns = @JoinColumn(name = "clothing_id")
     )
+    @JsonIgnoreProperties({"favorite", "size", "color",
+            "dateBought", "brand", "imagePath", "itemName", "material", "price", "type", "specialType", "creationDate"})
     private List<Clothing> outfitItems;
 
 
