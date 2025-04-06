@@ -4,6 +4,7 @@ package closetics.Users.UserProfile;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import closetics.Users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -88,5 +89,18 @@ public class UserProfileController{
     }else{
       throw new RuntimeException();
       }
+    }
+
+    @GetMapping("/userprofile/isFollowing/{id}/{followingId}")
+    public boolean IsFollowing(@PathVariable long id, @PathVariable long followingId){
+      UserProfile userProfile = uRepository.findById(id).orElseThrow(() -> new RuntimeException("User Profile Not Found"));
+      for (int i = 0; i < userProfile.getFollowing().size(); i++)
+      {
+        UserProfile follower = userProfile.getFollowing().get(i);
+        if(follower.getId() == followingId){
+          return true;
+        }
+      }
+      return false;
     }
 }
