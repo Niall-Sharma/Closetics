@@ -1,17 +1,26 @@
 package com.example.closetics;
 
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.session.MediaSession;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.example.closetics.follow.FollowActivity;
+import com.example.closetics.follow.FollowFragment;
+import com.example.closetics.outfits.EditOutfitActivity;
+import com.example.closetics.outfits.SelectClothesActivity;
 
 public class ProfileFragment extends Fragment {
 
@@ -21,6 +30,7 @@ public class ProfileFragment extends Fragment {
     private Button logoutButton;
     private Button editButton;
     private Button deleteUserButton;
+    private Button followingButton, followersButton;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -39,6 +49,8 @@ public class ProfileFragment extends Fragment {
         editButton = view.findViewById(R.id.profile_edit_user_button);
         deleteUserButton = view.findViewById(R.id.profile_delete_user_button);
         logoutButton = view.findViewById(R.id.profile_logout_button);
+        followingButton = view.findViewById(R.id.profile_following_button);
+        followersButton = view.findViewById(R.id.profile_followers_button);
 
         String username = UserManager.getUsername(getActivity().getApplicationContext());
         if(username == null) {
@@ -48,6 +60,8 @@ public class ProfileFragment extends Fragment {
             logoutButton.setVisibility(TextView.GONE);
             editButton.setVisibility(TextView.GONE);
             deleteUserButton.setVisibility(TextView.GONE);
+            followingButton.setVisibility(TextView.GONE);
+            followersButton.setVisibility(TextView.GONE);
         } else {
             usernameText.setText(username);
             loginButton.setVisibility(TextView.GONE);
@@ -55,6 +69,8 @@ public class ProfileFragment extends Fragment {
             logoutButton.setVisibility(TextView.VISIBLE);
             editButton.setVisibility(TextView.VISIBLE);
             deleteUserButton.setVisibility(TextView.VISIBLE);
+            followingButton.setVisibility(TextView.VISIBLE);
+            followersButton.setVisibility(TextView.VISIBLE);
         }
 
         loginButton.setOnClickListener(v -> {
@@ -99,6 +115,20 @@ public class ProfileFragment extends Fragment {
 
         deleteUserButton.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), DeleteUserActivity.class);
+            startActivity(intent);
+        });
+
+        followingButton.setOnClickListener(v -> {
+//            Navigation.findNavController(v).navigate(R.id.action_navigation_profile_to_followFragment);
+            Intent intent = new Intent(getActivity(), FollowActivity.class);
+            intent.putExtra("IS_FOLLOWING", true);
+            startActivity(intent);
+        });
+
+        followersButton.setOnClickListener(v -> {
+//            Navigation.findNavController(v).navigate(R.id.action_navigation_profile_to_followFragment);
+            Intent intent = new Intent(getActivity(), FollowActivity.class);
+            intent.putExtra("IS_FOLLOWING", false);
             startActivity(intent);
         });
 

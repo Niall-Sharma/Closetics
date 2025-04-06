@@ -16,24 +16,30 @@
         android:theme="@style/Theme.Closetics"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".follow.FollowActivity"
+            android:exported="false" />
+
         <service
             android:name=".recommendations.RecWebSocketService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true" />
 
         <activity
             android:name=".clothes.ClothesActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".clothes.EditClothesActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".outfits.SelectClothesActivity"
             android:exported="false" />
-        <activity android:name=".dashboard.StatisticsActivity"
-            android:exported="false"/>
-        <activity android:name=".dashboard.LeaderboardActivity"
-            android:exported="false"/>
+        <activity
+            android:name=".dashboard.StatisticsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".dashboard.LeaderboardActivity"
+            android:exported="false" />
         <activity
             android:name=".outfits.EditOutfitActivity"
             android:exported="false" />
