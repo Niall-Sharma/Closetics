@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 import java.util.*;
 
@@ -43,6 +44,7 @@ public class LeaderboardSocketHandler {
                        @PathParam("username") String username,
                        @PathParam("type") int type) throws IOException {
         logger.info("[onOpen] " + username + " with type " + type);
+
 
         if (usernameSessionMap.containsKey(username)) {
             session.getBasicRemote().sendText("Username already exists");
