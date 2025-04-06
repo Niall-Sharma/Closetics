@@ -61,10 +61,12 @@ public class UserProfileController{
   }
 
 
-//  @GetMapping("/userprofile/followers/{id}")
-//  public List<UserProfile> GetFollowers(@PathVariable("id") Long id){
-//    return uRepository.findById(id).get().getFollowers();
-//  }
+  @GetMapping("/userprofile/followers/{id}")
+  public List<UserProfileDTO> GetFollowers(@PathVariable("id") Long id){
+    UserProfile userProfile = uRepository.findById(id).get();
+    UserProfileDTO userProfileDTO = new UserProfileDTO(userProfile, 2);
+    return userProfileDTO.getFollowers();
+  }
 
   @GetMapping("/userprofile/following/{id}")
   public List<UserProfileDTO> GetFollowing(@PathVariable("id") Long id){
@@ -73,7 +75,6 @@ public class UserProfileController{
     return userProfileDTO.getFollowing();
 
   }
-  //ADD ENDPOINT TO RETURN OR FALSE IF YOU ARE FOLLOWING THEM.
   @GetMapping("/userprofile/outfits/{id}")
   public List<Outfit> GetOutfits(@PathVariable("id") Long id){
     return uRepository.findById(id).get().getOutfits();

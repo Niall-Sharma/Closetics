@@ -8,6 +8,7 @@ public class UserProfileDTO {
     private String username;
     private boolean isPublic;
     private List<UserProfileDTO> following;
+    private List<UserProfileDTO> followers;
 
     public UserProfileDTO(UserProfile profile, int depth) {
         this.id = profile.getId();
@@ -20,6 +21,12 @@ public class UserProfileDTO {
                     .map(p -> new UserProfileDTO(p, depth - 1))
                     .collect(Collectors.toList());
         }
+        if (depth > 0) {
+            this.followers = profile.getFollowers()
+                    .stream()
+                    .map(p -> new UserProfileDTO(p, depth - 1))
+                    .collect(Collectors.toList());
+        }
     }
 
     // Getters
@@ -27,4 +34,7 @@ public class UserProfileDTO {
     public String getUsername() { return username; }
     public boolean getIsPublic() { return isPublic; }
     public List<UserProfileDTO> getFollowing() { return following; }
+    public  List<UserProfileDTO> getFollowers(){
+        return followers;
+    }
 }
