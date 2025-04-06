@@ -30,7 +30,7 @@ public class ClothesManager {
     More work here adding more types and figuring out the best methods of input for them, currently just an edit text
      */
 
-    public static void saveClothingRequest(Context context, ArrayList<MutableLiveData<String>> fragments, Long userId,
+    public static void saveClothingRequest(Context context, ArrayList<MutableLiveData<String>> fragments, long userId,
     String URL, Response.Listener<JSONObject> responseListener, Response.ErrorListener errorListener) {
         String favorite = fragments.get(0).getValue();
         String size = fragments.get(1).getValue();
@@ -69,7 +69,7 @@ public class ClothesManager {
             /*
             Note: Small naming error, user instead of userId for JSON object
              */
-            saveClothing.put("user", userId);
+            saveClothing.put("userId", userId);
             /*
             This is for testing only! Remember to remove!
              */
@@ -83,7 +83,7 @@ public class ClothesManager {
         //The post request
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
-                URL,
+                URL + "/createClothing",
                 saveClothing, responseListener, errorListener);
         //Add request to the volley singleton request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);

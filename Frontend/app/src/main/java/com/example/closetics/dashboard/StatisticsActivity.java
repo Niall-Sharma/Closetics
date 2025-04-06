@@ -116,11 +116,30 @@ public class StatisticsActivity extends AppCompatActivity {
 
     }
 
+    /*
+    Note: Come back to these!
+     */
     private void setTotalOutfitsCount(){
-        OutfitManager.getAllOutfitsRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONArray>() {
+        OutfitManager.getAllOutfitsRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL + "/getAllUserOutfits/", new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
+                int greatestPrice = 0;
+                for (int i =0; i<response.length(); i++){
+                    try {
+                        JSONObject object = response.getJSONObject(i);
+                        //JSONObject statObject = object.getJSONObject("stats");
+                        //Log.d("statObject", statObject.toString());
+                        //String price = object.getString("price");
+                        //if (greatestPrice < Integer.parseInt(price)) {
+                          //  greatestPrice = Integer.parseInt(price);
+                        //}
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
                 totalOutfitCount.setText(String.valueOf(response.length()));
+                mostExpensiveOutfit.setText(String.valueOf(greatestPrice));
                 Log.d("Outfit count", String.valueOf(response.length()));
 
             }
@@ -152,8 +171,10 @@ public class StatisticsActivity extends AppCompatActivity {
                         throw new RuntimeException(e);
                     }
                 }
+                Log.d("response length", String.valueOf(response.length()));
                 totalClothingItems.setText(String.valueOf(response.length()));
                 totalClosetCount.setText(String.valueOf(totalPrice));
+                Log.d("userId", String.valueOf(UserManager.getUserID(getApplicationContext())));
             }
         }, new Response.ErrorListener() {
             @Override
@@ -163,6 +184,7 @@ public class StatisticsActivity extends AppCompatActivity {
         });
     }
 
+    /*
     private void setMostExpensiveOutfit(){
 
             @Override
@@ -188,6 +210,8 @@ public class StatisticsActivity extends AppCompatActivity {
             }
         });
     }
+
+     */
 
 
 
