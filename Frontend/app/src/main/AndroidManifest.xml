@@ -30,6 +30,10 @@
         <activity
             android:name=".outfits.SelectClothesActivity"
             android:exported="false" />
+        <activity android:name=".dashboard.StatisticsActivity"
+            android:exported="false"/>
+        <activity android:name=".dashboard.LeaderboardActivity"
+            android:exported="false"/>
         <activity
             android:name=".outfits.EditOutfitActivity"
             android:exported="false" />

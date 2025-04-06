@@ -2,22 +2,24 @@ package closetics.Outfits;
 
 import closetics.Clothes.Clothing;
 import closetics.Clothes.ClothingRepository;
+import closetics.Statistics.OutfitStatRepository;
+import closetics.Statistics.OutfitStats;
+import closetics.Users.User;
 import closetics.Users.UserRepository;
 import closetics.Users.UserProfile.UserProfile;
 import closetics.Users.UserProfile.UserProfileRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-
 public class OutfitController {
 
     @Autowired
@@ -28,6 +30,9 @@ public class OutfitController {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    OutfitStatRepository outfitStatRepository;
 
     @Autowired
     UserProfileRepository uProfileRepository;
@@ -43,14 +48,26 @@ public class OutfitController {
     }
 
     @PostMapping(path = "/createOutfit")
-    public Outfit saveClothing(@RequestBody Outfit outfit) {
-      if (outfit.getOutfitItems() == null) {
-          outfit.setOutfitItems(new ArrayList<>()); // Ensure the list is initialized
-      }
-      outfit.setCreationDate(LocalDateTime.now());
-      UserProfile uProfile = uProfileRepository.findByUID(outfit.getUser().getUserId());
-      uProfile.AddOutfit(outfit);
-      return outfitRepository.save(outfit);
+    public ResponseEntity<Outfit> createOutfit(@RequestBody OutfitMinimal request) {
+        long user_id = request.getUserId();
+        User user = userRepository.findById(user_id).orElseThrow(() -> new RuntimeException("User not found"));
+        Outfit outfit = new Outfit();
+        outfit.setUser(user);
+        outfit.setCreationDate(LocalDate.now());
+        outfit.setOutfitName(request.getOutfitName());
+        outfit.setFavorite(request.getFavorite());
+        outfit.setOutfitItems(request.getOutfitItems());
+        if (outfit.getOutfitItems() == null) {
+            outfit.setOutfitItems(new ArrayList<>()); // Ensure the list is initialized
+        }
+
+        Outfit savedOutfit =  outfitRepository.save(outfit);
+        UserProfile uProfile = uProfileRepository.findById(outfit.getUser().getUserId());
+        uProfile.AddOutfit(savedOutfit);
+        OutfitStats outfitStats = outfitStatRepository.save(new OutfitStats(savedOutfit.getOutfitId()));
+        Outfit statOutfit = savedOutfit.setOutfitStats(outfitStats);
+        Outfit outfitWithStats =  outfitRepository.save(statOutfit);
+        return ResponseEntity.ok(outfitWithStats);
     }
 
     @PutMapping(path = "/updateOutfit")
@@ -74,6 +91,7 @@ public class OutfitController {
     @DeleteMapping(path = "/deleteOutfit/{outfitId}")
     public void deleteClothing(@PathVariable long outfitId) {
         outfitRepository.deleteById(outfitId);
+        outfitStatRepository.deleteById(outfitId);
     }
 
     @PutMapping(path = "/addItemToOutfit/{outfitId}")

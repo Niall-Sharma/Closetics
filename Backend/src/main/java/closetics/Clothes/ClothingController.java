@@ -1,12 +1,16 @@
 package closetics.Clothes;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import closetics.Outfits.Outfit;
+import closetics.Statistics.ClothingStats;
+import closetics.Statistics.OutfitStats;
 import closetics.Users.User;
 import closetics.Users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import closetics.Clothes.Statistics.ClothingStatRepository;
+import closetics.Statistics.ClothingStatRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -64,16 +68,20 @@ public class ClothingController {
         clothing.setSize(request.getSize());
         clothing.setSpecialType(request.getSpecialType());
         clothing.setClothingType(request.getClothingType());
-        clothing.setCreationDate(LocalDateTime.now());
+        clothing.setCreationDate(LocalDate.now());
         clothing.setUser(user);
 
         Clothing savedClothing = clothingRepository.save(clothing);
-        return ResponseEntity.ok(savedClothing);
+        ClothingStats clothingStats = clothingStatRepository.save(new ClothingStats(savedClothing.getClothesId()));
+        Clothing statClothing = savedClothing.setClothingStats(clothingStats);
+        Clothing clothingWithStats = clothingRepository.save(statClothing);
+        return ResponseEntity.ok(clothingWithStats);
     }
 
     @DeleteMapping(path = "/deleteClothing/{itemId}")
     public void deleteClothing(@PathVariable long itemId) {
         clothingRepository.deleteById(itemId);
+        clothingStatRepository.deleteById((itemId));
     }
 
     @PutMapping (path = "/updateClothing")

@@ -13,9 +13,6 @@ import java.util.Optional;
 @Repository
 public interface ClothingRepository extends JpaRepository<Clothing, Long> {
 
-    @Query(value = "SELECT * FROM clothing_table WHERE clothes_id = :clothesId",nativeQuery = true)
-    Optional<Clothing> findById(@Param("clothesId") long clothesId);
-
     @Transactional
     @Modifying
     @Query(value = "DELETE FROM clothing_table WHERE clothes_id = :clothesId",nativeQuery = true)

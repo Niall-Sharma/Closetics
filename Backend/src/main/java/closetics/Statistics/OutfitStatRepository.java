@@ -1,8 +1,9 @@
-package closetics.Clothes.Statistics;
+package closetics.Statistics;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OutfitStatRepository extends JpaRepository<OutfitStats, Long> {
+
 }
