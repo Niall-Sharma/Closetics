@@ -62,7 +62,7 @@ public class OutfitController {
 
         Outfit savedOutfit =  outfitRepository.save(outfit);
         UserProfile uProfile = outfit.getUser().GetUserProfile();
-        uProfile.AddOutfit(savedOutfit);
+        uProfile.addOutfit(savedOutfit);
         uProfileRepository.save(uProfile);
         OutfitStats outfitStats = outfitStatRepository.save(new OutfitStats(savedOutfit.getOutfitId()));
         Outfit statOutfit = savedOutfit.setOutfitStats(outfitStats);

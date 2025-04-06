@@ -2,26 +2,27 @@ package closetics.Users.UserProfile;
 
 
 
-import java.util.ArrayList;
 import java.util.List;
 
 import closetics.Outfits.Outfit;
 import closetics.Users.User;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
 @Entity(name = "user_profiles_table")
 public class UserProfile{
   
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  long id;
+  private long id;
 
-  boolean isPublic;
-  String username;
-
-  @OneToOne
-  @JoinColumn(name = "user_id")
-  User user;
+  private boolean isPublic;
+  private String username;
 
   @OneToMany(fetch = FetchType.EAGER)
   @JoinTable(
@@ -54,43 +55,44 @@ public class UserProfile{
 
   public UserProfile(){}
 
-  public List<Outfit> GetOutfits(){
+  public List<Outfit> getOutfits(){
     return outfits;
   }
-  
-  public void AddOutfit(Outfit outfit){
+  public void addOutfit(Outfit outfit){
     outfits.add(outfit);
   }
-
-  public List<UserProfile> GetFollowing(){
+  public List<UserProfile> getFollowing(){
     return following_id;
   }
-
-  public List<UserProfile> GetFollowers(){
+  public List<UserProfile> getFollowers(){
     return followers_id;
   }
-  public void AddFollower(UserProfile follower){
+  public void addFollower(UserProfile follower){
     followers_id.add(follower);
   }
-
-  public void RemoveFollower(UserProfile follower){
+  public void removeFollower(UserProfile follower){
     followers_id.remove(followers_id.indexOf(follower));  
   }
-
-  public void AddFollowing(UserProfile following){
+  public void addFollowing(UserProfile following){
     following_id.add(following);
   }
-  public void RemoveFollowing(UserProfile following){
+  public void removeFollowing(UserProfile following){
     following_id.remove(following);
   }
-  public boolean GetIsPublic()
+  public boolean getIsPublic()
   {
     return isPublic;
   }
-  public void SetIsPublic(boolean b){
+  public void setIsPublic(boolean b){
     isPublic = b;
   }
-  public void SetUser(User user){
-    this.user = user;
+  public String getUsername(){
+    return username;
+  }
+  public void setUsername(String username){
+    this.username = username;
+  }
+  public long getId() {
+    return id;
   }
 }
