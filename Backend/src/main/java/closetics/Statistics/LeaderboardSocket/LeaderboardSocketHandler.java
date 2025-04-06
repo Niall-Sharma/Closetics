@@ -1,7 +1,7 @@
 package closetics.Statistics.LeaderboardSocket;
 
-import closetics.Clothes.Clothing;
 import closetics.Clothes.ClothingRepository;
+import closetics.Outfits.OutfitRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.websocket.*;
 import jakarta.websocket.server.PathParam;
@@ -9,33 +9,40 @@ import jakarta.websocket.server.ServerEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
-
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
-@ServerEndpoint("/leaderboard/  {username}")
+@ServerEndpoint("/leaderboard/{username}/{type}")
 @Component
 public class LeaderboardSocketHandler {
 
     private static ClothingRepository clothingRepository;
+    private static OutfitRepository outfitRepository;
 
-    // Static injection workaround
     @Autowired
     public void setClothingRepository(ClothingRepository repo) {
         clothingRepository = repo;
     }
 
+    @Autowired
+    public void setOutfitRepository(OutfitRepository outfitRepo) {
+        outfitRepository = outfitRepo;
+    }
+
     private static final Map<Session, String> sessionUsernameMap = new Hashtable<>();
     private static final Map<String, Session> usernameSessionMap = new Hashtable<>();
+    private static final Map<Session, Integer> sessionTypeMap = new Hashtable<>();
     private final Logger logger = LoggerFactory.getLogger(LeaderboardSocketHandler.class);
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @OnOpen
-    public void onOpen(Session session, @PathParam("username") String username) throws IOException {
-        logger.info("[onOpen] " + username);
+    public void onOpen(Session session,
+                       @PathParam("username") String username,
+                       @PathParam("type") int type) throws IOException {
+        logger.info("[onOpen] " + username + " with type " + type);
 
         if (usernameSessionMap.containsKey(username)) {
             session.getBasicRemote().sendText("Username already exists");
@@ -43,24 +50,26 @@ public class LeaderboardSocketHandler {
         } else {
             sessionUsernameMap.put(session, username);
             usernameSessionMap.put(username, session);
+            sessionTypeMap.put(session, type);
 
-            // Send current leaderboard
-            sendLeaderboardToAll();
+            sendLeaderboardToSession(session, type);
         }
     }
 
     @OnMessage
     public void onMessage(Session session, String message) throws IOException {
         logger.info("[onMessage] " + message);
-        sendLeaderboardToAll(); // trigger leaderboard update on message (if needed)
+        sendLeaderboardToAll(); // trigger leaderboard update on message
     }
 
     @OnClose
     public void onClose(Session session) throws IOException {
         String username = sessionUsernameMap.get(session);
         logger.info("[onClose] " + username);
+
         sessionUsernameMap.remove(session);
         usernameSessionMap.remove(username);
+        sessionTypeMap.remove(session);
     }
 
     @OnError
@@ -80,30 +89,41 @@ public class LeaderboardSocketHandler {
         }
     }
 
-    private void sendLeaderboardToAll() {
+    private List<?> getLeaderboardByType(int type) {
         try {
-            List<Clothing> leaderboard = clothingRepository.findAll().stream()
-                    .sorted((c1, c2) -> {
-                        try {
-                            double p1 = Double.parseDouble(c1.getPrice());
-                            double p2 = Double.parseDouble(c2.getPrice());
-                            return Double.compare(p2, p1);
-                        } catch (Exception e) {
-                            return 0;
-                        }
-                    })
-                    .limit(10)
-                    .collect(Collectors.toList());
+            switch (type) {
+                case 1:
+                    return clothingRepository.findTop10MostValuable(PageRequest.of(0, 10));
 
-            String leaderboardJson = objectMapper.writeValueAsString(leaderboard);
+                case 2:
+                    return clothingRepository.findTop10UsersByClothingCount(PageRequest.of(0, 10));
 
-            for (Session session : sessionUsernameMap.keySet()) {
-                if (session.isOpen()) {
-                    session.getBasicRemote().sendText(leaderboardJson);
-                }
+                case 3:
+                    return outfitRepository.findTop10MostExpensiveOutfits();
+                default:
+                    return Collections.emptyList();
             }
         } catch (Exception e) {
-            logger.error("Error sending leaderboard", e);
+            return Collections.emptyList();
+        }
+    }
+
+    private void sendLeaderboardToSession(Session session, int type) {
+        try {
+            List<?> leaderboard = getLeaderboardByType(type);
+            String leaderboardJson = objectMapper.writeValueAsString(leaderboard);
+            if (session.isOpen()) {
+                session.getBasicRemote().sendText(leaderboardJson);
+            }
+        } catch (IOException e) {
+            logger.error("Error sending leaderboard to session", e);
+        }
+    }
+
+    private void sendLeaderboardToAll() {
+        for (Session session : sessionUsernameMap.keySet()) {
+            int type = sessionTypeMap.getOrDefault(session, 1); // default to 1
+            sendLeaderboardToSession(session, type);
         }
     }
 }

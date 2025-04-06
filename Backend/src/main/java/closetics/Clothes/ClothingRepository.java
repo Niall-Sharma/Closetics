@@ -27,6 +27,12 @@ public interface ClothingRepository extends JpaRepository<Clothing, Long> {
     @Query(value = "SELECT * FROM clothing_table WHERE user_id = :userId ", nativeQuery = true)
     List<Clothing> findByUserId(@Param("userId") long userId);
 
-    @Query("SELECT c FROM clothing_table c ORDER BY CAST(c.price AS double) DESC")
+    @Query("SELECT c FROM clothing_table c WHERE c.price IS NOT NULL ORDER BY CAST(c.price AS double) DESC, c.clothesId ASC")
     List<Clothing> findTop10MostValuable(Pageable pageable);
+
+    @Query("SELECT c.user.id, COUNT(c) as totalItems " +
+            "FROM clothing_table c " +
+            "GROUP BY c.user.id " +
+            "ORDER BY totalItems DESC")
+    List<Object[]> findTop10UsersByClothingCount(Pageable pageable);
 }

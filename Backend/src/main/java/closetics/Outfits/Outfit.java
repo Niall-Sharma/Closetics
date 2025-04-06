@@ -4,6 +4,7 @@ import closetics.Clothes.Clothing;
 import closetics.Statistics.OutfitStats;
 import closetics.Users.User;
 import closetics.Users.UserProfile.UserProfile;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
@@ -31,7 +32,7 @@ public class Outfit {
     @JsonIgnoreProperties("datesWorn")
     private OutfitStats outfitStats;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "outfit_items",
             joinColumns = @JoinColumn(name = "outfit_id"),
@@ -43,6 +44,7 @@ public class Outfit {
 
 
     private String outfitName;
+    @JsonIgnore
     private LocalDate creationDate;
     private boolean favorite;
 
