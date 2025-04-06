@@ -100,10 +100,7 @@ public class EditOutfitActivity extends AppCompatActivity {
 
                         // parse the JSON array and add data to the adapter
                         try {
-                            outfitName = response.has("outfitName") ? response.getString("outfitName") : null;
-                            if (outfitName == null || outfitName.isBlank()) {
-                                outfitName = "No name";
-                            }
+                            outfitName = response.has("outfitName") ? response.getString("outfitName") : "";
                             // set edit to the most recent name
                             outfitNameEdit.setText(outfitName);
 

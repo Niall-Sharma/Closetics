@@ -26,6 +26,7 @@ public class WebSocketService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d("WebSocketService", "Service init");
         if (intent != null) {
             String action = intent.getAction();
             if ("CONNECT".equals(action)) {
