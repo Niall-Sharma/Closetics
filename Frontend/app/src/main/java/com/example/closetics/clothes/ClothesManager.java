@@ -51,13 +51,15 @@ public class ClothesManager {
 
         //Basic check will need to fix
         try {
-            if (favorite!=null) {
-                if (favorite.toLowerCase().trim() == "yes") {
-                    nullCheck("favorite", true, saveClothing);
-                } else {
-                    nullCheck("favorite", false, saveClothing);
-                }
+            if (favorite == null){
+                nullCheck("favorite", false, saveClothing);
             }
+            else if (favorite.toLowerCase().trim() == "yes") {
+                nullCheck("favorite", true, saveClothing);
+            } else {
+                nullCheck("favorite", false, saveClothing);
+            }
+
 
             nullCheck("size", size, saveClothing);
             nullCheck("color", color, saveClothing);
@@ -66,9 +68,8 @@ public class ClothesManager {
             nullCheck("itemName", itemName, saveClothing);
             nullCheck("material", material, saveClothing);
             nullCheck("price", price, saveClothing);
-            /*
-            Note: Small naming error, user instead of userId for JSON object
-             */
+
+
             saveClothing.put("userId", userId);
             /*
             This is for testing only! Remember to remove!

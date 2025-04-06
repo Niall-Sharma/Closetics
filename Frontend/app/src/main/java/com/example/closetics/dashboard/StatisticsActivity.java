@@ -43,8 +43,8 @@ public class StatisticsActivity extends AppCompatActivity {
     private TextView mostExpensiveOutfit;
     private TextView mostExpensiveClothing;
 
-    private ArrayList<ClothingStatItem> allClothingStatsObjects;
-    private ArrayList<OutfitStatsItem> allOutfitStatsObjects;
+    private ArrayList<JSONObject> allOutfitStatsObjects;
+    ArrayList<JSONObject> allClothingStatsObjects;
 
 
 
@@ -104,6 +104,7 @@ public class StatisticsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 whichButton.setText("Outfit Stats");
+
             }
         });
         overallStats.setOnClickListener(new View.OnClickListener() {
@@ -118,7 +119,7 @@ public class StatisticsActivity extends AppCompatActivity {
     }
 
     private void showFragment(){
-
+        
     }
 
     /*
@@ -129,15 +130,22 @@ public class StatisticsActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONArray response) {
                 int greatestPrice = 0;
+                int wornOutfitCount = 0;
+                ArrayList<JSONObject> statsObjects = new ArrayList<>();
+
                 for (int i =0; i<response.length(); i++){
                     try {
                         JSONObject object = response.getJSONObject(i);
-                        //JSONObject statObject = object.getJSONObject("stats");
-                        //Log.d("statObject", statObject.toString());
-                        //String price = object.getString("price");
-                        //if (greatestPrice < Integer.parseInt(price)) {
-                          //  greatestPrice = Integer.parseInt(price);
-                        //}
+                        Log.d("outfitObject", object.toString());
+                        JSONObject statObject = object.getJSONObject("outfitStats");
+                       Log.d("outfitStats", statObject.toString());
+                       int wornOutfit = statObject.getInt("timesWorn");
+                       statsObjects.add(statObject);
+
+                       if (wornOutfit>wornOutfitCount){
+                           wornOutfitCount = wornOutfit;
+                       }
+
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
@@ -145,6 +153,11 @@ public class StatisticsActivity extends AppCompatActivity {
 
                 totalOutfitCount.setText(String.valueOf(response.length()));
                 mostExpensiveOutfit.setText(String.valueOf(greatestPrice));
+                mostWornOutfit.setText(String.valueOf(wornOutfitCount));
+                setAllOutfitStatsObjects(statsObjects);
+
+
+
                 Log.d("Outfit count", String.valueOf(response.length()));
 
             }
@@ -165,32 +178,51 @@ public class StatisticsActivity extends AppCompatActivity {
             public void onResponse(JSONArray response) {
                 int totalPrice =0;
                 int greatestPrice =0;
+                int greatestWornItem =0;
 
+                ArrayList<JSONObject> statsObjects = new ArrayList<>();
                 for (int i =0; i<response.length(); i++){
                     try {
                         JSONObject object = response.getJSONObject(i);
-                        JSONObject statObject = object.getJSONObject("stats");
+                        Log.d("object", object.toString());
+                        JSONObject statObject = object.getJSONObject("clothingStats");
+                        //Add the json object to the arrayList
+                        statsObjects.add(statObject);
                         Log.d("statObject", statObject.toString());
-                        String price = object.getString("price");
-                        totalPrice +=Integer.parseInt(price);
+                        int timesWorn = statObject.getInt("timesWorn");
+
+                        if (timesWorn>greatestWornItem){
+                            greatestWornItem = timesWorn;
+                        }
+                        /*
+                        Check if price is not null
+                         */
+                        if (!object.getString("price") .equals("null")){
+                            int price = object.getInt("price");
+                            totalPrice +=price;
+                        }
+
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
                 }
                 Log.d("response length", String.valueOf(response.length()));
-                /*
-                Total clothing items
-                 */
+
+                //Total clothing items
                 totalClothingItems.setText(String.valueOf(response.length()));
-                /*
-                Total closet count
-                 */
+
+                //Total closet count
                 totalClosetCount.setText(String.valueOf(totalPrice));
-                /*
-                Most expensive clothing item
-                 */
+
+                //Most expensive clothing item
+
                 mostExpensiveClothing.setText(String.valueOf(greatestPrice));
-                Log.d("userId", String.valueOf(UserManager.getUserID(getApplicationContext())));
+
+                //Set the clothing stats arrayList
+
+                setAllClothingStatsObjects(statsObjects);
+                //Set the worn clothing count
+                mostWornClothingItem.setText(String.valueOf(greatestWornItem));
             }
         }, new Response.ErrorListener() {
             @Override
@@ -200,34 +232,13 @@ public class StatisticsActivity extends AppCompatActivity {
         });
     }
 
-    /*
-    private void setMostExpensiveOutfit(){
 
-            @Override
-            public void onResponse(JSONArray response) {
-                int totalPrice =0;
-
-                for (int i =0; i<response.length(); i++){
-                    try {
-                        JSONObject object = response.getJSONObject(i);
-                        String price = object.getString("price");
-                        totalPrice +=Integer.parseInt(price);
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                totalClothingItems.setText(String.valueOf(response.length()));
-                totalClosetCount.setText(String.valueOf(totalPrice));
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("Clothing total price error", error.toString());
-            }
-        });
+    private void setAllClothingStatsObjects(ArrayList<JSONObject> objects){
+        allClothingStatsObjects = objects;
     }
-
-     */
+    private void setAllOutfitStatsObjects(ArrayList<JSONObject> objects){
+        allOutfitStatsObjects = objects;
+    }
 
 
 

@@ -67,7 +67,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:text="Most Worn Outfit:" />
+                    android:text="Most Worn Outfit Count:" />
 
                 <TextView
                     android:id="@+id/wornOutfit"
@@ -80,7 +80,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:text="Most Worn Clothing Item:" />
+                    android:text="Most Worn Clothing Item Count:" />
 
                 <TextView
                     android:id="@+id/wornClothing"
