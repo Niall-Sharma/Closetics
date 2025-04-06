@@ -71,8 +71,9 @@ public class UserProfileController{
   @GetMapping("/userprofile/following/{id}")
   public List<UserProfile> GetFollowing(@PathVariable("id") Long id){
     return uRepository.findById(id).get().getFollowing();
+    //Username, id, if you are following them back
   }
-
+  //ADD ENDPOINT TO RETURN OR FALSE IF YOU ARE FOLLOWING THEM.
   @GetMapping("/userprofile/outfits/{id}")
   public List<Outfit> GetOutfits(@PathVariable("id") Long id){
     return uRepository.findById(id).get().getOutfits();
