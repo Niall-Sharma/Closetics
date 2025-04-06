@@ -25,7 +25,7 @@ import java.util.Set;
 
 public class SelectClothesActivity extends AppCompatActivity {
     private final String URL_GET_OUTFIT = MainActivity.SERVER_URL + "/getOutfit/"; // + {{outfitId}}
-    private final String URL_GET_ALL_USER_CLOTHES = MainActivity.SERVER_URL + "/clothes/user/"; // + {{userId}}
+    private final String URL_GET_ALL_USER_CLOTHES = MainActivity.SERVER_URL + "/getClothing/user/"; // + {{userId}}
 
     private Button doneButton;
     private ListView clothesList;
