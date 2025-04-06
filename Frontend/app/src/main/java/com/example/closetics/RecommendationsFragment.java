@@ -40,8 +40,6 @@ import java.util.List;
 
 public class RecommendationsFragment extends Fragment {
 
-    private final String URL_SEARCH_USERS_BY_USERNAME = MainActivity.SERVER_URL + "/searchUsersByUsername/"; // + {{username}}
-
     private final String[] INT_TO_MONTH = {
             "January", "February", "March", "April",
             "May", "June", "July", "August",
@@ -269,7 +267,7 @@ public class RecommendationsFragment extends Fragment {
     }
 
     private void searchUsers(String username) {
-        UserManager.searchUsersByUsernameRequest(getActivity().getApplicationContext(), username, URL_SEARCH_USERS_BY_USERNAME,
+        UserManager.searchUsersByUsernameRequest(getActivity().getApplicationContext(), username,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {

@@ -114,13 +114,14 @@ public class ProfileFragment extends Fragment {
 //            Navigation.findNavController(v).navigate(R.id.action_navigation_profile_to_followFragment);
             Intent intent = new Intent(getActivity(), FollowActivity.class);
             intent.putExtra("IS_FOLLOWING", true);
+            intent.putExtra("USER_ID", UserManager.getUserID(getActivity()));
             startActivity(intent);
         });
 
         followersButton.setOnClickListener(v -> {
 //            Navigation.findNavController(v).navigate(R.id.action_navigation_profile_to_followFragment);
             Intent intent = new Intent(getActivity(), FollowActivity.class);
-            intent.putExtra("IS_FOLLOWING", false);
+            intent.putExtra("USER_ID", UserManager.getUserID(getActivity()));
             startActivity(intent);
         });
 

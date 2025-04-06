@@ -18,6 +18,7 @@ public class FollowActivity extends AppCompatActivity {
     private FollowTabAdapter tabAdapter;
 
     private boolean isFollowing;
+    private long userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +33,10 @@ public class FollowActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         isFollowing = true;
+        userId = -1;
         if (extras != null) {
             isFollowing = extras.getBoolean("IS_FOLLOWING", true);
+            userId = extras.getLong("USER_ID", -1);
         }
 
         // set listeners
