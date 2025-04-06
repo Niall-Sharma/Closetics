@@ -2,14 +2,9 @@ package com.example.closetics;
 
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.media.session.MediaSession;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,9 +13,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.closetics.follow.FollowActivity;
-import com.example.closetics.follow.FollowFragment;
-import com.example.closetics.outfits.EditOutfitActivity;
-import com.example.closetics.outfits.SelectClothesActivity;
 
 public class ProfileFragment extends Fragment {
 
