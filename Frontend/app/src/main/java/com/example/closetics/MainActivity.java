@@ -9,9 +9,12 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.example.closetics.databinding.ActivityMainBinding;
+import com.example.closetics.recommendations.RecWebSocketService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.HashMap;
@@ -19,8 +22,10 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-//    public static final String SERVER_URL = "http://coms-3090-008.class.las.iastate.edu:8080";
-    public static final String SERVER_URL = "http://10.0.2.2:8080";
+    private static final String SERVER_ADDRESS = "10.0.2.2:8080";
+    //public static final String SERVER_ADDRESS = "coms-3090-008.class.las.iastate.edu:8080";
+    public static final String SERVER_URL = "http://" + SERVER_ADDRESS;
+    public static final String SERVER_WS_URL = "ws://" + SERVER_ADDRESS;
 
     public static final Map<Integer, String> CLOTHING_TYPES = new HashMap<Integer, String>() {{
         put(1, "accessories");put(2, "activewear");put(3, "bottoms");put(4, "dresses");put(5, "footwear");put(6, "formalwear");put(7, "outerwear");put(8, "seasonal");put(9, "sleepwear");put(10, "tops");put(11, "undergarments");put(12, "workwear");
@@ -51,9 +56,14 @@ public class MainActivity extends AppCompatActivity {
 //        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.bottomNavView, navController);
 
-        // FOR TEST
+        // DEBUG CODE
 //        UserManager.saveUsername(getApplicationContext(), "user1");
 //        UserManager.saveUserID(getApplicationContext(), 1);
+
+        // start websocket if person is logged in
+        if (UserManager.getUsername(getApplicationContext()) != null) {
+            startRecWebSocket();
+        }
 
 //        replaceFragment(new HomeFragment());
 
@@ -72,6 +82,13 @@ public class MainActivity extends AppCompatActivity {
 //
 //            return true;
 //        });
+    }
+
+    private void startRecWebSocket() {
+        Intent serviceIntent = new Intent(this, com.example.closetics.recommendations.RecWebSocketService.class);
+        serviceIntent.setAction("RecWebSocketConnect");
+        startService(serviceIntent);
+        Log.d("MainActivity", "RecWebSocket started");
     }
 
 //    private void replaceFragment(Fragment fragment) {
