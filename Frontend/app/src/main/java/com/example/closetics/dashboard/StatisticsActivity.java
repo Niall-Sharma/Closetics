@@ -26,6 +26,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class StatisticsActivity extends AppCompatActivity {
     private ImageButton back;
     private Button outfitStats;
@@ -40,6 +42,9 @@ public class StatisticsActivity extends AppCompatActivity {
     private TextView mostWornClothingItem;
     private TextView mostExpensiveOutfit;
     private TextView mostExpensiveClothing;
+
+    private ArrayList<ClothingStatItem> allClothingStatsObjects;
+    private ArrayList<OutfitStatsItem> allOutfitStatsObjects;
 
 
 
@@ -159,6 +164,7 @@ public class StatisticsActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONArray response) {
                 int totalPrice =0;
+                int greatestPrice =0;
 
                 for (int i =0; i<response.length(); i++){
                     try {
@@ -172,8 +178,18 @@ public class StatisticsActivity extends AppCompatActivity {
                     }
                 }
                 Log.d("response length", String.valueOf(response.length()));
+                /*
+                Total clothing items
+                 */
                 totalClothingItems.setText(String.valueOf(response.length()));
+                /*
+                Total closet count
+                 */
                 totalClosetCount.setText(String.valueOf(totalPrice));
+                /*
+                Most expensive clothing item
+                 */
+                mostExpensiveClothing.setText(String.valueOf(greatestPrice));
                 Log.d("userId", String.valueOf(UserManager.getUserID(getApplicationContext())));
             }
         }, new Response.ErrorListener() {
