@@ -40,13 +40,13 @@ public class UserProfile{
   )
   private List<UserProfile> following_id;
 
-  @ManyToMany(fetch = FetchType.EAGER)
-  @JoinTable(
-          name = "user_followers",
-          joinColumns = @JoinColumn(name = "UID"),
-          inverseJoinColumns = @JoinColumn(name = "follower_id")
-  )
-  private List<UserProfile> followers_id;
+//  @ManyToMany(fetch = FetchType.EAGER)
+//  @JoinTable(
+//          name = "user_followers",
+//          joinColumns = @JoinColumn(name = "UID"),
+//          inverseJoinColumns = @JoinColumn(name = "follower_id")
+//  )
+//  private List<UserProfile> followers_id;
 
 
   public UserProfile(boolean isPublic, String username){
@@ -65,15 +65,15 @@ public class UserProfile{
   public List<UserProfile> getFollowing(){
     return following_id;
   }
-  public List<UserProfile> getFollowers(){
-    return followers_id;
-  }
-  public void addFollower(UserProfile follower){
-    followers_id.add(follower);
-  }
-  public void removeFollower(UserProfile follower){
-    followers_id.remove(followers_id.indexOf(follower));  
-  }
+//  public List<UserProfile> getFollowers(){
+//    return followers_id;
+//  }
+//  public void addFollower(UserProfile follower){
+//    followers_id.add(follower);
+//  }
+//  public void removeFollower(UserProfile follower){
+//    followers_id.remove(followers_id.indexOf(follower));
+//  }
   public void addFollowing(UserProfile following){
     following_id.add(following);
   }

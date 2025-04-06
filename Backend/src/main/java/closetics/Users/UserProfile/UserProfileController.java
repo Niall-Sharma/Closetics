@@ -2,6 +2,7 @@ package closetics.Users.UserProfile;
 
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,54 +25,52 @@ public class UserProfileController{
   UserRepository userRepository;
 
   @GetMapping(path = "/userprofile/{id}")
-  public UserProfile GetUserProfile(@PathVariable long id){
-    return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User Profile not found")).GetUserProfile();
+  public UserProfileDTO GetUserProfile(@PathVariable long id){
+    return new UserProfileDTO(userRepository.findById(id).orElseThrow(() -> new RuntimeException("User Profile not found")).GetUserProfile(), 2);
   }
   @GetMapping(path = "/userprofile")
-  public List<UserProfile> GetAllUserProfiles(){
-    return uRepository.findAll();
+  public List<UserProfileDTO> GetAllUserProfiles(){
+    return uRepository.findAll().stream().map(p -> new UserProfileDTO(p, 2)).toList();
   }
 
   @PostMapping(path = "/userprofile")
-  public UserProfile CreateUserProfile(@RequestBody UserProfile userProfile){
+  public UserProfileDTO CreateUserProfile(@RequestBody UserProfile userProfile){
     uRepository.save(userProfile);
-    return userProfile;
+    return new UserProfileDTO(userProfile, 2);
   }
 
   @PutMapping(path = "/addFollowing/{id}/{followingId}")
-  public UserProfile AddFollowingToProfile(@PathVariable("id") long id, @PathVariable("followingId") long followingId){
+  public UserProfileDTO AddFollowingToProfile(@PathVariable("id") long id, @PathVariable("followingId") long followingId){
     UserProfile userProfile = userRepository.findById(id).get().GetUserProfile();
     UserProfile followingUser = userRepository.findById(followingId).get().GetUserProfile();
     if(id != followingId){
       userProfile.addFollowing(followingUser);
-      followingUser.addFollower(userProfile);
       uRepository.save(userProfile);
-      uRepository.save(followingUser);
-
     }
-    return userProfile;
+
+    return new UserProfileDTO(userProfile, 2);
   }
   @PutMapping(path = "/removeFollowing/{id}/{followingId}")
-  public UserProfile RemoveFollowingFromProfile(@PathVariable("id") long id, @PathVariable("followingId") long followingId){
+  public UserProfileDTO RemoveFollowingFromProfile(@PathVariable("id") long id, @PathVariable("followingId") long followingId){
     UserProfile userProfile = userRepository.findById(id).get().GetUserProfile();
     UserProfile followingUser = userRepository.findById(followingId).get().GetUserProfile();
     userProfile.removeFollowing(followingUser);
-    followingUser.removeFollower(userProfile);
     uRepository.save(userProfile);
-    uRepository.save(followingUser);
-    return userProfile;
+    return new UserProfileDTO(userProfile, 2);
   }
 
 
-  @GetMapping("/userprofile/followers/{id}")
-  public List<UserProfile> GetFollowers(@PathVariable("id") Long id){
-    return uRepository.findById(id).get().getFollowers();
-  }
+//  @GetMapping("/userprofile/followers/{id}")
+//  public List<UserProfile> GetFollowers(@PathVariable("id") Long id){
+//    return uRepository.findById(id).get().getFollowers();
+//  }
 
   @GetMapping("/userprofile/following/{id}")
-  public List<UserProfile> GetFollowing(@PathVariable("id") Long id){
-    return uRepository.findById(id).get().getFollowing();
-    //Username, id, if you are following them back
+  public List<UserProfileDTO> GetFollowing(@PathVariable("id") Long id){
+    UserProfile userProfile = uRepository.findById(id).get();
+    UserProfileDTO userProfileDTO = new UserProfileDTO(userProfile, 2);
+    return userProfileDTO.getFollowing();
+
   }
   //ADD ENDPOINT TO RETURN OR FALSE IF YOU ARE FOLLOWING THEM.
   @GetMapping("/userprofile/outfits/{id}")
@@ -80,12 +79,12 @@ public class UserProfileController{
   }
 
   @PutMapping("/userprofile/swappublicsetting/{id}")
-  public UserProfile swapFavorite(@PathVariable long id) {
+  public UserProfileDTO swapFavorite(@PathVariable long id) {
     UserProfile userProfile = uRepository.findById(id).get();
     if (userProfile != null) {
       userProfile.setIsPublic(!userProfile.getIsPublic());
       uRepository.save(userProfile);
-      return userProfile;
+      return new UserProfileDTO(userProfile, 2);
     }else{
       throw new RuntimeException();
       }
