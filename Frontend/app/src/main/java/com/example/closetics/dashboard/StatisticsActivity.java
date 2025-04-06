@@ -5,18 +5,42 @@ import static android.app.PendingIntent.getActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.example.closetics.MainActivity;
 import com.example.closetics.R;
+import com.example.closetics.UserManager;
+import com.example.closetics.clothes.ClothesManager;
+import com.example.closetics.outfits.OutfitManager;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class StatisticsActivity extends AppCompatActivity {
     private ImageButton back;
+    private Button outfitStats;
+    private Button clothesStats;
+    private Button overallStats;
+    private TextView whichButton;
+
+    private TextView totalOutfitCount;
+    private TextView totalClosetCount;
+    private TextView totalClothingItems;
+    private TextView mostWornOutfit;
+    private TextView mostWornClothingItem;
+    private TextView mostExpensiveOutfit;
+    private TextView mostExpensiveClothing;
+
 
 
 
@@ -28,6 +52,33 @@ public class StatisticsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_statistics);
 
         back = findViewById(R.id.backButton);
+        whichButton = findViewById(R.id.categoryText);
+        overallStats = findViewById(R.id.overallButton);
+        clothesStats = findViewById(R.id.clothesButton);
+        outfitStats = findViewById(R.id.outfitButton);
+        whichButton.setText("Overall Stats");
+
+        /*
+        Overall stats textViews
+         */
+        totalOutfitCount = findViewById(R.id.totalOutfitsCount);
+        totalClosetCount = findViewById(R.id.totalClosetCount);
+        totalClothingItems = findViewById(R.id.clothingCount);
+        mostWornOutfit = findViewById(R.id.wornOutfit);
+        mostWornClothingItem = findViewById(R.id.wornClothing);
+        mostExpensiveOutfit = findViewById(R.id.expensiveOutfit);
+        mostExpensiveClothing = findViewById(R.id.expensiveClothing);
+        /*
+        Set the views
+         */
+        setTotalOutfitsCount();
+        setTotalClosetValue();
+
+
+
+
+
+
 
 
         back.setOnClickListener(new View.OnClickListener() {
@@ -37,10 +88,107 @@ public class StatisticsActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        clothesStats.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                whichButton.setText("Clothes Stats");
 
+            }
+        });
+        outfitStats.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                whichButton.setText("Outfit Stats");
+            }
+        });
+        overallStats.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                whichButton.setText("Overall Stats");
 
-
+            }
+        });
 
 
     }
+
+    private void showFragment(){
+
+    }
+
+    private void setTotalOutfitsCount(){
+        OutfitManager.getAllOutfitsRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                totalOutfitCount.setText(String.valueOf(response.length()));
+                Log.d("Outfit count", String.valueOf(response.length()));
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Outfit count error", error.toString());
+            }
+        });
+
+    }
+    /*
+    Figure out a better way to find total closet value without having to fully scan all clothes
+     */
+    private void setTotalClosetValue(){
+        ClothesManager.getClothingByUserRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                int totalPrice =0;
+
+                for (int i =0; i<response.length(); i++){
+                    try {
+                        JSONObject object = response.getJSONObject(i);
+                        JSONObject statObject = object.getJSONObject("stats");
+                        Log.d("statObject", statObject.toString());
+                        String price = object.getString("price");
+                        totalPrice +=Integer.parseInt(price);
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                totalClothingItems.setText(String.valueOf(response.length()));
+                totalClosetCount.setText(String.valueOf(totalPrice));
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Clothing total price error", error.toString());
+            }
+        });
+    }
+
+    private void setMostExpensiveOutfit(){
+
+            @Override
+            public void onResponse(JSONArray response) {
+                int totalPrice =0;
+
+                for (int i =0; i<response.length(); i++){
+                    try {
+                        JSONObject object = response.getJSONObject(i);
+                        String price = object.getString("price");
+                        totalPrice +=Integer.parseInt(price);
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                totalClothingItems.setText(String.valueOf(response.length()));
+                totalClosetCount.setText(String.valueOf(totalPrice));
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Clothing total price error", error.toString());
+            }
+        });
+    }
+
+
+
 }
