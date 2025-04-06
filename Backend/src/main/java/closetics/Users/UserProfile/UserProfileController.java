@@ -25,7 +25,7 @@ public class UserProfileController{
 
   @GetMapping(path = "/userprofile/{id}")
   public UserProfile GetUserProfile(@PathVariable long id){
-    return userRepository.findById(id).get().GetUserProfile();
+    return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User Profile not found")).GetUserProfile();
   }
   @GetMapping(path = "/userprofile")
   public List<UserProfile> GetAllUserProfiles(){
@@ -43,8 +43,8 @@ public class UserProfileController{
     UserProfile userProfile = userRepository.findById(id).get().GetUserProfile();
     UserProfile followingUser = userRepository.findById(followingId).get().GetUserProfile();
     if(id != followingId){
-      userProfile.AddFollowing(followingUser);
-      followingUser.AddFollower(userProfile);
+      userProfile.addFollowing(followingUser);
+      followingUser.addFollower(userProfile);
       uRepository.save(userProfile);
       uRepository.save(followingUser);
 
@@ -55,8 +55,8 @@ public class UserProfileController{
   public UserProfile RemoveFollowingFromProfile(@PathVariable("id") long id, @PathVariable("followingId") long followingId){
     UserProfile userProfile = userRepository.findById(id).get().GetUserProfile();
     UserProfile followingUser = userRepository.findById(followingId).get().GetUserProfile();
-    userProfile.RemoveFollowing(followingUser);
-    followingUser.RemoveFollower(userProfile);
+    userProfile.removeFollowing(followingUser);
+    followingUser.removeFollower(userProfile);
     uRepository.save(userProfile);
     uRepository.save(followingUser);
     return userProfile;
@@ -64,25 +64,25 @@ public class UserProfileController{
 
 
   @GetMapping("/userprofile/followers/{id}")
-  public List<UserProfile> GetFollowers(Long id){
-    return uRepository.findById(id).get().GetFollowers();
+  public List<UserProfile> GetFollowers(@PathVariable("id") Long id){
+    return uRepository.findById(id).get().getFollowers();
   }
 
   @GetMapping("/userprofile/following/{id}")
-  public List<UserProfile> GetFollowing(Long id){
-    return uRepository.findById(id).get().GetFollowing();
+  public List<UserProfile> GetFollowing(@PathVariable("id") Long id){
+    return uRepository.findById(id).get().getFollowing();
   }
 
   @GetMapping("/userprofile/outfits/{id}")
-  public List<Outfit> GetOutfits(Long id){
-    return uRepository.findById(id).get().GetOutfits();
+  public List<Outfit> GetOutfits(@PathVariable("id") Long id){
+    return uRepository.findById(id).get().getOutfits();
   }
 
   @PutMapping("/userprofile/swappublicsetting/{id}")
   public UserProfile swapFavorite(@PathVariable long id) {
     UserProfile userProfile = uRepository.findById(id).get();
     if (userProfile != null) {
-      userProfile.SetIsPublic(!userProfile.GetIsPublic());
+      userProfile.setIsPublic(!userProfile.getIsPublic());
       uRepository.save(userProfile);
       return userProfile;
     }else{

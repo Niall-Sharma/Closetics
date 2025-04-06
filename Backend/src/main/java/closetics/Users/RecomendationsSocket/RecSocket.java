@@ -74,10 +74,10 @@ public class RecSocket {
 		uidSessionMap.put(UID, session);
     UserProfile uProfile = UserRepository.findById(UID).get().GetUserProfile();
     System.out.println(uProfile.toString());
-    List<UserProfile> following = uProfile.GetFollowing();
+    List<UserProfile> following = uProfile.getFollowing();
     List<Outfit> followingOutfits = new ArrayList<>();
     for(int i = 0; i < following.size();i++){
-      followingOutfits.addAll(following.get(i).GetOutfits());
+      followingOutfits.addAll(following.get(i).getOutfits());
     }
     followingOutfitMap.put(UID, followingOutfits);
 

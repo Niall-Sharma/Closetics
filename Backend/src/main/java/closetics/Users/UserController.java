@@ -104,7 +104,6 @@ public class UserController {
         userProfileRepository.save(userProfile);
         user.SetUserProfile(userProfile);
         userRepository.save(user);
-        userProfile.SetUser(user);
         userProfileRepository.save(userProfile);
         Token token = tokenService.createToken(user);
         response.put("token", token.getTokenValue());
