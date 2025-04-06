@@ -2,12 +2,10 @@ package closetics.Clothes;
 
 import closetics.Users.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import closetics.Statistics.ClothingStats;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -31,6 +29,7 @@ public class Clothing {
     private String price;
     private long type;
     private long specialType;
+    @JsonIgnore
     private LocalDate creationDate;
 
     @ManyToOne

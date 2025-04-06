@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,4 +26,13 @@ public interface ClothingRepository extends JpaRepository<Clothing, Long> {
 
     @Query(value = "SELECT * FROM clothing_table WHERE user_id = :userId ", nativeQuery = true)
     List<Clothing> findByUserId(@Param("userId") long userId);
+
+    @Query("SELECT c FROM clothing_table c WHERE c.price IS NOT NULL ORDER BY CAST(c.price AS double) DESC, c.clothesId ASC")
+    List<Clothing> findTop10MostValuable(Pageable pageable);
+
+    @Query("SELECT c.user.id, COUNT(c) as totalItems " +
+            "FROM clothing_table c " +
+            "GROUP BY c.user.id " +
+            "ORDER BY totalItems DESC")
+    List<Object[]> findTop10UsersByClothingCount(Pageable pageable);
 }

@@ -56,14 +56,14 @@ public class OutfitController {
         outfit.setCreationDate(LocalDate.now());
         outfit.setOutfitName(request.getOutfitName());
         outfit.setFavorite(request.getFavorite());
-        outfit.setOutfitItems(request.getOutfitItems());
         if (outfit.getOutfitItems() == null) {
             outfit.setOutfitItems(new ArrayList<>()); // Ensure the list is initialized
         }
 
         Outfit savedOutfit =  outfitRepository.save(outfit);
-        UserProfile uProfile = uProfileRepository.findById(outfit.getUser().getUserId());
+        UserProfile uProfile = outfit.getUser().GetUserProfile();
         uProfile.AddOutfit(savedOutfit);
+        uProfileRepository.save(uProfile);
         OutfitStats outfitStats = outfitStatRepository.save(new OutfitStats(savedOutfit.getOutfitId()));
         Outfit statOutfit = savedOutfit.setOutfitStats(outfitStats);
         Outfit outfitWithStats =  outfitRepository.save(statOutfit);
@@ -106,7 +106,8 @@ public class OutfitController {
         if (outfitOptional.isPresent()) {
             Outfit outfit = outfitOptional.get();
             if (!outfit.getOutfitItems().contains(clothingId)) { // Prevent duplicate entries
-                outfit.getOutfitItems().add(clothingId);
+                Clothing clothing = clothingRepository.findById(clothingId).get();
+                outfit.getOutfitItems().add(clothing);
                 outfitRepository.save(outfit);
             }
             return ResponseEntity.ok(outfit);
@@ -122,7 +123,8 @@ public class OutfitController {
         if (outfitOptional.isPresent()) {
             Outfit outfit = outfitOptional.get();
             if (outfit.getOutfitItems().contains(clothingId)) { // Check if it exists before removing
-                outfit.getOutfitItems().remove(clothingId);
+                Clothing clothing = clothingRepository.findById(clothingId).get();
+                outfit.getOutfitItems().remove(clothing);
                 outfitRepository.save(outfit);
             }
             return ResponseEntity.ok(outfit);
@@ -137,10 +139,7 @@ public class OutfitController {
         List<Optional<Clothing>> clothes = new ArrayList<>();
         if (outfitOptional.isPresent()) {
             Outfit outfit = outfitOptional.get();
-            List<Long> items = outfit.getOutfitItems();
-            for (Long itemId : items) {
-                clothes.add(clothingRepository.findById(itemId));
-            }
+            List<Clothing> items = outfit.getOutfitItems();
         }
         return ResponseEntity.ok(clothes);
     }
