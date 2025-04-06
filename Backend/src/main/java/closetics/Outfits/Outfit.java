@@ -1,7 +1,9 @@
 package closetics.Outfits;
 
+import closetics.Clothes.Clothing;
 import closetics.Statistics.OutfitStats;
 import closetics.Users.User;
+import closetics.Users.UserProfile.UserProfile;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
@@ -29,16 +31,22 @@ public class Outfit {
     @JsonIgnoreProperties("datesWorn")
     private OutfitStats outfitStats;
 
-    @ElementCollection
-    @CollectionTable(name = "outfit_items", joinColumns = @JoinColumn(name = "outfit_id"))
-    @Column(name = "clothing_id")
-    private List<Long> outfitItems = new ArrayList<>();
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "outfit_items",
+            joinColumns = @JoinColumn(name = "outfit_id"),
+            inverseJoinColumns = @JoinColumn(name = "clothing_id")
+    )
+    @JsonIgnoreProperties({"favorite", "size", "color",
+            "dateBought", "brand", "imagePath", "itemName", "material", "price", "type", "specialType", "creationDate"})
+    private List<Clothing> outfitItems;
+
 
     private String outfitName;
     private LocalDate creationDate;
     private boolean favorite;
 
-    public Outfit(long outfitId, User user, String outfitName, boolean favorite, List<Long> outfitItems) {
+    public Outfit(long outfitId, User user, String outfitName, boolean favorite, List<Clothing> outfitItems) {
         this.outfitId = outfitId;
         this.user = user;
         this.outfitName = outfitName;
@@ -64,8 +72,8 @@ public class Outfit {
     public void setFavorite(boolean favorite) {
         this.favorite = favorite;}
 
-    public List<Long> getOutfitItems() {return outfitItems;}
-    public void setOutfitItems(List<Long> outfitItems) {this.outfitItems = outfitItems;}
+    public List<Clothing> getOutfitItems() {return outfitItems;}
+    public void setOutfitItems(List<Clothing> outfitItems) {this.outfitItems = outfitItems;}
 
     public OutfitStats getOutfitStats() {
         return outfitStats;

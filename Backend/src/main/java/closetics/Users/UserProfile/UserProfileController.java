@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import closetics.Outfits.Outfit;
+import closetics.Users.UserRepository;
 
 @RestController
 public class UserProfileController{
@@ -19,9 +20,16 @@ public class UserProfileController{
   @Autowired
   UserProfileRepository uRepository;
 
+  @Autowired
+  UserRepository userRepository;
+
   @GetMapping(path = "/userprofile/{id}")
   public UserProfile GetUserProfile(@PathVariable long id){
-    return uRepository.findById(id);
+    return userRepository.findById(id).get().GetUserProfile();
+  }
+  @GetMapping(path = "/userprofile")
+  public List<UserProfile> GetAllUserProfiles(){
+    return uRepository.findAll();
   }
 
   @PostMapping(path = "/userprofile")
@@ -32,8 +40,8 @@ public class UserProfileController{
 
   @PutMapping(path = "/addFollowing/{id}/{followingId}")
   public UserProfile AddFollowingToProfile(@PathVariable("id") long id, @PathVariable("followingId") long followingId){
-    UserProfile userProfile = uRepository.findById(id);
-    UserProfile followingUser = uRepository.findById(followingId);
+    UserProfile userProfile = userRepository.findById(id).get().GetUserProfile();
+    UserProfile followingUser = userRepository.findById(followingId).get().GetUserProfile();
     if(id != followingId){
       userProfile.AddFollowing(followingUser);
       followingUser.AddFollower(userProfile);
@@ -45,8 +53,8 @@ public class UserProfileController{
   }
   @PutMapping(path = "/removeFollowing/{id}/{followingId}")
   public UserProfile RemoveFollowingFromProfile(@PathVariable("id") long id, @PathVariable("followingId") long followingId){
-    UserProfile userProfile = uRepository.findById(id);
-    UserProfile followingUser = uRepository.findById(followingId);
+    UserProfile userProfile = userRepository.findById(id).get().GetUserProfile();
+    UserProfile followingUser = userRepository.findById(followingId).get().GetUserProfile();
     userProfile.RemoveFollowing(followingUser);
     followingUser.RemoveFollower(userProfile);
     uRepository.save(userProfile);
@@ -55,23 +63,24 @@ public class UserProfileController{
   }
 
 
-  @GetMapping("/userprofile/followers/{userName}")
-  public List<UserProfile> GetFollowers(String userName){
-    return uRepository.findByUsername(userName).GetFollowers();
+  @GetMapping("/userprofile/followers/{id}")
+  public List<UserProfile> GetFollowers(Long id){
+    return uRepository.findById(id).get().GetFollowers();
   }
 
-  @GetMapping("/userprofile/following/{userName}")
-  public List<UserProfile> GetFollowing(String userName){
-    return uRepository.findByUsername(userName).GetFollowing();
+  @GetMapping("/userprofile/following/{id}")
+  public List<UserProfile> GetFollowing(Long id){
+    return uRepository.findById(id).get().GetFollowing();
   }
 
-  @GetMapping("/userprofile/outfits/{userName}")
-  public List<Outfit> GetOutfits(String userName){
-    return uRepository.findByUsername(userName).GetOutfits();
+  @GetMapping("/userprofile/outfits/{id}")
+  public List<Outfit> GetOutfits(Long id){
+    return uRepository.findById(id).get().GetOutfits();
   }
+
   @PutMapping("/userprofile/swappublicsetting/{id}")
   public UserProfile swapFavorite(@PathVariable long id) {
-    UserProfile userProfile = uRepository.findById(id); 
+    UserProfile userProfile = uRepository.findById(id).get();
     if (userProfile != null) {
       userProfile.SetIsPublic(!userProfile.GetIsPublic());
       uRepository.save(userProfile);

@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface UserProfileRepository extends JpaRepository<UserProfile, Long> {
-    UserProfile findById(long id);
 
     @Transactional
     void deleteById(long id);
