@@ -1,9 +1,15 @@
 package com.example.closetics;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,14 +22,13 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.NoConnectionError;
 import com.android.volley.Response;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.example.closetics.recommendations.RecOutfitsListAdapter;
 import com.example.closetics.recommendations.RecOutfitsListItem;
 import com.example.closetics.recommendations.RecUsersListAdapter;
 import com.example.closetics.recommendations.RecUsersListItem;
+import com.example.closetics.recommendations.RecWebSocketService;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,10 +36,17 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class RecommendationsFragment extends Fragment {
 
     private final String URL_SEARCH_USERS_BY_USERNAME = MainActivity.SERVER_URL + "/searchUsersByUsername/"; // + {{username}}
+
+    private final String[] INT_TO_MONTH = {
+            "January", "February", "March", "April",
+            "May", "June", "July", "August",
+            "September", "October", "November", "December"
+    };
 
     private SearchView search;
     private ImageButton backButton;
@@ -44,6 +56,20 @@ public class RecommendationsFragment extends Fragment {
     private RecUsersListAdapter usersAdapter;
 
     private boolean isStateOutfits;
+    private boolean isReceiving;
+    private boolean isAddingRecommendationsInProgress;
+
+    // For receiving new outfits from websocket
+    private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String message = intent.getStringExtra("message");
+
+            getActivity().runOnUiThread(() -> {
+                addMoreRecommendations(message);
+            });
+        }
+    };
 
     public RecommendationsFragment() {
         // Required empty public constructor
@@ -57,14 +83,25 @@ public class RecommendationsFragment extends Fragment {
 
         // TODO: redirect to login when not logged in
 
+        // attempt to start websocket
+        startWebSocket();
+
         // initialize UI elements
         search = view.findViewById(R.id.rec_search);
+        search.setQuery("", false); // clear search
         backButton = view.findViewById(R.id.rec_back_button);
         outfitsRecycler = view.findViewById(R.id.rec_outfits_recycler);
         usersRecycler = view.findViewById(R.id.rec_users_recycler);
 
         isStateOutfits = true;
         updateState();
+
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(messageReceiver,
+                new IntentFilter("RecWebSocketMessageReceived"));
+        Log.d("RecommendationsFragment", "Receiver registered");
+        isReceiving = true;
+
+        isAddingRecommendationsInProgress = false;
 
         // initialize recycler views
         outfitsAdapter = new RecOutfitsListAdapter(new ArrayList<RecOutfitsListItem>());
@@ -98,6 +135,23 @@ public class RecommendationsFragment extends Fragment {
             updateState();
         });
 
+        // load more outfits after scrolling far enough
+        outfitsRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                // if user sees one before last outfit
+                if (!isAddingRecommendationsInProgress && ((LinearLayoutManager)recyclerView.getLayoutManager()).findLastVisibleItemPosition() >= outfitsAdapter.getItemCount() - 2) {
+                    isAddingRecommendationsInProgress = true; // prevent sending requests until previous one finishes
+                    requestMoreRecommendations();
+                }
+            }
+        });
+
         // search users logic
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -106,7 +160,7 @@ public class RecommendationsFragment extends Fragment {
                 if (newText.length() > 1) {
                     searchUsers(newText);
                 } else {
-                    usersAdapter.clearItems();
+                    usersAdapter.clearItems(); // clear search if less than 2 chars inputted
                 }
                 return true;
             }
@@ -118,17 +172,88 @@ public class RecommendationsFragment extends Fragment {
             }
         });
 
-        populateRecommendations();
+        requestMoreRecommendations();
 
         return view;
     }
 
-    private void populateRecommendations() {
-        // TODO: send message to websocket
-        RecOutfitsListItem mockOutfit = new RecOutfitsListItem(1, "My old shoes", "bob002", Arrays.asList(R.drawable.clothing_mock_img, R.drawable.clothing_mock_img, R.drawable.clothing_mock_img), "Very expensive", "February 3, 1976", false);
-        for (int i = 0; i < 10; i++) {
-            outfitsAdapter.addItem(mockOutfit);
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (!isReceiving) {
+            LocalBroadcastManager.getInstance(getActivity()).registerReceiver(messageReceiver,
+                    new IntentFilter("RecWebSocketMessageReceived"));
+            Log.d("RecommendationsFragment", "Started, Receiver registered");
+            isReceiving = true;
         }
+    }
+
+    @Override
+    public void onStop() {
+        if (isReceiving) {
+            super.onStop();
+            LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(messageReceiver);
+            Log.d("RecommendationsFragment", "Stopped, Receiver unregistered");
+            isReceiving = false;
+        }
+    }
+
+    private void startWebSocket() {
+        Intent serviceIntent = new Intent(getActivity(), RecWebSocketService.class);
+        serviceIntent.setAction("RecWebSocketConnect");
+        getActivity().startService(serviceIntent);
+        Log.d("RecommendationsFragment", "WebSocket started");
+    }
+
+    private void requestMoreRecommendations() {
+        Intent intent = new Intent("RecWebSocketSendMessage");
+        intent.putExtra("message", "5"); // put a number of outfits here
+        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+
+        Log.d("RecommendationsFragment", "Requested more outfits: 5");
+    }
+
+    private void addMoreRecommendations(String message) {
+        // Mock outfits
+//        RecOutfitsListItem mockOutfit = new RecOutfitsListItem(1, "My old shoes", "bob002", Arrays.asList(R.drawable.clothing_mock_img, R.drawable.clothing_mock_img, R.drawable.clothing_mock_img), "Very expensive", "February 3, 1976", false);
+//        for (int i = 0; i < 10; i++) {
+//            outfitsAdapter.addItem(mockOutfit);
+//        }
+
+        Log.d("RecommendationsFragment", "Received outfits: " + message);
+
+        JSONArray outfitObjects;
+        try {
+            outfitObjects = new JSONArray(message);
+        } catch (JSONException e) {
+            Log.e("RecommendationsFragment Error", "JSON Exception from received outfits: " + e.toString());
+            isAddingRecommendationsInProgress = false;
+            return;
+        }
+
+        for (int i = 0; i < outfitObjects.length(); i++) {
+            try {
+                JSONObject outfit = outfitObjects.getJSONObject(i);
+
+                long id = outfit.getLong("outfitId");
+                String name = outfit.getString("outfitName");
+                String username = outfit.getJSONObject("user").getString("username");
+                String stats = "No stats for now"; // TODO: add stats stats
+                int year = outfit.getJSONArray("creationDate").getInt(0);
+                int month = outfit.getJSONArray("creationDate").getInt(1);
+                int day = outfit.getJSONArray("creationDate").getInt(2);
+                String date = INT_TO_MONTH[month - 1] + " " + day + ", " + year;
+                boolean isLiked = false; // TODO: add likes support
+                // TODO: add actual images
+                List<Integer> imageIds = Arrays.asList(R.drawable.clothing_mock_img, R.drawable.clothing_mock_img, R.drawable.clothing_mock_img);
+
+                outfitsAdapter.addItem(new RecOutfitsListItem(id, name, username, imageIds, stats, date, isLiked));
+            } catch (JSONException e) {
+                Log.e("RecommendationsFragment Error", "JSON Exception. Could not add outfit " + i);
+            }
+        }
+
+        isAddingRecommendationsInProgress = false;
     }
 
     private void updateState() {
