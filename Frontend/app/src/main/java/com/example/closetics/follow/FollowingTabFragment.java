@@ -26,13 +26,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class FollowingTabFragment extends Fragment {
 
     private TextView emptyText;
     private RecyclerView recycler;
     private FollowUsersListAdapter adapter;
-
 
     private long userId;
 
@@ -80,17 +80,46 @@ public class FollowingTabFragment extends Fragment {
     }
 
     private void populateFollowing(long userId) {
-        // mock values for testing
-        ArrayList<FollowUsersListItem> mockListItems = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            mockListItems.add(new FollowUsersListItem(getActivity().getApplicationContext(),
-                    i + 1, "mockUser" + (i + 1),
-                    i % 2 == 0));
-        }
-        adapter.setNewItems(mockListItems);
-        return;
+        // first get logged in user's following list
+        UserManager.getFollowingListRequest(getActivity().getApplicationContext(), UserManager.getUserID(getActivity().getApplicationContext()),
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            Log.d("Volley Response", "Successful get following of current user" + UserManager.getUserID(getActivity().getApplicationContext()) + ": " + response.toString());
 
-        /*
+                            ArrayList<Long> myFollowingIds = new ArrayList<>();
+                            for (int i = 0; i < response.length(); i++) {
+                                myFollowingIds.add(response.getJSONObject(i).getLong("id"));
+                            }
+
+                            // continue call with following ids on hand
+                            populateFollowing(userId, myFollowingIds);
+                        }
+                        catch (JSONException e) {
+                            Log.e("JSON Error", "Get following of current user Error: " + e.toString());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("Volley Error", "Get following of current user Error: " + error.toString());
+                    }
+                });
+    }
+
+    private void populateFollowing(long userId, List<Long> myFollowingIds) {
+        // mock values for testing
+//        ArrayList<FollowUsersListItem> mockListItems = new ArrayList<>();
+//        for (int i = 0; i < 10; i++) {
+//            mockListItems.add(new FollowUsersListItem(getActivity().getApplicationContext(),
+//                    i + 1, "mockUser" + (i + 1),
+//                    i % 2 == 0));
+//        }
+//        adapter.setNewItems(mockListItems);
+//        return;
+
         UserManager.getFollowingListRequest(getActivity().getApplicationContext(), userId,
                 new Response.Listener<JSONArray>() {
                     @Override
@@ -101,10 +130,12 @@ public class FollowingTabFragment extends Fragment {
                             ArrayList<FollowUsersListItem> usersListItems = new ArrayList<>();
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject user = response.getJSONObject(i);
-                                // TODO: adjust this to real values
+
+                                boolean isFollowing = myFollowingIds.contains(user.getLong("id"));
+
                                 usersListItems.add(new FollowUsersListItem(getActivity().getApplicationContext(),
-                                        user.getLong("userId"), user.getString("username"),
-                                        user.getBoolean("isFollowing")));
+                                        user.getLong("id"), user.getString("username"),
+                                        isFollowing));
                             }
 
                             // update recycler only if there is anything in the list
@@ -125,6 +156,5 @@ public class FollowingTabFragment extends Fragment {
                         Log.e("Volley Error", "Get following of " + userId + " Error: " + error.toString());
                     }
                 });
-        */
     }
 }

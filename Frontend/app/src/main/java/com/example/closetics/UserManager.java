@@ -25,6 +25,7 @@ public class UserManager {
     private static final String URL_PUT_REMOVE_FOLLOWING = MainActivity.SERVER_URL + "/removeFollowing/"; // + {{id}}/{{followingId}}
     private static final String URL_GET_FOLLOWING = MainActivity.SERVER_URL + "/userprofile/following/"; // + {{id}}
     private static final String URL_GET_FOLLOWERS = MainActivity.SERVER_URL + "/userprofile/followers/"; // + {{id}}
+    private static final String URL_GET_USERPROFILE = MainActivity.SERVER_URL + "/userprofile/"; // + {{id}}
 
     public static final String SHARED_PREFERENCES_FILE_NAME = "CloseticsPreferences";
     private static final String TOKEN_PARAM = "logInToken";

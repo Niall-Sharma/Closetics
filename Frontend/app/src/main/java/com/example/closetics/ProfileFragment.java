@@ -84,6 +84,8 @@ public class ProfileFragment extends Fragment {
             logoutButton.setVisibility(TextView.GONE);
             editButton.setVisibility(TextView.GONE);
             deleteUserButton.setVisibility(TextView.GONE);
+            followingButton.setVisibility(TextView.GONE);
+            followersButton.setVisibility(TextView.GONE);
         });
 
         // Edit user name
@@ -121,6 +123,7 @@ public class ProfileFragment extends Fragment {
         followersButton.setOnClickListener(v -> {
 //            Navigation.findNavController(v).navigate(R.id.action_navigation_profile_to_followFragment);
             Intent intent = new Intent(getActivity(), FollowActivity.class);
+            intent.putExtra("IS_FOLLOWING", false);
             intent.putExtra("USER_ID", UserManager.getUserID(getActivity()));
             startActivity(intent);
         });
