@@ -51,8 +51,8 @@ public class UserController {
     }
 
     @GetMapping(path = "/users/{id}")
-    public Optional<User> getUser(@PathVariable long id) {
-        return userRepository.findById(id);
+    public User getUser(@PathVariable long id) {
+        return userRepository.findById(id).get();
     }
 
     @GetMapping(path = "/users/username/{id}")
