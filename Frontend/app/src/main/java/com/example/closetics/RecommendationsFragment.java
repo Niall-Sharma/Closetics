@@ -246,9 +246,10 @@ public class RecommendationsFragment extends Fragment {
                 String name = outfit.getString("outfitName");
                 String username = outfit.getJSONObject("user").getString("username");
                 String stats = "No stats for now"; // TODO: add stats stats
-                int year = outfit.getJSONArray("creationDate").getInt(0);
-                int month = outfit.getJSONArray("creationDate").getInt(1);
-                int day = outfit.getJSONArray("creationDate").getInt(2);
+//                int year = outfit.getJSONArray("creationDate").getInt(0);
+//                int month = outfit.getJSONArray("creationDate").getInt(1);
+//                int day = outfit.getJSONArray("creationDate").getInt(2);
+                int year = 2025, month = 4, day = 6;
                 String date = INT_TO_MONTH[month - 1] + " " + day + ", " + year;
                 boolean isLiked = false; // TODO: add likes support
                 // TODO: add actual images
@@ -256,7 +257,7 @@ public class RecommendationsFragment extends Fragment {
 
                 outfitsAdapter.addItem(new RecOutfitsListItem(id, name, username, imageIds, stats, date, isLiked));
             } catch (JSONException e) {
-                Log.e("RecommendationsFragment Error", "JSON Exception. Could not add outfit " + i);
+                Log.e("RecommendationsFragment Error", "JSON Exception. Could not add outfit " + i + ": " + e.toString());
             }
         }
 
