@@ -14,6 +14,10 @@ import com.example.closetics.R;
 
 public class LeaderboardRecyclerViewAdapter extends RecyclerView.Adapter<LeaderboardRecyclerViewAdapter.MyViewHolder> {
 
+    public LeaderboardRecyclerViewAdapter (){
+
+
+    }
 
     @NonNull
     @Override
@@ -53,6 +57,9 @@ public class LeaderboardRecyclerViewAdapter extends RecyclerView.Adapter<Leaderb
         Currently set to 10 in the backend
          */
         return 10;
+    }
+    public void updateAdapter(){
+
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
