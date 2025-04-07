@@ -40,13 +40,11 @@ public class PaymentController{
     Stripe.apiKey = apiKey;
   }
 
-  @PostMapping("payments/createPayment")
+  @PostMapping("/createPayment")
   public ResponseEntity<Map<String,Object>> createPayment(@RequestBody Map<String,Object> request){
     try{
       long amount = Long.parseLong(request.get("amount").toString());
       long UID = Long.parseLong(request.get("uid").toString());
-
-
 
       PaymentIntentCreateParams params = PaymentIntentCreateParams.builder().setAmount(amount).setCurrency("usd").build();
       PaymentIntent intent = PaymentIntent.create(params);
