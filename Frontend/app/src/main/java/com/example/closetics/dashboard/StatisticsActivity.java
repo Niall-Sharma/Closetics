@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -20,6 +22,7 @@ import com.example.closetics.MainActivity;
 import com.example.closetics.R;
 import com.example.closetics.UserManager;
 import com.example.closetics.clothes.ClothesManager;
+import com.example.closetics.clothes.ViewClothesFragment;
 import com.example.closetics.outfits.OutfitManager;
 
 import org.json.JSONArray;
@@ -44,7 +47,10 @@ public class StatisticsActivity extends AppCompatActivity {
     private TextView mostExpensiveClothing;
 
     private ArrayList<JSONObject> allOutfitStatsObjects;
-    ArrayList<JSONObject> allClothingStatsObjects;
+    private ArrayList<JSONObject> allClothingStatsObjects;
+
+    private final String CLOTHES_STATS_TAG = "clothes_stats_fragment";
+    private final String OUTFITS_STATS_TAG = "outfits_stats_fragment";
 
 
 
@@ -82,10 +88,6 @@ public class StatisticsActivity extends AppCompatActivity {
 
 
 
-
-
-
-
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,6 +99,10 @@ public class StatisticsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 whichButton.setText("Clothes Stats");
+                Fragment fragment = new ClothesStatsFragment(allClothingStatsObjects);
+                showFragment(CLOTHES_STATS_TAG, fragment);
+
+
 
             }
         });
@@ -104,7 +110,8 @@ public class StatisticsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 whichButton.setText("Outfit Stats");
-
+                Fragment fragment = new OutfitStatsFragment(allOutfitStatsObjects);
+                showFragment(OUTFITS_STATS_TAG, fragment);
             }
         });
         overallStats.setOnClickListener(new View.OnClickListener() {
@@ -118,8 +125,10 @@ public class StatisticsActivity extends AppCompatActivity {
 
     }
 
-    private void showFragment(){
-        
+    private void showFragment(String tag, Fragment fragment){
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.stats_categories_container, fragment, tag);
+        transaction.commit();
     }
 
     /*

@@ -40,11 +40,4 @@
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/view_profile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="View Profile"
-        tools:layout_editor_absoluteX="143dp"
-        tools:layout_editor_absoluteY="52dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

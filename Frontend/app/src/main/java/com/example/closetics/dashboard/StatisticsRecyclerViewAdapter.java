@@ -11,13 +11,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.closetics.R;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
 public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<StatisticsRecyclerViewAdapter.MyViewHolder>{
     /*
     Baseline clothes stats adapter
      */
-    String [] objects;
+    ArrayList<JSONObject> objects;
 
-    public StatisticsRecyclerViewAdapter(String[] objects){
+    public StatisticsRecyclerViewAdapter(ArrayList<JSONObject> objects){
         this.objects = objects;
     }
 
@@ -32,13 +37,15 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         int realPosition = holder.getBindingAdapterPosition();
-        holder.object.setText(objects[realPosition]);
+
+        //Set the text view in the recycler view
+        holder.object.setText(objects.get(realPosition).toString());
 
     }
 
     @Override
     public int getItemCount() {
-        return objects.length;
+        return objects.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
