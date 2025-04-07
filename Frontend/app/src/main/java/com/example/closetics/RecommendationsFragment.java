@@ -109,8 +109,17 @@ public class RecommendationsFragment extends Fragment {
         outfitsRecycler.setAdapter(outfitsAdapter);
 
         usersAdapter = new RecUsersListAdapter(new ArrayList<RecUsersListItem>(), item -> {
-            // TODO: open public profile page by username
-            Toast.makeText(getContext(), "Clicked: " + item.getUsername(), Toast.LENGTH_SHORT).show();
+            if (item.getId() == UserManager.getUserID(getActivity().getApplicationContext())) {
+                // open your profile if clicked on your username
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                intent.putExtra("OPEN_FRAGMENT", 3); // open fragment Profile
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(getActivity(), PublicProfileActivity.class);
+                intent.putExtra("USER_ID", item.getId());
+                startActivity(intent);
+            }
+            //Toast.makeText(getContext(), "Clicked: " + item.getUsername(), Toast.LENGTH_SHORT).show();
         });
         RecyclerView.LayoutManager usersLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         usersRecycler.setLayoutManager(usersLayoutManager);

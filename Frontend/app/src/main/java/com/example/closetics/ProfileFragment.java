@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,6 +87,8 @@ public class ProfileFragment extends Fragment {
             deleteUserButton.setVisibility(TextView.GONE);
             followingButton.setVisibility(TextView.GONE);
             followersButton.setVisibility(TextView.GONE);
+
+            stopRecWebSocket();
         });
 
         // Edit user name
@@ -129,5 +132,12 @@ public class ProfileFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void stopRecWebSocket() {
+        Intent serviceIntent = new Intent(getActivity(), com.example.closetics.recommendations.RecWebSocketService.class);
+        serviceIntent.setAction("RecWebSocketDisconnect");
+        getActivity().startService(serviceIntent);
+        Log.d("ProfileFragment", "RecWebSocket stopped");
     }
 }
