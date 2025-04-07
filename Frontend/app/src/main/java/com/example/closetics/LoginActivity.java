@@ -109,6 +109,9 @@ public class LoginActivity extends AppCompatActivity {
                                     //Save username in shared preferences
                                     UserManager.saveUsername(getApplicationContext(), username);
 
+                                    // start websocket for recommendations
+                                    startRecWebSocket();
+
                                 } catch (JSONException e) {
                                     Log.e("JSON Error", e.toString());
 
@@ -244,7 +247,12 @@ public class LoginActivity extends AppCompatActivity {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-
+    private void startRecWebSocket() {
+        Intent serviceIntent = new Intent(this, com.example.closetics.recommendations.RecWebSocketService.class);
+        serviceIntent.setAction("RecWebSocketConnect");
+        startService(serviceIntent);
+        Log.d("LoginActivity", "RecWebSocket started");
+    }
 
 
 }

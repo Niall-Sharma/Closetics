@@ -1,17 +1,19 @@
 package com.example.closetics;
 
+
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.media.session.MediaSession;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.example.closetics.follow.FollowActivity;
 
 public class ProfileFragment extends Fragment {
 
@@ -21,6 +23,7 @@ public class ProfileFragment extends Fragment {
     private Button logoutButton;
     private Button editButton;
     private Button deleteUserButton;
+    private Button followingButton, followersButton;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -39,6 +42,8 @@ public class ProfileFragment extends Fragment {
         editButton = view.findViewById(R.id.profile_edit_user_button);
         deleteUserButton = view.findViewById(R.id.profile_delete_user_button);
         logoutButton = view.findViewById(R.id.profile_logout_button);
+        followingButton = view.findViewById(R.id.profile_following_button);
+        followersButton = view.findViewById(R.id.profile_followers_button);
 
         String username = UserManager.getUsername(getActivity().getApplicationContext());
         if(username == null) {
@@ -48,6 +53,8 @@ public class ProfileFragment extends Fragment {
             logoutButton.setVisibility(TextView.GONE);
             editButton.setVisibility(TextView.GONE);
             deleteUserButton.setVisibility(TextView.GONE);
+            followingButton.setVisibility(TextView.GONE);
+            followersButton.setVisibility(TextView.GONE);
         } else {
             usernameText.setText(username);
             loginButton.setVisibility(TextView.GONE);
@@ -55,6 +62,8 @@ public class ProfileFragment extends Fragment {
             logoutButton.setVisibility(TextView.VISIBLE);
             editButton.setVisibility(TextView.VISIBLE);
             deleteUserButton.setVisibility(TextView.VISIBLE);
+            followingButton.setVisibility(TextView.VISIBLE);
+            followersButton.setVisibility(TextView.VISIBLE);
         }
 
         loginButton.setOnClickListener(v -> {
@@ -76,6 +85,10 @@ public class ProfileFragment extends Fragment {
             logoutButton.setVisibility(TextView.GONE);
             editButton.setVisibility(TextView.GONE);
             deleteUserButton.setVisibility(TextView.GONE);
+            followingButton.setVisibility(TextView.GONE);
+            followersButton.setVisibility(TextView.GONE);
+
+            stopRecWebSocket();
         });
 
         // Edit user name
@@ -102,6 +115,29 @@ public class ProfileFragment extends Fragment {
             startActivity(intent);
         });
 
+        followingButton.setOnClickListener(v -> {
+//            Navigation.findNavController(v).navigate(R.id.action_navigation_profile_to_followFragment);
+            Intent intent = new Intent(getActivity(), FollowActivity.class);
+            intent.putExtra("IS_FOLLOWING", true);
+            intent.putExtra("USER_ID", UserManager.getUserID(getActivity()));
+            startActivity(intent);
+        });
+
+        followersButton.setOnClickListener(v -> {
+//            Navigation.findNavController(v).navigate(R.id.action_navigation_profile_to_followFragment);
+            Intent intent = new Intent(getActivity(), FollowActivity.class);
+            intent.putExtra("IS_FOLLOWING", false);
+            intent.putExtra("USER_ID", UserManager.getUserID(getActivity()));
+            startActivity(intent);
+        });
+
         return view;
+    }
+
+    private void stopRecWebSocket() {
+        Intent serviceIntent = new Intent(getActivity(), com.example.closetics.recommendations.RecWebSocketService.class);
+        serviceIntent.setAction("RecWebSocketDisconnect");
+        getActivity().startService(serviceIntent);
+        Log.d("ProfileFragment", "RecWebSocket stopped");
     }
 }

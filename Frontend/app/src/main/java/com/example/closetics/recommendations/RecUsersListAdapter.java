@@ -12,7 +12,7 @@ import com.example.closetics.R;
 
 import java.util.List;
 
-public class RecUsersListAdapter extends RecyclerView.Adapter<RecUsersListAdapter.ViewHolder>{
+public class RecUsersListAdapter extends RecyclerView.Adapter<RecUsersListAdapter.ViewHolder> {
     private final List<RecUsersListItem> items;
     private final RecUsersListAdapter.OnItemClickListener listener;
 
