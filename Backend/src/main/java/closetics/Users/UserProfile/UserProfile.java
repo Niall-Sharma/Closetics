@@ -2,12 +2,11 @@ package closetics.Users.UserProfile;
 
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import closetics.Outfits.Outfit;
-import closetics.Users.User;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
@@ -31,22 +30,22 @@ public class UserProfile{
           joinColumns = @JoinColumn(name = "UID"),
           inverseJoinColumns = @JoinColumn(name = "outfit_id")
   )
-  private List<Outfit> outfits;
+  private List<Outfit> outfits = new ArrayList<>();;
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
           name = "user_following",
-          joinColumns = @JoinColumn(name = "UID"),
+          joinColumns = @JoinColumn(name = "UID", referencedColumnName = "id"),
           inverseJoinColumns = @JoinColumn(name = "following_id")
   )
-  private List<UserProfile> following_id;
+  private List<UserProfile> following_id = new ArrayList<>();;
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
           name = "user_followers",
-          joinColumns = @JoinColumn(name = "UID"),
+          joinColumns = @JoinColumn(name = "UID", referencedColumnName = "id"),
           inverseJoinColumns = @JoinColumn(name = "follower_id")
   )
-  private List<UserProfile> followers_id;
+  private List<UserProfile> followers_id = new ArrayList<>();;
 
 
   public UserProfile(boolean isPublic, String username){
@@ -72,7 +71,7 @@ public class UserProfile{
     followers_id.add(follower);
   }
   public void removeFollower(UserProfile follower){
-    followers_id.remove(followers_id.indexOf(follower));
+    followers_id.remove(follower);
   }
   public void addFollowing(UserProfile following){
     following_id.add(following);

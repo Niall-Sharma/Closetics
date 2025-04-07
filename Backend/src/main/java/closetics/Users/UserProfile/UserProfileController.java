@@ -46,11 +46,14 @@ public class UserProfileController{
     UserProfile followingUser = userRepository.findById(followingId).get().GetUserProfile();
     if(id != followingId){
       userProfile.addFollowing(followingUser);
+      followingUser.addFollower(userProfile);
       uRepository.save(userProfile);
+      uRepository.save(followingUser);
     }
 
     return new UserProfileDTO(userProfile, 2);
   }
+
   @PutMapping(path = "/removeFollowing/{id}/{followingId}")
   public UserProfileDTO RemoveFollowingFromProfile(@PathVariable("id") long id, @PathVariable("followingId") long followingId){
     UserProfile userProfile = userRepository.findById(id).get().GetUserProfile();
