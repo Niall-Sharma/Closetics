@@ -72,7 +72,7 @@ public class RecSocket {
     // store connecting user information
         sessionUsernameMap.put(session, UID);
 		uidSessionMap.put(UID, session);
-    UserProfile uProfile = UserRepository.findById(UID).get().GetUserProfile();
+    UserProfile uProfile = UserRepository.findById(UID).orElseThrow(() -> new RuntimeException("User Not Found")).GetUserProfile();
     System.out.println(uProfile.toString());
     List<UserProfile> following = uProfile.getFollowing();
     List<Outfit> followingOutfits = new ArrayList<>();
