@@ -6,22 +6,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import closetics.Outfits.Outfit;
-import closetics.Users.User;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
 @Entity(name = "user_profiles_table")
 public class UserProfile{
   
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  long id;
+  private long id;
 
-  boolean isPublic;
-  String username;
-
-  @OneToOne
-  @JoinColumn(name = "user_id")
-  User user;
+  private boolean isPublic;
+  private String username;
 
   @OneToMany(fetch = FetchType.EAGER)
   @JoinTable(
@@ -29,22 +30,22 @@ public class UserProfile{
           joinColumns = @JoinColumn(name = "UID"),
           inverseJoinColumns = @JoinColumn(name = "outfit_id")
   )
-  private List<Outfit> outfits;
+  private List<Outfit> outfits = new ArrayList<>();;
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
           name = "user_following",
-          joinColumns = @JoinColumn(name = "UID"),
+          joinColumns = @JoinColumn(name = "UID", referencedColumnName = "id"),
           inverseJoinColumns = @JoinColumn(name = "following_id")
   )
-  private List<UserProfile> following_id;
+  private List<UserProfile> following_id = new ArrayList<>();;
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
           name = "user_followers",
-          joinColumns = @JoinColumn(name = "UID"),
+          joinColumns = @JoinColumn(name = "UID", referencedColumnName = "id"),
           inverseJoinColumns = @JoinColumn(name = "follower_id")
   )
-  private List<UserProfile> followers_id;
+  private List<UserProfile> followers_id = new ArrayList<>();;
 
 
   public UserProfile(boolean isPublic, String username){
@@ -54,43 +55,44 @@ public class UserProfile{
 
   public UserProfile(){}
 
-  public List<Outfit> GetOutfits(){
+  public List<Outfit> getOutfits(){
     return outfits;
   }
-  
-  public void AddOutfit(Outfit outfit){
+  public void addOutfit(Outfit outfit){
     outfits.add(outfit);
   }
-
-  public List<UserProfile> GetFollowing(){
+  public List<UserProfile> getFollowing(){
     return following_id;
   }
-
-  public List<UserProfile> GetFollowers(){
+  public List<UserProfile> getFollowers(){
     return followers_id;
   }
-  public void AddFollower(UserProfile follower){
+  public void addFollower(UserProfile follower){
     followers_id.add(follower);
   }
-
-  public void RemoveFollower(UserProfile follower){
-    followers_id.remove(followers_id.indexOf(follower));  
+  public void removeFollower(UserProfile follower){
+    followers_id.remove(follower);
   }
-
-  public void AddFollowing(UserProfile following){
+  public void addFollowing(UserProfile following){
     following_id.add(following);
   }
-  public void RemoveFollowing(UserProfile following){
+  public void removeFollowing(UserProfile following){
     following_id.remove(following);
   }
-  public boolean GetIsPublic()
+  public boolean getIsPublic()
   {
     return isPublic;
   }
-  public void SetIsPublic(boolean b){
+  public void setIsPublic(boolean b){
     isPublic = b;
   }
-  public void SetUser(User user){
-    this.user = user;
+  public String getUsername(){
+    return username;
+  }
+  public void setUsername(String username){
+    this.username = username;
+  }
+  public long getId() {
+    return id;
   }
 }
