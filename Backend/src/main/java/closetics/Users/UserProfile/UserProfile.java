@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import closetics.Outfits.Outfit;
+import closetics.Users.User;
 import jakarta.persistence.*;
 
 @Entity(name = "user_profiles_table")
@@ -13,32 +14,40 @@ public class UserProfile{
   
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  long userProfileId;
+  long id;
 
   boolean isPublic;
   String username;
 
-  @Column(name = "UID")
-  long UUID;
-  
-  @ElementCollection
-  @CollectionTable(name = "users_outfits", joinColumns = @JoinColumn(name = "UID"))
-  @JoinColumn(name = "outfit_id")
+  @OneToOne
+  @JoinColumn(name = "user_id")
+  User user;
+
+  @OneToMany(fetch = FetchType.EAGER)
+  @JoinTable(
+          name = "users_outfits",
+          joinColumns = @JoinColumn(name = "UID"),
+          inverseJoinColumns = @JoinColumn(name = "outfit_id")
+  )
   private List<Outfit> outfits;
-
-
-  @ElementCollection
-  @CollectionTable(name = "user_following", joinColumns = @JoinColumn(name = "UID"))
-  @Column(name = "following_id")
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(
+          name = "user_following",
+          joinColumns = @JoinColumn(name = "UID"),
+          inverseJoinColumns = @JoinColumn(name = "following_id")
+  )
   private List<UserProfile> following_id;
 
-  @ElementCollection
-  @CollectionTable(name = "user_followers", joinColumns = @JoinColumn(name = "UID"))
-  @Column(name = "follower_id")
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(
+          name = "user_followers",
+          joinColumns = @JoinColumn(name = "UID"),
+          inverseJoinColumns = @JoinColumn(name = "follower_id")
+  )
   private List<UserProfile> followers_id;
 
-  public UserProfile(boolean isPublic, String username, long UUID){
-    this.UUID = UUID;
+
+  public UserProfile(boolean isPublic, String username){
     this.username = username;
     this.isPublic = isPublic;
   }
@@ -80,5 +89,8 @@ public class UserProfile{
   }
   public void SetIsPublic(boolean b){
     isPublic = b;
+  }
+  public void SetUser(User user){
+    this.user = user;
   }
 }
