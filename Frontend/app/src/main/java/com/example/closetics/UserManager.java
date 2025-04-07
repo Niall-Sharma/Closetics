@@ -381,4 +381,18 @@ public class UserManager {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
+
+    public static void getUserProfileRequest(Context context, long id,
+                                               Response.Listener<JSONObject> responseListener,
+                                               Response.ErrorListener errorListener) {
+
+        //The post request
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.GET,
+                URL_GET_USERPROFILE + id,
+                null, responseListener, errorListener);
+        //Add request to the volley singleton request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
 }

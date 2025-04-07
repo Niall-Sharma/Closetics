@@ -1,5 +1,6 @@
 package com.example.closetics.follow;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -16,6 +17,8 @@ import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.example.closetics.MainActivity;
+import com.example.closetics.PublicProfileActivity;
 import com.example.closetics.R;
 import com.example.closetics.UserManager;
 import com.example.closetics.recommendations.RecUsersListAdapter;
@@ -62,8 +65,17 @@ public class FollowingTabFragment extends Fragment {
 
         // initialize recycler
         adapter = new FollowUsersListAdapter(new ArrayList<FollowUsersListItem>(), item -> {
-            // TODO: open public profile page by username
-            Toast.makeText(getContext(), "Clicked: " + item.getUsername(), Toast.LENGTH_SHORT).show();
+            if (item.getId() == UserManager.getUserID(getActivity().getApplicationContext())) {
+                // open your profile if clicked on your username
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                intent.putExtra("OPEN_FRAGMENT", 3); // open fragment Profile
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(getActivity(), PublicProfileActivity.class);
+                intent.putExtra("USER_ID", item.getId());
+                startActivity(intent);
+            }
+            //Toast.makeText(getContext(), "Clicked: " + item.getUsername(), Toast.LENGTH_SHORT).show();
         });
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recycler.setLayoutManager(layoutManager);

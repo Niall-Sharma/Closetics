@@ -17,6 +17,7 @@ import com.example.closetics.R;
 import com.example.closetics.UserManager;
 
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -40,21 +41,24 @@ public class FollowUsersListAdapter extends RecyclerView.Adapter<FollowUsersList
     public void onBindViewHolder(@NonNull FollowUsersListAdapter.ViewHolder holder, int position) {
         FollowUsersListItem item = items.get(position);
 
-        String username = item.getUsername();
+        holder.usernameText.setText(item.getUsername());
 
-        holder.usernameText.setText(username);
-        holder.followButton.setText(item.isFollowing() ? "Following" : "Follow");
+        if (item.getId() == UserManager.getUserID(item.getContext())) {
+            holder.followButton.setVisibility(TextView.GONE);
+        } else {
+            holder.followButton.setText(item.isFollowing() ? "Following" : "Follow");
 
-        holder.followButton.setOnClickListener(v -> {
-            if (item.isFollowing()) {
-                unfollow(item.getContext(), item.getId());
-                holder.followButton.setText("Follow");
-            } else {
-                follow(item.getContext(), item.getId());
-                holder.followButton.setText("Following");
-            }
-            item.setFollowing(!item.isFollowing());
-        });
+            holder.followButton.setOnClickListener(v -> {
+                if (item.isFollowing()) {
+                    unfollow(item.getContext(), item.getId());
+                    holder.followButton.setText("Follow");
+                } else {
+                    follow(item.getContext(), item.getId());
+                    holder.followButton.setText("Following");
+                }
+                item.setFollowing(!item.isFollowing());
+            });
+        }
 
         holder.bind(item, listener);
     }

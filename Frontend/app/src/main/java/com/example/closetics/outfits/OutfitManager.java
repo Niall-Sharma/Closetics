@@ -11,6 +11,7 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.example.closetics.MainActivity;
 import com.example.closetics.VolleySingleton;
 
 import org.json.JSONArray;
@@ -18,8 +19,10 @@ import org.json.JSONObject;
 
 public class OutfitManager {
 
-private static final String CURRENT_OUTFIT_PARAM = "currentOutfitId";
-private static final String TOMORROW_OUTFIT_PARAM = "tomorrowOutfitId";
+    private static final String URL_GET_ALL_USER_OUTFITS = MainActivity.SERVER_URL + "/getAllUserOutfits/"; // + {{userId}}
+
+    private static final String CURRENT_OUTFIT_PARAM = "currentOutfitId";
+    private static final String TOMORROW_OUTFIT_PARAM = "tomorrowOutfitId";
 
 
     public static void saveCurrentDailyOutfit(Context context, String outfitId) {
@@ -63,6 +66,20 @@ private static final String TOMORROW_OUTFIT_PARAM = "tomorrowOutfitId";
         JsonArrayRequest jsonArrReq = new JsonArrayRequest(
                 Request.Method.GET,
                 URL + userId,
+                null, // Pass null as the request body since it's a GET request
+                responseListener, errorListener);
+
+        // Adding request to request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(jsonArrReq);
+    }
+
+    public static void getAllOutfitsRequest(Context context, long userId,
+                                            Response.Listener<JSONArray> responseListener,
+                                            Response.ErrorListener errorListener) {
+
+        JsonArrayRequest jsonArrReq = new JsonArrayRequest(
+                Request.Method.GET,
+                URL_GET_ALL_USER_OUTFITS + userId,
                 null, // Pass null as the request body since it's a GET request
                 responseListener, errorListener);
 
