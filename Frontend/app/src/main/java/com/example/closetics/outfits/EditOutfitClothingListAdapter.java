@@ -24,7 +24,6 @@ import org.json.JSONObject;
 import java.util.List;
 
 public class EditOutfitClothingListAdapter extends ArrayAdapter<EditOutfitClothingListItem> {
-    private final String URL_REMOVE_ITEM = MainActivity.SERVER_URL + "/removeItemFromOutfit/"; // + {{outfitId}} + / + {{clothingId}}
 
     public EditOutfitClothingListAdapter(Context context, List<EditOutfitClothingListItem> items) {
         super(context, 0, items);
@@ -49,7 +48,7 @@ public class EditOutfitClothingListAdapter extends ArrayAdapter<EditOutfitClothi
 
         deleteButton.setOnClickListener(v -> {
             // delete this item
-            OutfitManager.removeClothingRequest(item.getContext(), item.getOutfitId(), item.getId(), URL_REMOVE_ITEM,
+            OutfitManager.removeClothingRequest(item.getContext(), item.getOutfitId(), item.getId(),
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {

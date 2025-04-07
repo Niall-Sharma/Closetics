@@ -145,7 +145,7 @@ public class StatisticsActivity extends AppCompatActivity {
     Note: Come back to these!
      */
     private void setTotalOutfitsCount(){
-        OutfitManager.getAllOutfitsRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL + "/getAllUserOutfits/", new Response.Listener<JSONArray>() {
+        OutfitManager.getAllOutfitsRequest(this, UserManager.getUserID(this), new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 int greatestPrice = 0;

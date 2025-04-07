@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.example.closetics.MainActivity;
 import com.example.closetics.R;
 import com.example.closetics.UserManager;
 
@@ -22,11 +21,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class EditOutfitActivity extends AppCompatActivity {
-    private final String URL_GET_OUTFIT = MainActivity.SERVER_URL + "/getOutfit/"; // + {{outfitId}}
-    private final String URL_GET_ALL_OUTFIT_ITEMS = MainActivity.SERVER_URL + "/getAllOutfitItems/"; // + {{outfitId}}
-    private final String URL_DELETE_OUTFIT = MainActivity.SERVER_URL + "/deleteOutfit/"; // + {{outfitId}}
-    private final String URL_UPDATE_OUTFIT = MainActivity.SERVER_URL + "/updateOutfit";
-    private final String URL_CREATE_OUTFIT = MainActivity.SERVER_URL + "/createOutfit";
 
     private EditText outfitNameEdit;
     private Button addClothingButton;
@@ -35,9 +29,10 @@ public class EditOutfitActivity extends AppCompatActivity {
     private ListView clothesList;
     private EditOutfitClothingListAdapter adapter;
 
-    private JSONObject jsonObject;
+    private JSONObject outfitJsonObject;
     private long outfitId;
     private String outfitName;
+    private boolean isFavorite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,9 +54,8 @@ public class EditOutfitActivity extends AppCompatActivity {
         if (extras != null) {
             outfitId = extras.getLong("OUTFIT_ID", -1);
         }
-//        outfitNewName = extras.getString("OUTFIT_NAME", null);
         outfitName = null;
-        jsonObject = null;
+        outfitJsonObject = null;
 
         addClothingButton.setOnClickListener(v -> {
             updateStoredJsonAndSaveChanges();
@@ -86,25 +80,24 @@ public class EditOutfitActivity extends AppCompatActivity {
             createOutfit("New Outfit");
         } else {
             populateOutfitInfo();
+            populateClothesList();
         }
     }
 
     private void populateOutfitInfo() {
-        OutfitManager.getOutfitRequest(getApplicationContext(), outfitId, URL_GET_OUTFIT,
+        OutfitManager.getOutfitRequest(getApplicationContext(), outfitId,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d("Volley Response", response.toString());
 
-                        jsonObject = response;
+                        outfitJsonObject = response;
 
                         // parse the JSON array and add data to the adapter
                         try {
                             outfitName = response.has("outfitName") ? response.getString("outfitName") : "";
                             // set edit to the most recent name
                             outfitNameEdit.setText(outfitName);
-
-                            populateClothesList();
                         } catch (JSONException e) {
                             Log.e("JSON Error", e.toString());
                         }
@@ -113,13 +106,13 @@ public class EditOutfitActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("Volley Error", error.toString());
+                        Log.e("Volley Error", "Error getting outfit: " + error.toString());
                     }
                 });
     }
 
     private void populateClothesList() {
-        OutfitManager.getAllOutfitItemsRequest(getApplicationContext(), outfitId, URL_GET_ALL_OUTFIT_ITEMS,
+        OutfitManager.getAllOutfitItemsRequest(getApplicationContext(), outfitId,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -140,7 +133,7 @@ public class EditOutfitActivity extends AppCompatActivity {
                                         clothingId, outfitId, name, color, typeId, specialTypeId);
                                 adapter.add(item);
                             } catch (JSONException e) {
-                                Log.e("JSON Error", e.toString());
+                                Log.e("JSON Error", "Error parsing clothing: " + e.toString());
                             }
                         }
                     }
@@ -148,19 +141,19 @@ public class EditOutfitActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("Volley Error", error.toString());
+                        Log.e("Volley Error", "Error getting clothes: " + error.toString());
                     }
                 });
     }
 
     private void updateStoredJsonAndSaveChanges() {
-        OutfitManager.getOutfitRequest(getApplicationContext(), outfitId, URL_GET_OUTFIT,
+        OutfitManager.getOutfitRequest(getApplicationContext(), outfitId,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d("Volley Response", response.toString());
+                        Log.d("Volley Response", "Successfully got outfit " + outfitId + " to save: " + response.toString());
 
-                        jsonObject = response;
+                        outfitJsonObject = response;
 
                         saveChanges();
                     }
@@ -168,19 +161,19 @@ public class EditOutfitActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("Volley Error", error.toString());
+                        Log.e("Volley Error", "Error getting outfit " + outfitId + " to save: " + error.toString());
                     }
                 });
     }
 
     private void createOutfit(String name) {
-        OutfitManager.createOutfitRequest(getApplicationContext(), UserManager.getUserID(getApplicationContext()), name, URL_CREATE_OUTFIT,
+        OutfitManager.createOutfitRequest(getApplicationContext(), UserManager.getUserID(getApplicationContext()), name,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d("Volley Response", response.toString());
+                        Log.d("Volley Response", "Successfully created outfit: " + response.toString());
 
-                        jsonObject = response;
+                        outfitJsonObject = response;
                         outfitName = name;
                         outfitNameEdit.setText(outfitName);
 
@@ -188,49 +181,55 @@ public class EditOutfitActivity extends AppCompatActivity {
                         try {
                             outfitId = response.getLong("outfitId");
                         } catch (JSONException e) {
-                            Log.e("JSON Error", e.toString());
+                            Log.e("JSON Error", "Error parsing new outfit: " + e.toString());
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("Volley Error", error.toString());
+                        Log.e("Volley Error", "Error creating outfit: " + error.toString());
                     }
                 });
     }
 
     private void saveChanges() {
+        // can't save if there is no outfit
+        if (outfitId == -1 || outfitName == null) {
+            Log.e("EditOutfitActivity", "Error when saving outfit: outfitId == -1 or outfitName == null");
+            return;
+        }
+
         try {
             // update name
-            jsonObject.put("outfitName", outfitNameEdit.getText().toString());
+            outfitJsonObject.put("outfitName", outfitNameEdit.getText().toString());
         } catch (JSONException e) {
             Log.e("JSON Error", outfitNameEdit.getText().toString() + " : " + e.toString());
         }
 
-        OutfitManager.updateOutfitRequest(getApplicationContext(), jsonObject, URL_UPDATE_OUTFIT,
+        OutfitManager.updateOutfitRequest(getApplicationContext(), outfitJsonObject,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d("Volley Response", response.toString());
+                        Log.d("Volley Response", "Successfully saved outfit: " + response.toString());
 
-                        jsonObject = response;
+                        outfitJsonObject = response;
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("Volley Error", error.toString());
+                        Log.e("Volley Error", "Error saving outfit: " + error.toString());
                     }
                 });
     }
 
     private void deleteOutfit() {
-        OutfitManager.deleteOutfitRequest(getApplicationContext(), outfitId, URL_DELETE_OUTFIT,
+        OutfitManager.deleteOutfitRequest(getApplicationContext(), outfitId,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("Volley Response", response.toString());
+                        Log.d("Volley Response", "Successfully deleted outfit: " + response.toString());
 
                         // switch activities only if deleted successfully
                         Intent intent = new Intent(EditOutfitActivity.this, OutfitsActivity.class);
@@ -240,7 +239,7 @@ public class EditOutfitActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("Volley Error", error.toString());
+                        Log.e("Volley Error", "Error deleting outfit: " + error.toString());
                     }
                 });
     }
