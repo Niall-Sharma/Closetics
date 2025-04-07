@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -45,6 +46,9 @@ public class StatisticsActivity extends AppCompatActivity {
     private TextView mostWornClothingItem;
     private TextView mostExpensiveOutfit;
     private TextView mostExpensiveClothing;
+
+    private CardView card1;
+    private CardView card2;
 
     private ArrayList<JSONObject> allOutfitStatsObjects;
     private ArrayList<JSONObject> allClothingStatsObjects;
@@ -79,6 +83,9 @@ public class StatisticsActivity extends AppCompatActivity {
         mostWornClothingItem = findViewById(R.id.wornClothing);
         mostExpensiveOutfit = findViewById(R.id.expensiveOutfit);
         mostExpensiveClothing = findViewById(R.id.expensiveClothing);
+
+        card1 = findViewById(R.id.cardView);
+        card2 = findViewById(R.id.cardView2);
         /*
         Set the views
          */
@@ -100,7 +107,9 @@ public class StatisticsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 whichButton.setText("Clothes Stats");
                 Fragment fragment = new ClothesStatsFragment(allClothingStatsObjects);
+                setCardsInvisible();
                 showFragment(CLOTHES_STATS_TAG, fragment);
+
 
 
 
@@ -111,6 +120,7 @@ public class StatisticsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 whichButton.setText("Outfit Stats");
                 Fragment fragment = new OutfitStatsFragment(allOutfitStatsObjects);
+                setCardsInvisible();
                 showFragment(OUTFITS_STATS_TAG, fragment);
             }
         });
@@ -247,6 +257,14 @@ public class StatisticsActivity extends AppCompatActivity {
     }
     private void setAllOutfitStatsObjects(ArrayList<JSONObject> objects){
         allOutfitStatsObjects = objects;
+    }
+    private void setCardsInvisible(){
+        card1.setVisibility(View.GONE);
+        card2.setVisibility(View.GONE);
+    }
+    private void setCardsVisible(){
+        card1.setVisibility(View.VISIBLE);
+        card2.setVisibility(View.VISIBLE);
     }
 
 
