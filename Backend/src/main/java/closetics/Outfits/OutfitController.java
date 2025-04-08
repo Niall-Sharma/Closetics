@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -94,19 +93,14 @@ public class OutfitController {
         outfitStatRepository.deleteById(outfitId);
     }
 
-    @PutMapping(path = "/addItemToOutfit/{outfitId}")
-    public void addItemToOutfit(@PathVariable long outfitId) {
-
-    }
-
     @PutMapping("/addItemToOutfit/{outfitId}/{clothingId}")
     public ResponseEntity<Outfit> addItemToOutfit(@PathVariable long outfitId, @PathVariable long clothingId) {
         Optional<Outfit> outfitOptional = outfitRepository.findById(outfitId);
 
         if (outfitOptional.isPresent()) {
             Outfit outfit = outfitOptional.get();
-            if (!outfit.getOutfitItems().contains(clothingId)) { // Prevent duplicate entries
-                Clothing clothing = clothingRepository.findById(clothingId).get();
+            Clothing clothing = clothingRepository.findById(clothingId).get();
+            if (!outfit.getOutfitItems().contains(clothing)) { // Prevent duplicate entries
                 outfit.getOutfitItems().add(clothing);
                 outfitRepository.save(outfit);
             }
