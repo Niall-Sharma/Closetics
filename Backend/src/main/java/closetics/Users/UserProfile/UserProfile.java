@@ -30,6 +30,7 @@ public class UserProfile{
           inverseJoinColumns = @JoinColumn(name = "outfit_id")
   )
   private List<Outfit> outfits;
+
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
           name = "user_following",

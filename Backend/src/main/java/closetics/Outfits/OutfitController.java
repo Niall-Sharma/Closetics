@@ -38,8 +38,8 @@ public class OutfitController {
     UserProfileRepository uProfileRepository;
 
     @GetMapping(path = "/getOutfit/{outfitId}")
-    public Optional<Outfit> getOutfit(@PathVariable long outfitId) {
-        return outfitRepository.findById(outfitId);
+    public Outfit getOutfit(@PathVariable long outfitId) {
+        return outfitRepository.findById(outfitId).get();
     }
 
     @GetMapping(path = "/getAllUserOutfits/{userId}")
@@ -61,12 +61,12 @@ public class OutfitController {
         }
 
         Outfit savedOutfit =  outfitRepository.save(outfit);
-        UserProfile uProfile = outfit.getUser().GetUserProfile();
-        uProfile.AddOutfit(savedOutfit);
-        uProfileRepository.save(uProfile);
+        UserProfile uProfile = savedOutfit.getUser().GetUserProfile();
         OutfitStats outfitStats = outfitStatRepository.save(new OutfitStats(savedOutfit.getOutfitId()));
         Outfit statOutfit = savedOutfit.setOutfitStats(outfitStats);
         Outfit outfitWithStats =  outfitRepository.save(statOutfit);
+        uProfile.AddOutfit(outfitWithStats);
+        uProfileRepository.save(uProfile);
         return ResponseEntity.ok(outfitWithStats);
     }
 
@@ -122,8 +122,8 @@ public class OutfitController {
 
         if (outfitOptional.isPresent()) {
             Outfit outfit = outfitOptional.get();
-            if (outfit.getOutfitItems().contains(clothingId)) { // Check if it exists before removing
-                Clothing clothing = clothingRepository.findById(clothingId).get();
+            Clothing clothing = clothingRepository.findById(clothingId).get();
+            if (outfit.getOutfitItems().contains(clothing)) { // Check if it exists before removing
                 outfit.getOutfitItems().remove(clothing);
                 outfitRepository.save(outfit);
             }
@@ -134,14 +134,14 @@ public class OutfitController {
     }
 
     @GetMapping(path = "/getAllOutfitItems/{outfitId}")
-    public ResponseEntity<List<Optional<Clothing>>> getAllOutfitItems(@PathVariable long outfitId) {
-        Optional<Outfit> outfitOptional = outfitRepository.findById(outfitId);
-        List<Optional<Clothing>> clothes = new ArrayList<>();
-        if (outfitOptional.isPresent()) {
-            Outfit outfit = outfitOptional.get();
-            List<Clothing> items = outfit.getOutfitItems();
+    public List<Clothing> getAllOutfitItems(@PathVariable long outfitId) {
+        Outfit outfit = outfitRepository.findById(outfitId)
+                .orElseThrow(() -> new RuntimeException("Outfit Item not found"));
+        List<Clothing> clothes = new ArrayList<>();
+        if (outfit != null) {
+           clothes = outfit.getOutfitItems();
         }
-        return ResponseEntity.ok(clothes);
+        return clothes;
     }
 
     @PutMapping("/swapFavoriteOnOutfit/{outfitId}")

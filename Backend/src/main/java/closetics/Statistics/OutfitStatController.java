@@ -1,5 +1,8 @@
 package closetics.Statistics;
 
+import closetics.Clothes.Clothing;
+import closetics.Outfits.Outfit;
+import closetics.Outfits.OutfitRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +21,12 @@ public class OutfitStatController {
     @Autowired
     OutfitStatRepository outfitStatRepository;
 
+    @Autowired
+    OutfitRepository outfitRepository;
+
+    @Autowired
+    ClothingStatRepository clothingStatRepository;
+
     @GetMapping(path = "/getOutfitStats/{id}")
     public Optional<OutfitStats> getClothingStats(@PathVariable long id) {
         return outfitStatRepository.findById(id);
@@ -33,6 +42,18 @@ public class OutfitStatController {
             outfitStats.addWornRecord(record);
             calculateAvgTemps(outfitStats);
             outfitStatRepository.save(outfitStats);
+
+            // Add worn record to clothing items in outfit as well
+            Outfit outfit = outfitRepository.findById(id).orElseThrow(() -> new RuntimeException("Outfit not found"));
+            List<Clothing> clothes = outfit.getOutfitItems();
+            for (Clothing clothingItem : clothes) {
+                ClothingStats clothingItemStats = clothingStatRepository.findById(clothingItem.getClothesId())
+                        .orElseThrow(() -> new RuntimeException("Clothing item not found"));
+                clothingItemStats.incrementTimesWorn();
+                clothingItemStats.addWornRecord(record);
+                calculateAvgTemps(clothingItemStats);
+                clothingStatRepository.save(clothingItemStats);
+            }
             return ResponseEntity.ok(outfitStats);
         } catch(RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -58,5 +79,26 @@ public class OutfitStatController {
         // Set updated values
         outfitStats.setAvgHighTemp((float) avgHighTemp);
         outfitStats.setAvgLowTemp((float) avgLowTemp);
+    }
+
+    private void calculateAvgTemps(ClothingStats clothingStats) {
+        List<WornRecord> validRecords = clothingStats.getDatesWorn().stream()
+                .filter(record -> record.getHighTemp() != -1000 && record.getLowTemp() != -1000)
+                .collect(Collectors.toList());
+
+        // Prevent division by zero
+        if (validRecords.isEmpty()) {
+            clothingStats.setAvgHighTemp(-1000f);
+            clothingStats.setAvgLowTemp(-1000f);
+            return;
+        }
+
+        // Calculate new averages
+        double avgHighTemp = validRecords.stream().mapToDouble(WornRecord::getHighTemp).average().orElse(0);
+        double avgLowTemp = validRecords.stream().mapToDouble(WornRecord::getLowTemp).average().orElse(0);
+
+        // Set updated values
+        clothingStats.setAvgHighTemp((float) avgHighTemp);
+        clothingStats.setAvgLowTemp((float) avgLowTemp);
     }
 }
