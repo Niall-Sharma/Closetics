@@ -276,6 +276,9 @@ public class SignupActivity extends AppCompatActivity {
 
                             long id = response.getLong("userId");
                             UserManager.saveUserID(getApplicationContext(), id);
+
+                            // start websocket for recommendations
+                            startRecWebSocket();
                         }
                         catch (JSONException e) {
                             Log.e("JSON Error", "Get user by username Error: " + e.toString());
@@ -299,6 +302,13 @@ public class SignupActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private void startRecWebSocket() {
+        Intent serviceIntent = new Intent(this, com.example.closetics.recommendations.RecWebSocketService.class);
+        serviceIntent.setAction("RecWebSocketConnect");
+        startService(serviceIntent);
+        Log.d("SignupActivity", "RecWebSocket started");
     }
 
 //    private void login(String username, String password) {

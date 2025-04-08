@@ -65,6 +65,22 @@ public class MainActivity extends AppCompatActivity {
             startRecWebSocket();
         }
 
+        // commented bc doesn't work properly
+//        Bundle extras = getIntent().getExtras();
+//        if (extras != null) {
+//            switch (extras.getInt("OPEN_FRAGMENT", 0)) {
+//                case 1:
+//                    navController.navigate(R.id.action_navigation_dashboard_to_navigation_recommendations);
+//                    break;
+//                case 2:
+//                    navController.navigate(R.id.action_navigation_dashboard_to_navigation_clothes);
+//                    break;
+//                case 3:
+//                    navController.navigate(R.id.action_navigation_dashboard_to_navigation_profile);
+//                    break;
+//            }
+//        }
+
 //        replaceFragment(new HomeFragment());
 
 //        binding.bottomNavigationView.setOnItemSelectedListener(item -> {

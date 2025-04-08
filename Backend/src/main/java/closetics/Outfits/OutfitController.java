@@ -61,11 +61,11 @@ public class OutfitController {
         }
 
         Outfit savedOutfit =  outfitRepository.save(outfit);
-        UserProfile uProfile = savedOutfit.getUser().GetUserProfile();
+        UserProfile uProfile = outfit.getUser().GetUserProfile();
         OutfitStats outfitStats = outfitStatRepository.save(new OutfitStats(savedOutfit.getOutfitId()));
         Outfit statOutfit = savedOutfit.setOutfitStats(outfitStats);
         Outfit outfitWithStats =  outfitRepository.save(statOutfit);
-        uProfile.AddOutfit(outfitWithStats);
+        uProfile.addOutfit(outfitWithStats);
         uProfileRepository.save(uProfile);
         return ResponseEntity.ok(outfitWithStats);
     }

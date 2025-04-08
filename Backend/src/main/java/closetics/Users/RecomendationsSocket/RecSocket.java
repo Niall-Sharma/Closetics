@@ -10,7 +10,6 @@ import java.util.Map;
 import closetics.Users.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import jakarta.websocket.EncodeException;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnError;
 import jakarta.websocket.OnMessage;
@@ -75,10 +74,10 @@ public class RecSocket {
 		uidSessionMap.put(UID, session);
     UserProfile uProfile = UserRepository.findById(UID).get().GetUserProfile();
     System.out.println(uProfile.toString());
-    List<UserProfile> following = uProfile.GetFollowing();
+    List<UserProfile> following = uProfile.getFollowing();
     List<Outfit> followingOutfits = new ArrayList<>();
     for(int i = 0; i < following.size();i++){
-      followingOutfits.addAll(following.get(i).GetOutfits());
+      followingOutfits.addAll(following.get(i).getOutfits());
     }
     followingOutfitMap.put(UID, followingOutfits);
 
@@ -113,30 +112,54 @@ public class RecSocket {
 
   //Maybe take stats into consideration when deciding on what recomendations to pick
 	private void sendRec(long UID) {
-    int recSize = 1;
-    System.out.println("OUTFITS: "+followingOutfitMap);
-        List<Outfit> RecList = new ArrayList<Outfit>();
-		try {
-      for(int i = 0; i < recSize; i++){
-          int randomChoice = (int)((Math.random()*10)+1);
-          if(randomChoice > 5){
-            int randomOutfitInteger = (int)((Math.random()*followingOutfitMap.get(UID).size()));
-            RecList.add(followingOutfitMap.get(UID).remove(randomOutfitInteger));
-          }else{
+        int recSize = 5;
+        List<Outfit> recList = new ArrayList<>();
+        Session userSession = uidSessionMap.get(UID);
+        try {
+            for (int i = 0; i < recSize; i++) {
+                int randomChoice = (int) ((Math.random() * 10) + 1);
 
-            Long randomOutfit = Math.round(Math.random()*OutfitRepository.count());
-            RecList.add(OutfitRepository.findById(randomOutfit).get());
-          }
-      }
-        List<Outfit> recList = recommendationService.getRecommendations(UID, followingOutfitMap.get(UID));
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        String json = objectMapper.writeValueAsString(RecList);
-        uidSessionMap.get(UID).getBasicRemote().sendText(json);
-		} 
-    catch (IOException e) {
-			e.printStackTrace();
-		}
+                List<Outfit> followingOutfits = followingOutfitMap.get(UID);
+
+                if (randomChoice > 5 && followingOutfits != null && !followingOutfits.isEmpty()) {
+                    int randomIndex = (int) (Math.random() * followingOutfits.size());
+                    recList.add(followingOutfits.remove(randomIndex));
+                } else {
+                    long outfitCount = OutfitRepository.count();
+
+                    if (outfitCount > 0) {
+                        boolean found = false;
+                        Outfit randomOutfit = null;
+                        int maxRetries = 5;
+                        int attempt = 0;
+
+                        while (!found && attempt < maxRetries) {
+                            long randomId = (long) (Math.random() * outfitCount) + 1;
+                            var optionalOutfit = OutfitRepository.findById(randomId);
+                            if (optionalOutfit.isPresent()) {
+                                randomOutfit = optionalOutfit.get();
+                                found = true;
+                            }
+                            attempt++;
+                        }
+                        if (randomOutfit != null) {
+                            recList.add(randomOutfit);
+                        }else{
+                            userSession.getBasicRemote().sendText("Out of retries");
+                        }
+                    }
+                }
+            }
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+
+            String json = objectMapper.writeValueAsString(recList);
+            userSession.getBasicRemote().sendText(json);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 

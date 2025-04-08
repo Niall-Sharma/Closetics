@@ -26,8 +26,6 @@ public class TypeGridRecyclerViewAdapter extends RecyclerView.Adapter<TypeGridRe
         //this.imageResource = imageResource;
         this.counts = counts;
         this.clickListener = clickListener;
-
-
     }
 
     @NonNull
@@ -56,7 +54,7 @@ public class TypeGridRecyclerViewAdapter extends RecyclerView.Adapter<TypeGridRe
         holder.countText.setText(count);
 
         //Only if not zero
-        if (count != "0") {
+        if (!count.equals("0")) {
             //This sets the clicklistener on the entire item in the list
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

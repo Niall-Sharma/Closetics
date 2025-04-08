@@ -40,8 +40,6 @@ import java.util.List;
 
 public class RecommendationsFragment extends Fragment {
 
-    private final String URL_SEARCH_USERS_BY_USERNAME = MainActivity.SERVER_URL + "/searchUsersByUsername/"; // + {{username}}
-
     private final String[] INT_TO_MONTH = {
             "January", "February", "March", "April",
             "May", "June", "July", "August",
@@ -111,8 +109,17 @@ public class RecommendationsFragment extends Fragment {
         outfitsRecycler.setAdapter(outfitsAdapter);
 
         usersAdapter = new RecUsersListAdapter(new ArrayList<RecUsersListItem>(), item -> {
-            // TODO: open public profile page by username
-            Toast.makeText(getContext(), "Clicked: " + item.getUsername(), Toast.LENGTH_SHORT).show();
+            if (item.getId() == UserManager.getUserID(getActivity().getApplicationContext())) {
+                // open your profile if clicked on your username
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                intent.putExtra("OPEN_FRAGMENT", 3); // open fragment Profile
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(getActivity(), PublicProfileActivity.class);
+                intent.putExtra("USER_ID", item.getId());
+                startActivity(intent);
+            }
+            //Toast.makeText(getContext(), "Clicked: " + item.getUsername(), Toast.LENGTH_SHORT).show();
         });
         RecyclerView.LayoutManager usersLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         usersRecycler.setLayoutManager(usersLayoutManager);
@@ -239,9 +246,10 @@ public class RecommendationsFragment extends Fragment {
                 String name = outfit.getString("outfitName");
                 String username = outfit.getJSONObject("user").getString("username");
                 String stats = "No stats for now"; // TODO: add stats stats
-                int year = outfit.getJSONArray("creationDate").getInt(0);
-                int month = outfit.getJSONArray("creationDate").getInt(1);
-                int day = outfit.getJSONArray("creationDate").getInt(2);
+//                int year = outfit.getJSONArray("creationDate").getInt(0);
+//                int month = outfit.getJSONArray("creationDate").getInt(1);
+//                int day = outfit.getJSONArray("creationDate").getInt(2);
+                int year = 2025, month = 4, day = 6;
                 String date = INT_TO_MONTH[month - 1] + " " + day + ", " + year;
                 boolean isLiked = false; // TODO: add likes support
                 // TODO: add actual images
@@ -249,7 +257,7 @@ public class RecommendationsFragment extends Fragment {
 
                 outfitsAdapter.addItem(new RecOutfitsListItem(id, name, username, imageIds, stats, date, isLiked));
             } catch (JSONException e) {
-                Log.e("RecommendationsFragment Error", "JSON Exception. Could not add outfit " + i);
+                Log.e("RecommendationsFragment Error", "JSON Exception. Could not add outfit " + i + ": " + e.toString());
             }
         }
 
@@ -269,7 +277,7 @@ public class RecommendationsFragment extends Fragment {
     }
 
     private void searchUsers(String username) {
-        UserManager.searchUsersByUsernameRequest(getActivity().getApplicationContext(), username, URL_SEARCH_USERS_BY_USERNAME,
+        UserManager.searchUsersByUsernameRequest(getActivity().getApplicationContext(), username,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {

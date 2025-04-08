@@ -253,7 +253,7 @@ public class ClothesActivity extends AppCompatActivity {
     }
 
     private void saveClothing(Context context, ArrayList<MutableLiveData<String>> fragments, String URL, Long userId){
-        ClothesManager.saveClothingRequest(context, fragments, userId,URL, new Response.Listener<JSONObject>() {
+        ClothesManager.saveClothingRequest(context, fragments, userId,URL , new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
 

@@ -20,6 +20,13 @@ import java.util.Arrays;
 
 public class UserManager {
 
+    private static final String URL_GET_SEARCH_USERS_BY_USERNAME = MainActivity.SERVER_URL + "/searchUsersByUsername/"; // + {{username}}
+    private static final String URL_PUT_ADD_FOLLOWING = MainActivity.SERVER_URL + "/addFollowing/"; // + {{id}}/{{followingId}}
+    private static final String URL_PUT_REMOVE_FOLLOWING = MainActivity.SERVER_URL + "/removeFollowing/"; // + {{id}}/{{followingId}}
+    private static final String URL_GET_FOLLOWING = MainActivity.SERVER_URL + "/userprofile/following/"; // + {{id}}
+    private static final String URL_GET_FOLLOWERS = MainActivity.SERVER_URL + "/userprofile/followers/"; // + {{id}}
+    private static final String URL_GET_USERPROFILE = MainActivity.SERVER_URL + "/userprofile/"; // + {{id}}
+
     public static final String SHARED_PREFERENCES_FILE_NAME = "CloseticsPreferences";
     private static final String TOKEN_PARAM = "logInToken";
     private static final String USERNAME_PARAM = "username";
@@ -304,16 +311,101 @@ public class UserManager {
     }
 
 
-    public static void searchUsersByUsernameRequest(Context context, String username, String URL,
+    public static void searchUsersByUsernameRequest(Context context, String username,
                                                 Response.Listener<JSONArray> responseListener,
                                                 Response.ErrorListener errorListener) {
 
         JsonArrayRequest request = new JsonArrayRequest(
                 Request.Method.GET,
-                URL + username, // add username to the URL
+                URL_GET_SEARCH_USERS_BY_USERNAME + username, // add username to the URL
                 null,
                 responseListener,
                 errorListener);
+        //Add request to the volley singleton request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+    public static void getUserByIdRequest(Context context, String userId, String URL,
+                                          Response.Listener<JSONObject> responseListener,
+                                          Response.ErrorListener errorListener){
+
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.GET,
+                URL + userId, // add username to the URL
+                null,
+                responseListener,
+                errorListener);
+        //Add request to the volley singleton request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+
+    }
+
+
+    public static void addFollowingRequest(Context context, long userId, long followingUserId,
+                                             Response.Listener<JSONObject> responseListener,
+                                             Response.ErrorListener errorListener) {
+
+        //The post request
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.PUT,
+                URL_PUT_ADD_FOLLOWING + userId + "/" + followingUserId,
+                null, responseListener, errorListener);
+        //Add request to the volley singleton request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+
+    public static void removeFollowingRequest(Context context, long userId, long followingUserId,
+                                           Response.Listener<JSONObject> responseListener,
+                                           Response.ErrorListener errorListener) {
+
+        //The post request
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.PUT,
+                URL_PUT_REMOVE_FOLLOWING + userId + "/" + followingUserId,
+                null, responseListener, errorListener);
+        //Add request to the volley singleton request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+
+    public static void getFollowingListRequest(Context context, long id,
+                                              Response.Listener<JSONArray> responseListener,
+                                              Response.ErrorListener errorListener) {
+
+        //The post request
+        JsonArrayRequest request = new JsonArrayRequest(
+                Request.Method.GET,
+                URL_GET_FOLLOWING + id,
+                null, responseListener, errorListener);
+        //Add request to the volley singleton request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+
+    public static void getFollowersListRequest(Context context, long id,
+                                               Response.Listener<JSONArray> responseListener,
+                                               Response.ErrorListener errorListener) {
+
+        //The post request
+        JsonArrayRequest request = new JsonArrayRequest(
+                Request.Method.GET,
+                URL_GET_FOLLOWERS + id,
+                null, responseListener, errorListener);
+        //Add request to the volley singleton request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+
+    public static void getUserProfileRequest(Context context, long id,
+                                               Response.Listener<JSONObject> responseListener,
+                                               Response.ErrorListener errorListener) {
+
+        //The post request
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.GET,
+                URL_GET_USERPROFILE + id,
+                null, responseListener, errorListener);
         //Add request to the volley singleton request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }

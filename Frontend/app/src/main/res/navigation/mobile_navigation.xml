@@ -9,7 +9,17 @@
         android:id="@+id/navigation_dashboard"
         android:name="com.example.closetics.DashboardFragment"
         android:label="fragment_dashboard"
-        tools:layout="@layout/fragment_dashboard"/>
+        tools:layout="@layout/fragment_dashboard">
+        <action
+            android:id="@+id/action_navigation_dashboard_to_navigation_recommendations"
+            app:destination="@id/navigation_recommendations" />
+        <action
+            android:id="@+id/action_navigation_dashboard_to_navigation_clothes"
+            app:destination="@id/navigation_clothes" />
+        <action
+            android:id="@+id/action_navigation_dashboard_to_navigation_profile"
+            app:destination="@id/navigation_profile" />
+    </fragment>
 
 
     <fragment
