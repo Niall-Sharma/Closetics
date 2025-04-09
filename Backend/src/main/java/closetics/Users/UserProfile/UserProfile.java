@@ -30,7 +30,8 @@ public class UserProfile{
           joinColumns = @JoinColumn(name = "UID"),
           inverseJoinColumns = @JoinColumn(name = "outfit_id")
   )
-  private List<Outfit> outfits = new ArrayList<>();;
+  private List<Outfit> outfits = new ArrayList<>();
+
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
           name = "user_following",
@@ -94,5 +95,8 @@ public class UserProfile{
   }
   public long getId() {
     return id;
+  }
+  public void removeOutfit(Outfit outfit){
+    outfits.remove(outfit);
   }
 }

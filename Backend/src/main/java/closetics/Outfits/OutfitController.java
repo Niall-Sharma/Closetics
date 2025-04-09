@@ -90,6 +90,12 @@ public class OutfitController {
 
     @DeleteMapping(path = "/deleteOutfit/{outfitId}")
     public void deleteClothing(@PathVariable long outfitId) {
+
+        Outfit outfit = outfitRepository.findById(outfitId).orElseThrow( () -> new RuntimeException("Failed To Find Outfit"));
+        UserProfile userProfile = outfit.getUser().GetUserProfile();
+
+        userProfile.removeOutfit(outfit);
+
         outfitRepository.deleteById(outfitId);
         outfitStatRepository.deleteById(outfitId);
     }
@@ -105,8 +111,8 @@ public class OutfitController {
 
         if (outfitOptional.isPresent()) {
             Outfit outfit = outfitOptional.get();
-            if (!outfit.getOutfitItems().contains(clothingId)) { // Prevent duplicate entries
-                Clothing clothing = clothingRepository.findById(clothingId).get();
+            if (!outfit.getOutfitItems().contains(clothingRepository.findById(clothingId).orElseThrow(() -> new RuntimeException("Clothing Not Found")))) { // Prevent duplicate entries
+                Clothing clothing = clothingRepository.findById(clothingId).orElseThrow(() -> new RuntimeException("Clothing Not Found"));
                 outfit.getOutfitItems().add(clothing);
                 outfitRepository.save(outfit);
             }
@@ -122,7 +128,7 @@ public class OutfitController {
 
         if (outfitOptional.isPresent()) {
             Outfit outfit = outfitOptional.get();
-            if (outfit.getOutfitItems().contains(clothingId)) { // Check if it exists before removing
+            if (outfit.getOutfitItems().contains(clothingRepository.findById(clothingId).orElseThrow(() -> new RuntimeException("Clothing Not Found")))) { // Check if it exists before removing
                 Clothing clothing = clothingRepository.findById(clothingId).get();
                 outfit.getOutfitItems().remove(clothing);
                 outfitRepository.save(outfit);

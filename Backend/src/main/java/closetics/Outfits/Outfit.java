@@ -43,6 +43,7 @@ public class Outfit {
     private List<Clothing> outfitItems;
 
 
+
     private String outfitName;
     @JsonIgnore
     private LocalDate creationDate;
