@@ -29,24 +29,18 @@ public class TransactionHistory{
 
   private String stripeSessionId = null;
 
+  private String tierName;
 
-  public TransactionHistory(User user, String currency, String status, long amount, String paymentIntentId, String stripeSessionId) {
+
+
+  public TransactionHistory(User user, String currency, String status, long amount, String paymentIntentId, String tierName){
     this.user = user;
     this.currency = currency;
     this.status = status;
     this.amount = amount;
     this.localDateTime = LocalDateTime.now();
     this.paymentIntentId = paymentIntentId;
-    this.stripeSessionId = stripeSessionId;
-  }
-
-  public TransactionHistory(User user, String currency, String status, long amount, String paymentIntentId){
-    this.user = user;
-    this.currency = currency;
-    this.status = status;
-    this.amount = amount;
-    this.localDateTime = LocalDateTime.now();
-    this.paymentIntentId = paymentIntentId;
+    this.tierName = tierName;
   }
 
   public long getId() {
@@ -111,5 +105,13 @@ public class TransactionHistory{
 
   public void setStripeSessionId(String stripeSessionId) {
     this.stripeSessionId = stripeSessionId;
+  }
+
+  public String getTierName() {
+    return tierName;
+  }
+
+  public void setTierName(String tierName) {
+    this.tierName = tierName;
   }
 }

@@ -44,14 +44,22 @@ public class PaymentController{
     try{
       long amount = Long.parseLong(request.get("amount").toString());
       long UID = Long.parseLong(request.get("userId").toString());
+      String tier = request.get("tier").toString();
 
-      PaymentIntentCreateParams params = PaymentIntentCreateParams.builder().setAmount(amount).setCurrency("usd").build();
+      Map<String, String> metadata = new HashMap<>();
+      metadata.put("userId", String.valueOf(UID));
+      metadata.put("tier", tier);
+
+      PaymentIntentCreateParams params = PaymentIntentCreateParams.builder().setAmount(amount).setCurrency("usd").putAllMetadata(metadata).build();
       PaymentIntent intent = PaymentIntent.create(params);
+
       Map<String, Object> response = new HashMap<>();
       response.put("clientSecret", intent.getClientSecret());
-      response.put("stripeID", intent.getId());
+
       User user = userRepository.findById(UID).orElseThrow(() -> new RuntimeException("User Not Found"));
-      TransactionHistory transactionHistory = new TransactionHistory(user, intent.getCurrency(), intent.getStatus(), intent.getAmount(), intent.getId());
+
+
+      TransactionHistory transactionHistory = new TransactionHistory(user, intent.getCurrency(), intent.getStatus(), intent.getAmount(), intent.getId(), tier);
       tRepository.save(transactionHistory);
       return ResponseEntity.ok(response);
 
@@ -61,11 +69,13 @@ public class PaymentController{
     }
   }
 
-  @PutMapping("/confirmPayment/{id}/{stripeSession}")
-  public ResponseEntity<?> completePayment(@PathVariable String id, @PathVariable("stripeSession") String stripeSession){
-    TransactionHistory transactionHistory = tRepository.findByPaymentIntentId(id).orElseThrow(() -> new RuntimeException("Stripe Session Not Found"));
+  @PutMapping("/confirmPayment/{stripeSession}")
+  public ResponseEntity<?> completePayment(@PathVariable("stripeSession") String stripeSession){
     try {
       Session session = Session.retrieve(stripeSession);
+      PaymentIntent paymentIntent = session.getPaymentIntentObject();
+
+      TransactionHistory transactionHistory = tRepository.findByPaymentIntentId(paymentIntent.getId()).orElseThrow(() -> new RuntimeException("Stripe Session Not Found"));
       if(session.getStatus().equals("complete")){
         transactionHistory.setStatus(session.getStatus());
         transactionHistory.setStripeSessionId(stripeSession);
@@ -73,7 +83,7 @@ public class PaymentController{
         return ResponseEntity.ok("Payment Successfully Accepted");
       }
       else{
-        tRepository.deleteByPaymentIntentId(id);
+        tRepository.deleteByPaymentIntentId(paymentIntent.getId());
         return ResponseEntity.status(400).body("Payment Not Accepted");
       }
     }catch (StripeException e){
