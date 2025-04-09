@@ -11,9 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.closetics.follow.FollowActivity;
+import com.example.closetics.settings.SettingsActivity;
 
 public class ProfileFragment extends Fragment {
 
@@ -24,6 +26,7 @@ public class ProfileFragment extends Fragment {
     private Button editButton;
     private Button deleteUserButton;
     private Button followingButton, followersButton;
+    private ImageButton settingsButton;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -44,6 +47,7 @@ public class ProfileFragment extends Fragment {
         logoutButton = view.findViewById(R.id.profile_logout_button);
         followingButton = view.findViewById(R.id.profile_following_button);
         followersButton = view.findViewById(R.id.profile_followers_button);
+        settingsButton = view.findViewById(R.id.profile_settings_button);
 
         String username = UserManager.getUsername(getActivity().getApplicationContext());
         if(username == null) {
@@ -55,6 +59,7 @@ public class ProfileFragment extends Fragment {
             deleteUserButton.setVisibility(TextView.GONE);
             followingButton.setVisibility(TextView.GONE);
             followersButton.setVisibility(TextView.GONE);
+            settingsButton.setVisibility(TextView.GONE);
         } else {
             usernameText.setText(username);
             loginButton.setVisibility(TextView.GONE);
@@ -64,6 +69,7 @@ public class ProfileFragment extends Fragment {
             deleteUserButton.setVisibility(TextView.VISIBLE);
             followingButton.setVisibility(TextView.VISIBLE);
             followersButton.setVisibility(TextView.VISIBLE);
+            settingsButton.setVisibility(TextView.VISIBLE);
         }
 
         loginButton.setOnClickListener(v -> {
@@ -87,6 +93,7 @@ public class ProfileFragment extends Fragment {
             deleteUserButton.setVisibility(TextView.GONE);
             followingButton.setVisibility(TextView.GONE);
             followersButton.setVisibility(TextView.GONE);
+            settingsButton.setVisibility(TextView.GONE);
 
             stopRecWebSocket();
         });
@@ -128,6 +135,11 @@ public class ProfileFragment extends Fragment {
             Intent intent = new Intent(getActivity(), FollowActivity.class);
             intent.putExtra("IS_FOLLOWING", false);
             intent.putExtra("USER_ID", UserManager.getUserID(getActivity()));
+            startActivity(intent);
+        });
+
+        settingsButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), SettingsActivity.class);
             startActivity(intent);
         });
 
