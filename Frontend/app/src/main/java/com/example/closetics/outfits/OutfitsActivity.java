@@ -25,8 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OutfitsActivity extends AppCompatActivity {
-    private final String URL_GET_ALL_USER_OUTFITS = MainActivity.SERVER_URL + "/getAllUserOutfits/"; // + {{userId}}
-    private final String URL_GET_ALL_OUTFIT_ITEMS = MainActivity.SERVER_URL + "/getAllOutfitItems/"; // + {{outfitId}}
 
     private Button addOutfitButton;
     private TextView noOutfitsText;
@@ -76,7 +74,7 @@ public class OutfitsActivity extends AppCompatActivity {
     }
 
     private void populateOutfitsList(long userId) {
-        OutfitManager.getAllOutfitsRequest(getApplicationContext(), userId, URL_GET_ALL_USER_OUTFITS,
+        OutfitManager.getAllOutfitsRequest(getApplicationContext(), userId,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -116,7 +114,7 @@ public class OutfitsActivity extends AppCompatActivity {
     }
 
     private void getAllClothesAndSave(long outfitId, OutfitsListItem item) {
-        OutfitManager.getAllOutfitItemsRequest(getApplicationContext(), outfitId, URL_GET_ALL_OUTFIT_ITEMS,
+        OutfitManager.getAllOutfitItemsRequest(getApplicationContext(), outfitId,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {

@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.example.closetics.MainActivity;
 import com.example.closetics.R;
 import com.example.closetics.UserManager;
 
@@ -24,8 +23,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class SelectClothesActivity extends AppCompatActivity {
-    private final String URL_GET_OUTFIT = MainActivity.SERVER_URL + "/getOutfit/"; // + {{outfitId}}
-    private final String URL_GET_ALL_USER_CLOTHES = MainActivity.SERVER_URL + "/getClothing/user/"; // + {{userId}}
 
     private Button doneButton;
     private ListView clothesList;
@@ -33,7 +30,7 @@ public class SelectClothesActivity extends AppCompatActivity {
     private SelectClothesListAdapter adapter;
 
     private long outfitId;
-    private JSONObject jsonObject;
+    private JSONObject outfitJsonObject;
     private Set<Long> initialOutfitClothes;
 
     @Override
@@ -44,6 +41,7 @@ public class SelectClothesActivity extends AppCompatActivity {
         doneButton = findViewById(R.id.select_clothes_done_button);
         clothesList = findViewById(R.id.select_clothes_list);
         noClothesText = findViewById(R.id.select_clothes_no_clothes_text);
+        noClothesText.setVisibility(TextView.GONE);
 
         // Initialize the adapter with an empty list (data will be added later)
         adapter = new SelectClothesListAdapter(this, new ArrayList<>());
@@ -70,27 +68,27 @@ public class SelectClothesActivity extends AppCompatActivity {
     }
 
     private void getOutfitInfo() {
-        OutfitManager.getOutfitRequest(getApplicationContext(), outfitId, URL_GET_OUTFIT,
+        OutfitManager.getOutfitRequest(getApplicationContext(), outfitId,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d("Volley Response", response.toString());
+                        Log.d("Volley Response", "Successfully got outfit: " + response.toString());
 
-                        jsonObject = response;
+                        outfitJsonObject = response;
 
                         try {
                             JSONArray clothes = response.getJSONArray("outfitItems");
                             for (int i = 0; i < clothes.length(); i++) {
                                 try {
                                     // fill initial outfit clothes set
-                                    long clothingId = clothes.getLong(i);
+                                    long clothingId = clothes.getJSONObject(i).getLong("clothesId");
                                     initialOutfitClothes.add(clothingId);
                                 } catch (JSONException e) {
-                                    Log.e("JSON Error", e.toString());
+                                    Log.e("JSON Error", "Cannot parse clothig: " + e.toString());
                                 }
                             }
                         } catch (JSONException e1) {
-                            Log.e("JSON Error", e1.toString());
+                            Log.e("JSON Error", "Outfit doesn't contain outfitItems array: " + e1.toString());
                         }
 
                         populateClothesList(UserManager.getUserID(getApplicationContext()));
@@ -99,20 +97,20 @@ public class SelectClothesActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("Volley Error", error.toString());
+                        Log.e("Volley Error", "Error getting outfit" + outfitId + ": " + error.toString());
                     }
                 });
     }
 
     private void populateClothesList(long userId) {
-        OutfitManager.getAllUserClothesRequest(getApplicationContext(), userId, URL_GET_ALL_USER_CLOTHES,
+        OutfitManager.getAllUserClothesRequest(getApplicationContext(), userId,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        Log.d("Volley Response", response.toString());
+                        Log.d("Volley Response", "Successfully got clothes of user " + userId + ": " + response.toString());
 
-                        if (response.length() > 0) {
-                            noClothesText.setVisibility(TextView.GONE);
+                        if (response.length() == 0) {
+                            noClothesText.setVisibility(TextView.VISIBLE);
                         }
 
                         for (int i = 0; i < response.length(); i++) {
@@ -131,7 +129,7 @@ public class SelectClothesActivity extends AppCompatActivity {
                                         clothingId, outfitId, name, color, typeId, specialTypeId, initiallyChecked);
                                 adapter.add(item);
                             } catch (JSONException e) {
-                                Log.e("JSON Error", e.toString());
+                                Log.e("JSON Error", "Error parsing clothing: " + e.toString());
                             }
                         }
                     }
@@ -139,7 +137,7 @@ public class SelectClothesActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("Volley Error", error.toString());
+                        Log.e("Volley Error", "Error getting clothes of user " + userId + ": " + error.toString());
                     }
                 });
     }

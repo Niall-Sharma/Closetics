@@ -47,6 +47,7 @@
         android:layout_marginTop="16dp"
         android:text="No clothes present\nPlease add clothes first"
         android:textAlignment="center"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/select_clothes_label_text" />
