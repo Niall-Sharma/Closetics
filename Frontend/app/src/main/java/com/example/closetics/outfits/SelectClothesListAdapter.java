@@ -23,8 +23,6 @@ import org.json.JSONObject;
 import java.util.List;
 
 public class SelectClothesListAdapter extends ArrayAdapter<SelectClothesListItem> {
-    private final String URL_REMOVE_ITEM = MainActivity.SERVER_URL + "/removeItemFromOutfit/"; // + {{outfitId}} + / + {{clothingId}}
-    private final String URL_ADD_ITEM = MainActivity.SERVER_URL + "/addItemToOutfit/"; // + {{outfitId}} + / + {{clothingId}}
 
     public SelectClothesListAdapter(Context context, List<SelectClothesListItem> items) {
         super(context, 0, items);
@@ -53,7 +51,7 @@ public class SelectClothesListAdapter extends ArrayAdapter<SelectClothesListItem
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) {
                             // add item to outfit
-                            OutfitManager.addClothingRequest(item.getContext(), item.getOutfitId(), item.getId(), URL_ADD_ITEM,
+                            OutfitManager.addClothingRequest(item.getContext(), item.getOutfitId(), item.getId(),
                                     new Response.Listener<JSONObject>() {
                                         @Override
                                         public void onResponse(JSONObject response) {
@@ -68,7 +66,7 @@ public class SelectClothesListAdapter extends ArrayAdapter<SelectClothesListItem
                                     });
                         } else {
                             // delete item from outfit
-                            OutfitManager.removeClothingRequest(item.getContext(), item.getOutfitId(), item.getId(), URL_REMOVE_ITEM,
+                            OutfitManager.removeClothingRequest(item.getContext(), item.getOutfitId(), item.getId(),
                                     new Response.Listener<JSONObject>() {
                                         @Override
                                         public void onResponse(JSONObject response) {
