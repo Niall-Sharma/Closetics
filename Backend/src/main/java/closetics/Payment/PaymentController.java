@@ -74,12 +74,14 @@ public class PaymentController{
     try {
       Session session = Session.retrieve(stripeSession);
       PaymentIntent paymentIntent = session.getPaymentIntentObject();
-
+      Map<String,String> metadata = paymentIntent.getMetadata();
+      User user = userRepository.findById(Long.parseLong(metadata.get("userId"))).orElseThrow(() -> new RuntimeException("User Not Found"));
       TransactionHistory transactionHistory = tRepository.findByPaymentIntentId(paymentIntent.getId()).orElseThrow(() -> new RuntimeException("Stripe Session Not Found"));
+
       if(session.getStatus().equals("complete")){
         transactionHistory.setStatus(session.getStatus());
         transactionHistory.setStripeSessionId(stripeSession);
-
+        user.setUserTier(metadata.get("tier"));
         return ResponseEntity.ok("Payment Successfully Accepted");
       }
       else{
@@ -88,6 +90,8 @@ public class PaymentController{
       }
     }catch (StripeException e){
       return ResponseEntity.status(500).body("Stripe error: " + e.getMessage());
+    } catch (RuntimeException e) {
+      return  ResponseEntity.status(500).body("Error occurred: " + e.getMessage());
     }
   }
 }
