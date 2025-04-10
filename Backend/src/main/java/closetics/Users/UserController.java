@@ -143,6 +143,9 @@ public class UserController {
         if (updatedUser.getEmail() != null) {
             existingUser.setEmail(updatedUser.getEmail());
         }
+        if (updatedUser.getUserTier() != null) {
+            existingUser.setUserTier(updatedUser.getUserTier());
+        }
         return userRepository.save(existingUser);
     }
 
