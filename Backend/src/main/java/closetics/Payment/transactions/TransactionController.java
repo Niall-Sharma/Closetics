@@ -18,14 +18,23 @@ public class TransactionController {
         return ResponseEntity.ok(history);
     }
     @GetMapping("/history/{id}")
-    public ResponseEntity<List<TransactionHistory>> GetUserTransactions(@PathVariable long id){
-        List<TransactionHistory> history = transactionRepository.findByUserId(id).orElseThrow(() -> new RuntimeException("Transactions Not Found"));
-        return ResponseEntity.ok(history);
+    public ResponseEntity<?> GetUserTransactions(@PathVariable long id){
+        try {
+            List<TransactionHistory> history = transactionRepository.findByUserId(id).orElseThrow(() -> new RuntimeException("Transactions Not Found"));
+            return ResponseEntity.ok(history);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body("Error occurred: " + e.getMessage());
+        }
     }
     @DeleteMapping("/history/{id}")
-    public ResponseEntity<TransactionHistory> DeleteTransactionHistory(@PathVariable long id){
-        TransactionHistory history = transactionRepository.findById(id).orElseThrow(() -> new RuntimeException("Transaction Not Found"));
-        transactionRepository.deleteById(id);
-        return ResponseEntity.ok(history);
+    public ResponseEntity<?> DeleteTransactionHistory(@PathVariable long id){
+        try {
+            TransactionHistory history = transactionRepository.findById(id).orElseThrow(() -> new RuntimeException("Transaction Not Found"));
+            transactionRepository.deleteById(id);
+            return ResponseEntity.ok(history);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body("Error occurred: " + e.getMessage());
+        }
+
     }
 }
