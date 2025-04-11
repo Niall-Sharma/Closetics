@@ -33,31 +33,31 @@ public class OutfitManager {
     private static final String TOMORROW_OUTFIT_PARAM = "tomorrowOutfitId";
 
 
-    public static void saveCurrentDailyOutfit(Context context, String outfitId) {
+    public static void saveCurrentDailyOutfit(Context context, long outfitId) {
         //Access the shared preferences file make it private to this app
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(CURRENT_OUTFIT_PARAM, outfitId);
+        editor.putLong(CURRENT_OUTFIT_PARAM, outfitId);
         editor.apply();
     }
 
-    public static String getCurrentDailyOutfit(Context context) {
+    public static long getCurrentDailyOutfit(Context context) {
         //Access the shared preferences file make it private to this app
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
-        return prefs.getString(CURRENT_OUTFIT_PARAM, null);
+        return prefs.getLong(CURRENT_OUTFIT_PARAM, -1);
     }
 
-    public static void saveTomorrowDailyOutfit(Context context, String outfitId) {
+    public static void saveTomorrowDailyOutfit(Context context, long outfitId) {
         //Access the shared preferences file make it private to this app
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(TOMORROW_OUTFIT_PARAM, outfitId);
+        editor.putLong(TOMORROW_OUTFIT_PARAM, outfitId);
         editor.apply();
     }
-    public static String getTomorrowDailyOutfit(Context context) {
+    public static long getTomorrowDailyOutfit(Context context) {
         //Access the shared preferences file make it private to this app
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
-        return prefs.getString(TOMORROW_OUTFIT_PARAM, null);
+        return prefs.getLong(TOMORROW_OUTFIT_PARAM, -1);
     }
     /*
     Replace with "null" for string if there is no outfit being added!!

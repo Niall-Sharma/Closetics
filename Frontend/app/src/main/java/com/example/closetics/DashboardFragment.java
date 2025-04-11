@@ -42,8 +42,8 @@ public class DashboardFragment extends Fragment {
     private Button leaderboard;
     private Button userStatistics;
     private Button setTomorrow;
-    private boolean current;
-    private boolean tomorrow;
+    private long current;
+    private long tomorrow;
     private ImageButton login;
     private TextView outfitName;
     private TextView outfitInsights;
@@ -69,6 +69,13 @@ public class DashboardFragment extends Fragment {
         outfitImage = view.findViewById(R.id.imageView2);
         todaysDate = view.findViewById(R.id.todaysDate);
 
+        current = OutfitManager.getCurrentDailyOutfit(getActivity());
+        tomorrow = OutfitManager.getTomorrowDailyOutfit(getActivity());
+
+        Log.d("current", String.valueOf(OutfitManager.getCurrentDailyOutfit(getActivity())));
+        Log.d("tommorow", String.valueOf(OutfitManager.getTomorrowDailyOutfit(getActivity())));
+        
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
             LocalDate today = LocalDate.now();
@@ -77,22 +84,8 @@ public class DashboardFragment extends Fragment {
 
         }
 
-
-
-
-
-
-
-        if (OutfitManager.getCurrentDailyOutfit(getActivity()) == null){
-            /*
-            This means that there is no outfit set for today!!
-            So show a different fragment!
-             */
-            //showFragment();
-        }
-
         //No set outfit for today
-        if (!current){
+        if (current == -1){
             String s = "Set Today's Outfit";
             setTomorrow.setText(s);
 
@@ -119,7 +112,7 @@ public class DashboardFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), OutfitsActivity.class);
 
                 //If current is false, set current
-                if (!current){
+                if (current == -1){
                     intent.putExtra("setTomorrow", false);
 
                 }
