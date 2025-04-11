@@ -4,6 +4,7 @@ import closetics.Clothes.Clothing;
 import closetics.Outfits.Outfit;
 import closetics.Outfits.OutfitRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,8 +12,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -26,6 +29,7 @@ public class OutfitStatController {
 
     @Autowired
     ClothingStatRepository clothingStatRepository;
+
 
     @GetMapping(path = "/getOutfitStats/{id}")
     public Optional<OutfitStats> getClothingStats(@PathVariable long id) {
@@ -58,6 +62,32 @@ public class OutfitStatController {
         } catch(RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
+    }
+
+    @GetMapping(path = "/getUsersMostExpensiveOutfit/{userId}")
+    public Map mostExpOutfit(@PathVariable long userId) {
+        return outfitRepository.findMostExpensiveOutfitByUserId(userId);
+    }
+
+    @GetMapping(path = "/getUsersMostWornOutfit/{userId}")
+    public Outfit mostWornOutfit(@PathVariable long userId) {
+        return outfitRepository.findTopByUser_userIdOrderByOutfitStats_timesWornDesc(userId)
+                .orElse(null);
+    }
+
+    @GetMapping(path = "/getUsersColdestAvgOutfit/{userId}")
+    public Outfit coldestAvgOutfit(@PathVariable long userId) {
+        Pageable pageable = PageRequest.of(0, 1);
+        List<Outfit> outfits = outfitRepository.findTopByUserIdOrderByAvgLowTempAsc(userId, pageable);
+        return outfits.isEmpty() ? null : outfits.get(0);
+    }
+
+    @GetMapping(path = "/getUsersWarmestAvgOutfit/{userId}")
+    public Outfit warmestAvgOutfit(@PathVariable long userId) {
+        Pageable pageable = PageRequest.of(0, 1);
+        List<Outfit> outfits = outfitRepository.findTopByUserIdOrderByAvgHighTempDesc(userId, pageable);
+        return outfits.isEmpty() ? null : outfits.get(0);
+
     }
 
     private void calculateAvgTemps(OutfitStats outfitStats) {

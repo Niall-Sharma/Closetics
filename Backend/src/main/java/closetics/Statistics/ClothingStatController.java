@@ -1,5 +1,7 @@
 package closetics.Statistics;
 
+import closetics.Clothes.Clothing;
+import closetics.Clothes.ClothingRepository;
 import closetics.Outfits.OutfitRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,9 @@ public class ClothingStatController {
     @Autowired
     OutfitRepository outfitRepository;
 
+    @Autowired
+    ClothingRepository clothingRepository;
+
     @GetMapping(path = "/getClothingStats/{id}")
     public Optional<ClothingStats> getClothingStats(@PathVariable long id) {
         return clothingStatRepository.findById(id);
@@ -45,7 +50,7 @@ public class ClothingStatController {
     }
 
     @PutMapping(path = "/numberOfOutfitsIn/{id}")
-    public long calcNumberOfOutfitsIn(@PathVariable long id){
+    public long calcNumberOfOutfitsIn(@PathVariable long id) {
         try {
             ClothingStats clothingStats = clothingStatRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("ClothingItem Item not found"));
@@ -56,6 +61,30 @@ public class ClothingStatController {
         } catch(RuntimeException e) {
             return 0;
         }
+    }
+
+    @GetMapping(path = "/getUsersMostExpensiveClothing/{userId}")
+    public Clothing mostExpClothing(@PathVariable long userId) {
+        return clothingRepository.findTopByUser_userIdOrderByPriceAsc(userId)
+                .orElse(null);
+    }
+
+    @GetMapping(path = "/getUsersMostWornClothing/{userId}")
+    public Clothing mostWornClothing(@PathVariable long userId) {
+        return clothingRepository.findTopByUser_userIdOrderByClothingStats_timesWornDesc(userId)
+                .orElse(null);
+    }
+
+    @GetMapping(path = "/getUsersColdestAvgClothing/{userId}")
+    public Clothing coldestAvgClothing(@PathVariable long userId) {
+        return clothingRepository.findTopByUserIdOrderByAvgLowTempAsc(userId)
+                .orElse(null);
+    }
+
+    @GetMapping(path = "/getUsersWarmestAvgClothing/{userId}")
+    public Clothing warmestAvgClothing(@PathVariable long userId) {
+        return clothingRepository.findTopByUserIdOrderByAvgHighTempDesc(userId)
+                .orElse(null);
     }
 
 
