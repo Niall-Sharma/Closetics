@@ -29,8 +29,8 @@ public class OutfitManager {
     private static final String URL_PUT_REMOVE_ITEM = MainActivity.SERVER_URL + "/removeItemFromOutfit/"; // + {{outfitId}} + / + {{clothingId}}
     private static final String URL_PUT_ADD_ITEM = MainActivity.SERVER_URL + "/addItemToOutfit/"; // + {{outfitId}} + / + {{clothingId}}
 
-    private static final String CURRENT_OUTFIT_PARAM = "currentOutfitId";
-    private static final String TOMORROW_OUTFIT_PARAM = "tomorrowOutfitId";
+    public static final String CURRENT_OUTFIT_PARAM = "currentOutfitId";
+    public static final String TOMORROW_OUTFIT_PARAM = "tomorrowOutfitId";
 
 
     public static void saveCurrentDailyOutfit(Context context, long outfitId) {

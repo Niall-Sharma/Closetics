@@ -52,7 +52,11 @@ public class DashboardFragment extends Fragment {
     private TextView outfitInsights;
     private TextView todaysDate;
     private ImageView outfitImage;
-    private int holdCount;
+    private JSONObject outfitStats;
+    private TextView wornCount;
+    private TextView outfitTotalCount;
+    private TextView averageLowTemperature;
+
 
 
     public DashboardFragment() {
@@ -72,6 +76,12 @@ public class DashboardFragment extends Fragment {
         outfitImage = view.findViewById(R.id.imageView2);
         todaysDate = view.findViewById(R.id.todaysDate);
         outfitName = view.findViewById(R.id.outfitName);
+        outfitInsights = view.findViewById(R.id.outfitStats);
+        wornCount = view.findViewById(R.id.wornCount);
+        outfitTotalCount = view.findViewById(R.id.outfitTotalCount);
+        averageLowTemperature = view.findViewById(R.id.averageLowTemperature);
+
+
 
         current = OutfitManager.getCurrentDailyOutfit(getActivity());
         tomorrow = OutfitManager.getTomorrowDailyOutfit(getActivity());
@@ -100,7 +110,6 @@ public class DashboardFragment extends Fragment {
             String s = "Set Tomorrow's Outfit";
             setTomorrow.setText(s);
             getOutfit();
-            getOutfitStats(current);
             String s1 = String.valueOf(current);
             outfitName.setText(s1);
         }
@@ -158,6 +167,23 @@ public class DashboardFragment extends Fragment {
                 Log.d("get outfit", response.toString());
                 try {
                     String name = response.getString("outfitName");
+                    outfitName.setText(name);
+                    name+=" Insights";
+                    outfitInsights.setText(name);
+                    //Grab the images from the clothes
+                    //
+                    outfitStats = response.getJSONObject("outfitStats");
+                    String worn = outfitStats.getString("timesWorn");
+                    wornCount.setText(worn);
+                    String lowTemp = response.getString("avgLowTemp");
+                    String highTemp = response.getString("avgHighTemp");
+                    outfitTotalCount.setText(highTemp);
+                    averageLowTemperature.setText(lowTemp);
+
+
+
+
+
                     //Grab the image
 
                 } catch (JSONException e) {
@@ -181,6 +207,7 @@ public class DashboardFragment extends Fragment {
     Possibly add something to the outfit controller or outfit stat controller in the backend
 
      */
+    /*
     private void getOutfitStats(long outfitId){
         StatisticsManager.getOutfitsStatsRequest(getActivity(), outfitId, MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
             @Override
@@ -194,6 +221,8 @@ public class DashboardFragment extends Fragment {
             }
         });
     }
+
+     */
 
     private void showFragment(){
         //NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment_activity_main);

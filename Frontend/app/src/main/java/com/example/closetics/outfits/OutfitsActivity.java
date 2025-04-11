@@ -84,13 +84,11 @@ public class OutfitsActivity extends AppCompatActivity {
             if (bundle.getBoolean("setTomorrow")) {
                 String s = start + "Tomorrow's Outfit";
                 noOutfitsText.setText(s);
-                Log.d("check", s);
                 noOutfitsText.setVisibility(View.VISIBLE);
             }else {
                 String s = start + "Today's Outfit";
                 noOutfitsText.setText(s);
                 noOutfitsText.setVisibility(View.VISIBLE);
-                Log.d("check", s);
             }
                 //Clicking an outfit now sends that outfit ID to dashboard!
                 outfitsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
