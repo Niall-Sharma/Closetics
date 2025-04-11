@@ -2,8 +2,7 @@ package closetics.Outfits;
 
 import closetics.Clothes.Clothing;
 import closetics.Clothes.ClothingRepository;
-import closetics.Statistics.OutfitStatRepository;
-import closetics.Statistics.OutfitStats;
+import closetics.Statistics.*;
 import closetics.Users.User;
 import closetics.Users.UserRepository;
 import closetics.Users.UserProfile.UserProfile;
@@ -31,6 +30,9 @@ public class OutfitController {
 
     @Autowired
     OutfitStatRepository outfitStatRepository;
+
+    @Autowired
+    ClothingStatRepository clothingStatRepository;
 
     @Autowired
     UserProfileRepository uProfileRepository;
@@ -113,6 +115,12 @@ public class OutfitController {
                 outfit.getOutfitItems().add(clothing);
                 outfitRepository.save(outfit);
             }
+
+            ClothingStats clothingStats = clothingStatRepository.findById(clothingId)
+                    .orElseThrow(() -> new RuntimeException("Clothing Stat Item not found"));
+            long numOfOutfitsIn = outfitRepository.countDistinctOutfitsContainingClothing(clothingId);
+            clothingStats.setNumberOfOutfitsIn(numOfOutfitsIn);
+            clothingStatRepository.save(clothingStats);
             return ResponseEntity.ok(outfit);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -130,6 +138,12 @@ public class OutfitController {
                 outfit.getOutfitItems().remove(clothing);
                 outfitRepository.save(outfit);
             }
+
+            ClothingStats clothingStats = clothingStatRepository.findById(clothingId)
+                    .orElseThrow(() -> new RuntimeException("Clothing Stat Item not found"));
+            long numOfOutfitsIn = outfitRepository.countDistinctOutfitsContainingClothing(clothingId);
+            clothingStats.setNumberOfOutfitsIn(numOfOutfitsIn);
+            clothingStatRepository.save(clothingStats);
             return ResponseEntity.ok(outfit);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
