@@ -158,7 +158,7 @@ public class PaymentActivity extends AppCompatActivity {
             Log.d("PaymentSheetResult", "Completed");
 
             confirmPayment();
-            updateUserTier();
+            //updateUserTier();
 
             // return to Main
             Intent intent = new Intent(PaymentActivity.this, MainActivity.class);

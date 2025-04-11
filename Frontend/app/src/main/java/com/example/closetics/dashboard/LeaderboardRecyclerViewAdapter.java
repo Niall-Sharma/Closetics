@@ -39,7 +39,7 @@ public class LeaderboardRecyclerViewAdapter extends RecyclerView.Adapter<Leaderb
         try {
             LeaderboardItem item = adapterItems.get(realPosition);
             //Rank
-            String correctRank = item.getRank().substring(1);
+            String correctRank = item.getRank();//.substring(1);
             holder.rank.setText(correctRank);
             //Log.d("username", item.getUsername());
             holder.username.setText(item.getUsername());

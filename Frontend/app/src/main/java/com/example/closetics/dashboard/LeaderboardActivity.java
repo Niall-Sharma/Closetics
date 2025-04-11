@@ -195,9 +195,16 @@ public class LeaderboardActivity extends AppCompatActivity {
                             String price = object.getString("price");
                             long userId = user.getLong("userId");
 
-                            if (!price.equals("null")) price = "$" + price;
+                            if (!price.equals("null")) {
+                                price = "$" + price;
+                                if (price.contains(".")) {
+                                    price = price.substring(0, Math.min(price.indexOf(".") + 3, price.length()));
+                                } else {
+                                    price += ".00";
+                                }
+                            }
 
-                            leaderboardItem = new LeaderboardItem(String.valueOf(i) +1, username, price, userId);
+                            leaderboardItem = new LeaderboardItem((i + 1) + "", username, price, userId);
                             objects.set(i, leaderboardItem);
 
                         }
@@ -207,14 +214,14 @@ public class LeaderboardActivity extends AppCompatActivity {
                             Log.d("Array", leaderboardArray.toString());
                             long userId = object.getLong(0);
                             String clothingItems = object.getString(1);
-                            leaderboardItem = new LeaderboardItem(String.valueOf(i), clothingItems);
+                            leaderboardItem = new LeaderboardItem(i + "", clothingItems);
 
                             //Get the username from the user id
 
                             getUsername(userId, leaderboardItem,  new UsernameCallback() {
                                 @Override
                                 public void onSuccess(String username, String i, String categoryValue) {
-                                    LeaderboardItem l = new LeaderboardItem(i + 1, categoryValue);
+                                    LeaderboardItem l = new LeaderboardItem((Integer.parseInt(i) + 1) + "", categoryValue);
                                     l.setUsername(username);
                                     Log.d("Username", "Username: " + l.getUsername());
                                     objects.set(Integer.valueOf(i), l);
@@ -249,14 +256,19 @@ public class LeaderboardActivity extends AppCompatActivity {
                                 continue;
                             }
                             price  = "$" + price;
+                            if (price.contains(".")) {
+                                price = price.substring(0, Math.min(price.indexOf(".") + 3, price.length()));
+                            } else {
+                                price += ".00";
+                            }
 
 
-                            leaderboardItem = new LeaderboardItem(String.valueOf(i), price);
+                            leaderboardItem = new LeaderboardItem(i + "", price);
                             getUserAttributesFromOutfitId(outfitId, leaderboardItem, new UsernameCallback() {
                                 @Override
                                 public void onSuccess(String username, String i, String categoryValue) {
 
-                                    LeaderboardItem l = new LeaderboardItem(i+1, categoryValue);
+                                    LeaderboardItem l = new LeaderboardItem((Integer.parseInt(i) + 1) + "", categoryValue);
                                     l.setUsername(username);
                                     Log.d("Username", "Username: " + l.getUsername());
                                     objects.set(Integer.valueOf(i), l);
