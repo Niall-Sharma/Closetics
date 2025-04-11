@@ -83,6 +83,7 @@ public class PaymentController{
         transactionHistory.setStatus("succeeded");
         tRepository.save(transactionHistory);
         user.setUserTier(metadata.get("tier"));
+        userRepository.save(user);
         return ResponseEntity.ok("Payment Successfully Accepted");
       }
       else{
