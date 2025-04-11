@@ -12,12 +12,15 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView2"
-            android:layout_width="200dp"
-            android:layout_height="500dp"
-            android:layout_marginStart="4dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="6dp"
             android:layout_marginTop="115dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toTopOf="@+id/cardView3"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.48">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -75,12 +78,13 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
-            android:layout_width="200dp"
-            android:layout_height="500dp"
-            android:layout_marginTop="115dp"
-            android:layout_marginEnd="4dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="6dp"
+            app:layout_constraintBottom_toBottomOf="@+id/cardView2"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="@+id/cardView2"
+            app:layout_constraintWidth_percent="0.48">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -99,9 +103,9 @@
 
                 <LinearLayout
                     android:id="@+id/linearLayout7"
-                    android:layout_width="198dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="1dp"
+                    android:layout_marginStart="4dp"
                     android:layout_marginTop="1dp"
                     android:layout_marginEnd="1dp"
                     android:orientation="vertical"
@@ -205,12 +209,13 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView3"
-            android:layout_width="200dp"
+            android:layout_width="0dp"
             android:layout_height="100dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginBottom="4dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_percent="0.46">
 
             <TextView
                 android:id="@+id/textView23"
@@ -223,29 +228,23 @@
             android:id="@+id/leaderboardButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="3dp"
-            android:layout_marginEnd="13dp"
             android:layout_marginBottom="16dp"
             android:text="Closetics Leaderboard"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/cardView3" />
 
         <Button
             android:id="@+id/userStatsButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="35dp"
-            android:layout_marginBottom="4dp"
+            android:layout_marginTop="4dp"
             android:text="User Statistics"
             app:layout_constraintBottom_toTopOf="@+id/leaderboardButton"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/cardView3"
+            app:layout_constraintEnd_toEndOf="@+id/leaderboardButton"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/leaderboardButton"
             app:layout_constraintTop_toBottomOf="@+id/cardView"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintVertical_bias="0.5" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
