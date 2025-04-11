@@ -12,10 +12,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.closetics.R;
 
+import java.util.ArrayList;
+
 public class LeaderboardRecyclerViewAdapter extends RecyclerView.Adapter<LeaderboardRecyclerViewAdapter.MyViewHolder> {
 
-    public LeaderboardRecyclerViewAdapter (){
 
+    private ArrayList<LeaderboardItem> adapterItems;
+    OnItemClickListener clickListener;
+
+    public LeaderboardRecyclerViewAdapter (ArrayList<LeaderboardItem> adapterItems, OnItemClickListener clickListener){
+        this.adapterItems = adapterItems;
+        this.clickListener = clickListener;
 
     }
 
@@ -30,24 +37,26 @@ public class LeaderboardRecyclerViewAdapter extends RecyclerView.Adapter<Leaderb
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         int realPosition = holder.getBindingAdapterPosition();
-        //Rank
-        holder.rank.setText(String.valueOf(realPosition));
-        //username
-        //holder.username.setText();
-        //category value
+        try {
+            LeaderboardItem item = adapterItems.get(realPosition);
+            //Rank
+            String correctRank = item.getRank().substring(1);
+            holder.rank.setText(correctRank);
+            //Log.d("username", item.getUsername());
+            holder.username.setText(item.getUsername());
+            holder.categoryValue.setText(item.getCategoryValue());
 
 
+            holder.viewProfileButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    clickListener.onItemClick(realPosition, v, item);
+                }
+            });
 
-
-        holder.viewProfileButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("functionality check", "clicked");
-            }
-        });
-
-
-
+        } catch (NullPointerException e) {
+           throw new NullPointerException();
+        }
 
     }
 
@@ -56,7 +65,7 @@ public class LeaderboardRecyclerViewAdapter extends RecyclerView.Adapter<Leaderb
         /*
         Currently set to 10 in the backend
          */
-        return 10;
+        return adapterItems.size();
     }
     public void updateAdapter(){
 
@@ -80,7 +89,7 @@ public class LeaderboardRecyclerViewAdapter extends RecyclerView.Adapter<Leaderb
     //Inner interface
     public interface OnItemClickListener{
         //Send the view to differentiate between which button view is being pressed
-        void onItemClick(int position, View view, String jsonObject);
+        void onItemClick(int position, View view, LeaderboardItem item);
     }
 
 
