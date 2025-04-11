@@ -1,6 +1,8 @@
 package com.example.closetics;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,6 +35,7 @@ import com.example.closetics.dashboard.StatisticsManager;
 import com.example.closetics.outfits.OutfitManager;
 import com.example.closetics.outfits.OutfitsActivity;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class DashboardFragment extends Fragment {
@@ -68,13 +71,14 @@ public class DashboardFragment extends Fragment {
         login = view.findViewById(R.id.loginPageButton);
         outfitImage = view.findViewById(R.id.imageView2);
         todaysDate = view.findViewById(R.id.todaysDate);
+        outfitName = view.findViewById(R.id.outfitName);
 
         current = OutfitManager.getCurrentDailyOutfit(getActivity());
         tomorrow = OutfitManager.getTomorrowDailyOutfit(getActivity());
 
         Log.d("current", String.valueOf(OutfitManager.getCurrentDailyOutfit(getActivity())));
         Log.d("tommorow", String.valueOf(OutfitManager.getTomorrowDailyOutfit(getActivity())));
-        
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
@@ -88,20 +92,21 @@ public class DashboardFragment extends Fragment {
         if (current == -1){
             String s = "Set Today's Outfit";
             setTomorrow.setText(s);
+            outfitName.setText("Please set an Outfit!");
 
         }
-        //No set ouftit for tomorrow
-        else{
+        //Current is set!
+        if (current != -1){
             String s = "Set Tomorrow's Outfit";
             setTomorrow.setText(s);
+            getOutfit();
+            getOutfitStats(current);
+            String s1 = String.valueOf(current);
+            outfitName.setText(s1);
         }
 
 
 
-
-
-
-        //getOutfitStats();
 
 
 
@@ -146,6 +151,28 @@ public class DashboardFragment extends Fragment {
         return view;
     }
 
+    private void getOutfit(){
+        OutfitManager.getOutfitRequest(getActivity(), current, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d("get outfit", response.toString());
+                try {
+                    String name = response.getString("outfitName");
+                    //Grab the image
+
+                } catch (JSONException e) {
+                    Log.e("exception", e.toString());
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+    }
+
 
 
 
@@ -174,14 +201,27 @@ public class DashboardFragment extends Fragment {
 
     }
 
+    /*
+    This is called by the android manifest!
+     */
+    public static class DateChangeReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (Intent.ACTION_DATE_CHANGED.equals(intent.getAction())){
+                //Swap tomorrow to current on next day
+                long clothingId = OutfitManager.getTomorrowDailyOutfit(context);
+                OutfitManager.saveCurrentDailyOutfit(context, clothingId);
+                //Reset tomorrow to -1
+                OutfitManager.saveTomorrowDailyOutfit(context, -1);
+
+            }
+        }
+    }
 
 
 
-    //Requests on this page:
-    //getOutfit worn today
-    //getOutfit stats, and getOutfit for grabbing the image
 
-    //get overall statistics when pressing user statistics
 
 
 
