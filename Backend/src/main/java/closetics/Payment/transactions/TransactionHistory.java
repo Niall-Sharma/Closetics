@@ -42,7 +42,7 @@ public class TransactionHistory{
   }
 
   public TransactionHistory(){
-    
+
   }
   public long getId() {
     return id;
