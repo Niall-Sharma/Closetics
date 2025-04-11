@@ -326,10 +326,12 @@ public class UserManager {
         //Add request to the volley singleton request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
+
+
+    // TODO: DELETE THIS
     public static void getUserByIdRequest(Context context, String userId, String URL,
                                           Response.Listener<JSONObject> responseListener,
                                           Response.ErrorListener errorListener){
-
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,
@@ -340,6 +342,21 @@ public class UserManager {
         //Add request to the volley singleton request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
 
+    }
+
+
+    public static void getUserByIdRequest(Context context, long userId,
+                                          Response.Listener<JSONObject> responseListener,
+                                          Response.ErrorListener errorListener){
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.GET,
+                URL_GET_USER_BY_ID + userId, // add id to the URL
+                null,
+                responseListener,
+                errorListener);
+        //Add request to the volley singleton request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
 

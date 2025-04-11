@@ -55,6 +55,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         if (feedbackPref != null) {
             feedbackPref.setOnPreferenceClickListener((preference) -> {
                 Log.d("Preferences", "Feedback was clicked");
+                // Address of a random Olive Garden
                 Toast.makeText(getActivity(), "Please, mail your feedback to 3600 Westown Pkwy, West Des Moines, IA", Toast.LENGTH_LONG).show();
                 return true; // Return true if the event is handled.
             });

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -26,12 +27,16 @@ public class PaymentActivity extends AppCompatActivity {
 
     private ImageButton backButton;
     private Button basicBuyButton, premiumBuyButton;
+    private TextView currentTierText, currentTierDescriptionText;
+    private TextView basicTierText, basicTierDescriptionText;
+    private TextView premiumTierText, premiumTierDescriptionText;
 
     private PaymentSheet paymentSheet;
     private String paymentIntentClientSecret;
     private String paymentIntentId;
     private PaymentSheet.CustomerConfiguration customerConfig;
 
+    private String userTier;
     private boolean isBuyingBasic;
 
     @Override
@@ -42,6 +47,12 @@ public class PaymentActivity extends AppCompatActivity {
         backButton = findViewById(R.id.payment_back_button);
         basicBuyButton = findViewById(R.id.payment_basic_buy_button);
         premiumBuyButton = findViewById(R.id.payment_premium_buy_button);
+        currentTierText = findViewById(R.id.payment_current_tier_name_text);
+        currentTierDescriptionText = findViewById(R.id.payment_current_tier_description_text);
+        basicTierText = findViewById(R.id.payment_basic_tier_text);
+        basicTierDescriptionText = findViewById(R.id.payment_basic_tier_description_text);
+        premiumTierText = findViewById(R.id.payment_premium_tier_text);
+        premiumTierDescriptionText = findViewById(R.id.payment_premium_tier_description_text);
 
         paymentSheet = new PaymentSheet(this, this::onPaymentSheetResult);
 
@@ -63,6 +74,9 @@ public class PaymentActivity extends AppCompatActivity {
                 buyPremium(UserManager.getUserID(getApplicationContext()));
             });
         }
+
+        // get and populate current tier data
+        getUserTier(UserManager.getUserID(getApplicationContext()));
     }
 
     private void buyBasic(long userId) {
@@ -151,6 +165,59 @@ public class PaymentActivity extends AppCompatActivity {
             intent.putExtra("OPEN_FRAGMENT", 3); // open fragment Profile
             startActivity(intent);
         }
+    }
+
+    private void getUserTier(long userId) {
+        UserManager.getUserByIdRequest(getApplicationContext(), userId,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("Volley Response", "Success getting user for tier: " + response);
+
+                        try {
+                            userTier = null;
+                            if (response.has("userTier")) {
+                                userTier = response.getString("userTier");
+                            }
+
+                            populateUserTier();
+                        }
+                        catch (JSONException e) {
+                            Log.e("JSON Error", "Error getting user object for tier: " + e.toString());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("Volley Error", "Error getting user for tier: " + error.toString());
+                    }
+                });
+    }
+
+    private void populateUserTier() {
+        if (userTier == null) userTier = "Free";
+
+        if (userTier.equals("Basic")) {
+            currentTierText.setText("Basic");
+            currentTierDescriptionText.setText("+   Clothes limit: 30\n+   Outfits limit: 30\n+   All Free features\n+   Wearing statistics");
+            // Hide buying Basic UI
+            basicTierText.setVisibility(TextView.GONE);
+            basicTierDescriptionText.setVisibility(TextView.GONE);
+            basicBuyButton.setVisibility(TextView.GONE);
+        } else if (userTier.equals("Premium")) {
+            currentTierText.setText("Premium");
+            currentTierDescriptionText.setText("+   Clothes limit: Unlimited\n+   Outfits limit: Unlimited\n+   All Basic features\n+   Leaderboard access\n+   Cosmetic badge");
+            // Hide buying Basic UI
+            basicTierText.setVisibility(TextView.GONE);
+            basicTierDescriptionText.setVisibility(TextView.GONE);
+            basicBuyButton.setVisibility(TextView.GONE);
+            // Hide buying Premium UI
+            premiumTierText.setVisibility(TextView.GONE);
+            premiumTierDescriptionText.setVisibility(TextView.GONE);
+            premiumBuyButton.setVisibility(TextView.GONE);
+        }
+        // No changes needed if Free
     }
 
     private void confirmPayment() {
