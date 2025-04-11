@@ -65,6 +65,9 @@ public class DashboardFragment extends Fragment {
     private StatisticsRecyclerViewAdapter adapter;
 
 
+    /*
+    Note add a viewpager2 for the outfit images
+     */
 
     public DashboardFragment() {
         // Required empty public constructor

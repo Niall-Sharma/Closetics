@@ -13,7 +13,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView2"
             android:layout_width="200dp"
-            android:layout_height="475dp"
+            android:layout_height="500dp"
             android:layout_marginStart="4dp"
             android:layout_marginTop="115dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -76,7 +76,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
             android:layout_width="200dp"
-            android:layout_height="475dp"
+            android:layout_height="500dp"
             android:layout_marginTop="115dp"
             android:layout_marginEnd="4dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -208,7 +208,7 @@
             android:layout_width="200dp"
             android:layout_height="100dp"
             android:layout_marginStart="4dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
@@ -239,9 +239,13 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="25dp"
             android:layout_marginEnd="35dp"
+            android:layout_marginBottom="4dp"
             android:text="User Statistics"
+            app:layout_constraintBottom_toTopOf="@+id/leaderboardButton"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/cardView3"
-            app:layout_constraintTop_toBottomOf="@+id/cardView" />
+            app:layout_constraintTop_toBottomOf="@+id/cardView"
+            app:layout_constraintVertical_bias="1.0" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
