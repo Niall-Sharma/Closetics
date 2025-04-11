@@ -2,7 +2,9 @@ package com.example.closetics.clothes;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -18,6 +20,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -33,6 +39,7 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.example.closetics.R;
 
@@ -63,6 +70,9 @@ public class CameraActivity extends AppCompatActivity {
     private CameraDevice cameraDevice;
 
     private CameraCaptureSession cameraCaptureSession;
+
+    private ActivityResultLauncher<Intent> cameraActivityResultLauncher;
+
     /*
     Typical default indexes for the front and rear cameras
      */
@@ -72,6 +82,41 @@ public class CameraActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
+
+        snapPicture = findViewById(R.id.snap);
+
+
+        cameraActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult o) {
+                        if (o.getResultCode() == RESULT_OK && o.getData() != null) {
+                            Bitmap imageBitmap = (Bitmap) o.getData().getExtras().get("data");
+                            ImageView imageView = findViewById(R.id.imageView);
+                            imageView.setImageBitmap(imageBitmap);
+                        }
+                    }
+                });
+        snapPicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openCamera();
+            }
+        });
+
+    }
+    private void openCamera(){
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (intent.resolveActivity(getPackageManager()) != null){
+            cameraActivityResultLauncher.launch(intent);
+        }
+    }
+}
+
+
+        /*
+        setContentView(R.layout.activity_camera);
+
 
         textureView = findViewById(R.id.textureView);
         snapPicture = findViewById(R.id.snap);
@@ -124,12 +169,13 @@ public class CameraActivity extends AppCompatActivity {
             }
         });
 
-    }
-
-    private void openCamera(String cameraId, CameraManager cameraManager){
-        /*
-        This section requests permission to open camera if permission not already granted
          */
+
+
+
+/*
+    private void openCamera(String cameraId, CameraManager cameraManager){
+
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             //Request permission if permission hasn't been granted
             ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.CAMERA}, 100);
@@ -168,15 +214,21 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
+ */
+
+
+/*
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.P)
     private void createCaptureSession(CameraDevice cameraDevice) throws CameraAccessException {
-        /*
+
         Note:
         Surfaces are Output configurations for the camera
         Preview Surface used for rendering to the screen
         Image Reader used for saving images
-         */
+
         //Note add a preview configuration with a texture view to display the picture in the UI
 
 
@@ -309,7 +361,5 @@ public class CameraActivity extends AppCompatActivity {
 
     }
 
+ */
 
-
-
-}

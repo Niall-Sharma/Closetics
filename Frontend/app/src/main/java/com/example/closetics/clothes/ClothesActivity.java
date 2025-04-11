@@ -2,11 +2,18 @@ package com.example.closetics.clothes;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -50,6 +57,8 @@ public class ClothesActivity extends AppCompatActivity {
 
     private Button clothesActivityBack;
     private Button mainActivityBack;
+
+
 
     /*
     Recycler View
@@ -150,12 +159,16 @@ public class ClothesActivity extends AppCompatActivity {
 
             }
         });
+
         testCamera.setOnClickListener(v -> {
             Intent intent = new Intent(this, CameraActivity.class);
             startActivity(intent);
         });
 
+
     }
+
+
 
     //Add more items if more added to activity
     private void activityItemsVisibility(){
