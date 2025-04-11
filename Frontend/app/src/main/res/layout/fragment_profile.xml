@@ -116,6 +116,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <Button
+            android:id="@+id/profile_tier_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="User Tier"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@+id/profile_followers_button"
+            app:layout_constraintStart_toStartOf="@+id/profile_followers_button"
+            app:layout_constraintTop_toBottomOf="@+id/profile_followers_button" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
