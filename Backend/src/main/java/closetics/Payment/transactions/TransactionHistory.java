@@ -41,6 +41,9 @@ public class TransactionHistory{
     this.tierName = tierName;
   }
 
+  public TransactionHistory(){
+    
+  }
   public long getId() {
     return id;
   }
