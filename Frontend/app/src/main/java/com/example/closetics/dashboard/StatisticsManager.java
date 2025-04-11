@@ -67,22 +67,22 @@ public class StatisticsManager {
 
     }
 
-    public static void coldestAverageOutfitRequest(Context context, long userId, String URL, Response.Listener<String> responseListener,
+    public static void coldestAverageOutfitRequest(Context context, long userId, String URL, Response.Listener<JSONObject> responseListener,
                                              Response.ErrorListener errorListener){
 
         String getUrl = URL + "/getUsersColdestAvgOutfit/" + userId;
-        StringRequest request = new StringRequest(Request.Method.GET, getUrl, responseListener, errorListener);
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, getUrl, null, responseListener, errorListener);
 
         VolleySingleton.getInstance(context).addToRequestQueue(request);
 
 
     }
 
-    public static void warmestAverageOutfitRequest(Context context, long userId, String URL, Response.Listener<String> responseListener,
+    public static void warmestAverageOutfitRequest(Context context, long userId, String URL, Response.Listener<JSONObject> responseListener,
                                                    Response.ErrorListener errorListener) {
 
         String getUrl = URL + "/getUsersWarmestAvgOutfit/" + userId;
-        StringRequest request = new StringRequest(Request.Method.GET, getUrl,  responseListener, errorListener);
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, getUrl,  null,responseListener, errorListener);
 
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
@@ -171,14 +171,15 @@ public class StatisticsManager {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-    public static void warmestAverageClothingRequest(Context context, long userId, String URL, Response.Listener<String> responseListener,
+    public static void warmestAverageClothingRequest(Context context, long userId, String URL, Response.Listener<JSONObject> responseListener,
                                                      Response.ErrorListener errorListener){
 
         String getUrl = URL + "/getUsersWarmestAvgClothing/" + userId;
 
-        StringRequest request = new StringRequest(
+        JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,
                 getUrl,
+                null,
                 responseListener,
                 errorListener
         );

@@ -420,17 +420,17 @@ public class StatisticsActivity extends AppCompatActivity {
     }
 
     private void setWarmClothing(){
-        StatisticsManager.warmestAverageClothingRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<String>() {
+        StatisticsManager.warmestAverageClothingRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(String response) {
-                Log.d("CW check", response);
+            public void onResponse(JSONObject response) {
+                Log.d("CW check", response.toString());
                 String s;
                 if (response.equals("")){
                     s = "none";
                     warmClothing.setText(s);
                 }
                 else{
-                    warmClothing.setText(response);
+                    warmClothing.setText(response.toString());
                 }
 
             }
@@ -445,17 +445,17 @@ public class StatisticsActivity extends AppCompatActivity {
     }
 
     private void setWarmOutfit(){
-        StatisticsManager.warmestAverageOutfitRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<String>() {
+        StatisticsManager.warmestAverageOutfitRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(String response) {
-                Log.d("OW check", response);
+            public void onResponse(JSONObject response) {
+                Log.d("OW check", response.toString());
                 String s;
                 if (response.equals("")){
                     s = "none";
                     coldOutfit.setText(s);
                 }
                 else{
-                    coldOutfit.setText(response);
+                    coldOutfit.setText(response.toString());
                 }
 
 
@@ -471,17 +471,17 @@ public class StatisticsActivity extends AppCompatActivity {
         });
     }
     private void setColdOutfit(){
-        StatisticsManager.coldestAverageOutfitRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<String>() {
+        StatisticsManager.coldestAverageOutfitRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(String response) {
-                Log.d("OC", response);
+            public void onResponse(JSONObject response) {
+                Log.d("OC", response.toString());
                 String s;
                 if (response.equals("")){
                     s = "none";
                     warmOutfit.setText(s);
                 }
                 else{
-                    warmOutfit.setText(response);
+                    warmOutfit.setText(response.toString());
                 }
 
             }

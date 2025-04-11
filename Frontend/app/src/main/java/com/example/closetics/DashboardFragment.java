@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,11 +28,13 @@ import java.time.LocalDate;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.example.closetics.clothes.ClothesManager;
 import com.example.closetics.dashboard.LeaderboardActivity;
 import com.example.closetics.dashboard.SetTodaysOutfitFragment;
 import com.example.closetics.dashboard.StatisticsActivity;
 
 import com.example.closetics.dashboard.StatisticsManager;
+import com.example.closetics.dashboard.StatisticsRecyclerViewAdapter;
 import com.example.closetics.outfits.OutfitManager;
 import com.example.closetics.outfits.OutfitsActivity;
 
@@ -56,6 +59,10 @@ public class DashboardFragment extends Fragment {
     private TextView wornCount;
     private TextView outfitTotalCount;
     private TextView averageLowTemperature;
+
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private StatisticsRecyclerViewAdapter adapter;
 
 
 
@@ -129,6 +136,7 @@ public class DashboardFragment extends Fragment {
                 if (current == -1){
                     intent.putExtra("setTomorrow", false);
 
+
                 }
                 else{
                     intent.putExtra("setTomorrow", true);
@@ -175,13 +183,10 @@ public class DashboardFragment extends Fragment {
                     outfitStats = response.getJSONObject("outfitStats");
                     String worn = outfitStats.getString("timesWorn");
                     wornCount.setText(worn);
-                    String lowTemp = response.getString("avgLowTemp");
-                    String highTemp = response.getString("avgHighTemp");
+                    String lowTemp = outfitStats.getString("avgLowTemp");
+                    String highTemp = outfitStats.getString("avgHighTemp");
                     outfitTotalCount.setText(highTemp);
                     averageLowTemperature.setText(lowTemp);
-
-
-
 
 
                     //Grab the image
@@ -199,35 +204,29 @@ public class DashboardFragment extends Fragment {
         });
     }
 
-
-
-
-    /*
-    Note: this needs to be updated to work for TODAY'S outfit not just some random outfit
-    Possibly add something to the outfit controller or outfit stat controller in the backend
-
-     */
-    /*
-    private void getOutfitStats(long outfitId){
-        StatisticsManager.getOutfitsStatsRequest(getActivity(), outfitId, MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Log.d("check", response.toString());
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("check", error.toString());
-            }
-        });
-    }
-
-     */
-
     private void showFragment(){
         //NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment_activity_main);
         //navController.navigate(R.id.set_todays_outfit_action);
 
+    }
+
+    /*
+    Will need to add error
+     */
+    public static void addWornToday(Context context, long outfitId){
+        StatisticsManager.addWornOutfitTodayRequest(context,outfitId, MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d("Add worn response", response.toString());
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Error worn", error.toString());
+
+            }
+        });
     }
 
     /*
@@ -243,7 +242,7 @@ public class DashboardFragment extends Fragment {
                 OutfitManager.saveCurrentDailyOutfit(context, clothingId);
                 //Reset tomorrow to -1
                 OutfitManager.saveTomorrowDailyOutfit(context, -1);
-
+                addWornToday(context, clothingId);
             }
         }
     }

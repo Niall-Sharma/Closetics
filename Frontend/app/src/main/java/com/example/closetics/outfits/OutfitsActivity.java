@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.example.closetics.DashboardFragment;
 import com.example.closetics.MainActivity;
 import com.example.closetics.R;
 import com.example.closetics.UserManager;
@@ -102,6 +103,7 @@ public class OutfitsActivity extends AppCompatActivity {
                         }
                         else {
                             OutfitManager.saveCurrentDailyOutfit(OutfitsActivity.this, selectedId);
+                            DashboardFragment.addWornToday(getApplicationContext(), selectedId);
                         }
 
                         Intent intent = new Intent(OutfitsActivity.this, MainActivity.class);
