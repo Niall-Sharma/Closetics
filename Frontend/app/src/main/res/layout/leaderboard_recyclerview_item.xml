@@ -3,12 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingBottom="16dp">
 
     <LinearLayout
         android:id="@+id/linearLayout10"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_marginTop="1dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -17,40 +18,46 @@
 
         <TextView
             android:id="@+id/rank_value"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="-rank value-"
+            android:layout_gravity="center"
+            android:layout_weight="0.7"
+            android:text="-rank-"
+            android:textAlignment="center"
             android:textSize="20sp" />
 
-        <TextView
-            android:id="@+id/username_value"
-            android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/username_button"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:layout_marginTop="0dp"
+            android:layout_weight="0.5"
             android:text="-username-"
             android:textSize="20sp" />
 
         <TextView
-            android:id="@+id/category_value"
-            android:layout_width="wrap_content"
+            android:id="@+id/username_value"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:layout_weight="0.5"
+            android:text="-username-"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/category_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="0.5"
             android:text="-category value-"
+            android:textAlignment="center"
             android:textSize="20sp" />
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/view_profile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="143dp"
-        android:layout_marginTop="26dp"
-        android:layout_marginEnd="143dp"
-        android:text="View Profile"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout10" />
 </androidx.constraintlayout.widget.ConstraintLayout>
