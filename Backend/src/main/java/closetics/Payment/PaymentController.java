@@ -85,7 +85,7 @@ public class PaymentController{
         return ResponseEntity.ok("Payment Successfully Accepted");
       }
       else{
-        transactionHistory.setStatus(paymentIntent.getStatus());
+        transactionHistory.setStatus("failed");
         return ResponseEntity.status(400).body("Payment Not Accepted");
       }
     }catch (StripeException e){
