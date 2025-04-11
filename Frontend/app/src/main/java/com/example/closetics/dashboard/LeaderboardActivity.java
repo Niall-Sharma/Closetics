@@ -39,6 +39,9 @@ import com.example.closetics.outfits.OutfitManager;
 import java.net.URISyntaxException;
 import java.nio.channels.AlreadyConnectedException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class LeaderboardActivity extends AppCompatActivity {
 
@@ -109,13 +112,13 @@ public class LeaderboardActivity extends AppCompatActivity {
             //Store chosen question
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                spinnerPosition = position + 1;
+                chosenFilter = (String) parent.getItemAtPosition(position);
                 if (isConnected) {
                     webSocketClient.close();
                 }
                 connectWebSocketClient();
-
-                spinnerPosition = position + 1;
-                chosenFilter = (String) parent.getItemAtPosition(position);
                 categoryValue.setText(chosenFilter);
 
             }
@@ -176,8 +179,10 @@ public class LeaderboardActivity extends AppCompatActivity {
                 //Grab the JSONArray
                 try {
                     JSONArray leaderboardArray = new JSONArray(message);
-                    ArrayList<LeaderboardItem> objects = new ArrayList<>();
+                    ArrayList<LeaderboardItem> objects = new ArrayList<>(Collections.nCopies(leaderboardArray.length(), null));
+
                     LeaderboardItem leaderboardItem;
+                    final AtomicInteger remainingRequests = new AtomicInteger(leaderboardArray.length()); // Counter to track async requests
                     //Parse the array and grab the fields needed for the recycler view
                     for (int i = 0; i < leaderboardArray.length(); i++){
                         //Do different things based on the category!
@@ -187,32 +192,39 @@ public class LeaderboardActivity extends AppCompatActivity {
                             JSONObject user = object.getJSONObject("user");
                             String username = user.getString("username");
                             String price = object.getString("price");
-                            long userId = user.getLong("user_id");
-                            leaderboardItem = new LeaderboardItem(String.valueOf(i), username, price, userId);
-                            objects.add(leaderboardItem);
+                            long userId = user.getLong("userId");
+                            leaderboardItem = new LeaderboardItem(String.valueOf(i) +1, username, price, userId);
+                            objects.set(i, leaderboardItem);
+
                         }
                         else if (spinnerPosition == 2){
                             JSONArray object = leaderboardArray.getJSONArray(i);
-                            Log.d("Object", object.toString());
+                            //final AtomicInteger remainingRequests2 = new AtomicInteger(object.length());
+                            Log.d("Array", leaderboardArray.toString());
                             long userId = object.getLong(0);
                             String clothingItems = object.getString(1);
                             leaderboardItem = new LeaderboardItem(String.valueOf(i), clothingItems);
 
-
                             //Get the username from the user id
-                            LeaderboardItem finalLeaderboardItem = leaderboardItem;
-                            objects.add(finalLeaderboardItem);
-                            getUsername(userId, new UsernameCallback() {
-                                @Override
-                                public void onSuccess(String username) {
-                                    Log.d("Username", "Username: " + username);
-                                    finalLeaderboardItem.setUsername(username);
 
+                            getUsername(userId, leaderboardItem,  new UsernameCallback() {
+                                @Override
+                                public void onSuccess(String username, String i, String categoryValue) {
+                                    LeaderboardItem l = new LeaderboardItem(i + 1, categoryValue);
+                                    l.setUsername(username);
+                                    Log.d("Username", "Username: " + l.getUsername());
+                                    objects.set(Integer.valueOf(i), l);
                                 }
 
                                 @Override
                                 public void onError(String error) {
                                     Log.e("Username Error", "Error: " + error);
+                                }
+                                @Override
+                                public void onFinish(){
+                                    if (remainingRequests.decrementAndGet() == 0){
+                                        updateAdapter(objects);
+                                    }
                                 }
                             });
 
@@ -221,19 +233,28 @@ public class LeaderboardActivity extends AppCompatActivity {
                         //3rd category
                         else{
                             //Object design is outfit id and total price
+                            Log.d("tag", String.valueOf(leaderboardArray.length()));
                             JSONObject object = leaderboardArray.getJSONObject(i);
+                            Log.d("Object", object.toString());
                             String price = object.getString("totalPrice");
                             //Use the getOutfit endpoint to get the userId
                             long outfitId = object.getLong("outfitId");
+                            if (price.equals("null")) {
+                                remainingRequests.decrementAndGet();
+                                objects.remove(objects.size()-1);
+                                continue;
+                            }
+
+
                             leaderboardItem = new LeaderboardItem(String.valueOf(i), price);
-
-
-                            LeaderboardItem finalLeaderboardItem = leaderboardItem;
-                            objects.add(finalLeaderboardItem);
-                            getUserAttributesFromOutfitId(outfitId, new UsernameCallback() {
+                            getUserAttributesFromOutfitId(outfitId, leaderboardItem, new UsernameCallback() {
                                 @Override
-                                public void onSuccess(String username) {
-                                    finalLeaderboardItem.setUsername(username);
+                                public void onSuccess(String username, String i, String categoryValue) {
+
+                                    LeaderboardItem l = new LeaderboardItem(i+1, categoryValue);
+                                    l.setUsername(username);
+                                    Log.d("Username", "Username: " + l.getUsername());
+                                    objects.set(Integer.valueOf(i), l);
 
                                 }
 
@@ -242,21 +263,21 @@ public class LeaderboardActivity extends AppCompatActivity {
                                     Log.e("Username Error", "Error: " + error);
 
                                 }
+                                @Override
+                                public void onFinish(){
+                                    if (remainingRequests.decrementAndGet() == 0){
+                                        updateAdapter(objects);
+                                    }
+                                }
                             });
 
                         }
 
                     }
-                    //Replace adapter items
-                    adapterItems = objects;
-                    try{
-                        runOnUiThread(() -> {
-                            setAdapter();
-                        });
-                    } catch (NullPointerException e) {
-                        Log.d("null adapter", "yes");
+                    //This is called outside of the loop for first category
+                    if (spinnerPosition == 1){
+                        updateAdapter(objects);
                     }
-
 
                 }
 
@@ -283,6 +304,7 @@ public class LeaderboardActivity extends AppCompatActivity {
                 //Show error dialog or retry connection
 
             }
+
         };
 
     }
@@ -332,7 +354,7 @@ public class LeaderboardActivity extends AppCompatActivity {
             Log.d("WebSocket", "WebSocket closed in onDestroy.");
         }
     }
-    private void getUserAttributesFromOutfitId(long outfitId, UsernameCallback callback){
+    private void getUserAttributesFromOutfitId(long outfitId, LeaderboardItem item, UsernameCallback callback){
         OutfitManager.getOutfitRequest(this, outfitId, MainActivity.SERVER_URL + "/getOutfit/", new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -340,10 +362,11 @@ public class LeaderboardActivity extends AppCompatActivity {
                     JSONObject user = response.getJSONObject("user");
                     String username = user.getString("username");
                     //Maybe user profile id instead!
-                    long userId = user.getLong("user_id");
+                    long userId = user.getLong("userId");
                     Log.d("user", user.toString());
 
-                    callback.onSuccess(username);
+                    callback.onSuccess(username, item.getRank(), item.getCategoryValue());
+                    callback.onFinish();
 
                 } catch (JSONException e) {
                     callback.onError(e.toString());
@@ -359,14 +382,15 @@ public class LeaderboardActivity extends AppCompatActivity {
             }
         });
     }
-    private void getUsername(long userId, UsernameCallback callback){
+    private void getUsername(long userId, LeaderboardItem item, UsernameCallback callback){
         UserManager.getUserByIdRequest(this, String.valueOf(userId), MainActivity.SERVER_URL + "/users/", new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     String username = response.getString("username");
-                    callback.onSuccess(username);
+                    callback.onSuccess(username, item.getRank(), item.getCategoryValue());
+                    callback.onFinish();
 
                 } catch (JSONException e) {
                     callback.onError(e.toString());
@@ -384,6 +408,19 @@ public class LeaderboardActivity extends AppCompatActivity {
 
 
     }
+    private void updateAdapter(ArrayList<LeaderboardItem> objects){
+        //Replace adapter items
+        adapterItems = objects;
+        Log.d("check", adapterItems.get(0).getUsername());
+        try{
+            runOnUiThread(() -> {
+                setAdapter();
+            });
+        } catch (NullPointerException e) {
+            Log.d("null adapter", "yes");
+        }
+    }
+
     private void setAdapter(){
 
         this.adapter = new LeaderboardRecyclerViewAdapter(adapterItems, new LeaderboardRecyclerViewAdapter.OnItemClickListener() {
@@ -402,8 +439,9 @@ public class LeaderboardActivity extends AppCompatActivity {
      */
 
     public interface UsernameCallback {
-        void onSuccess(String username);
+        void onSuccess(String username, String i, String value);
         void onError(String error);
+        void onFinish();
     }
 
 }

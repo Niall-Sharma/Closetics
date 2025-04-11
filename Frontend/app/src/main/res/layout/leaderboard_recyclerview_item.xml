@@ -6,6 +6,7 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
+        android:id="@+id/linearLayout10"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="1dp"
@@ -44,7 +45,12 @@
         android:id="@+id/view_profile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="143dp"
+        android:layout_marginTop="26dp"
+        android:layout_marginEnd="143dp"
         android:text="View Profile"
-        tools:layout_editor_absoluteX="143dp"
-        tools:layout_editor_absoluteY="52dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout10" />
 </androidx.constraintlayout.widget.ConstraintLayout>
