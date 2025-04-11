@@ -44,7 +44,6 @@ public class Outfit {
 
 
     private String outfitName;
-    @JsonIgnore
     private LocalDate creationDate;
     private boolean favorite;
 

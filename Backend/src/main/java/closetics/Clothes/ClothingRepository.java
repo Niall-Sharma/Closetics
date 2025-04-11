@@ -35,4 +35,23 @@ public interface ClothingRepository extends JpaRepository<Clothing, Long> {
             "GROUP BY c.user.id " +
             "ORDER BY totalItems DESC")
     List<Object[]> findTop10UsersByClothingCount(Pageable pageable);
+
+    Optional<Clothing> findTopByUser_userIdOrderByPriceAsc(long userId);
+
+    Optional<Clothing> findTopByUser_userIdOrderByClothingStats_timesWornDesc(long userId);
+
+    @Query("SELECT c FROM clothing_table c " +
+            "JOIN c.clothingStats cs " +
+            "WHERE c.user.userId = :userId " +
+            "AND cs.avgLowTemp > -1000 " +
+            "ORDER BY cs.avgLowTemp ASC")
+    Optional<Clothing> findTopByUserIdOrderByAvgLowTempAsc(@Param("userId") Long userId);
+
+    @Query("SELECT c FROM clothing_table c " +
+            "JOIN c.clothingStats cs " +
+            "WHERE c.user.userId = :userId " +
+            "AND cs.avgHighTemp > -1000 " +
+            "ORDER BY cs.avgHighTemp DESC")
+    Optional<Clothing> findTopByUserIdOrderByAvgHighTempDesc(@Param("userId") Long userId);
+
 }
