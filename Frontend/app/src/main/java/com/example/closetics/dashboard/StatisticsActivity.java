@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.Response;
@@ -47,6 +48,10 @@ public class StatisticsActivity extends AppCompatActivity {
     private TextView mostWornClothingItem;
     private TextView mostExpensiveOutfit;
     private TextView mostExpensiveClothing;
+    private TextView warmClothing;
+    private TextView coldClothing;
+    private TextView warmOutfit;
+    private TextView coldOutfit;
 
     private CardView card1;
     private CardView card2;
@@ -54,8 +59,8 @@ public class StatisticsActivity extends AppCompatActivity {
     private ArrayList<JSONObject> allOutfitStatsObjects;
     private ArrayList<JSONObject> allClothingStatsObjects;
 
-    private final String CLOTHES_STATS_TAG = "clothes_stats_fragment";
-    private final String OUTFITS_STATS_TAG = "outfits_stats_fragment";
+    private final String CLOTHES_STATS_TAG = "Clothes Stats";
+    private final String OUTFITS_STATS_TAG = "Outfit Stats";
 
 
 
@@ -84,6 +89,10 @@ public class StatisticsActivity extends AppCompatActivity {
         mostWornClothingItem = findViewById(R.id.wornClothing);
         mostExpensiveOutfit = findViewById(R.id.expensiveOutfit);
         mostExpensiveClothing = findViewById(R.id.expensiveClothing);
+        warmClothing = findViewById(R.id.warm_clothing);
+        coldClothing = findViewById(R.id.cold_clothing);
+        warmOutfit = findViewById(R.id.warm_outfit);
+        coldOutfit = findViewById(R.id.cold_outfit);
 
         card1 = findViewById(R.id.cardView);
         card2 = findViewById(R.id.cardView2);
@@ -96,6 +105,11 @@ public class StatisticsActivity extends AppCompatActivity {
         setMostWornClothingItem();
         setTotalOutfitsCount();
         setTotalClosetValueAndTotalClothing();
+
+        setColdClothing();
+        setWarmClothing();
+        setColdOutfit();
+        setWarmOutfit();
 
 
 
@@ -110,7 +124,7 @@ public class StatisticsActivity extends AppCompatActivity {
         clothesStats.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                whichButton.setText("Clothes Stats");
+                whichButton.setText(CLOTHES_STATS_TAG);
                 Fragment fragment = new ClothesStatsFragment(allClothingStatsObjects);
                 setCardsInvisible();
                 showFragment(CLOTHES_STATS_TAG, fragment);
@@ -123,7 +137,7 @@ public class StatisticsActivity extends AppCompatActivity {
         outfitStats.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                whichButton.setText("Outfit Stats");
+                whichButton.setText(OUTFITS_STATS_TAG);
                 Fragment fragment = new OutfitStatsFragment(allOutfitStatsObjects);
                 setCardsInvisible();
                 showFragment(OUTFITS_STATS_TAG, fragment);
@@ -132,8 +146,10 @@ public class StatisticsActivity extends AppCompatActivity {
         overallStats.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String tag = (String)whichButton.getText();
                 whichButton.setText("Overall Stats");
-
+                deleteFragment(tag);
+                setCardsVisible();
             }
         });
 
@@ -144,6 +160,14 @@ public class StatisticsActivity extends AppCompatActivity {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.stats_categories_container, fragment, tag);
         transaction.commit();
+    }
+    private void deleteFragment(String tag){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = fragmentManager.findFragmentByTag(tag);
+
+        if (fragment != null){
+            fragmentManager.beginTransaction().remove(fragment).commit();
+        }
     }
 
     /*
@@ -159,7 +183,7 @@ public class StatisticsActivity extends AppCompatActivity {
                 for (int i =0; i < response.length(); i++){
                    try {
                        JSONObject object = response.getJSONObject(i);
-                       JSONObject stats = object.getJSONObject("clothingStats");
+                       JSONObject stats = object.getJSONObject("outfitStats");
                        statsObjects.add(stats);
                    } catch (JSONException e) {
                        Log.e("exception", e.toString());
@@ -349,6 +373,80 @@ public class StatisticsActivity extends AppCompatActivity {
         });
     }
 
+   private void weatherRequestNull(VolleyError error, TextView text){
+       if (error.networkResponse == null){
+           String s = "none";
+           text.setText(s);
+       }
+       Log.e("error", error.toString());
+   }
 
+    private void setColdClothing() {
+        StatisticsManager.coldestAverageClothingRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                //Note will need to add logic to these on responses!
+                Log.d("CC check", response.toString());
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                weatherRequestNull(error, coldClothing);
+
+            }
+        });
+
+    }
+
+    private void setWarmClothing(){
+        StatisticsManager.warmestAverageClothingRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d("CW check", response.toString());
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                weatherRequestNull(error, warmClothing);
+
+            }
+        });
+    }
+
+    private void setWarmOutfit(){
+        StatisticsManager.warmestAverageOutfitRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d("OW check", response.toString());
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                weatherRequestNull(error, warmOutfit);
+
+
+            }
+        });
+    }
+    private void setColdOutfit(){
+        StatisticsManager.warmestAverageOutfitRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d("OC check", response.toString());
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                weatherRequestNull(error, coldOutfit);
+
+            }
+        });
+    }
 
 }
