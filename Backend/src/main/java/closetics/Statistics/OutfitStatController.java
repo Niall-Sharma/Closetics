@@ -31,8 +31,8 @@ public class OutfitStatController {
 
 
     @GetMapping(path = "/getOutfitStats/{id}")
-    public Optional<OutfitStats> getClothingStats(@PathVariable long id) {
-        return outfitStatRepository.findById(id);
+    public OutfitStats getClothingStats(@PathVariable long id) {
+        return outfitStatRepository.findById(id).get();
     }
 
     @PutMapping(path = "/wornOutfitToday/{id}")

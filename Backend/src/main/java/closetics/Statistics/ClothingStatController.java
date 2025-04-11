@@ -28,8 +28,8 @@ public class ClothingStatController {
     ClothingRepository clothingRepository;
 
     @GetMapping(path = "/getClothingStats/{id}")
-    public Optional<ClothingStats> getClothingStats(@PathVariable long id) {
-        return clothingStatRepository.findById(id);
+    public ClothingStats getClothingStats(@PathVariable long id) {
+        return clothingStatRepository.findById(id).get();
     }
 
     @PutMapping(path = "/wornClothingToday/{id}")
