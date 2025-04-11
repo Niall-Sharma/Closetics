@@ -78,7 +78,7 @@ public class PaymentController{
       User user = userRepository.findById(Long.parseLong(metadata.get("userId"))).orElseThrow(() -> new RuntimeException("User Not Found"));
       TransactionHistory transactionHistory = tRepository.findByPaymentIntentId(paymentIntent.getId()).orElseThrow(() -> new RuntimeException("Stripe Session Not Found"));
 
-      if(paymentIntent.getStatus().equals("complete")){
+      if(paymentIntent.getStatus().equals("succeeded")){
         transactionHistory.setStatus(paymentIntent.getStatus());
         user.setUserTier(metadata.get("tier"));
         return ResponseEntity.ok("Payment Successfully Accepted");
