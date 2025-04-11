@@ -67,50 +67,48 @@ public class CameraActivity extends AppCompatActivity {
 
     private Button snapPicture;
 
-    private CameraDevice cameraDevice;
+    private Uri imageUri;
+    private ImageView imageView;
 
-    private CameraCaptureSession cameraCaptureSession;
-
-    private ActivityResultLauncher<Intent> cameraActivityResultLauncher;
-
-    /*
-    Typical default indexes for the front and rear cameras
-     */
-
+    private final ActivityResultLauncher<Intent> cameraLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    imageView.setImageURI(imageUri);
+                } else {
+                    // Cleanup if the photo wasn't actually taken
+                    if (imageUri != null) {
+                        getContentResolver().delete(imageUri, null, null);
+                        imageUri = null;
+                    }
+                }
+            });
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
-        snapPicture = findViewById(R.id.snap);
+        imageView = findViewById(R.id.capturedImage);
+        Button cameraButton = findViewById(R.id.cameraButton);
 
-
-        cameraActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult o) {
-                        if (o.getResultCode() == RESULT_OK && o.getData() != null) {
-                            Bitmap imageBitmap = (Bitmap) o.getData().getExtras().get("data");
-                            ImageView imageView = findViewById(R.id.imageView);
-                            imageView.setImageBitmap(imageBitmap);
-                        }
-                    }
-                });
-        snapPicture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openCamera();
-            }
-        });
-
+        cameraButton.setOnClickListener(v -> openCamera());
     }
-    private void openCamera(){
+
+    private void openCamera() {
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.DISPLAY_NAME, "IMG_" + System.currentTimeMillis());
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+        values.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/MyApp");
+
+        imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (intent.resolveActivity(getPackageManager()) != null){
-            cameraActivityResultLauncher.launch(intent);
-        }
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        cameraLauncher.launch(intent);
     }
+
+
+
 }
 
 
