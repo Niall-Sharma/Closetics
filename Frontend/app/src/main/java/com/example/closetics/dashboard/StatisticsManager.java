@@ -67,22 +67,22 @@ public class StatisticsManager {
 
     }
 
-    public static void coldestAverageOutfitRequest(Context context, long userId, String URL, Response.Listener<JSONObject> responseListener,
+    public static void coldestAverageOutfitRequest(Context context, long userId, String URL, Response.Listener<String> responseListener,
                                              Response.ErrorListener errorListener){
 
         String getUrl = URL + "/getUsersColdestAvgOutfit/" + userId;
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, getUrl, null, responseListener, errorListener);
+        StringRequest request = new StringRequest(Request.Method.GET, getUrl, responseListener, errorListener);
 
         VolleySingleton.getInstance(context).addToRequestQueue(request);
 
 
     }
 
-    public static void warmestAverageOutfitRequest(Context context, long userId, String URL, Response.Listener<JSONObject> responseListener,
+    public static void warmestAverageOutfitRequest(Context context, long userId, String URL, Response.Listener<String> responseListener,
                                                    Response.ErrorListener errorListener) {
 
         String getUrl = URL + "/getUsersWarmestAvgOutfit/" + userId;
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, getUrl, null, responseListener, errorListener);
+        StringRequest request = new StringRequest(Request.Method.GET, getUrl,  responseListener, errorListener);
 
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
@@ -157,30 +157,28 @@ public class StatisticsManager {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-    public static void coldestAverageClothingRequest(Context context, long userId, String URL, Response.Listener<JSONObject> responseListener,
+    public static void coldestAverageClothingRequest(Context context, long userId, String URL, Response.Listener<String> responseListener,
                                                      Response.ErrorListener errorListener){
 
         String getUrl = URL + "/getUsersColdestAvgClothing/" + userId;
 
-        JsonObjectRequest request = new JsonObjectRequest(
+        StringRequest request = new StringRequest(
                 Request.Method.GET,
                 getUrl,
-                null,
                 responseListener,
                 errorListener
         );
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-    public static void warmestAverageClothingRequest(Context context, long userId, String URL, Response.Listener<JSONObject> responseListener,
+    public static void warmestAverageClothingRequest(Context context, long userId, String URL, Response.Listener<String> responseListener,
                                                      Response.ErrorListener errorListener){
 
         String getUrl = URL + "/getUsersWarmestAvgClothing/" + userId;
 
-        JsonObjectRequest request = new JsonObjectRequest(
+        StringRequest request = new StringRequest(
                 Request.Method.GET,
                 getUrl,
-                null,
                 responseListener,
                 errorListener
         );

@@ -22,14 +22,14 @@ import java.util.ArrayList;
 
 public class ClothesStatsFragment extends Fragment {
 
-    ArrayList<JSONObject> objects;
+    ArrayList<ClothingStatItem> objects;
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
     StatisticsRecyclerViewAdapter adapter;
 
 
 
-    public ClothesStatsFragment(ArrayList<JSONObject> objects){
+    public ClothesStatsFragment(ArrayList<ClothingStatItem> objects){
         this.objects = objects;
     }
 

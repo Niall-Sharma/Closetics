@@ -57,8 +57,8 @@ public class StatisticsActivity extends AppCompatActivity {
     private CardView card1;
     private CardView card2;
 
-    private ArrayList<JSONObject> allOutfitStatsObjects;
-    private ArrayList<JSONObject> allClothingStatsObjects;
+    private ArrayList<JSONObject> allOutfitStatsObjects = new ArrayList<>();
+    private ArrayList<ClothingStatItem> allClothingStatsObjects = new ArrayList<>();
 
     private final String CLOTHES_STATS_TAG = "Clothes Stats";
     private final String OUTFITS_STATS_TAG = "Outfit Stats";
@@ -210,8 +210,9 @@ public class StatisticsActivity extends AppCompatActivity {
 
                 int totalClosetValue =0;
 
-                ArrayList<JSONObject> statsObjects = new ArrayList<>();
-                String numberOfOutfitsIn;
+                if (allClothingStatsObjects != null){
+                    allClothingStatsObjects.clear();
+                }
                 for (int i =0; i<response.length(); i++){
                     try {
 
@@ -221,10 +222,12 @@ public class StatisticsActivity extends AppCompatActivity {
                         /*
                         Grab the numberOfOutfitsIn field
                          */
-                        setNumberOfOutfitsIn(object.getLong("clothesId"));
                         JSONObject statObject = object.getJSONObject("clothingStats");
+                        String name = object.getString("itemName");
+                        long clothesId = object.getLong("clothesId");
+                        ClothingStatItem statItem = new ClothingStatItem(statObject, name, clothesId);
+                        setNumberOfOutfitsIn(clothesId, statItem);
                         //Add the json object to the arrayList
-                        statsObjects.add(statObject);
                         Log.d("statObject", statObject.toString());
 
                         /*
@@ -239,7 +242,6 @@ public class StatisticsActivity extends AppCompatActivity {
                         Log.e("exception", e.toString());
                     }
                 }
-                setAllClothingStatsObjects(statsObjects);
                 totalClothingItems.setText(String.valueOf(response.length()));
                 totalClosetCount.setText(String.valueOf(totalClosetValue));
 
@@ -254,9 +256,7 @@ public class StatisticsActivity extends AppCompatActivity {
     }
 
 
-    private void setAllClothingStatsObjects(ArrayList<JSONObject> objects){
-        allClothingStatsObjects = objects;
-    }
+
     private void setAllOutfitStatsObjects(ArrayList<JSONObject> objects){
         allOutfitStatsObjects = objects;
     }
@@ -390,14 +390,21 @@ public class StatisticsActivity extends AppCompatActivity {
    }
 
     private void setColdClothing() {
-        StatisticsManager.coldestAverageClothingRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
+        StatisticsManager.coldestAverageClothingRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<String>() {
             @Override
-            public void onResponse(JSONObject response) {
-                //Note will need to add logic to these on responses!
-                Log.d("CC check", response.toString());
-
+            public void onResponse(String response) {
+                Log.d("CC check", response);
+                String s;
+                if (response.equals("")){
+                    s = "none";
+                    coldClothing.setText(s);
+                }
+                else{
+                    coldClothing.setText(response);
+                }
 
             }
+
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -409,12 +416,21 @@ public class StatisticsActivity extends AppCompatActivity {
     }
 
     private void setWarmClothing(){
-        StatisticsManager.warmestAverageClothingRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
+        StatisticsManager.warmestAverageClothingRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<String>() {
             @Override
-            public void onResponse(JSONObject response) {
-                Log.d("CW check", response.toString());
+            public void onResponse(String response) {
+                Log.d("CW check", response);
+                String s;
+                if (response.equals("")){
+                    s = "none";
+                    warmClothing.setText(s);
+                }
+                else{
+                    warmClothing.setText(response);
+                }
 
             }
+
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -425,12 +441,22 @@ public class StatisticsActivity extends AppCompatActivity {
     }
 
     private void setWarmOutfit(){
-        StatisticsManager.warmestAverageOutfitRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
+        StatisticsManager.warmestAverageOutfitRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<String>() {
             @Override
-            public void onResponse(JSONObject response) {
-                Log.d("OW check", response.toString());
+            public void onResponse(String response) {
+                Log.d("OW check", response);
+                String s;
+                if (response.equals("")){
+                    s = "none";
+                    coldOutfit.setText(s);
+                }
+                else{
+                    coldOutfit.setText(response);
+                }
+
 
             }
+
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -441,13 +467,21 @@ public class StatisticsActivity extends AppCompatActivity {
         });
     }
     private void setColdOutfit(){
-        StatisticsManager.warmestAverageOutfitRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
+        StatisticsManager.coldestAverageOutfitRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<String>() {
             @Override
-            public void onResponse(JSONObject response) {
-                Log.d("OC check", response.toString());
-
+            public void onResponse(String response) {
+                Log.d("OC", response);
+                String s;
+                if (response.equals("")){
+                    s = "none";
+                    warmOutfit.setText(s);
+                }
+                else{
+                    warmOutfit.setText(response);
+                }
 
             }
+
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -456,11 +490,15 @@ public class StatisticsActivity extends AppCompatActivity {
             }
         });
     }
-    private void setNumberOfOutfitsIn(long clothingId){
+    private void setNumberOfOutfitsIn(long clothingId, ClothingStatItem statItem){
         StatisticsManager.calcNumberOfOutfitsInRequest(this, clothingId, MainActivity.SERVER_URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.d("response", response);
+                statItem.setNumberOfOutfitsIn(response);
+                allClothingStatsObjects.add(statItem);
+
+
 
             }
 
@@ -471,5 +509,6 @@ public class StatisticsActivity extends AppCompatActivity {
             }
         });
     }
+
 
 }

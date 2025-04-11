@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,9 +21,9 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
     /*
     Baseline clothes stats adapter
      */
-    ArrayList<JSONObject> objects;
+    ArrayList<ClothingStatItem> objects;
 
-    public StatisticsRecyclerViewAdapter(ArrayList<JSONObject> objects){
+    public StatisticsRecyclerViewAdapter(ArrayList<ClothingStatItem> objects){
         this.objects = objects;
     }
 
@@ -49,11 +50,21 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        private TextView object;
+        private TextView timesWorn;
+        private TextView lowTemp;
+        private TextView highTemp;
+        private TextView outfitsIn;
+        private TextView name;
+        private ImageView image;
+
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            //object = itemView.findViewById(R.id.stat_object);
+            timesWorn = itemView.findViewById(R.id.timesWorn);
+            lowTemp = itemView.findViewById(R.id.low_temp);
+            highTemp = itemView.findViewById(R.id.high_temp);
+            outfitsIn = itemView.findViewById(R.id.outfits_in);
+            name = itemView.findViewById(R.id.name);
 
         }
     }

@@ -14,11 +14,11 @@ public class ClothingStatItem {
     private String numberOfOutfitsIn;
 
     // Constructor without image and wornToday
-    public ClothingStatItem(JSONObject object, String name, long clothesId, String numberOfOutfitsIn) {
+    public ClothingStatItem(JSONObject object, String name, long clothesId) {
         this.object = object;
         this.name = name;
         this.clothesId = clothesId;
-        this.numberOfOutfitsIn = numberOfOutfitsIn;
+        //this.numberOfOutfitsIn = numberOfOutfitsIn;
         this.wornToday = false; // default value
     }
 
@@ -28,6 +28,10 @@ public class ClothingStatItem {
         this.name = name;
         this.clothesId = clothesId;
         this.wornToday = wornToday;
+        this.numberOfOutfitsIn = numberOfOutfitsIn;
+    }
+
+    public void setNumberOfOutfitsIn(String numberOfOutfitsIn) {
         this.numberOfOutfitsIn = numberOfOutfitsIn;
     }
 
