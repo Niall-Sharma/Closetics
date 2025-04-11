@@ -64,7 +64,7 @@ public class ClothingStatController {
 
     @GetMapping(path = "/getUsersMostExpensiveClothing/{userId}")
     public Clothing mostExpClothing(@PathVariable long userId) {
-        return clothingRepository.findTopByUser_userIdOrderByPriceAsc(userId)
+        return clothingRepository.findMostExpensiveClothingByUserId(userId)
                 .orElse(null);
     }
 

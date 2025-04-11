@@ -36,7 +36,8 @@ public interface ClothingRepository extends JpaRepository<Clothing, Long> {
             "ORDER BY totalItems DESC")
     List<Object[]> findTop10UsersByClothingCount(Pageable pageable);
 
-    Optional<Clothing> findTopByUser_userIdOrderByPriceAsc(long userId);
+    @Query(value = "SELECT * FROM clothing_table c WHERE c.user_id = :userId ORDER BY CAST(c.price AS DOUBLE) DESC LIMIT 1", nativeQuery = true)
+    Optional<Clothing> findMostExpensiveClothingByUserId(@Param("userId") Long userId);
 
     Optional<Clothing> findTopByUser_userIdOrderByClothingStats_timesWornDesc(long userId);
 
