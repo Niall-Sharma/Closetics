@@ -10,6 +10,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.example.closetics.outfits.OutfitManager;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -89,6 +91,8 @@ public class UserManager {
         editor.putString(TOKEN_PARAM, null);
         editor.putString(USERNAME_PARAM, null);
         editor.putLong(USER_ID_PARAM, -1);
+        editor.putLong(OutfitManager.CURRENT_OUTFIT_PARAM, -1);
+        editor.putLong(OutfitManager.TOMORROW_OUTFIT_PARAM, -1);
         editor.apply();
     }
 

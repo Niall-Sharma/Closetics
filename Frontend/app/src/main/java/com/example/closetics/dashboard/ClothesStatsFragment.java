@@ -22,14 +22,14 @@ import java.util.ArrayList;
 
 public class ClothesStatsFragment extends Fragment {
 
-    ArrayList<JSONObject> objects;
+    ArrayList<ClothingStatItem> objects;
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
     StatisticsRecyclerViewAdapter adapter;
 
 
 
-    public ClothesStatsFragment(ArrayList<JSONObject> objects){
+    public ClothesStatsFragment(ArrayList<ClothingStatItem> objects){
         this.objects = objects;
     }
 
@@ -44,7 +44,7 @@ public class ClothesStatsFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_view);
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new StatisticsRecyclerViewAdapter(objects);
+        adapter = new StatisticsRecyclerViewAdapter(objects, false);
 
         recyclerView.setAdapter(adapter);
         //recyclerView.setHasFixedSize(true);

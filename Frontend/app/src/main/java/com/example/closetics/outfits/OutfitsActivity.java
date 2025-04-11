@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.example.closetics.DashboardFragment;
 import com.example.closetics.MainActivity;
 import com.example.closetics.R;
 import com.example.closetics.UserManager;
@@ -31,6 +32,8 @@ public class OutfitsActivity extends AppCompatActivity {
     private Button backButton;
     private ListView outfitsList;
     private OutfitsListAdapter adapter;
+    private Boolean setDashboard = false;
+
 
     private List<Long> outfitIds;
 
@@ -43,6 +46,8 @@ public class OutfitsActivity extends AppCompatActivity {
         outfitsList = findViewById(R.id.outfits_list);
         noOutfitsText = findViewById(R.id.outfits_no_outfits_text);
         backButton = findViewById(R.id.outfits_back_button);
+
+
 
         // Initialize the adapter with an empty list (data will be added later)
         adapter = new OutfitsListAdapter(this, new ArrayList<>());
@@ -70,6 +75,47 @@ public class OutfitsActivity extends AppCompatActivity {
             }
         });
 
+
+        //Ashten's code, outfits activity is reused in the dashboard with slight modifications!
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null){
+            String start  = "Choose ";
+            setDashboard = true;
+            addOutfitButton.setVisibility(View.INVISIBLE);
+            if (bundle.getBoolean("setTomorrow")) {
+                String s = start + "Tomorrow's Outfit";
+                noOutfitsText.setText(s);
+                noOutfitsText.setVisibility(View.VISIBLE);
+            }else {
+                String s = start + "Today's Outfit";
+                noOutfitsText.setText(s);
+                noOutfitsText.setVisibility(View.VISIBLE);
+            }
+                //Clicking an outfit now sends that outfit ID to dashboard!
+                outfitsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                        //Send outfit ID to main instead!
+                        long selectedId = outfitIds.get(position);
+                        if (noOutfitsText.getText().equals("Choose Tomorrow's Outfit")) {
+                            OutfitManager.saveTomorrowDailyOutfit(OutfitsActivity.this, selectedId);
+                        }
+                        else {
+                            OutfitManager.saveCurrentDailyOutfit(OutfitsActivity.this, selectedId);
+                            DashboardFragment.addWornToday(getApplicationContext(), selectedId);
+                        }
+
+                        Intent intent = new Intent(OutfitsActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                });
+
+
+            }
+
+
+
         populateOutfitsList(UserManager.getUserID(getApplicationContext()));
     }
 
@@ -81,7 +127,7 @@ public class OutfitsActivity extends AppCompatActivity {
                         Log.d("Volley Response", response.toString());
 
                         // hide no outfits text if there are outfits
-                        if (response.length() > 0) {
+                        if (response.length() > 0 && !setDashboard) {
                             noOutfitsText.setVisibility(TextView.GONE);
                         }
 

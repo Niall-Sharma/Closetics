@@ -25,16 +25,16 @@ public class OutfitStatsFragment extends Fragment {
     This can likely be a child of the other statistics fragment!
      */
 
-    ArrayList<JSONObject> objects;
+    ArrayList<ClothingStatItem> objects;
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
-    ClothesByTypeAdapter adapter;
+    StatisticsRecyclerViewAdapter adapter;
 
     /*
     Recycler view fields
      */
 
-    public OutfitStatsFragment(ArrayList<JSONObject> objects){
+    public OutfitStatsFragment(ArrayList<ClothingStatItem> objects){
         this.objects = objects;
     }
 
@@ -49,6 +49,9 @@ public class OutfitStatsFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_view);
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
+        adapter = new StatisticsRecyclerViewAdapter(objects ,true);
+        recyclerView.setAdapter(adapter);
+
 
 
 
