@@ -39,8 +39,8 @@ public class UserProfileController{
 
   @PutMapping(path = "/addFollowing/{id}/{followingId}")
   public UserProfileDTO AddFollowingToProfile(@PathVariable("id") long id, @PathVariable("followingId") long followingId){
-    UserProfile userProfile = userRepository.findById(id).get().GetUserProfile();
-    UserProfile followingUser = userRepository.findById(followingId).get().GetUserProfile();
+    UserProfile userProfile = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User Profile Not Found")).GetUserProfile();
+    UserProfile followingUser = userRepository.findById(followingId).orElseThrow(() -> new RuntimeException("Following User Profile Not Found")).GetUserProfile();
     if(id != followingId){
       userProfile.addFollowing(followingUser);
       followingUser.addFollower(userProfile);
@@ -53,8 +53,8 @@ public class UserProfileController{
 
   @PutMapping(path = "/removeFollowing/{id}/{followingId}")
   public UserProfileDTO RemoveFollowingFromProfile(@PathVariable("id") long id, @PathVariable("followingId") long followingId){
-    UserProfile userProfile = userRepository.findById(id).get().GetUserProfile();
-    UserProfile followingUser = userRepository.findById(followingId).get().GetUserProfile();
+    UserProfile userProfile = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User Profile Not Found")).GetUserProfile();
+    UserProfile followingUser = userRepository.findById(followingId).orElseThrow(() -> new RuntimeException("Following User Profile Not Found")).GetUserProfile();
     userProfile.removeFollowing(followingUser);
     uRepository.save(userProfile);
     return new UserProfileDTO(userProfile, 2);
@@ -63,14 +63,14 @@ public class UserProfileController{
 
   @GetMapping("/userprofile/followers/{id}")
   public List<UserProfileDTO> GetFollowers(@PathVariable("id") Long id){
-    UserProfile userProfile = uRepository.findById(id).get();
+    UserProfile userProfile = uRepository.findById(id).orElseThrow(() -> new RuntimeException("User Profile Not Found"));
     UserProfileDTO userProfileDTO = new UserProfileDTO(userProfile, 2);
     return userProfileDTO.getFollowers();
   }
 
   @GetMapping("/userprofile/following/{id}")
   public List<UserProfileDTO> GetFollowing(@PathVariable("id") Long id){
-    UserProfile userProfile = uRepository.findById(id).get();
+    UserProfile userProfile = uRepository.findById(id).orElseThrow(() -> new RuntimeException("User Profile Not Found"));
     UserProfileDTO userProfileDTO = new UserProfileDTO(userProfile, 2);
     return userProfileDTO.getFollowing();
 
@@ -82,7 +82,7 @@ public class UserProfileController{
 
   @PutMapping("/userprofile/swappublicsetting/{id}")
   public UserProfileDTO swapFavorite(@PathVariable long id) {
-    UserProfile userProfile = uRepository.findById(id).get();
+    UserProfile userProfile = uRepository.findById(id).orElseThrow(() -> new RuntimeException("User Profile Not Found"));
     if (userProfile != null) {
       userProfile.setIsPublic(!userProfile.getIsPublic());
       uRepository.save(userProfile);
