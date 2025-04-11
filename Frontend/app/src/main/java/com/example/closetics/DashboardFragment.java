@@ -1,7 +1,10 @@
 package com.example.closetics;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,16 +22,23 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
+
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.example.closetics.clothes.ClothesManager;
 import com.example.closetics.dashboard.LeaderboardActivity;
 import com.example.closetics.dashboard.SetTodaysOutfitFragment;
 import com.example.closetics.dashboard.StatisticsActivity;
 
 import com.example.closetics.dashboard.StatisticsManager;
+import com.example.closetics.dashboard.StatisticsRecyclerViewAdapter;
 import com.example.closetics.outfits.OutfitManager;
+import com.example.closetics.outfits.OutfitsActivity;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class DashboardFragment extends Fragment {
@@ -37,13 +48,26 @@ public class DashboardFragment extends Fragment {
     private Button leaderboard;
     private Button userStatistics;
     private Button setTomorrow;
+    private long current;
+    private long tomorrow;
     private ImageButton login;
     private TextView outfitName;
     private TextView outfitInsights;
     private TextView todaysDate;
     private ImageView outfitImage;
-    private int holdCount;
+    private JSONObject outfitStats;
+    private TextView wornCount;
+    private TextView outfitTotalCount;
+    private TextView averageLowTemperature;
 
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private StatisticsRecyclerViewAdapter adapter;
+
+
+    /*
+    Note add a viewpager2 for the outfit images
+     */
 
     public DashboardFragment() {
         // Required empty public constructor
@@ -60,24 +84,70 @@ public class DashboardFragment extends Fragment {
         setTomorrow = view.findViewById(R.id.setTomorrowButton);
         login = view.findViewById(R.id.loginPageButton);
         outfitImage = view.findViewById(R.id.imageView2);
+        todaysDate = view.findViewById(R.id.todaysDate);
+        outfitName = view.findViewById(R.id.outfitName);
+        outfitInsights = view.findViewById(R.id.outfitStats);
+        wornCount = view.findViewById(R.id.wornCount);
+        outfitTotalCount = view.findViewById(R.id.outfitTotalCount);
+        averageLowTemperature = view.findViewById(R.id.averageLowTemperature);
 
-        if (OutfitManager.getCurrentDailyOutfit(getActivity()) == null){
-            /*
-            This means that there is no outfit set for today!!
-            So show a different fragment!
-             */
-            //showFragment();
+
+
+        current = OutfitManager.getCurrentDailyOutfit(getActivity());
+        tomorrow = OutfitManager.getTomorrowDailyOutfit(getActivity());
+
+        Log.d("current", String.valueOf(OutfitManager.getCurrentDailyOutfit(getActivity())));
+        Log.d("tommorow", String.valueOf(OutfitManager.getTomorrowDailyOutfit(getActivity())));
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+            LocalDate today = LocalDate.now();
+            String formattedDate = today.format(formatter);
+            todaysDate.setText(formattedDate);
+
+        }
+
+        //No set outfit for today
+        if (current == -1){
+            String s = "Set Today's Outfit";
+            setTomorrow.setText(s);
+            outfitName.setText("Please set an Outfit!");
+
+        }
+        //Current is set!
+        if (current != -1){
+            String s = "Set Tomorrow's Outfit";
+            setTomorrow.setText(s);
+            getOutfit();
+            String s1 = String.valueOf(current);
+            outfitName.setText(s1);
         }
 
 
 
 
-        //getOutfitStats();
 
 
 
+        setTomorrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), OutfitsActivity.class);
+
+                //If current is false, set current
+                if (current == -1){
+                    intent.putExtra("setTomorrow", false);
 
 
+                }
+                else{
+                    intent.putExtra("setTomorrow", true);
+
+                }
+                startActivity(intent);
+            }
+        });
 
         leaderboard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,35 +166,43 @@ public class DashboardFragment extends Fragment {
 
             }
         });
-        setTomorrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("Add more", "clicked");
-            }
-        });
 
 
         return view;
     }
 
-
-
-
-    /*
-    Note: this needs to be updated to work for TODAY'S outfit not just some random outfit
-    Possibly add something to the outfit controller or outfit stat controller in the backend
-
-     */
-    private void getOutfitStats(long outfitId){
-        StatisticsManager.getOutfitsStatsRequest(getActivity(), outfitId, MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
+    private void getOutfit(){
+        OutfitManager.getOutfitRequest(getActivity(), current, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.d("check", response.toString());
+                Log.d("get outfit", response.toString());
+                try {
+                    String name = response.getString("outfitName");
+                    outfitName.setText(name);
+                    name+=" Insights";
+                    outfitInsights.setText(name);
+                    //Grab the images from the clothes
+                    //
+                    outfitStats = response.getJSONObject("outfitStats");
+                    String worn = outfitStats.getString("timesWorn");
+                    wornCount.setText(worn);
+                    String lowTemp = outfitStats.getString("avgLowTemp");
+                    String highTemp = outfitStats.getString("avgHighTemp");
+                    outfitTotalCount.setText(highTemp);
+                    averageLowTemperature.setText(lowTemp);
+
+
+                    //Grab the image
+
+                } catch (JSONException e) {
+                    Log.e("exception", e.toString());
+                }
+
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("check", error.toString());
+
             }
         });
     }
@@ -135,14 +213,46 @@ public class DashboardFragment extends Fragment {
 
     }
 
+    /*
+    Will need to add error
+     */
+    public static void addWornToday(Context context, long outfitId){
+        StatisticsManager.addWornOutfitTodayRequest(context,outfitId, MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d("Add worn response", response.toString());
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Error worn", error.toString());
+
+            }
+        });
+    }
+
+    /*
+    This is called by the android manifest!
+     */
+    public static class DateChangeReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (Intent.ACTION_DATE_CHANGED.equals(intent.getAction())){
+                //Swap tomorrow to current on next day
+                long clothingId = OutfitManager.getTomorrowDailyOutfit(context);
+                OutfitManager.saveCurrentDailyOutfit(context, clothingId);
+                //Reset tomorrow to -1
+                OutfitManager.saveTomorrowDailyOutfit(context, -1);
+                addWornToday(context, clothingId);
+            }
+        }
+    }
 
 
 
-    //Requests on this page:
-    //getOutfit worn today
-    //getOutfit stats, and getOutfit for grabbing the image
 
-    //get overall statistics when pressing user statistics
 
 
 

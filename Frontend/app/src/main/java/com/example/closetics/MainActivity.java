@@ -10,6 +10,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -17,6 +18,8 @@ import com.example.closetics.databinding.ActivityMainBinding;
 import com.example.closetics.recommendations.RecWebSocketService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());             // link to Main activity XML
 
         bottomNavView = binding.bottomNavView;
+
+
+
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.

@@ -13,7 +13,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView2"
             android:layout_width="200dp"
-            android:layout_height="475dp"
+            android:layout_height="500dp"
             android:layout_marginStart="4dp"
             android:layout_marginTop="115dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -55,7 +55,8 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/outfitName" />
+                    app:layout_constraintTop_toBottomOf="@+id/outfitName"
+                    app:srcCompat="@drawable/hanger" />
 
                 <Button
                     android:id="@+id/setTomorrowButton"
@@ -64,7 +65,7 @@
                     android:layout_marginStart="33dp"
                     android:layout_marginEnd="33dp"
                     android:layout_marginBottom="16dp"
-                    android:text="Set tomorrow"
+                    android:text="-tomorrow-"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -75,7 +76,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
             android:layout_width="200dp"
-            android:layout_height="475dp"
+            android:layout_height="500dp"
             android:layout_marginTop="115dp"
             android:layout_marginEnd="4dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -109,37 +110,36 @@
                     app:layout_constraintTop_toBottomOf="@+id/outfitStats">
 
                     <TextView
-                        android:id="@+id/textView14"
+                        android:id="@+id/timesWornPrompt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
-                        android:text="Dates Worn This Month:" />
+                        android:text="Times Worn: " />
 
                     <TextView
-                        android:id="@+id/wornMonthCount"
+                        android:id="@+id/wornCount"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="-count-" />
 
                     <TextView
-                        android:id="@+id/textView17"
+                        android:id="@+id/warmPrompt"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
-                        android:text="How Many Times Have You Worn This Outfit:" />
+                        android:text="Average High Temperature: " />
 
                     <TextView
                         android:id="@+id/outfitTotalCount"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-count-" />
+                        android:layout_height="wrap_content" />
 
                     <TextView
-                        android:id="@+id/textView19"
+                        android:id="@+id/coldPrompt"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
-                        android:text="Average Low Temperature: " />
+                        android:text="Average Cold Temperature: " />
 
                     <TextView
                         android:id="@+id/averageLowTemperature"
@@ -148,30 +148,25 @@
                         android:text="-average-" />
 
                     <TextView
+                        android:id="@+id/textView17"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
-                        android:text="Average High Temperature:" />
-
-                    <TextView
-                        android:id="@+id/averageHighTemperature"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-average-" />
+                        android:text="Outfit's Clothing Statistics: " />
 
                 </LinearLayout>
 
-                <Button
-                    android:id="@+id/userStatsButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginEnd="30dp"
-                    android:layout_marginBottom="16dp"
-                    android:text="User Statistics"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="215dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="1dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/linearLayout7" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>
@@ -213,7 +208,7 @@
             android:layout_width="200dp"
             android:layout_height="100dp"
             android:layout_marginStart="4dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
@@ -230,11 +225,27 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="3dp"
             android:layout_marginEnd="13dp"
-            android:layout_marginBottom="40dp"
+            android:layout_marginBottom="16dp"
             android:text="Closetics Leaderboard"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/cardView3" />
+
+        <Button
+            android:id="@+id/userStatsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginEnd="35dp"
+            android:layout_marginBottom="4dp"
+            android:text="User Statistics"
+            app:layout_constraintBottom_toTopOf="@+id/leaderboardButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/cardView3"
+            app:layout_constraintTop_toBottomOf="@+id/cardView"
+            app:layout_constraintVertical_bias="1.0" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
