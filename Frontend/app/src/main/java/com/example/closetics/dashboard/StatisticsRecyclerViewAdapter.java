@@ -53,7 +53,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            object = itemView.findViewById(R.id.stat_object);
+            //object = itemView.findViewById(R.id.stat_object);
 
         }
     }

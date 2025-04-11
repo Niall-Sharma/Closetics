@@ -148,13 +148,13 @@
                 <TextView
                     android:id="@+id/warm_outfit"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp" />
+                    android:layout_height="wrap_content" />
 
                 <TextView
                     android:id="@+id/textView24"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
                     android:text="You Like This Outfit When It's Cold:" />
 
                 <TextView

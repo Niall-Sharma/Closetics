@@ -6,6 +6,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.example.closetics.VolleySingleton;
 
 import org.json.JSONArray;
@@ -112,15 +113,14 @@ public class StatisticsManager {
         );
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
-    public static void calcNumberOfOutfitsInRequest(Context context, long clothingId, String URL, Response.Listener<JSONObject> responseListener,
+    public static void calcNumberOfOutfitsInRequest(Context context, long clothingId, String URL, Response.Listener<String> responseListener,
                                              Response.ErrorListener errorListener){
 
         String putUrl = URL + "/numberOfOutfitsIn/" + clothingId;
 
-        JsonObjectRequest request = new JsonObjectRequest(
+        StringRequest request = new StringRequest(
                 Request.Method.PUT,
                 putUrl,
-                null,
                 responseListener,
                 errorListener
         );

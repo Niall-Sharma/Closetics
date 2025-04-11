@@ -20,6 +20,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.example.closetics.MainActivity;
 import com.example.closetics.R;
 import com.example.closetics.UserManager;
@@ -210,10 +211,17 @@ public class StatisticsActivity extends AppCompatActivity {
                 int totalClosetValue =0;
 
                 ArrayList<JSONObject> statsObjects = new ArrayList<>();
+                String numberOfOutfitsIn;
                 for (int i =0; i<response.length(); i++){
                     try {
+
                         JSONObject object = response.getJSONObject(i);
                         Log.d("object", object.toString());
+
+                        /*
+                        Grab the numberOfOutfitsIn field
+                         */
+                        setNumberOfOutfitsIn(object.getLong("clothesId"));
                         JSONObject statObject = object.getJSONObject("clothingStats");
                         //Add the json object to the arrayList
                         statsObjects.add(statObject);
@@ -445,6 +453,21 @@ public class StatisticsActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 weatherRequestNull(error, coldOutfit);
 
+            }
+        });
+    }
+    private void setNumberOfOutfitsIn(long clothingId){
+        StatisticsManager.calcNumberOfOutfitsInRequest(this, clothingId, MainActivity.SERVER_URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("response", response);
+
+            }
+
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("outfitsIn", error.toString());
             }
         });
     }
