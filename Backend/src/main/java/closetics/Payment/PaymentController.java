@@ -55,6 +55,7 @@ public class PaymentController{
 
       Map<String, Object> response = new HashMap<>();
       response.put("clientSecret", intent.getClientSecret());
+      response.put("paymentIntentId", intent.getId());
 
       User user = userRepository.findById(UID).orElseThrow(() -> new RuntimeException("User Not Found"));
 
@@ -70,17 +71,15 @@ public class PaymentController{
   }
 
   @PutMapping("/confirmPayment/{stripeSession}")
-  public ResponseEntity<?> completePayment(@PathVariable("stripeSession") String stripeSession){
+  public ResponseEntity<?> completePayment(@PathVariable("paymentIntentId") String paymentIntentId){
     try {
-      Session session = Session.retrieve(stripeSession);
-      PaymentIntent paymentIntent = session.getPaymentIntentObject();
+      PaymentIntent paymentIntent = PaymentIntent.retrieve(paymentIntentId);
       Map<String,String> metadata = paymentIntent.getMetadata();
       User user = userRepository.findById(Long.parseLong(metadata.get("userId"))).orElseThrow(() -> new RuntimeException("User Not Found"));
       TransactionHistory transactionHistory = tRepository.findByPaymentIntentId(paymentIntent.getId()).orElseThrow(() -> new RuntimeException("Stripe Session Not Found"));
 
-      if(session.getStatus().equals("complete")){
-        transactionHistory.setStatus(session.getStatus());
-        transactionHistory.setStripeSessionId(stripeSession);
+      if(paymentIntent.getStatus().equals("complete")){
+        transactionHistory.setStatus(paymentIntent.getStatus());
         user.setUserTier(metadata.get("tier"));
         return ResponseEntity.ok("Payment Successfully Accepted");
       }

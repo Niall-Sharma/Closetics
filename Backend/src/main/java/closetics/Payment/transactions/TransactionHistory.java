@@ -27,8 +27,6 @@ public class TransactionHistory{
 
   private String paymentIntentId;
 
-  private String stripeSessionId = null;
-
   private String tierName;
 
 
@@ -97,14 +95,6 @@ public class TransactionHistory{
 
   public void setPaymentIntentId(String paymentIntentId) {
     this.paymentIntentId = paymentIntentId;
-  }
-
-  public String getStripeSessionId() {
-    return stripeSessionId;
-  }
-
-  public void setStripeSessionId(String stripeSessionId) {
-    this.stripeSessionId = stripeSessionId;
   }
 
   public String getTierName() {
