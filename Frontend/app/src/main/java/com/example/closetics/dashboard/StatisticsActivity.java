@@ -25,6 +25,7 @@ import com.example.closetics.UserManager;
 import com.example.closetics.clothes.ClothesManager;
 import com.example.closetics.clothes.ViewClothesFragment;
 import com.example.closetics.outfits.OutfitManager;
+import com.example.closetics.outfits.OutfitsActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -86,11 +87,15 @@ public class StatisticsActivity extends AppCompatActivity {
 
         card1 = findViewById(R.id.cardView);
         card2 = findViewById(R.id.cardView2);
-        /*
-        Set the views
-         */
+
+
+
+        setMostExpensiveOutfit();
+        setMostWornOutfit();
+        setMostExpensiveClothing();
+        setMostWornClothingItem();
         setTotalOutfitsCount();
-        setTotalClosetValue();
+        setTotalClosetValueAndTotalClothing();
 
 
 
@@ -148,37 +153,20 @@ public class StatisticsActivity extends AppCompatActivity {
         OutfitManager.getAllOutfitsRequest(this, UserManager.getUserID(this), new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-                int greatestPrice = 0;
-                int wornOutfitCount = 0;
+               totalOutfitCount.setText(String.valueOf(response.length()));
                 ArrayList<JSONObject> statsObjects = new ArrayList<>();
 
-                for (int i =0; i<response.length(); i++){
-                    try {
-                        JSONObject object = response.getJSONObject(i);
-                        Log.d("outfitObject", object.toString());
-                        JSONObject statObject = object.getJSONObject("outfitStats");
-                       Log.d("outfitStats", statObject.toString());
-                       int wornOutfit = statObject.getInt("timesWorn");
-                       statsObjects.add(statObject);
+                for (int i =0; i < response.length(); i++){
+                   try {
+                       JSONObject object = response.getJSONObject(i);
+                       JSONObject stats = object.getJSONObject("clothingStats");
+                       statsObjects.add(stats);
+                   } catch (JSONException e) {
+                       Log.e("exception", e.toString());
+                   }
 
-                       if (wornOutfit>wornOutfitCount){
-                           wornOutfitCount = wornOutfit;
-                       }
-
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-
-                totalOutfitCount.setText(String.valueOf(response.length()));
-                mostExpensiveOutfit.setText(String.valueOf(greatestPrice));
-                mostWornOutfit.setText(String.valueOf(wornOutfitCount));
+               }
                 setAllOutfitStatsObjects(statsObjects);
-
-
-
-                Log.d("Outfit count", String.valueOf(response.length()));
-
             }
         }, new Response.ErrorListener() {
             @Override
@@ -186,18 +174,16 @@ public class StatisticsActivity extends AppCompatActivity {
                 Log.e("Outfit count error", error.toString());
             }
         });
-
     }
     /*
     Figure out a better way to find total closet value without having to fully scan all clothes
      */
-    private void setTotalClosetValue(){
+    private void setTotalClosetValueAndTotalClothing(){
         ClothesManager.getClothingByUserRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-                int totalPrice =0;
-                int greatestPrice =0;
-                int greatestWornItem =0;
+
+                int totalClosetValue =0;
 
                 ArrayList<JSONObject> statsObjects = new ArrayList<>();
                 for (int i =0; i<response.length(); i++){
@@ -208,40 +194,24 @@ public class StatisticsActivity extends AppCompatActivity {
                         //Add the json object to the arrayList
                         statsObjects.add(statObject);
                         Log.d("statObject", statObject.toString());
-                        int timesWorn = statObject.getInt("timesWorn");
 
-                        if (timesWorn>greatestWornItem){
-                            greatestWornItem = timesWorn;
-                        }
                         /*
                         Check if price is not null
                          */
                         if (!object.getString("price") .equals("null")){
                             int price = object.getInt("price");
-                            totalPrice +=price;
+                            totalClosetValue +=price;
                         }
 
                     } catch (JSONException e) {
-                        throw new RuntimeException(e);
+                        Log.e("exception", e.toString());
                     }
                 }
-                Log.d("response length", String.valueOf(response.length()));
-
-                //Total clothing items
-                totalClothingItems.setText(String.valueOf(response.length()));
-
-                //Total closet count
-                totalClosetCount.setText(String.valueOf(totalPrice));
-
-                //Most expensive clothing item
-
-                mostExpensiveClothing.setText(String.valueOf(greatestPrice));
-
-                //Set the clothing stats arrayList
-
                 setAllClothingStatsObjects(statsObjects);
-                //Set the worn clothing count
-                mostWornClothingItem.setText(String.valueOf(greatestWornItem));
+                totalClothingItems.setText(String.valueOf(response.length()));
+                totalClosetCount.setText(String.valueOf(totalClosetValue));
+
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -265,6 +235,118 @@ public class StatisticsActivity extends AppCompatActivity {
     private void setCardsVisible(){
         card1.setVisibility(View.VISIBLE);
         card2.setVisibility(View.VISIBLE);
+    }
+    private void setMostExpensiveOutfit(){
+        StatisticsManager.mostExpensiveOutfitRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d("Most expensive", response.toString());
+                try {
+                    getOutfit(response.getLong("outfitId"), response.getString("totalPrice"));
+
+                } catch (JSONException e) {
+                    Log.e("exception", e.toString());
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Most expensive clothing request", error.toString());
+
+            }
+        });
+    }
+
+    private void getOutfit(long outfitId, String price){
+        OutfitManager.getOutfitRequest(this, outfitId, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    Log.d("outfit", response.toString());
+                    String s = "Name: " + response.getString("outfitName") +"\nPrice: " + price;
+                    mostExpensiveOutfit.setText(s);
+                } catch (JSONException e) {
+                    Log.e("exception", e.toString());
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+    }
+    private void setMostWornOutfit(){
+        StatisticsManager.mostWornOutfitRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d("check", response.toString());
+                try {
+                    String name = response.getString("outfitName");
+                    JSONObject object = response.getJSONObject("outfitStats");
+                    String timesWorn = object.getString("timesWorn");
+                    String s = "Name: " + name + "\nTimes Worn: " + timesWorn;
+                    mostWornOutfit.setText(s);
+                } catch (JSONException e) {
+                    Log.e("exception", e.toString());
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+    }
+
+    private void setMostExpensiveClothing(){
+        StatisticsManager.mostExpensiveClothingRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d("expensive clothing", response.toString());
+                try {
+                    String name = response.getString("itemName");
+                    String price = response.getString("price");
+                    if (price.equals("null")){
+                        price = "none";
+                    }
+                    String s = "Name: " + name + "\nPrice: " + price;
+                    mostExpensiveClothing.setText(s);
+                } catch (JSONException e) {
+                    Log.e("exception", e.toString());
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("error", error.toString());
+            }
+        });
+    }
+    private void setMostWornClothingItem(){
+        StatisticsManager.mostWornClothingRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d("most worn clothing", response.toString());
+                try {
+                    String name = response.getString("itemName");
+                    JSONObject object = response.getJSONObject("clothingStats");
+                    String timesWorn = object.getString("timesWorn");
+                    String s = "Name: " + name + "\nTimes Worn: " + timesWorn;
+                    mostWornClothingItem.setText(s);
+                } catch (JSONException e) {
+                    Log.e("exception", e.toString());
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
     }
 
 
