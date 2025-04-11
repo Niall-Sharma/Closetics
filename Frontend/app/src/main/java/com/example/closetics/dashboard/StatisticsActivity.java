@@ -394,17 +394,17 @@ public class StatisticsActivity extends AppCompatActivity {
    }
 
     private void setColdClothing() {
-        StatisticsManager.coldestAverageClothingRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<String>() {
+        StatisticsManager.coldestAverageClothingRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(String response) {
-                Log.d("CC check", response);
+            public void onResponse(JSONObject response) {
+                Log.d("CC check", response.toString());
                 String s;
                 if (response.equals("")){
                     s = "none";
                     coldClothing.setText(s);
                 }
                 else{
-                    coldClothing.setText(response);
+                    coldClothing.setText(response.toString());
                 }
 
             }
@@ -449,13 +449,13 @@ public class StatisticsActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 Log.d("OW check", response.toString());
-                String s;
-                if (response.equals("")){
-                    s = "none";
-                    coldOutfit.setText(s);
-                }
-                else{
-                    coldOutfit.setText(response.toString());
+                try {
+                    JSONObject object = response.getJSONObject("outfitStats");
+                    String high = object.getString("avgHighTemp");
+                    warmOutfit.setText(high);
+
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
                 }
 
 
@@ -475,13 +475,13 @@ public class StatisticsActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 Log.d("OC", response.toString());
-                String s;
-                if (response.equals("")){
-                    s = "none";
-                    warmOutfit.setText(s);
-                }
-                else{
-                    warmOutfit.setText(response.toString());
+                try {
+                    JSONObject object = response.getJSONObject("outfitStats");
+                    String high = object.getString("avgLowTemp");
+                    coldOutfit.setText(high);
+
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
                 }
 
             }

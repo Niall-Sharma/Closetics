@@ -157,14 +157,15 @@ public class StatisticsManager {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-    public static void coldestAverageClothingRequest(Context context, long userId, String URL, Response.Listener<String> responseListener,
+    public static void coldestAverageClothingRequest(Context context, long userId, String URL, Response.Listener<JSONObject> responseListener,
                                                      Response.ErrorListener errorListener){
 
         String getUrl = URL + "/getUsersColdestAvgClothing/" + userId;
 
-        StringRequest request = new StringRequest(
+        JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,
                 getUrl,
+                null,
                 responseListener,
                 errorListener
         );
