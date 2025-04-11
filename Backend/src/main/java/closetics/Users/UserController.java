@@ -7,7 +7,6 @@ import closetics.Users.Tokens.TokenRepository;
 import closetics.Users.Tokens.TokenService;
 import closetics.Users.UserProfile.UserProfile;
 import closetics.Users.UserProfile.UserProfileRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -15,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Optional;
 
 @RestController
 public class UserController {
@@ -92,7 +90,7 @@ public class UserController {
         if(!User.validatePassword(user.getPassword())){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Password does not meet criteria");
         }
-        if(!User.validateEmail(user.getEmail())){
+        if(!User.validateEmail(user.getEmail().toLowerCase())){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Please enter a valid email address");
         }
         // Encrypt sensitive data before storing

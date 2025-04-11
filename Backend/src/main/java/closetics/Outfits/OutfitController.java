@@ -12,9 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -51,6 +49,10 @@ public class OutfitController {
     public ResponseEntity<Outfit> createOutfit(@RequestBody OutfitMinimal request) {
         long user_id = request.getUserId();
         User user = userRepository.findById(user_id).orElseThrow(() -> new RuntimeException("User not found"));
+        long numOfUserOutfits = outfitRepository.countByUserUserId(user_id);
+        if ((user.getUserTier().equals("Free") && numOfUserOutfits >= 15) || (user.getUserTier().equals("Basic") && numOfUserOutfits >= 30)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
         Outfit outfit = new Outfit();
         outfit.setUser(user);
         outfit.setCreationDate(LocalDate.now());
