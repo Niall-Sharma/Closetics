@@ -2,6 +2,7 @@ package com.example.closetics;
 
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,9 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
+
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -27,6 +31,7 @@ import com.example.closetics.dashboard.StatisticsActivity;
 
 import com.example.closetics.dashboard.StatisticsManager;
 import com.example.closetics.outfits.OutfitManager;
+import com.example.closetics.outfits.OutfitsActivity;
 
 import org.json.JSONObject;
 
@@ -37,6 +42,8 @@ public class DashboardFragment extends Fragment {
     private Button leaderboard;
     private Button userStatistics;
     private Button setTomorrow;
+    private boolean current;
+    private boolean tomorrow;
     private ImageButton login;
     private TextView outfitName;
     private TextView outfitInsights;
@@ -60,6 +67,21 @@ public class DashboardFragment extends Fragment {
         setTomorrow = view.findViewById(R.id.setTomorrowButton);
         login = view.findViewById(R.id.loginPageButton);
         outfitImage = view.findViewById(R.id.imageView2);
+        todaysDate = view.findViewById(R.id.todaysDate);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+            LocalDate today = LocalDate.now();
+            String formattedDate = today.format(formatter);
+            todaysDate.setText(formattedDate);
+
+        }
+
+
+
+
+
+
 
         if (OutfitManager.getCurrentDailyOutfit(getActivity()) == null){
             /*
@@ -69,6 +91,20 @@ public class DashboardFragment extends Fragment {
             //showFragment();
         }
 
+        //No set outfit for today
+        if (!current){
+            String s = "Set Today's Outfit";
+            setTomorrow.setText(s);
+
+        }
+        //No set ouftit for tomorrow
+        else{
+            String s = "Set Tomorrow's Outfit";
+            setTomorrow.setText(s);
+        }
+
+
+
 
 
 
@@ -77,7 +113,23 @@ public class DashboardFragment extends Fragment {
 
 
 
+        setTomorrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), OutfitsActivity.class);
 
+                //If current is false, set current
+                if (!current){
+                    intent.putExtra("setTomorrow", false);
+
+                }
+                else{
+                    intent.putExtra("setTomorrow", true);
+
+                }
+                startActivity(intent);
+            }
+        });
 
         leaderboard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,12 +146,6 @@ public class DashboardFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), StatisticsActivity.class);
                 startActivity(intent);
 
-            }
-        });
-        setTomorrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("Add more", "clicked");
             }
         });
 

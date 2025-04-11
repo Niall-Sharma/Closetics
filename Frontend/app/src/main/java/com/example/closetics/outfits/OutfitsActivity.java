@@ -32,6 +32,7 @@ public class OutfitsActivity extends AppCompatActivity {
     private ListView outfitsList;
     private OutfitsListAdapter adapter;
 
+
     private List<Long> outfitIds;
 
     @Override
@@ -43,6 +44,8 @@ public class OutfitsActivity extends AppCompatActivity {
         outfitsList = findViewById(R.id.outfits_list);
         noOutfitsText = findViewById(R.id.outfits_no_outfits_text);
         backButton = findViewById(R.id.outfits_back_button);
+
+
 
         // Initialize the adapter with an empty list (data will be added later)
         adapter = new OutfitsListAdapter(this, new ArrayList<>());
@@ -69,6 +72,33 @@ public class OutfitsActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
+        //Ashten's code, outfits activity is reused in the dashboard with slight modifications!
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null){
+            if (bundle.getBoolean("setTomorrow")){
+                addOutfitButton.setVisibility(View.INVISIBLE);
+                noOutfitsText.setText("Choose ");
+                
+
+
+                //Clicking an outfit now sends that outfit ID to dashboard!
+                outfitsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                        //Send outfit ID to main instead!
+                        long selectedId = outfitIds.get(position);
+                        Intent intent = new Intent(OutfitsActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                });
+
+
+            }
+
+        }
 
         populateOutfitsList(UserManager.getUserID(getApplicationContext()));
     }
