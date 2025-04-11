@@ -2,6 +2,7 @@ package com.example.closetics.dashboard;
 
 import android.media.Image;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ClothingStatItem {
@@ -34,6 +35,23 @@ public class ClothingStatItem {
     public void setNumberOfOutfitsIn(String numberOfOutfitsIn) {
         this.numberOfOutfitsIn = numberOfOutfitsIn;
     }
+    public String getName(){
+        return name;
+    }
+    public String getTimesWorn() throws JSONException {
+        return object.getString("timesWorn");
+    }
+    public String getAvgHighTemp() throws JSONException{
+        return object.getString("avgHighTemp");
+    }
+    public String getAvgLowTemp()throws JSONException{
+        return object.getString("avgLowTemp");
+    }
+    public String getNumberOfOutfitsIn(){
+        return numberOfOutfitsIn;
+    }
+
+
 
 
 }

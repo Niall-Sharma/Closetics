@@ -57,7 +57,7 @@ public class StatisticsActivity extends AppCompatActivity {
     private CardView card1;
     private CardView card2;
 
-    private ArrayList<JSONObject> allOutfitStatsObjects = new ArrayList<>();
+    private ArrayList<ClothingStatItem> allOutfitStatsObjects = new ArrayList<>();
     private ArrayList<ClothingStatItem> allClothingStatsObjects = new ArrayList<>();
 
     private final String CLOTHES_STATS_TAG = "Clothes Stats";
@@ -179,13 +179,17 @@ public class StatisticsActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONArray response) {
                totalOutfitCount.setText(String.valueOf(response.length()));
-                ArrayList<JSONObject> statsObjects = new ArrayList<>();
+                ArrayList<ClothingStatItem> statsObjects = new ArrayList<>();
 
                 for (int i =0; i < response.length(); i++){
                    try {
                        JSONObject object = response.getJSONObject(i);
+                       Log.d("outfit check", object.toString());
                        JSONObject stats = object.getJSONObject("outfitStats");
-                       statsObjects.add(stats);
+                       String name = object.getString("outfitName");
+                       long outfitId = object.getLong("outfitId");
+                       ClothingStatItem c = new ClothingStatItem(stats, name, outfitId);
+                       statsObjects.add(c);
                    } catch (JSONException e) {
                        Log.e("exception", e.toString());
                    }
@@ -257,7 +261,7 @@ public class StatisticsActivity extends AppCompatActivity {
 
 
 
-    private void setAllOutfitStatsObjects(ArrayList<JSONObject> objects){
+    private void setAllOutfitStatsObjects(ArrayList<ClothingStatItem> objects){
         allOutfitStatsObjects = objects;
     }
     private void setCardsInvisible(){
