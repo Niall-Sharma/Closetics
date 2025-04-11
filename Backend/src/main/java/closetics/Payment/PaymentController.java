@@ -70,7 +70,7 @@ public class PaymentController{
     }
   }
 
-  @PutMapping("/confirmPayment/{stripeSession}")
+  @PutMapping("/confirmPayment/{paymentIntentId}")
   public ResponseEntity<?> completePayment(@PathVariable("paymentIntentId") String paymentIntentId){
     try {
       PaymentIntent paymentIntent = PaymentIntent.retrieve(paymentIntentId);
