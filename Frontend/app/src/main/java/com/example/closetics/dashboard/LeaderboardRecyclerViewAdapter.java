@@ -1,6 +1,5 @@
 package com.example.closetics.dashboard;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,10 +43,11 @@ public class LeaderboardRecyclerViewAdapter extends RecyclerView.Adapter<Leaderb
             holder.rank.setText(correctRank);
             //Log.d("username", item.getUsername());
             holder.username.setText(item.getUsername());
+            holder.usernameButton.setText(item.getUsername());
             holder.categoryValue.setText(item.getCategoryValue());
 
 
-            holder.viewProfileButton.setOnClickListener(new View.OnClickListener() {
+            holder.usernameButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     clickListener.onItemClick(realPosition, v, item);
@@ -72,14 +72,14 @@ public class LeaderboardRecyclerViewAdapter extends RecyclerView.Adapter<Leaderb
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        private Button viewProfileButton;
+        private Button usernameButton;
         private TextView username;
         private TextView rank;
         private TextView categoryValue;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            viewProfileButton = itemView.findViewById(R.id.view_profile);
+            usernameButton = itemView.findViewById(R.id.username_button);
             username = itemView.findViewById(R.id.username_value);
             rank = itemView.findViewById(R.id.rank_value);
             categoryValue = itemView.findViewById(R.id.category_value);

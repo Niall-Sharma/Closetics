@@ -26,7 +26,7 @@ public class Outfit {
     @JsonIgnoreProperties("datesWorn")
     private OutfitStats outfitStats;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "outfit_items",
             joinColumns = @JoinColumn(name = "outfit_id"),

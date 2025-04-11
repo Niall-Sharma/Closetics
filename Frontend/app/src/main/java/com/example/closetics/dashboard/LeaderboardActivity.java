@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.closetics.MainActivity;
+import com.example.closetics.PublicProfileActivity;
 import com.example.closetics.R;
 import com.example.closetics.UserManager;
 import com.example.closetics.clothes.ClothesActivity;
@@ -157,7 +158,7 @@ public class LeaderboardActivity extends AppCompatActivity {
         webSocketClient = new WebSocketClient(uri) {
             @Override
             public void onOpen(ServerHandshake handshakedata) {
-                Log.d("Websocket", "Connected to Websocket server!");
+                Log.d("LeaderboardWebsocket", "Connected to Websocket server!");
                 isConnected = true;
                 //Loading UI?
                 //Connected UI?
@@ -167,7 +168,7 @@ public class LeaderboardActivity extends AppCompatActivity {
 
             @Override
             public void onMessage(String message) {
-                Log.d("Websocket", "Message received: " + message);
+                Log.d("LeaderboardWebsocket", "Message received: " + message);
                 isConnected = true;
 
                 if (message.equals("Username already exists")){
@@ -193,6 +194,9 @@ public class LeaderboardActivity extends AppCompatActivity {
                             String username = user.getString("username");
                             String price = object.getString("price");
                             long userId = user.getLong("userId");
+
+                            if (!price.equals("null")) price = "$" + price;
+
                             leaderboardItem = new LeaderboardItem(String.valueOf(i) +1, username, price, userId);
                             objects.set(i, leaderboardItem);
 
@@ -244,6 +248,7 @@ public class LeaderboardActivity extends AppCompatActivity {
                                 objects.remove(objects.size()-1);
                                 continue;
                             }
+                            price  = "$" + price;
 
 
                             leaderboardItem = new LeaderboardItem(String.valueOf(i), price);
@@ -355,7 +360,7 @@ public class LeaderboardActivity extends AppCompatActivity {
         }
     }
     private void getUserAttributesFromOutfitId(long outfitId, LeaderboardItem item, UsernameCallback callback){
-        OutfitManager.getOutfitRequest(this, outfitId, MainActivity.SERVER_URL + "/getOutfit/", new Response.Listener<JSONObject>() {
+        OutfitManager.getOutfitRequest(this, outfitId, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -426,7 +431,8 @@ public class LeaderboardActivity extends AppCompatActivity {
         this.adapter = new LeaderboardRecyclerViewAdapter(adapterItems, new LeaderboardRecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position, View view, LeaderboardItem item) {
-                Log.d("Check button", "good");
+                Log.d("LeaderboardActivity", "Clicked on user: " + item.getUsername());
+
             }
         });
         recyclerView.setAdapter(this.adapter);
