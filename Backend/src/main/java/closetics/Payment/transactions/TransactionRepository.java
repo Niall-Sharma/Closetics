@@ -15,11 +15,11 @@ public interface TransactionRepository extends JpaRepository<TransactionHistory,
     @Query(value = "SELECT * FROM transaction_history_table WHERE id=?",nativeQuery = true)
     Optional<List<TransactionHistory>> findByUserId(long id);
 
-    @Query(value = "SELECT * FROM transaction_history_table WHERE paymentIntentId=?", nativeQuery = true)
+    @Query(value = "SELECT * FROM transaction_history_table WHERE payment_intent_id=?", nativeQuery = true)
     Optional<TransactionHistory> findByPaymentIntentId(String id);
 
     @Transactional
-    @Query(value = "DELETE FROM transaction_history_table WHERE paymentIntentId=?", nativeQuery = true)
+    @Query(value = "DELETE FROM transaction_history_table WHERE payment_intent_id=?", nativeQuery = true)
     void deleteByPaymentIntentId(String Id);
 
 }
