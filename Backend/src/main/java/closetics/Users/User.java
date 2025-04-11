@@ -2,9 +2,7 @@ package closetics.Users;
 
 import jakarta.persistence.*;
 import org.mindrot.jbcrypt.*;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import closetics.Users.UserProfile.UserProfile;
 
 
@@ -87,7 +85,8 @@ Regex explanation:
     }
 
     /*
-Regex explanation:
+    /*
+Regex explanataion:
     Don't even ask I took it from stack overflow
  */
     public static Boolean validateEmail(String email) {
