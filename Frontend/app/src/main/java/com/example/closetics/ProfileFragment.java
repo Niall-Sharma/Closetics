@@ -15,6 +15,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.closetics.follow.FollowActivity;
+import com.example.closetics.payment.PaymentActivity;
 import com.example.closetics.settings.SettingsActivity;
 
 public class ProfileFragment extends Fragment {
@@ -27,6 +28,7 @@ public class ProfileFragment extends Fragment {
     private Button deleteUserButton;
     private Button followingButton, followersButton;
     private ImageButton settingsButton;
+    private Button tierButton;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -48,6 +50,7 @@ public class ProfileFragment extends Fragment {
         followingButton = view.findViewById(R.id.profile_following_button);
         followersButton = view.findViewById(R.id.profile_followers_button);
         settingsButton = view.findViewById(R.id.profile_settings_button);
+        tierButton = view.findViewById(R.id.profile_tier_button);
 
         String username = UserManager.getUsername(getActivity().getApplicationContext());
         if(username == null) {
@@ -60,6 +63,7 @@ public class ProfileFragment extends Fragment {
             followingButton.setVisibility(TextView.GONE);
             followersButton.setVisibility(TextView.GONE);
             settingsButton.setVisibility(TextView.GONE);
+            tierButton.setVisibility(TextView.GONE);
         } else {
             usernameText.setText(username);
             loginButton.setVisibility(TextView.GONE);
@@ -70,6 +74,7 @@ public class ProfileFragment extends Fragment {
             followingButton.setVisibility(TextView.VISIBLE);
             followersButton.setVisibility(TextView.VISIBLE);
             settingsButton.setVisibility(TextView.VISIBLE);
+            tierButton.setVisibility(TextView.VISIBLE);
         }
 
         loginButton.setOnClickListener(v -> {
@@ -94,6 +99,7 @@ public class ProfileFragment extends Fragment {
             followingButton.setVisibility(TextView.GONE);
             followersButton.setVisibility(TextView.GONE);
             settingsButton.setVisibility(TextView.GONE);
+            tierButton.setVisibility(TextView.GONE);
 
             stopRecWebSocket();
         });
@@ -140,6 +146,11 @@ public class ProfileFragment extends Fragment {
 
         settingsButton.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), SettingsActivity.class);
+            startActivity(intent);
+        });
+
+        tierButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), PaymentActivity.class);
             startActivity(intent);
         });
 

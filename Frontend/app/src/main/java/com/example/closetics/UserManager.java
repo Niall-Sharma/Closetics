@@ -20,6 +20,8 @@ import java.util.Arrays;
 
 public class UserManager {
 
+    private static final String URL_GET_USER_BY_ID = MainActivity.SERVER_URL + "/users/"; // + {{userId}}
+    private static final String URL_PUT_UPDATE_USER = MainActivity.SERVER_URL + "/updateUser";
     private static final String URL_GET_SEARCH_USERS_BY_USERNAME = MainActivity.SERVER_URL + "/searchUsersByUsername/"; // + {{username}}
     private static final String URL_PUT_ADD_FOLLOWING = MainActivity.SERVER_URL + "/addFollowing/"; // + {{id}}/{{followingId}}
     private static final String URL_PUT_REMOVE_FOLLOWING = MainActivity.SERVER_URL + "/removeFollowing/"; // + {{id}}/{{followingId}}
@@ -324,10 +326,12 @@ public class UserManager {
         //Add request to the volley singleton request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
+
+
+    // TODO: DELETE THIS
     public static void getUserByIdRequest(Context context, String userId, String URL,
                                           Response.Listener<JSONObject> responseListener,
                                           Response.ErrorListener errorListener){
-
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,
@@ -338,6 +342,21 @@ public class UserManager {
         //Add request to the volley singleton request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
 
+    }
+
+
+    public static void getUserByIdRequest(Context context, long userId,
+                                          Response.Listener<JSONObject> responseListener,
+                                          Response.ErrorListener errorListener){
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.GET,
+                URL_GET_USER_BY_ID + userId, // add id to the URL
+                null,
+                responseListener,
+                errorListener);
+        //Add request to the volley singleton request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
 
@@ -406,6 +425,60 @@ public class UserManager {
                 Request.Method.GET,
                 URL_GET_USERPROFILE + id,
                 null, responseListener, errorListener);
+        //Add request to the volley singleton request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+
+    public static void updateUserTierRequest(Context context, long userId, String newTier,
+                                         Response.Listener<JSONObject> responseListener,
+                                         Response.ErrorListener errorListener) {
+
+        // use GET request to get user object
+        // to then updateUser with new tier
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.GET,
+                URL_GET_USER_BY_ID + userId,
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            // do this to throw an error in case if something changed
+                            String oldTier = response.getString("userTier");
+
+                            // call update tier with object method
+                            UserManager.updateUserTierRequest(context, response, newTier, responseListener, errorListener);
+                        }
+                        catch (JSONException e) {
+                            Log.e("JSON Error", "Error getting user object to update tier: " + e.toString());
+                        }
+                    }
+                },
+                errorListener);
+        //Add request to the volley singleton request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+
+    public static void updateUserTierRequest(Context context, JSONObject user, String newTier,
+                                             Response.Listener<JSONObject> responseListener,
+                                             Response.ErrorListener errorListener) {
+
+        try {
+            user.put("userTier", newTier);
+        } catch (JSONException e) {
+            Log.e("JSON Error", "Error changing user object to update tier: " + e.toString());
+        }
+
+        // use GET request to get user object
+        // to then updateUser with new tier
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.PUT,
+                URL_PUT_UPDATE_USER,
+                user,
+                responseListener,
+                errorListener);
         //Add request to the volley singleton request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }

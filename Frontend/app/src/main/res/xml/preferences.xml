@@ -29,6 +29,10 @@
         <Preference
             app:key="log_out"
             app:title="Log out"/>
+
+        <Preference
+            app:key="delete_account"
+            app:title="Delete account"/>
     </PreferenceCategory>
 
     <PreferenceCategory

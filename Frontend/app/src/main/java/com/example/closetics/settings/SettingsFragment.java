@@ -1,5 +1,6 @@
 package com.example.closetics.settings;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -9,6 +10,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
 
+import com.example.closetics.DeleteUserActivity;
 import com.example.closetics.R;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
@@ -53,11 +55,21 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         if (feedbackPref != null) {
             feedbackPref.setOnPreferenceClickListener((preference) -> {
                 Log.d("Preferences", "Feedback was clicked");
-                Toast.makeText(getActivity(), "Please, mail your feedback to 4401 Westown Pkwy, West Des Moines, IA", Toast.LENGTH_LONG).show();
+                // Address of a random Olive Garden
+                Toast.makeText(getActivity(), "Please, mail your feedback to 3600 Westown Pkwy, West Des Moines, IA", Toast.LENGTH_LONG).show();
                 return true; // Return true if the event is handled.
             });
         }
 
-
+        Preference deleteAccPref = findPreference("delete_account");
+        if (deleteAccPref != null) {
+            deleteAccPref.setOnPreferenceClickListener((preference) -> {
+                Log.d("Preferences", "Delete account was clicked");
+                // open delete user activity
+                Intent intent = new Intent(getActivity(), DeleteUserActivity.class);
+                startActivity(intent);
+                return true; // Return true if the event is handled.
+            });
+        }
     }
 }
