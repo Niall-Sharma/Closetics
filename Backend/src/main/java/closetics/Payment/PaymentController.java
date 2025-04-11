@@ -80,12 +80,12 @@ public class PaymentController{
 
       System.out.println(paymentIntent.getStatus());
       if(paymentIntent.getStatus().equals("succeeded")){
-        transactionHistory.setStatus(paymentIntent.getStatus());
+        transactionHistory.setStatus("succeeded");
         user.setUserTier(metadata.get("tier"));
         return ResponseEntity.ok("Payment Successfully Accepted");
       }
       else{
-        tRepository.deleteByPaymentIntentId(paymentIntent.getId());
+        transactionHistory.setStatus(paymentIntent.getStatus());
         return ResponseEntity.status(400).body("Payment Not Accepted");
       }
     }catch (StripeException e){

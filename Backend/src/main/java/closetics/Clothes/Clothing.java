@@ -4,10 +4,8 @@ import closetics.Users.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import closetics.Statistics.ClothingStats;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 
 @Entity(name = "clothing_table")

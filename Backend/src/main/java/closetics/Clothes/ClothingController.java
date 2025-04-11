@@ -1,12 +1,8 @@
 package closetics.Clothes;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
-import closetics.Outfits.Outfit;
 import closetics.Statistics.ClothingStats;
-import closetics.Statistics.OutfitStats;
 import closetics.Users.User;
 import closetics.Users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +51,6 @@ public class ClothingController {
     public ResponseEntity<Clothing> createClothing(@RequestBody ClothingMinimal request) {
         long user_id = request.getUserId();
         User user = userRepository.findById(user_id).orElseThrow(() -> new RuntimeException("User not found"));
-
         Clothing clothing = new Clothing();
         clothing.setBrand(request.getBrand());
         clothing.setColor(request.getColor());

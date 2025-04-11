@@ -54,4 +54,6 @@ public interface ClothingRepository extends JpaRepository<Clothing, Long> {
             "ORDER BY cs.avgHighTemp DESC")
     Optional<Clothing> findTopByUserIdOrderByAvgHighTempDesc(@Param("userId") Long userId);
 
+
+
 }
