@@ -2,11 +2,18 @@ package com.example.closetics.clothes;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -41,8 +48,7 @@ public class ClothesActivity extends AppCompatActivity {
 
     private static HashMap<Long,Long> clothingTypeCounts = new HashMap<>();
     private Button addClothes;
-    private Button editClothes;
-    private Button viewClothes;
+    private Button testCamera;
     private Button finalSubmission;
     private Button deleteClothes;
     private CardView card;
@@ -50,6 +56,8 @@ public class ClothesActivity extends AppCompatActivity {
 
     private Button clothesActivityBack;
     private Button mainActivityBack;
+
+
 
     /*
     Recycler View
@@ -81,8 +89,7 @@ public class ClothesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_clothes);
 
         addClothes = findViewById(R.id.add_clothes);
-        editClothes = findViewById(R.id.edit_clothes);
-        viewClothes = findViewById(R.id.view_clothes);
+        testCamera = findViewById(R.id.view_clothes);
         finalSubmission = findViewById(R.id.final_submission);
         card = findViewById(R.id.card_view);
 
@@ -151,13 +158,20 @@ public class ClothesActivity extends AppCompatActivity {
             }
         });
 
+        testCamera.setOnClickListener(v -> {
+            Intent intent = new Intent(this, CameraActivity.class);
+            startActivity(intent);
+        });
+
+
     }
+
+
 
     //Add more items if more added to activity
     private void activityItemsVisibility(){
         addClothes.setVisibility(View.GONE);
-        editClothes.setVisibility(View.GONE);
-        viewClothes.setVisibility(View.GONE);
+        testCamera.setVisibility(View.GONE);
         tabLayout.setVisibility(View.VISIBLE);
         finalSubmission.setVisibility(View.VISIBLE);
         gridRecyclerView.setVisibility(View.GONE);

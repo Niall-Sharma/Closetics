@@ -59,16 +59,10 @@
             android:text="Add Clothes" />
 
         <Button
-            android:id="@+id/edit_clothes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Edit Clothes" />
-
-        <Button
             android:id="@+id/view_clothes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="View Clothes" />
+            android:text="Test Camera" />
 
         <Button
             android:id="@+id/final_submission"

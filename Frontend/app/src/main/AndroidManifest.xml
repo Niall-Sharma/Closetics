@@ -2,8 +2,22 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!--This allows app to be used without the camera-->
+    <uses-feature android:name="android.hardware.camera" android:required="false"/>
+
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <!--Permissions to use the (rear) camera and save the photos-->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <!--Permission to save images taken in the devices camera roll-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+
+
 
     <application
         android:allowBackup="true"
@@ -65,6 +79,9 @@
         <activity
             android:name=".DeleteUserActivity"
             android:exported="false" />
+        <activity
+            android:name=".clothes.CameraActivity"
+            android:exported="false"/>
         <activity
             android:name=".SignupActivity"
             android:exported="false" />

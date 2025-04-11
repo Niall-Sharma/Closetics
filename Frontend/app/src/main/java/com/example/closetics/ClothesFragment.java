@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.closetics.clothes.CameraActivity;
 import com.example.closetics.clothes.ClothesActivity;
 import com.example.closetics.outfits.OutfitsActivity;
 
@@ -55,6 +56,8 @@ public class ClothesFragment extends Fragment {
             Intent intent = new Intent(getActivity(), OutfitsActivity.class);
             startActivity(intent);
         });
+
+
 
         return view;
     }
