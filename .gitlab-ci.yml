@@ -1,0 +1,84 @@
+stages:             # these stages (jobs) forms the CICD pipeline
+  - mavenbuild      # this is a JOB to build your Springboot application
+  - maventest       # this is a JOB to run tests in your Springboot application (it's okay you don't have any test for now)
+  - mavendeploy     # this is a JOB to deploy your Springboot application on your server
+  - androidbuild    # this is a JOB to build your Android application
+  - androidtest     # this is a JOB to run tests in your Android application (it's okay you don't have any test for now)
+
+maven-build:            
+  stage: mavenbuild     # one of the stages listed above
+  tags:                 # to specify which runner to execute this job
+    - springboot_tag    # change to your runner's tag
+  script:               # what to execute for this job
+    - cd Backend        # change 'Backend' to to where you have the pom.xml (do not add / in the beginning)
+    - mvn package       # maven package
+  artifacts:            # where to output the packaged jar file, change 'Backend' to to where you have the pom.xml
+    paths:
+    - Backend/target/*.jar # change 'Backend' to where you have 'target' (do not add a / in the beginning)
+  only:
+    refs:
+      - main            # only to trigger the pipeline when changes are pushed to 'main'
+    changes:
+      - Backend/**/*    # more specifically - only when changes are made inside the 'Backend' folder
+
+maven-test:             
+  stage: maventest     # one of the stages listed above
+  tags:
+     - springboot_tag   # change to your runner's tag
+  script:
+     - cd Backend       # change 'Backend' to to where you have the pom.xml (do not add / in the beginning)
+     - mvn test         # maven test
+  only:
+    refs:
+      - main            # only to trigger the pipeline when changes are pushed to 'main'
+    changes:
+      - Backend/**/*    # more specifically - only when changes are made inside the 'Backend' folder
+
+auto-deploy:
+  stage: mavendeploy    # one of the stages listed above
+  tags:
+  - springboot_tag      # change to your runner's tag
+  script:               # script to run the deployment service you created
+    - cd Backend        # change 'Backend' to to where you have the pom.xml (do not add / in the beginning)
+    - sudo mv target/*.jar /target/web-demo.jar 
+    - sudo systemctl stop system-web-demo
+    - sudo systemctl start system-web-demo
+  only:
+    refs:
+      - main            # only to trigger the pipeline when changes are pushed to 'main'
+    changes:
+      - Backend/**/*    # more specifically - only when changes are made inside the 'Backend' folder
+
+android-build:
+  image: afirefly/android-ci:java17 # Docker image that has Android environments installed     gjandres/android-ci:latest
+  stage: androidbuild               # one of the stages listed above
+  tags:
+   - android_tag                    # change to your runner's tag
+  before_script:                    # enable gradlew, change 'Frontend' to where you have 'gradlew'
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+    - chmod +x ./Frontend/gradlew
+  script:
+    - cd Frontend                   # change 'Frontend' to where you have 'gradlew' (do not add / in the beginning)
+    - ./gradlew build               # gradle build
+  only:
+    refs:
+      - main                        # only to trigger the pipeline when changes are pushed to 'main'
+    changes:
+      - Frontend/**/*               # more specifically - only when changes are made inside the 'Frontend' folder
+
+android-test:
+  image: afirefly/android-ci:java17
+  stage: androidtest               # one of the stages listed above
+  tags:
+    - android_tag                   # change to your runner's tag
+  before_script:                   # enable gradlew, change 'Frontend' to where you have 'gradlew'
+     - export GRADLE_USER_HOME=`pwd`/.gradle
+     - chmod +x ./Frontend/gradlew
+  script:
+     - cd Frontend                  # change 'Frontend' to where you have 'gradlew' (do not add / in the beginning)
+     - ./gradlew test               # gradle test
+  only:
+    refs:
+      - main          # only to trigger the pipeline when changes are pushed to 'main'
+    changes:
+      - Frontend/**/*               # more specifically - only when changes are made inside the 'Frontend' folder
