@@ -1,0 +1,30 @@
+stages:
+  - mavenbuild
+  - maventest
+  
+maven-build:            
+  stage: mavenbuild
+  tags:
+    - brayden_tag      # <-- change to your runner's tag
+  script:
+    - cd Backend        # change 'Backend' to to where you have the pom.xml (do not add / in the beginning)
+    - mvn package
+  only:
+    refs:
+      - Brayden_CICD
+    changes:
+      - Backend/**/*
+
+
+maven-test:             
+  stage: maventest
+  tags:
+    - brayden_tag     # <-- change to your runner's tag
+  script:
+    - cd Backend       # change 'Backend' to to where you have the pom.xml (do not add / in the beginning)
+    - mvn test
+  only:
+    refs:
+      - Brayden_CICD
+    changes:
+      - Backend/**/*
