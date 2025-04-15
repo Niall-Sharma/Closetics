@@ -1,5 +1,9 @@
+stages:
+  - build
+  - test
+
 maven-build:
-  stage: mavenbuild
+  stage: build
   tags:
     - brayden_tag
   script:
@@ -15,7 +19,7 @@ maven-build:
       - Backend/**/*
 
 maven-test:
-  stage: maventest
+  stage: test
   tags:
     - brayden_tag
   script:
