@@ -1,14 +1,11 @@
-image: maven:3.9-openjdk-17
-
-stages:
-  - mavenbuild
-  - maventest
-
 maven-build:
   stage: mavenbuild
   tags:
     - brayden_tag
   script:
+    - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+    - export PATH=$JAVA_HOME/bin:$PATH
+    - java -version  # for confirmation
     - cd Backend
     - mvn package
   only:
@@ -22,6 +19,9 @@ maven-test:
   tags:
     - brayden_tag
   script:
+    - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+    - export PATH=$JAVA_HOME/bin:$PATH
+    - java -version
     - cd Backend
     - mvn test
   only:
