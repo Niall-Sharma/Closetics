@@ -10,8 +10,21 @@ maven-build:
   tags:                 # to specify which runner to execute this job
     - springboot_tag    # change to your runner's tag
   script:               # what to execute for this job
-    - cd Backend        # change 'Backend' to to where you have the pom.xml (do not add / in the beginning)
-    - mvn package       # maven package
+    - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+    - export MAVEN_VERSION=3.8.6
+    - wget https://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz
+    - tar -xzf apache-maven-$MAVEN_VERSION-bin.tar.gz
+    - export PATH=$PWD/apache-maven-$MAVEN_VERSION/bin:$PATH
+    - java -version
+    - mvn -version
+    - cd Backend
+    - mvn package
+  only:
+    refs:
+      - Brayden_CICD
+    changes:
+      - Backend/**/*
+
   artifacts:            # where to output the packaged jar file, change 'Backend' to to where you have the pom.xml
     paths:
     - Backend/target/*.jar # change 'Backend' to where you have 'target' (do not add a / in the beginning)
@@ -26,8 +39,15 @@ maven-test:
   tags:
      - springboot_tag   # change to your runner's tag
   script:
-     - cd Backend       # change 'Backend' to to where you have the pom.xml (do not add / in the beginning)
-     - mvn test         # maven test
+    - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+    - export MAVEN_VERSION=3.8.6
+    - wget https://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz
+    - tar -xzf apache-maven-$MAVEN_VERSION-bin.tar.gz
+    - export PATH=$PWD/apache-maven-$MAVEN_VERSION/bin:$PATH
+    - java -version
+    - mvn -version
+    - cd Backend
+    - mvn test
   only:
     refs:
       - main            # only to trigger the pipeline when changes are pushed to 'main'
