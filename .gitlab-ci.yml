@@ -1,13 +1,15 @@
+image: maven:3.9-openjdk-17
+
 stages:
   - mavenbuild
   - maventest
-  
-maven-build:            
+
+maven-build:
   stage: mavenbuild
   tags:
-    - brayden_tag      # <-- change to your runner's tag
+    - brayden_tag
   script:
-    - cd Backend        # change 'Backend' to to where you have the pom.xml (do not add / in the beginning)
+    - cd Backend
     - mvn package
   only:
     refs:
@@ -15,13 +17,12 @@ maven-build:
     changes:
       - Backend/**/*
 
-
-maven-test:             
+maven-test:
   stage: maventest
   tags:
-    - brayden_tag     # <-- change to your runner's tag
+    - brayden_tag
   script:
-    - cd Backend       # change 'Backend' to to where you have the pom.xml (do not add / in the beginning)
+    - cd Backend
     - mvn test
   only:
     refs:
