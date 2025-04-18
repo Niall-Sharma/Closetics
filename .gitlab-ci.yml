@@ -21,7 +21,7 @@ maven-build:
     - mvn package
   only:
     refs:
-      - Brayden_CICD
+      - main
     changes:
       - Backend/**/*
 
