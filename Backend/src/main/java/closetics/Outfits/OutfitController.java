@@ -38,8 +38,10 @@ public class OutfitController {
     UserProfileRepository uProfileRepository;
 
     @GetMapping(path = "/getOutfit/{outfitId}")
-    public Outfit getOutfit(@PathVariable long outfitId) {
-        return outfitRepository.findById(outfitId).get();
+    public ResponseEntity<Outfit> getOutfit(@PathVariable long outfitId) {
+        return outfitRepository.findById(outfitId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
     }
 
     @GetMapping(path = "/getAllUserOutfits/{userId}")
