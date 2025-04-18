@@ -38,8 +38,10 @@ public class OutfitController {
     UserProfileRepository uProfileRepository;
 
     @GetMapping(path = "/getOutfit/{outfitId}")
-    public Outfit getOutfit(@PathVariable long outfitId) {
-        return outfitRepository.findById(outfitId).get();
+    public ResponseEntity<Outfit> getOutfit(@PathVariable long outfitId) {
+        return outfitRepository.findById(outfitId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
     }
 
     @GetMapping(path = "/getAllUserOutfits/{userId}")
@@ -75,16 +77,22 @@ public class OutfitController {
     }
 
     @PutMapping(path = "/updateOutfit")
-    public ResponseEntity<Outfit> updateClothing(@RequestBody OutfitMinimal request){
+    public ResponseEntity<Outfit> updateOutfit(@RequestBody OutfitMinimal request) {
         try {
             Outfit outfit = outfitRepository.findById(request.getOutfitId())
                     .orElseThrow(() -> new RuntimeException("Outfit Item not found"));
-            outfit.setOutfitItems(request.getOutfitItems());
-            if (outfit.getOutfitItems() == null) {
-                outfit.setOutfitItems(new ArrayList<>()); // Ensure the list is initialized
+
+            List<Clothing> items = new ArrayList<>();
+            if (request.getOutfitItems() != null) {
+                for (Long id : request.getOutfitItems()) {
+                    clothingRepository.findById(id).ifPresent(items::add);
+                }
             }
+
+            outfit.setOutfitItems(items);
             outfit.setOutfitName(request.getOutfitName());
             outfit.setFavorite(request.getFavorite());
+
             outfitRepository.save(outfit);
             return ResponseEntity.ok(outfit);
         } catch (RuntimeException e) {
@@ -93,7 +101,7 @@ public class OutfitController {
     }
 
     @DeleteMapping(path = "/deleteOutfit/{outfitId}")
-    public void deleteClothing(@PathVariable long outfitId) {
+    public void deleteOutfit(@PathVariable long outfitId) {
 
         Outfit outfit = outfitRepository.findById(outfitId).orElseThrow( () -> new RuntimeException("Failed To Find Outfit"));
         UserProfile userProfile = outfit.getUser().GetUserProfile();

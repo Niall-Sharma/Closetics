@@ -12,7 +12,7 @@ public class OutfitMinimal {
     private String outfitName;
     private LocalDateTime creationDate;
     private boolean favorite;
-    private List<Clothing> outfitItems = new ArrayList<>();
+    private List<Long> outfitItems;
 
 
     public long getOutfitId() {
@@ -35,7 +35,7 @@ public class OutfitMinimal {
         return favorite;
     }
 
-    public List<Clothing> getOutfitItems() {
+    public List<Long> getOutfitItems() {
         return outfitItems;
     }
 }
