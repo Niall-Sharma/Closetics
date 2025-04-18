@@ -6,7 +6,7 @@ stages:             # these stages (jobs) forms the CICD pipeline
 maven-build:            
   stage: mavenbuild     # one of the stages listed above
   tags:                 # to specify which runner to execute this job
-    - Niall_CICD    # change to your runner's tag
+    - niall_CICD    # change to your runner's tag
   script:               # what to execute for this job
     - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
     - export MAVEN_VERSION=3.8.6
@@ -29,7 +29,7 @@ maven-build:
 maven-test:             
   stage: maventest     # one of the stages listed above
   tags:
-     - Niall_CICD   # change to your runner's tag
+     - niall_CICD   # change to your runner's tag
   script:
     - export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
     - export MAVEN_VERSION=3.8.6
