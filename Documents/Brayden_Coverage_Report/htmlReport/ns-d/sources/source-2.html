@@ -1,0 +1,223 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserProfileController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">closetics.Users.UserProfile</a>
+</div>
+
+<h1>Coverage Summary for Class: UserProfileController (closetics.Users.UserProfile)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserProfileController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    9.1%
+  </span>
+  <span class="absValue">
+    (1/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    2.7%
+  </span>
+  <span class="absValue">
+    (1/37)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package closetics.Users.UserProfile;
+&nbsp;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.PathVariable;
+&nbsp;import org.springframework.web.bind.annotation.PostMapping;
+&nbsp;import org.springframework.web.bind.annotation.PutMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestBody;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;
+&nbsp;import closetics.Outfits.Outfit;
+&nbsp;import closetics.Users.UserRepository;
+&nbsp;
+&nbsp;@RestController
+<b class="fc">&nbsp;public class UserProfileController{</b>
+&nbsp;
+&nbsp;  @Autowired
+&nbsp;  UserProfileRepository uRepository;
+&nbsp;
+&nbsp;  @Autowired
+&nbsp;  UserRepository userRepository;
+&nbsp;
+&nbsp;  @GetMapping(path = &quot;/userprofile/{id}&quot;)
+&nbsp;  public UserProfileDTO GetUserProfile(@PathVariable long id){
+<b class="nc">&nbsp;    return new UserProfileDTO(userRepository.findById(id).orElseThrow(() -&gt; new RuntimeException(&quot;User Profile not found&quot;)).GetUserProfile(), 2);</b>
+&nbsp;  }
+&nbsp;  @GetMapping(path = &quot;/userprofile&quot;)
+&nbsp;  public List&lt;UserProfileDTO&gt; GetAllUserProfiles(){
+<b class="nc">&nbsp;    return uRepository.findAll().stream().map(p -&gt; new UserProfileDTO(p, 2)).toList();</b>
+&nbsp;  }
+&nbsp;
+&nbsp;  @PostMapping(path = &quot;/userprofile&quot;)
+&nbsp;  public UserProfileDTO CreateUserProfile(@RequestBody UserProfile userProfile){
+<b class="nc">&nbsp;    uRepository.save(userProfile);</b>
+<b class="nc">&nbsp;    return new UserProfileDTO(userProfile, 2);</b>
+&nbsp;  }
+&nbsp;
+&nbsp;  @PutMapping(path = &quot;/addFollowing/{id}/{followingId}&quot;)
+&nbsp;  public UserProfileDTO AddFollowingToProfile(@PathVariable(&quot;id&quot;) long id, @PathVariable(&quot;followingId&quot;) long followingId){
+<b class="nc">&nbsp;    UserProfile userProfile = userRepository.findById(id).orElseThrow(() -&gt; new RuntimeException(&quot;User Profile Not Found&quot;)).GetUserProfile();</b>
+<b class="nc">&nbsp;    UserProfile followingUser = userRepository.findById(followingId).orElseThrow(() -&gt; new RuntimeException(&quot;Following User Profile Not Found&quot;)).GetUserProfile();</b>
+<b class="nc">&nbsp;    if(id != followingId){</b>
+<b class="nc">&nbsp;      userProfile.addFollowing(followingUser);</b>
+<b class="nc">&nbsp;      followingUser.addFollower(userProfile);</b>
+<b class="nc">&nbsp;      uRepository.save(userProfile);</b>
+<b class="nc">&nbsp;      uRepository.save(followingUser);</b>
+&nbsp;    }
+&nbsp;
+<b class="nc">&nbsp;    return new UserProfileDTO(userProfile, 2);</b>
+&nbsp;  }
+&nbsp;
+&nbsp;  @PutMapping(path = &quot;/removeFollowing/{id}/{followingId}&quot;)
+&nbsp;  public UserProfileDTO RemoveFollowingFromProfile(@PathVariable(&quot;id&quot;) long id, @PathVariable(&quot;followingId&quot;) long followingId){
+<b class="nc">&nbsp;    UserProfile userProfile = userRepository.findById(id).orElseThrow(() -&gt; new RuntimeException(&quot;User Profile Not Found&quot;)).GetUserProfile();</b>
+<b class="nc">&nbsp;    UserProfile followingUser = userRepository.findById(followingId).orElseThrow(() -&gt; new RuntimeException(&quot;Following User Profile Not Found&quot;)).GetUserProfile();</b>
+<b class="nc">&nbsp;    userProfile.removeFollowing(followingUser);</b>
+<b class="nc">&nbsp;    uRepository.save(userProfile);</b>
+<b class="nc">&nbsp;    return new UserProfileDTO(userProfile, 2);</b>
+&nbsp;  }
+&nbsp;
+&nbsp;
+&nbsp;  @GetMapping(&quot;/userprofile/followers/{id}&quot;)
+&nbsp;  public List&lt;UserProfileDTO&gt; GetFollowers(@PathVariable(&quot;id&quot;) Long id){
+<b class="nc">&nbsp;    UserProfile userProfile = uRepository.findById(id).orElseThrow(() -&gt; new RuntimeException(&quot;User Profile Not Found&quot;));</b>
+<b class="nc">&nbsp;    UserProfileDTO userProfileDTO = new UserProfileDTO(userProfile, 2);</b>
+<b class="nc">&nbsp;    return userProfileDTO.getFollowers();</b>
+&nbsp;  }
+&nbsp;
+&nbsp;  @GetMapping(&quot;/userprofile/following/{id}&quot;)
+&nbsp;  public List&lt;UserProfileDTO&gt; GetFollowing(@PathVariable(&quot;id&quot;) Long id){
+<b class="nc">&nbsp;    UserProfile userProfile = uRepository.findById(id).orElseThrow(() -&gt; new RuntimeException(&quot;User Profile Not Found&quot;));</b>
+<b class="nc">&nbsp;    UserProfileDTO userProfileDTO = new UserProfileDTO(userProfile, 2);</b>
+<b class="nc">&nbsp;    return userProfileDTO.getFollowing();</b>
+&nbsp;
+&nbsp;  }
+&nbsp;  @GetMapping(&quot;/userprofile/outfits/{id}&quot;)
+&nbsp;  public List&lt;Outfit&gt; GetOutfits(@PathVariable(&quot;id&quot;) Long id){
+<b class="nc">&nbsp;    return uRepository.findById(id).get().getOutfits();</b>
+&nbsp;  }
+&nbsp;
+&nbsp;  @PutMapping(&quot;/userprofile/swappublicsetting/{id}&quot;)
+&nbsp;  public UserProfileDTO swapFavorite(@PathVariable long id) {
+<b class="nc">&nbsp;    UserProfile userProfile = uRepository.findById(id).orElseThrow(() -&gt; new RuntimeException(&quot;User Profile Not Found&quot;));</b>
+<b class="nc">&nbsp;    if (userProfile != null) {</b>
+<b class="nc">&nbsp;      userProfile.setIsPublic(!userProfile.getIsPublic());</b>
+<b class="nc">&nbsp;      uRepository.save(userProfile);</b>
+<b class="nc">&nbsp;      return new UserProfileDTO(userProfile, 2);</b>
+&nbsp;    }else{
+<b class="nc">&nbsp;      throw new RuntimeException();</b>
+&nbsp;      }
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/userprofile/isFollowing/{id}/{followingId}&quot;)
+&nbsp;    public boolean IsFollowing(@PathVariable long id, @PathVariable long followingId){
+<b class="nc">&nbsp;      UserProfile userProfile = uRepository.findById(id).orElseThrow(() -&gt; new RuntimeException(&quot;User Profile Not Found&quot;));</b>
+<b class="nc">&nbsp;      for (int i = 0; i &lt; userProfile.getFollowing().size(); i++)</b>
+&nbsp;      {
+<b class="nc">&nbsp;        UserProfile follower = userProfile.getFollowing().get(i);</b>
+<b class="nc">&nbsp;        if(follower.getId() == followingId){</b>
+<b class="nc">&nbsp;          return true;</b>
+&nbsp;        }
+&nbsp;      }
+<b class="nc">&nbsp;      return false;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-17 20:54</div>
+</div>
+</body>
+</html>
