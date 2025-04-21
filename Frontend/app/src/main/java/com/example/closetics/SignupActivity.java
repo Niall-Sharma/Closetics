@@ -12,25 +12,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.NoConnectionError;
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -60,7 +53,7 @@ public class SignupActivity extends AppCompatActivity {
         // Initialize UI elements
         securityAnswerSpinner1 = findViewById(R.id.signup_sq1_spinner);
         securityAnswerSpinner2 = findViewById(R.id.signup_sq2_spinner);
-        securityAnswerEditText2= findViewById(R.id.editTextText2);
+        securityAnswerEditText2= findViewById(R.id.signup_sq2_edit);
         securityAnswerEditText1 = findViewById(R.id.signup_sq1_edit);
         usernameEditText = findViewById(R.id.signup_username_edit);
         emailEditText = findViewById(R.id.signup_email_edit);
