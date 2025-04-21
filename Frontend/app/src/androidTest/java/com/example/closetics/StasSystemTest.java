@@ -25,12 +25,15 @@ import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.action.ViewActions.swipeDown;
 import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItem;
+import static androidx.test.espresso.contrib.RecyclerViewActions.scrollTo;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.Intents.times;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
+import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -155,7 +158,7 @@ public class StasSystemTest {
      *
      * Note: Not working because of SearchView >:(
      */
-    //@Test
+    @Test
     public void searchUsersTest(){
         Intents.init();
 
@@ -176,40 +179,63 @@ public class StasSystemTest {
 
         // open search
         onView(withId(R.id.rec_search)).perform(click());
+        onView(withId(androidx.appcompat.R.id.search_button)).perform(click());
         //onData(allOf(is(instanceOf(SearchView.class)))).perform(click());
-//        activityScenarioRule.getScenario().onActivity(activity -> {
-//            activity.findViewById(R.id.rec_search).performClick();
-//        });
+        //activityScenarioRule.getScenario().onActivity(activity -> {
+        //    activity.findViewById(R.id.rec_search).performClick();
+        //});
+        //onView(withId(android.support.design.R.id.search_button)).perform(click());
         sleep(2000);
-        onView(withId(R.id.rec_search)).perform(submitSearchViewText("a"));
-        onView(withId(R.id.rec_search)).perform(submitSearchViewText(""));
+
+        onView(withId(R.id.rec_search)).perform(typeSearchViewText("a"));
+        onView(withId(R.id.rec_search)).perform(typeSearchViewText(""));
+        //onView(withId(R.id.rec_search)).perform(click(), typeText("a\n"));
         sleep(2000);
-//        onView(withId(R.id.rec_search)).perform(typeText("a"));
-//        onView(withId(R.id.rec_search)).perform(clearText());
 
         onView(withId(R.id.rec_back_button)).check(matches(isDisplayed()));
 
         // search for 'test'
-        onView(withId(R.id.rec_search)).perform(typeText("test"));
+        //onView(withId(R.id.rec_search)).perform(typeText("test"));
+        onView(withId(R.id.rec_search)).perform(typeSearchViewText("test"));
         sleep();
 
-        onData(allOf(is(instanceOf(String.class)), is("testAshten"))).check(matches(isDisplayed()));
+        //onData(allOf(is(instanceOf(String.class)), is("testAshten"))).check(matches(isDisplayed()));
+        onView(withText("testAshten")).check(matches(isDisplayed()));
 
         // search for 'user'
-        onView(withId(R.id.rec_search)).perform(replaceText("user"));
+        //onView(withId(R.id.rec_search)).perform(replaceText("user"));
+        onView(withId(R.id.rec_search)).perform(typeSearchViewText("user"));
         sleep();
 
-        onData(allOf(is(instanceOf(String.class)), is("user1"))).check(matches(isDisplayed()));
-        onData(allOf(is(instanceOf(String.class)), is("user3"))).check(matches(isDisplayed()));
-        onData(allOf(is(instanceOf(String.class)), is("user6"))).check(matches(isDisplayed()));
-        onData(allOf(is(instanceOf(String.class)), is("user9"))).check(matches(isDisplayed()));
-        onData(allOf(is(instanceOf(String.class)), is("user10"))).check(matches(isDisplayed()));
+//        onData(allOf(is(instanceOf(String.class)), is("user1"))).check(matches(isDisplayed()));
+//        onData(allOf(is(instanceOf(String.class)), is("user3"))).check(matches(isDisplayed()));
+//        onData(allOf(is(instanceOf(String.class)), is("user6"))).check(matches(isDisplayed()));
+//        onData(allOf(is(instanceOf(String.class)), is("user9"))).check(matches(isDisplayed()));
+//        onData(allOf(is(instanceOf(String.class)), is("user10"))).check(matches(isDisplayed()));
+//
+//        onData(allOf(is(instanceOf(String.class)), is("user11"))).check(matches(not(isDisplayed())));
+//        onData(allOf(is(instanceOf(String.class)), is("testAshten"))).check(matches(not(isDisplayed())));
 
-        onData(allOf(is(instanceOf(String.class)), is("user11"))).check(matches(not(isDisplayed())));
-        onData(allOf(is(instanceOf(String.class)), is("testAshten"))).check(matches(not(isDisplayed())));
+        onView(withId(R.id.rec_users_recycler)).perform(scrollTo(hasDescendant(withText("user1"))));
+        onView(withText("user1")).check(matches(isDisplayed()));
+        onView(withId(R.id.rec_users_recycler)).perform(scrollTo(hasDescendant(withText("user3"))));
+        onView(withText("user3")).check(matches(isDisplayed()));
+        onView(withId(R.id.rec_users_recycler)).perform(scrollTo(hasDescendant(withText("user6"))));
+        onView(withText("user6")).check(matches(isDisplayed()));
+        onView(withId(R.id.rec_users_recycler)).perform(scrollTo(hasDescendant(withText("user9"))));
+        onView(withText("user9")).check(matches(isDisplayed()));
+        onView(withId(R.id.rec_users_recycler)).perform(scrollTo(hasDescendant(withText("user10"))));
+        onView(withText("user10")).check(matches(isDisplayed()));
+
+        //onView(withId(R.id.rec_users_recycler)).perform(scrollTo(hasDescendant(withText("user11"))));
+        onView(withText("user11")).check(doesNotExist());
+        //onView(withId(R.id.rec_users_recycler)).perform(scrollTo(hasDescendant(withText("testAshten"))));
+        onView(withText("testAshten")).check(doesNotExist());
 
         // click on 'user3'
-        onData(allOf(is(instanceOf(String.class)), is("user3"))).perform(click());
+        //onData(allOf(is(instanceOf(String.class)), is("user3"))).perform(click());
+        onView(withId(R.id.rec_users_recycler)).perform(scrollTo(hasDescendant(withText("user3"))));
+        onView(withText("user3")).perform(click());
         sleep();
 
         intended(hasComponent(PublicProfileActivity.class.getName()));
@@ -220,10 +246,11 @@ public class StasSystemTest {
         pressBack();
 
         // check that 'user3' is still displayed
-        onData(allOf(is(instanceOf(String.class)), is("user3"))).check(matches(isDisplayed()));
+        //onData(allOf(is(instanceOf(String.class)), is("user3"))).check(matches(isDisplayed()));
+        onView(withText("user3")).check(matches(isDisplayed()));
 
         // close search
-        onView(withText(R.id.rec_back_button)).perform(click());
+        onView(withId(R.id.rec_back_button)).perform(click());
 
         onView(withId(R.id.rec_back_button)).check(matches(not(isDisplayed())));
 
@@ -318,6 +345,33 @@ public class StasSystemTest {
         sleep();
 
         intended(hasComponent(MainActivity.class.getName()));
+
+        Intents.release();
+    }
+
+
+    /**
+     *
+     */
+    @Test
+    public void addAndEditOutfitTest() {
+        Intents.init();
+
+        String testUsername = "user1";
+        long testId = 1;
+
+        // set a fake user
+        activityScenarioRule.getScenario().onActivity(activity -> {
+            UserManager.saveUsername(activity.getApplicationContext(), testUsername);
+            UserManager.saveUserID(activity.getApplicationContext(), testId);
+        });
+
+        // open profile fragment
+        onView(withId(R.id.navigation_profile)).perform(click());
+
+        onView(withId(R.id.profile_username_text)).check(matches(withText(testUsername)));
+
+
 
         Intents.release();
     }
