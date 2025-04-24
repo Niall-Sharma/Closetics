@@ -200,14 +200,24 @@ public class EditOutfitActivity extends AppCompatActivity {
             return;
         }
 
+        JSONObject updateObject = new JSONObject();
+
         try {
+            // clone object
+            updateObject = new JSONObject(outfitJsonObject.toString());
+
             // update name
-            outfitJsonObject.put("outfitName", outfitNameEdit.getText().toString());
+            updateObject.put("outfitName", outfitNameEdit.getText().toString());
+
+            // remove creation date
+            updateObject.remove("creationDate");
+
         } catch (JSONException e) {
             Log.e("JSON Error", outfitNameEdit.getText().toString() + " : " + e.toString());
+            return;
         }
 
-        OutfitManager.updateOutfitRequest(getApplicationContext(), outfitJsonObject,
+        OutfitManager.updateOutfitRequest(getApplicationContext(), updateObject,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
