@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ClothesManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics.clothes</a> &gt; <span class="el_source">ClothesManager.java</span></div><h1>ClothesManager.java</h1><pre class="source lang-java linenums">package com.example.closetics.clothes;
+
+import android.content.Context;
+import android.util.Log;
+
+import androidx.lifecycle.MutableLiveData;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.RequestFuture;
+import com.android.volley.toolbox.StringRequest;
+import com.example.closetics.MainActivity;
+import com.example.closetics.VolleySingleton;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONStringer;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+<span class="nc" id="L26">public class ClothesManager {</span>
+
+
+    /*
+    More work here adding more types and figuring out the best methods of input for them, currently just an edit text
+     */
+
+    public static void saveClothingRequest(Context context, ArrayList&lt;MutableLiveData&lt;String&gt;&gt; fragments, long userId,
+    String URL, Response.Listener&lt;JSONObject&gt; responseListener, Response.ErrorListener errorListener) {
+<span class="nc" id="L35">        String favorite = fragments.get(0).getValue();</span>
+<span class="nc" id="L36">        String size = fragments.get(1).getValue();</span>
+<span class="nc" id="L37">        String color = fragments.get(2).getValue();</span>
+<span class="nc" id="L38">        String dateBought = fragments.get(3).getValue();</span>
+<span class="nc" id="L39">        String brand = fragments.get(6).getValue();</span>
+<span class="nc" id="L40">        String itemName = fragments.get(5).getValue();</span>
+<span class="nc" id="L41">        String material = fragments.get(7).getValue();</span>
+<span class="nc" id="L42">        String price = fragments.get(4).getValue();</span>
+
+
+        //Create the json object of the saveClothing data
+<span class="nc" id="L46">        JSONObject saveClothing = new JSONObject();</span>
+
+
+
+        //Use try catch blocks when creating JSON objects
+
+        //Basic check will need to fix
+        try {
+<span class="nc bnc" id="L54" title="All 2 branches missed.">            if (favorite == null){</span>
+<span class="nc" id="L55">                nullCheck(&quot;favorite&quot;, false, saveClothing);</span>
+            }
+<span class="nc bnc" id="L57" title="All 2 branches missed.">            else if (favorite.toLowerCase().trim() == &quot;yes&quot;) {</span>
+<span class="nc" id="L58">                nullCheck(&quot;favorite&quot;, true, saveClothing);</span>
+            } else {
+<span class="nc" id="L60">                nullCheck(&quot;favorite&quot;, false, saveClothing);</span>
+            }
+
+
+<span class="nc" id="L64">            nullCheck(&quot;size&quot;, size, saveClothing);</span>
+<span class="nc" id="L65">            nullCheck(&quot;color&quot;, color, saveClothing);</span>
+<span class="nc" id="L66">            nullCheck(&quot;dateBought&quot;, dateBought, saveClothing);</span>
+<span class="nc" id="L67">            nullCheck(&quot;brand&quot;, brand, saveClothing);</span>
+<span class="nc" id="L68">            nullCheck(&quot;itemName&quot;, itemName, saveClothing);</span>
+<span class="nc" id="L69">            nullCheck(&quot;material&quot;, material, saveClothing);</span>
+<span class="nc" id="L70">            nullCheck(&quot;price&quot;, price, saveClothing);</span>
+
+
+<span class="nc" id="L73">            saveClothing.put(&quot;userId&quot;, userId);</span>
+            /*
+            This is for testing only! Remember to remove!
+             */
+<span class="nc" id="L77">            saveClothing.put(&quot;clothingType&quot;, 1);</span>
+
+<span class="nc" id="L79">        } catch (JSONException e) {</span>
+<span class="nc" id="L80">            Log.e(&quot;JSON Error&quot;, e.toString());</span>
+<span class="nc" id="L81">            return;</span>
+<span class="nc" id="L82">        }</span>
+
+        //The post request
+<span class="nc" id="L85">        JsonObjectRequest request = new JsonObjectRequest(</span>
+                Request.Method.POST,
+                URL + &quot;/createClothing&quot;,
+                saveClothing, responseListener, errorListener);
+        //Add request to the volley singleton request queue
+<span class="nc" id="L90">        VolleySingleton.getInstance(context).addToRequestQueue(request);</span>
+<span class="nc" id="L91">    }</span>
+
+    /*
+    The delete mapping sends a string response back, that is why this request is handled differently
+     */
+    public static void deleteClothingRequest(Context context, Long clothingId, String URL,
+                                             Response.Listener&lt;String&gt; responseListener,
+                                             Response.ErrorListener errorListener) {
+<span class="nc" id="L99">        String deleteUrl = URL + &quot;/&quot; + clothingId;</span>
+
+<span class="nc" id="L101">        StringRequest request = new StringRequest(</span>
+                Request.Method.DELETE,
+                deleteUrl,
+                responseListener,
+                errorListener);
+
+<span class="nc" id="L107">        VolleySingleton.getInstance(context).addToRequestQueue(request);</span>
+<span class="nc" id="L108">    }</span>
+
+    public static void updateClothingRequest(Context context, JSONObject updateObject, String URL,
+                                             Response.Listener&lt;JSONObject&gt; responseListener,
+                                             Response.ErrorListener errorListener) {
+<span class="nc" id="L113">        String updateUrl = URL + &quot;/&quot;;</span>
+
+
+<span class="nc" id="L116">        JsonObjectRequest request = new JsonObjectRequest(</span>
+                Request.Method.PUT,
+                updateUrl,
+                updateObject,
+                responseListener,
+                errorListener
+        );
+<span class="nc" id="L123">        VolleySingleton.getInstance(context).addToRequestQueue(request);</span>
+<span class="nc" id="L124">    }</span>
+
+    /*
+    Note: This method is not for a JSON object but for an array
+     */
+
+    public static void getClothingByUserRequest(Context context, long userId, String URL,
+                                                Response.Listener&lt;JSONArray&gt; responseListener,
+                                                Response.ErrorListener errorListener) {
+<span class="nc" id="L133">        String getUrl = URL + &quot;/getClothing/user/&quot; + userId;</span>
+<span class="nc" id="L134">        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,</span>
+                getUrl, null, responseListener, errorListener);
+
+        //if (request.getBody() == null){
+           // responseListener.onResponse(new JSONArray());
+        //}
+
+
+
+<span class="nc" id="L143">        VolleySingleton.getInstance(context).addToRequestQueue(request);</span>
+<span class="nc" id="L144">    }</span>
+    public static void getClothingRequest(Context context, long clothingId, String URL,
+                                          Response.Listener&lt;JSONObject&gt; responseListener,
+                                          Response.ErrorListener errorListener){
+
+<span class="nc" id="L149">        String getUrl = URL + &quot;/&quot; + clothingId;</span>
+<span class="nc" id="L150">        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,</span>
+                getUrl, null, responseListener, errorListener);
+
+
+
+
+
+<span class="nc" id="L157">        VolleySingleton.getInstance(context).addToRequestQueue(request);</span>
+
+<span class="nc" id="L159">    }</span>
+
+
+    public static void getClothingByTypeRequest(Context context, long userId, String URL, long type, Response.Listener&lt;JSONArray&gt; responseListener,
+                                                Response.ErrorListener errorListener){
+        //clothes/type/{userId}/{type}
+<span class="nc" id="L165">        String getUrl = URL + &quot;/type/&quot; + userId +&quot;/&quot;+type;</span>
+<span class="nc" id="L166">        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, getUrl, null, responseListener, errorListener);</span>
+
+<span class="nc" id="L168">        VolleySingleton.getInstance(context).addToRequestQueue(request);</span>
+
+
+<span class="nc" id="L171">    }</span>
+
+
+
+
+    public static void nullCheck(String header, Object parameter, JSONObject object) throws JSONException {
+<span class="nc bnc" id="L177" title="All 2 branches missed.">        if (parameter != null){</span>
+<span class="nc" id="L178">            object.put(header, parameter);</span>
+        }
+<span class="nc" id="L180">    }</span>
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>

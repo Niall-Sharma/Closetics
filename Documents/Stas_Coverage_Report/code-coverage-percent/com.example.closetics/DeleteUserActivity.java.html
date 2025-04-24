@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DeleteUserActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics</a> &gt; <span class="el_source">DeleteUserActivity.java</span></div><h1>DeleteUserActivity.java</h1><pre class="source lang-java linenums">package com.example.closetics;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.TextView;
+
+//import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+import com.android.volley.NoConnectionError;
+import com.android.volley.Response;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+
+import org.json.JSONObject;
+
+import java.net.HttpURLConnection;
+
+<span class="fc" id="L24">public class DeleteUserActivity extends AppCompatActivity {</span>
+
+    private static final String URL_DELETE_USER = MainActivity.SERVER_URL + &quot;/users/&quot;; // +{{id}}
+    private static final String URL_GET_USER_BY_USERNAME = MainActivity.SERVER_URL + &quot;/users/username/&quot;; // +{{username}}
+
+    private Button yesButton;
+    private Button noButton;
+    private TextView errorText;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="fc" id="L35">        super.onCreate(savedInstanceState);</span>
+<span class="fc" id="L36">        setContentView(R.layout.activity_delete_user);</span>
+
+<span class="fc" id="L38">        yesButton = findViewById(R.id.delete_user_yes_button);</span>
+<span class="fc" id="L39">        noButton = findViewById(R.id.delete_user_no_button);</span>
+<span class="fc" id="L40">        errorText = findViewById(R.id.delete_user_error_text);</span>
+
+<span class="fc" id="L42">        errorText.setVisibility(TextView.GONE); // hide error message by default</span>
+
+<span class="fc" id="L44">        yesButton.setOnClickListener(v -&gt; {</span>
+<span class="fc" id="L45">            deleteUser(UserManager.getUserID(getApplicationContext()));</span>
+<span class="fc" id="L46">        });</span>
+
+<span class="fc" id="L48">        noButton.setOnClickListener(v -&gt; {</span>
+            // return to MainActivity
+<span class="nc" id="L50">            Intent intent = new Intent(DeleteUserActivity.this, MainActivity.class);</span>
+<span class="nc" id="L51">            startActivity(intent);</span>
+<span class="nc" id="L52">        });</span>
+<span class="fc" id="L53">    }</span>
+
+    private void setErrorMessage(String message) {
+<span class="nc" id="L56">        errorText.setText(message);</span>
+<span class="nc" id="L57">        errorText.setVisibility(TextView.VISIBLE);</span>
+<span class="nc" id="L58">    }</span>
+
+    private void deleteUser(long id) {
+<span class="fc" id="L61">        UserManager.deleteUserRequest(getApplicationContext(), id, URL_DELETE_USER,</span>
+<span class="fc" id="L62">                new Response.Listener&lt;String&gt;() {</span>
+                    @Override
+                    public void onResponse(String response) {
+<span class="fc" id="L65">                        Log.d(&quot;Volley Response&quot;, &quot;Successful Delete: &quot; + response.toString());</span>
+
+                        // remove token and username from shared prefs
+<span class="fc" id="L68">                        UserManager.saveLoginToken(getApplicationContext(), null);</span>
+<span class="fc" id="L69">                        UserManager.saveUsername(getApplicationContext(), null);</span>
+
+                        // return to MainActivity
+<span class="fc" id="L72">                        Intent intent = new Intent(DeleteUserActivity.this, MainActivity.class);</span>
+<span class="fc" id="L73">                        startActivity(intent);</span>
+<span class="fc" id="L74">                    }</span>
+                },
+<span class="fc" id="L76">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L79">                        Log.e(&quot;Volley Error&quot;, &quot;Deletion Error: &quot; + error.toString());</span>
+
+<span class="nc bnc" id="L81" title="All 4 branches missed.">                        if (error instanceof TimeoutError || error instanceof NoConnectionError) {</span>
+<span class="nc" id="L82">                            setErrorMessage(&quot;Connection timeout&quot;);</span>
+                        }
+<span class="nc bnc" id="L84" title="All 2 branches missed.">                        else if (error.networkResponse != null) {</span>
+<span class="nc" id="L85">                            setErrorMessage(&quot;Error Code: &quot; + error.networkResponse.statusCode);</span>
+<span class="nc" id="L86">                            Log.e(&quot;Volley Error&quot;, &quot;Error Code: &quot; + error.networkResponse.statusCode);</span>
+                        }
+                        else {
+<span class="nc" id="L89">                            setErrorMessage(&quot;Unknown deletion error&quot;);</span>
+                        }
+<span class="nc" id="L91">                    }</span>
+                });
+<span class="fc" id="L93">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FollowUsersListAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics.follow</a> &gt; <span class="el_source">FollowUsersListAdapter.java</span></div><h1>FollowUsersListAdapter.java</h1><pre class="source lang-java linenums">package com.example.closetics.follow;
+
+import android.content.Context;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.example.closetics.R;
+import com.example.closetics.UserManager;
+
+import org.json.JSONObject;
+import org.w3c.dom.Text;
+
+import java.util.List;
+
+public class FollowUsersListAdapter extends RecyclerView.Adapter&lt;FollowUsersListAdapter.ViewHolder&gt; {
+    private final List&lt;FollowUsersListItem&gt; items;
+    private final FollowUsersListAdapter.OnItemClickListener listener;
+
+<span class="fc" id="L28">    public FollowUsersListAdapter(List&lt;FollowUsersListItem&gt; items, FollowUsersListAdapter.OnItemClickListener listener) {</span>
+<span class="fc" id="L29">        this.items = items;</span>
+<span class="fc" id="L30">        this.listener = listener;</span>
+<span class="fc" id="L31">    }</span>
+
+    @NonNull
+    @Override
+    public FollowUsersListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+<span class="fc" id="L36">        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_follow_users, parent, false);</span>
+<span class="fc" id="L37">        return new FollowUsersListAdapter.ViewHolder(itemView);</span>
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull FollowUsersListAdapter.ViewHolder holder, int position) {
+<span class="fc" id="L42">        FollowUsersListItem item = items.get(position);</span>
+
+<span class="fc" id="L44">        holder.usernameText.setText(item.getUsername());</span>
+
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        if (item.getId() == UserManager.getUserID(item.getContext())) {</span>
+<span class="fc" id="L47">            holder.followButton.setVisibility(TextView.GONE);</span>
+        } else {
+<span class="fc bfc" id="L49" title="All 2 branches covered.">            holder.followButton.setText(item.isFollowing() ? &quot;Following&quot; : &quot;Follow&quot;);</span>
+
+<span class="fc" id="L51">            holder.followButton.setOnClickListener(v -&gt; {</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">                if (item.isFollowing()) {</span>
+<span class="nc" id="L53">                    unfollow(item.getContext(), item.getId());</span>
+<span class="nc" id="L54">                    holder.followButton.setText(&quot;Follow&quot;);</span>
+                } else {
+<span class="nc" id="L56">                    follow(item.getContext(), item.getId());</span>
+<span class="nc" id="L57">                    holder.followButton.setText(&quot;Following&quot;);</span>
+                }
+<span class="nc bnc" id="L59" title="All 2 branches missed.">                item.setFollowing(!item.isFollowing());</span>
+<span class="nc" id="L60">            });</span>
+        }
+
+<span class="fc" id="L63">        holder.bind(item, listener);</span>
+<span class="fc" id="L64">    }</span>
+
+    @Override
+    public int getItemCount() {
+<span class="fc" id="L68">        return items.size();</span>
+    }
+
+    public void addItem(FollowUsersListItem item) {
+<span class="nc" id="L72">        items.add(item);</span>
+<span class="nc" id="L73">        notifyItemInserted(items.size() - 1);</span>
+<span class="nc" id="L74">    }</span>
+
+    public void setNewItems(List&lt;FollowUsersListItem&gt; newItems) {
+<span class="fc" id="L77">        int oldSize = items.size();</span>
+<span class="fc" id="L78">        items.clear();</span>
+<span class="fc" id="L79">        items.addAll(newItems);</span>
+<span class="fc" id="L80">        notifyItemRangeChanged(0, Math.max(oldSize, newItems.size()));</span>
+<span class="fc" id="L81">    }</span>
+
+    public void clearItems() {
+<span class="nc" id="L84">        int oldSize = items.size();</span>
+<span class="nc" id="L85">        items.clear();</span>
+<span class="nc" id="L86">        notifyItemRangeRemoved(0, oldSize);</span>
+<span class="nc" id="L87">    }</span>
+
+    private void follow(Context context, long followingId) {
+<span class="nc" id="L90">        UserManager.addFollowingRequest(context, UserManager.getUserID(context), followingId,</span>
+<span class="nc" id="L91">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+<span class="nc" id="L94">                        Log.d(&quot;Volley Response&quot;, &quot;Successful followed &quot; + followingId);</span>
+<span class="nc" id="L95">                    }</span>
+                },
+<span class="nc" id="L97">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L100">                        Log.e(&quot;Volley Error&quot;, &quot;Error following &quot; + followingId + &quot;, Error: &quot; + error.toString());</span>
+<span class="nc" id="L101">                    }</span>
+                });
+<span class="nc" id="L103">    }</span>
+
+    private void unfollow(Context context, long followingId) {
+<span class="nc" id="L106">        UserManager.removeFollowingRequest(context, UserManager.getUserID(context), followingId,</span>
+<span class="nc" id="L107">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+<span class="nc" id="L110">                        Log.d(&quot;Volley Response&quot;, &quot;Successful unfollowed &quot; + followingId);</span>
+<span class="nc" id="L111">                    }</span>
+                },
+<span class="nc" id="L113">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L116">                        Log.e(&quot;Volley Error&quot;, &quot;Error unfollowing &quot; + followingId + &quot;, Error: &quot; + error.toString());</span>
+<span class="nc" id="L117">                    }</span>
+                });
+<span class="nc" id="L119">    }</span>
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        private TextView usernameText;
+        private Button followButton;
+
+<span class="fc" id="L125">        public ViewHolder(final View itemView) {</span>
+<span class="fc" id="L126">            super(itemView);</span>
+
+<span class="fc" id="L128">            usernameText = itemView.findViewById(R.id.follow_users_list_item_username_text);</span>
+<span class="fc" id="L129">            followButton = itemView.findViewById(R.id.follow_users_list_item_follow_button);</span>
+<span class="fc" id="L130">        }</span>
+
+        public void bind(final FollowUsersListItem item, final FollowUsersListAdapter.OnItemClickListener listener) {
+<span class="fc" id="L133">            itemView.setOnClickListener(new View.OnClickListener() {</span>
+                @Override public void onClick(View v) {
+<span class="fc" id="L135">                    listener.onItemClick(item);</span>
+<span class="fc" id="L136">                }</span>
+            });
+<span class="fc" id="L138">        }</span>
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(FollowUsersListItem item);
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>

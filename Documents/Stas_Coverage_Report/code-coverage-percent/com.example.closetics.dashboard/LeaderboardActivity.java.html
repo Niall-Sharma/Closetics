@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LeaderboardActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics.dashboard</a> &gt; <span class="el_source">LeaderboardActivity.java</span></div><h1>LeaderboardActivity.java</h1><pre class="source lang-java linenums">package com.example.closetics.dashboard;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.TextView;
+
+
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URI;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.example.closetics.MainActivity;
+import com.example.closetics.PublicProfileActivity;
+import com.example.closetics.R;
+import com.example.closetics.UserManager;
+import com.example.closetics.clothes.ClothesActivity;
+import com.example.closetics.clothes.ClothesByTypeAdapter;
+import com.example.closetics.clothes.ClothingItem;
+import com.example.closetics.clothes.EditClothesActivity;
+import com.example.closetics.outfits.OutfitManager;
+
+import java.net.URISyntaxException;
+import java.nio.channels.AlreadyConnectedException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.concurrent.atomic.AtomicInteger;
+
+<span class="nc" id="L47">public class LeaderboardActivity extends AppCompatActivity {</span>
+
+    /*
+     Continually update the leaderboard with Runnable and Handler
+     */
+    private Runnable continuousMessaging;
+    private Handler handler;
+
+    /*
+    Websocket client
+     */
+    private WebSocketClient webSocketClient;
+
+
+    private Spinner leaderboardFilter;
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private LeaderboardRecyclerViewAdapter adapter;
+    private String chosenFilter;
+    private URI uri;
+<span class="nc" id="L67">    private boolean isConnected  = false;</span>
+    private Button back;
+
+
+    private int spinnerPosition; //Default to first spinner item
+    private TextView categoryValue;
+<span class="nc" id="L73">    private final String[] spinnerItems = new String[]</span>
+            {&quot;Most Expensive Clothing Items&quot;, &quot;Largest Closet&quot;, &quot;Most Bougie Outfits&quot; };
+
+<span class="nc" id="L76">    private final String WEB_SOCKET_URL = MainActivity.SERVER_WS_URL +&quot;/leaderboard/&quot;; // + {username}/{type}</span>
+
+    private ArrayList&lt;LeaderboardItem&gt; adapterItems;
+
+
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+<span class="nc" id="L84">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L85">        setContentView(R.layout.activity_leaderboard);</span>
+
+        /*
+        Set the categories spinner
+         */
+
+<span class="nc" id="L91">        recyclerView = findViewById(R.id.recycler_view);</span>
+<span class="nc" id="L92">        layoutManager = new LinearLayoutManager(this);</span>
+<span class="nc" id="L93">        recyclerView.setLayoutManager(layoutManager);</span>
+<span class="nc" id="L94">        leaderboardFilter = findViewById(R.id.spinner);</span>
+<span class="nc" id="L95">        categoryValue = findViewById(R.id.category);</span>
+<span class="nc" id="L96">        back = findViewById(R.id.back);</span>
+
+<span class="nc" id="L98">        back.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L101">                Intent intent = new Intent(getApplicationContext(), MainActivity.class);</span>
+<span class="nc" id="L102">                startActivity(intent);</span>
+<span class="nc" id="L103">            }</span>
+        });
+
+        /*
+        Note this will have one more item
+         */
+<span class="nc" id="L109">        ArrayAdapter&lt;String&gt; adapter = new ArrayAdapter&lt;String&gt;(this, android.R.layout.simple_spinner_dropdown_item, spinnerItems);</span>
+<span class="nc" id="L110">        leaderboardFilter.setAdapter(adapter);</span>
+
+<span class="nc" id="L112">        leaderboardFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {</span>
+            //Store chosen question
+            @Override
+            public void onItemSelected(AdapterView&lt;?&gt; parent, View view, int position, long id) {
+
+<span class="nc" id="L117">                spinnerPosition = position + 1;</span>
+<span class="nc" id="L118">                chosenFilter = (String) parent.getItemAtPosition(position);</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">                if (isConnected) {</span>
+<span class="nc" id="L120">                    webSocketClient.close();</span>
+                }
+<span class="nc" id="L122">                connectWebSocketClient();</span>
+<span class="nc" id="L123">                categoryValue.setText(chosenFilter);</span>
+
+<span class="nc" id="L125">            }</span>
+
+            @Override
+            public void onNothingSelected(AdapterView&lt;?&gt; parent) {
+<span class="nc" id="L129">            }</span>
+        });
+
+<span class="nc" id="L132">        handler = new Handler();</span>
+<span class="nc" id="L133">        continuousMessaging = new Runnable() {</span>
+            @Override
+            public void run() {
+                //Send a message to websocket
+<span class="nc" id="L137">                String message = &quot;PLEASE_SEND_ME_THE_LEADERBOARDDDDDD&quot;;</span>
+
+<span class="nc bnc" id="L139" title="All 4 branches missed.">                if (webSocketClient != null &amp;&amp; webSocketClient.isOpen()) {</span>
+<span class="nc" id="L140">                    webSocketClient.send(message);</span>
+                }
+
+                //Delay of every 10 seconds
+<span class="nc" id="L144">                handler.postDelayed(this, 10000);</span>
+
+<span class="nc" id="L146">            }</span>
+        };
+
+<span class="nc" id="L149">        handler.post(continuousMessaging);</span>
+
+
+<span class="nc" id="L152">    }</span>
+
+
+
+    private void setWebSocketClient(URI uri){
+
+<span class="nc" id="L158">        webSocketClient = new WebSocketClient(uri) {</span>
+            @Override
+            public void onOpen(ServerHandshake handshakedata) {
+<span class="nc" id="L161">                Log.d(&quot;LeaderboardWebsocket&quot;, &quot;Connected to Websocket server!&quot;);</span>
+<span class="nc" id="L162">                isConnected = true;</span>
+                //Loading UI?
+                //Connected UI?
+
+
+<span class="nc" id="L167">            }</span>
+
+            @Override
+            public void onMessage(String message) {
+<span class="nc" id="L171">                Log.d(&quot;LeaderboardWebsocket&quot;, &quot;Message received: &quot; + message);</span>
+<span class="nc" id="L172">                isConnected = true;</span>
+
+<span class="nc bnc" id="L174" title="All 2 branches missed.">                if (message.equals(&quot;Username already exists&quot;)){</span>
+<span class="nc" id="L175">                    throw new AlreadyConnectedException();</span>
+                    //print an error message
+                    //Do more?
+                }
+
+                //Grab the JSONArray
+                try {
+<span class="nc" id="L182">                    JSONArray leaderboardArray = new JSONArray(message);</span>
+<span class="nc" id="L183">                    ArrayList&lt;LeaderboardItem&gt; objects = new ArrayList&lt;&gt;(Collections.nCopies(leaderboardArray.length(), null));</span>
+
+                    LeaderboardItem leaderboardItem;
+<span class="nc" id="L186">                    final AtomicInteger remainingRequests = new AtomicInteger(leaderboardArray.length()); // Counter to track async requests</span>
+                    //Parse the array and grab the fields needed for the recycler view
+<span class="nc bnc" id="L188" title="All 2 branches missed.">                    for (int i = 0; i &lt; leaderboardArray.length(); i++){</span>
+                        //Do different things based on the category!
+<span class="nc bnc" id="L190" title="All 2 branches missed.">                        if (spinnerPosition == 1) {</span>
+<span class="nc" id="L191">                            JSONObject object = leaderboardArray.getJSONObject(i);</span>
+<span class="nc" id="L192">                            Log.d(&quot;Object&quot;, leaderboardArray.get(i).toString());</span>
+<span class="nc" id="L193">                            JSONObject user = object.getJSONObject(&quot;user&quot;);</span>
+<span class="nc" id="L194">                            String username = user.getString(&quot;username&quot;);</span>
+<span class="nc" id="L195">                            String price = object.getString(&quot;price&quot;);</span>
+<span class="nc" id="L196">                            long userId = user.getLong(&quot;userId&quot;);</span>
+
+<span class="nc bnc" id="L198" title="All 2 branches missed.">                            if (!price.equals(&quot;null&quot;)) {</span>
+<span class="nc" id="L199">                                price = &quot;$&quot; + price;</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">                                if (price.contains(&quot;.&quot;)) {</span>
+<span class="nc" id="L201">                                    price = price.substring(0, Math.min(price.indexOf(&quot;.&quot;) + 3, price.length()));</span>
+                                } else {
+<span class="nc" id="L203">                                    price += &quot;.00&quot;;</span>
+                                }
+                            }
+
+<span class="nc" id="L207">                            leaderboardItem = new LeaderboardItem((i + 1) + &quot;&quot;, username, price, userId);</span>
+<span class="nc" id="L208">                            objects.set(i, leaderboardItem);</span>
+
+<span class="nc" id="L210">                        }</span>
+<span class="nc bnc" id="L211" title="All 2 branches missed.">                        else if (spinnerPosition == 2){</span>
+<span class="nc" id="L212">                            JSONArray object = leaderboardArray.getJSONArray(i);</span>
+                            //final AtomicInteger remainingRequests2 = new AtomicInteger(object.length());
+<span class="nc" id="L214">                            Log.d(&quot;Array&quot;, leaderboardArray.toString());</span>
+<span class="nc" id="L215">                            long userId = object.getLong(0);</span>
+<span class="nc" id="L216">                            String clothingItems = object.getString(1);</span>
+<span class="nc" id="L217">                            leaderboardItem = new LeaderboardItem(i + &quot;&quot;, clothingItems);</span>
+
+                            //Get the username from the user id
+
+<span class="nc" id="L221">                            getUsername(userId, leaderboardItem,  new UsernameCallback() {</span>
+                                @Override
+                                public void onSuccess(String username, String i, String categoryValue) {
+<span class="nc" id="L224">                                    LeaderboardItem l = new LeaderboardItem((Integer.parseInt(i) + 1) + &quot;&quot;, categoryValue);</span>
+<span class="nc" id="L225">                                    l.setUsername(username);</span>
+<span class="nc" id="L226">                                    Log.d(&quot;Username&quot;, &quot;Username: &quot; + l.getUsername());</span>
+<span class="nc" id="L227">                                    objects.set(Integer.valueOf(i), l);</span>
+<span class="nc" id="L228">                                }</span>
+
+                                @Override
+                                public void onError(String error) {
+<span class="nc" id="L232">                                    Log.e(&quot;Username Error&quot;, &quot;Error: &quot; + error);</span>
+<span class="nc" id="L233">                                }</span>
+                                @Override
+                                public void onFinish(){
+<span class="nc bnc" id="L236" title="All 2 branches missed.">                                    if (remainingRequests.decrementAndGet() == 0){</span>
+<span class="nc" id="L237">                                        updateAdapter(objects);</span>
+                                    }
+<span class="nc" id="L239">                                }</span>
+                            });
+
+
+<span class="nc" id="L243">                        }</span>
+                        //3rd category
+                        else{
+                            //Object design is outfit id and total price
+<span class="nc" id="L247">                            Log.d(&quot;tag&quot;, String.valueOf(leaderboardArray.length()));</span>
+<span class="nc" id="L248">                            JSONObject object = leaderboardArray.getJSONObject(i);</span>
+<span class="nc" id="L249">                            Log.d(&quot;Object&quot;, object.toString());</span>
+<span class="nc" id="L250">                            String price = object.getString(&quot;totalPrice&quot;);</span>
+                            //Use the getOutfit endpoint to get the userId
+<span class="nc" id="L252">                            long outfitId = object.getLong(&quot;outfitId&quot;);</span>
+<span class="nc bnc" id="L253" title="All 2 branches missed.">                            if (price.equals(&quot;null&quot;)) {</span>
+<span class="nc" id="L254">                                remainingRequests.decrementAndGet();</span>
+<span class="nc" id="L255">                                objects.remove(objects.size()-1);</span>
+<span class="nc" id="L256">                                continue;</span>
+                            }
+<span class="nc" id="L258">                            price  = &quot;$&quot; + price;</span>
+<span class="nc bnc" id="L259" title="All 2 branches missed.">                            if (price.contains(&quot;.&quot;)) {</span>
+<span class="nc" id="L260">                                price = price.substring(0, Math.min(price.indexOf(&quot;.&quot;) + 3, price.length()));</span>
+                            } else {
+<span class="nc" id="L262">                                price += &quot;.00&quot;;</span>
+                            }
+
+
+<span class="nc" id="L266">                            leaderboardItem = new LeaderboardItem(i + &quot;&quot;, price);</span>
+<span class="nc" id="L267">                            getUserAttributesFromOutfitId(outfitId, leaderboardItem, new UsernameCallback() {</span>
+                                @Override
+                                public void onSuccess(String username, String i, String categoryValue) {
+
+<span class="nc" id="L271">                                    LeaderboardItem l = new LeaderboardItem((Integer.parseInt(i) + 1) + &quot;&quot;, categoryValue);</span>
+<span class="nc" id="L272">                                    l.setUsername(username);</span>
+<span class="nc" id="L273">                                    Log.d(&quot;Username&quot;, &quot;Username: &quot; + l.getUsername());</span>
+<span class="nc" id="L274">                                    objects.set(Integer.valueOf(i), l);</span>
+
+<span class="nc" id="L276">                                }</span>
+
+                                @Override
+                                public void onError(String error) {
+<span class="nc" id="L280">                                    Log.e(&quot;Username Error&quot;, &quot;Error: &quot; + error);</span>
+
+<span class="nc" id="L282">                                }</span>
+                                @Override
+                                public void onFinish(){
+<span class="nc bnc" id="L285" title="All 2 branches missed.">                                    if (remainingRequests.decrementAndGet() == 0){</span>
+<span class="nc" id="L286">                                        updateAdapter(objects);</span>
+                                    }
+<span class="nc" id="L288">                                }</span>
+                            });
+
+                        }
+
+                    }
+                    //This is called outside of the loop for first category
+<span class="nc bnc" id="L295" title="All 2 branches missed.">                    if (spinnerPosition == 1){</span>
+<span class="nc" id="L296">                        updateAdapter(objects);</span>
+                    }
+
+                }
+
+
+<span class="nc" id="L302">                catch (JSONException e) {</span>
+<span class="nc" id="L303">                    Log.e(&quot;JSONArray Error&quot;, e.toString());</span>
+<span class="nc" id="L304">                }</span>
+
+<span class="nc" id="L306">                }</span>
+
+
+            @Override
+            public void onClose(int code, String reason, boolean remote) {
+<span class="nc" id="L311">                Log.d(&quot;Websocket&quot;, &quot;Closed with reason: &quot; + reason);</span>
+                //Handle UI updates or reconnection attempts if needed
+<span class="nc" id="L313">                isConnected = false;</span>
+
+
+<span class="nc" id="L316">            }</span>
+
+            @Override
+            public void onError(Exception ex) {
+<span class="nc" id="L320">                Log.e(&quot;Websocket&quot;, &quot;Error: &quot; + ex.getMessage());</span>
+                //Show error dialog or retry connection
+
+<span class="nc" id="L323">            }</span>
+
+        };
+
+<span class="nc" id="L327">    }</span>
+    private void setUri() {
+        try {
+<span class="nc" id="L330">            uri = new URI(WEB_SOCKET_URL + UserManager.getUsername(this) + &quot;/&quot; + spinnerPosition);</span>
+<span class="nc" id="L331">        }catch (URISyntaxException e) {</span>
+            //throw new RuntimeException(e);
+<span class="nc" id="L333">            Log.e(&quot;error&quot;, e.toString());</span>
+<span class="nc" id="L334">        }</span>
+<span class="nc" id="L335">    }</span>
+
+    private void connectWebSocketClient(){
+<span class="nc" id="L338">        setUri();</span>
+<span class="nc" id="L339">        setWebSocketClient(uri);</span>
+        try {
+<span class="nc" id="L341">            webSocketClient.connect();</span>
+<span class="nc" id="L342">        } catch (Exception e) {</span>
+<span class="nc" id="L343">            Log.e(&quot;WebSocket&quot;, &quot;Connection failed: &quot; + e.getMessage());</span>
+<span class="nc" id="L344">        }</span>
+
+<span class="nc" id="L346">    }</span>
+
+
+
+    /*
+    When the activity stops, stop sending messages and disconnect websocket
+     */
+
+    @Override
+    protected void onStop(){
+<span class="nc" id="L356">        super.onStop();</span>
+<span class="nc bnc" id="L357" title="All 2 branches missed.">        if (handler!=null){</span>
+<span class="nc" id="L358">            handler.removeCallbacks(continuousMessaging);</span>
+        }
+<span class="nc bnc" id="L360" title="All 2 branches missed.">        if (webSocketClient!=null){</span>
+<span class="nc" id="L361">            webSocketClient.close();</span>
+        }
+<span class="nc" id="L363">    }</span>
+
+    @Override
+    protected void onDestroy() {
+<span class="nc" id="L367">        super.onDestroy();</span>
+        // Ensure WebSocket is closed when activity is destroyed
+<span class="nc bnc" id="L369" title="All 4 branches missed.">        if (webSocketClient != null &amp;&amp; webSocketClient.isOpen()) {</span>
+<span class="nc" id="L370">            webSocketClient.close();</span>
+<span class="nc" id="L371">            Log.d(&quot;WebSocket&quot;, &quot;WebSocket closed in onDestroy.&quot;);</span>
+        }
+<span class="nc" id="L373">    }</span>
+    private void getUserAttributesFromOutfitId(long outfitId, LeaderboardItem item, UsernameCallback callback){
+<span class="nc" id="L375">        OutfitManager.getOutfitRequest(this, outfitId, new Response.Listener&lt;JSONObject&gt;() {</span>
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+<span class="nc" id="L379">                    JSONObject user = response.getJSONObject(&quot;user&quot;);</span>
+<span class="nc" id="L380">                    String username = user.getString(&quot;username&quot;);</span>
+                    //Maybe user profile id instead!
+<span class="nc" id="L382">                    long userId = user.getLong(&quot;userId&quot;);</span>
+<span class="nc" id="L383">                    Log.d(&quot;user&quot;, user.toString());</span>
+
+<span class="nc" id="L385">                    callback.onSuccess(username, item.getRank(), item.getCategoryValue());</span>
+<span class="nc" id="L386">                    callback.onFinish();</span>
+
+<span class="nc" id="L388">                } catch (JSONException e) {</span>
+<span class="nc" id="L389">                    callback.onError(e.toString());</span>
+
+<span class="nc" id="L391">                }</span>
+
+<span class="nc" id="L393">            }</span>
+<span class="nc" id="L394">        }, new Response.ErrorListener() {</span>
+            @Override
+            public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L397">                callback.onError(error.toString());</span>
+
+<span class="nc" id="L399">            }</span>
+        });
+<span class="nc" id="L401">    }</span>
+    private void getUsername(long userId, LeaderboardItem item, UsernameCallback callback){
+<span class="nc" id="L403">        UserManager.getUserByIdRequest(this, String.valueOf(userId), MainActivity.SERVER_URL + &quot;/users/&quot;, new Response.Listener&lt;JSONObject&gt;() {</span>
+
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+<span class="nc" id="L408">                    String username = response.getString(&quot;username&quot;);</span>
+<span class="nc" id="L409">                    callback.onSuccess(username, item.getRank(), item.getCategoryValue());</span>
+<span class="nc" id="L410">                    callback.onFinish();</span>
+
+<span class="nc" id="L412">                } catch (JSONException e) {</span>
+<span class="nc" id="L413">                    callback.onError(e.toString());</span>
+
+<span class="nc" id="L415">                }</span>
+
+
+<span class="nc" id="L418">            }</span>
+<span class="nc" id="L419">        }, new Response.ErrorListener() {</span>
+            @Override
+            public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L422">                callback.onError(error.toString());</span>
+<span class="nc" id="L423">            }</span>
+        });
+
+
+<span class="nc" id="L427">    }</span>
+    private void updateAdapter(ArrayList&lt;LeaderboardItem&gt; objects){
+        //Replace adapter items
+<span class="nc" id="L430">        adapterItems = objects;</span>
+<span class="nc" id="L431">        Log.d(&quot;check&quot;, adapterItems.get(0).getUsername());</span>
+        try{
+<span class="nc" id="L433">            runOnUiThread(() -&gt; {</span>
+<span class="nc" id="L434">                setAdapter();</span>
+<span class="nc" id="L435">            });</span>
+<span class="nc" id="L436">        } catch (NullPointerException e) {</span>
+<span class="nc" id="L437">            Log.d(&quot;null adapter&quot;, &quot;yes&quot;);</span>
+<span class="nc" id="L438">        }</span>
+<span class="nc" id="L439">    }</span>
+
+    private void setAdapter(){
+
+<span class="nc" id="L443">        this.adapter = new LeaderboardRecyclerViewAdapter(adapterItems, new LeaderboardRecyclerViewAdapter.OnItemClickListener() {</span>
+            @Override
+            public void onItemClick(int position, View view, LeaderboardItem item) {
+<span class="nc" id="L446">                Log.d(&quot;LeaderboardActivity&quot;, &quot;Clicked on user: &quot; + item.getUsername());</span>
+
+<span class="nc" id="L448">            }</span>
+        });
+<span class="nc" id="L450">        recyclerView.setAdapter(this.adapter);</span>
+<span class="nc" id="L451">        recyclerView.setHasFixedSize(false);</span>
+<span class="nc" id="L452">    }</span>
+
+    /*
+    Note: Work on this design, should this be an interface with it's
+    own file?
+     */
+
+    public interface UsernameCallback {
+        void onSuccess(String username, String i, String value);
+        void onError(String error);
+        void onFinish();
+    }
+
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MainActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics</a> &gt; <span class="el_source">MainActivity.java</span></div><h1>MainActivity.java</h1><pre class="source lang-java linenums">package com.example.closetics;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
+
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+import android.util.Log;
+
+import com.example.closetics.databinding.ActivityMainBinding;
+import com.example.closetics.recommendations.RecWebSocketService;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
+
+<span class="fc" id="L26">public class MainActivity extends AppCompatActivity {</span>
+
+    //private static final String SERVER_ADDRESS = &quot;10.0.2.2:8080&quot;;
+    public static final String SERVER_ADDRESS = &quot;coms-3090-008.class.las.iastate.edu:8080&quot;;
+    public static final String SERVER_URL = &quot;http://&quot; + SERVER_ADDRESS;
+    public static final String SERVER_WS_URL = &quot;ws://&quot; + SERVER_ADDRESS;
+
+<span class="fc" id="L33">    public static final Map&lt;Integer, String&gt; CLOTHING_TYPES = new HashMap&lt;Integer, String&gt;() {{</span>
+<span class="fc" id="L34">        put(1, &quot;accessories&quot;);put(2, &quot;activewear&quot;);put(3, &quot;bottoms&quot;);put(4, &quot;dresses&quot;);put(5, &quot;footwear&quot;);put(6, &quot;formalwear&quot;);put(7, &quot;outerwear&quot;);put(8, &quot;seasonal&quot;);put(9, &quot;sleepwear&quot;);put(10, &quot;tops&quot;);put(11, &quot;undergarments&quot;);put(12, &quot;workwear&quot;);</span>
+<span class="fc" id="L35">    }};</span>
+<span class="fc" id="L36">    public static final Map&lt;Integer, String&gt; CLOTHING_SPECIAL_TYPES = new HashMap&lt;Integer, String&gt;() {{</span>
+<span class="fc" id="L37">        put(81, &quot;aprons&quot;);put(27, &quot;a line dresses&quot;);put(13, &quot;backpacks&quot;);put(10, &quot;belts&quot;);put(51, &quot;blazers&quot;);put(67, &quot;blouses&quot;);put(28, &quot;bodycon dresses&quot;);put(34, &quot;boots&quot;);put(75, &quot;boxers&quot;);put(73, &quot;bras&quot;);put(76, &quot;briefs&quot;);put(23, &quot;capris&quot;);put(52, &quot;cardigans&quot;);put(50, &quot;coats&quot;);put(30, &quot;cocktail dresses&quot;);put(6, &quot;compression wear&quot;);put(72, &quot;crop tops&quot;);put(45, &quot;dress shirts&quot;);put(44, &quot;evening gowns&quot;);put(38, &quot;flats&quot;);put(36, &quot;flip flops&quot;);put(48, &quot;formal dresses&quot;);put(14, &quot;glasses&quot;);put(11, &quot;gloves&quot;);put(31, &quot;gowns&quot;);put(5, &quot;gym t shirts&quot;);put(12, &quot;handbags&quot;);put(9, &quot;hats&quot;);put(37, &quot;heels&quot;);put(71, &quot;hoodies&quot;);put(49, &quot;jackets&quot;);put(17, &quot;jeans&quot;);put(15, &quot;jewelry&quot;);put(21, &quot;leggings&quot;);put(39, &quot;loafers&quot;);put(64, &quot;loungewear&quot;);put(24, &quot;maxi dresses&quot;);put(26, &quot;midi dresses&quot;);put(25, &quot;mini dresses&quot;);put(61, &quot;nightgowns&quot;);put(7, &quot;other&quot;);put(79, &quot;overalls&quot;);put(40, &quot;oxfords&quot;);put(60, &quot;pajamas&quot;);put(77, &quot;panties&quot;);put(56, &quot;parkas&quot;);put(69, &quot;polos&quot;);put(54, &quot;ponchos&quot;);put(59, &quot;rainwear&quot;);put(63, &quot;robes&quot;);put(4, &quot;running shorts&quot;);put(82, &quot;safety gear&quot;);put(35, &quot;sandals&quot;);put(8, &quot;scarves&quot;);put(80, &quot;scrubs&quot;);put(68, &quot;shirts&quot;);put(19, &quot;shorts&quot;);put(20, &quot;skirts&quot;);put(62, &quot;sleep shirts&quot;);put(41, &quot;slippers&quot;);put(33, &quot;sneakers&quot;);put(1, &quot;sports bras&quot;);put(42, &quot;suits&quot;);put(32, &quot;sun dresses&quot;);put(22, &quot;sweatpants&quot;);put(70, &quot;sweatshirts&quot;);put(57, &quot;swimwear&quot;);put(66, &quot;tank tops&quot;);put(46, &quot;ties&quot;);put(3, &quot;tracksuits&quot;);put(18, &quot;trousers&quot;);put(43, &quot;tuxedos&quot;);put(65, &quot;t shirts&quot;);put(74, &quot;underwear&quot;);put(78, &quot;uniforms&quot;);put(53, &quot;vests&quot;);put(47, &quot;waistcoats&quot;);put(16, &quot;watches&quot;);put(55, &quot;windbreakers&quot;);put(58, &quot;winterwear&quot;);put(29, &quot;wrap dresses&quot;);put(2, &quot;yoga pants&quot;);</span>
+<span class="fc" id="L38">    }};</span>
+
+    private ActivityMainBinding binding;
+    private BottomNavigationView bottomNavView;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+
+<span class="fc" id="L47">        super.onCreate(savedInstanceState);</span>
+<span class="fc" id="L48">        binding = ActivityMainBinding.inflate(getLayoutInflater());</span>
+<span class="fc" id="L49">        setContentView(binding.getRoot());             // link to Main activity XML</span>
+
+<span class="fc" id="L51">        bottomNavView = binding.bottomNavView;</span>
+
+
+
+
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+//        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+//                R.id.navigation_home, R.id.navigation_discover, R.id.navigation_profile)
+//                .build();
+<span class="fc" id="L61">        NavController navController = Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment_activity_main);</span>
+//        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+<span class="fc" id="L63">        NavigationUI.setupWithNavController(binding.bottomNavView, navController);</span>
+
+        // DEBUG CODE
+//        UserManager.saveUsername(getApplicationContext(), &quot;user1&quot;);
+//        UserManager.saveUserID(getApplicationContext(), 1);
+
+        // start websocket if person is logged in
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if (UserManager.getUsername(getApplicationContext()) != null) {</span>
+<span class="fc" id="L71">            startRecWebSocket();</span>
+        }
+
+        // commented bc doesn't work properly
+//        Bundle extras = getIntent().getExtras();
+//        if (extras != null) {
+//            switch (extras.getInt(&quot;OPEN_FRAGMENT&quot;, 0)) {
+//                case 1:
+//                    navController.navigate(R.id.action_navigation_dashboard_to_navigation_recommendations);
+//                    break;
+//                case 2:
+//                    navController.navigate(R.id.action_navigation_dashboard_to_navigation_clothes);
+//                    break;
+//                case 3:
+//                    navController.navigate(R.id.action_navigation_dashboard_to_navigation_profile);
+//                    break;
+//            }
+//        }
+
+//        replaceFragment(new HomeFragment());
+
+//        binding.bottomNavigationView.setOnItemSelectedListener(item -&gt; {
+//
+//            int itemId = item.getItemId();
+//            if (itemId == R.id.home) {
+//                replaceFragment(new HomeFragment());
+//            }
+//            else if (itemId == R.id.discover) {
+//                replaceFragment(new DiscoverFragment());
+//            }
+//            else if (itemId == R.id.profile) {
+//                replaceFragment(new ProfileFragment());
+//            }
+//
+//            return true;
+//        });
+<span class="fc" id="L107">    }</span>
+
+    private void startRecWebSocket() {
+<span class="fc" id="L110">        Intent serviceIntent = new Intent(this, com.example.closetics.recommendations.RecWebSocketService.class);</span>
+<span class="fc" id="L111">        serviceIntent.setAction(&quot;RecWebSocketConnect&quot;);</span>
+<span class="fc" id="L112">        startService(serviceIntent);</span>
+<span class="fc" id="L113">        Log.d(&quot;MainActivity&quot;, &quot;RecWebSocket started&quot;);</span>
+<span class="fc" id="L114">    }</span>
+
+//    private void replaceFragment(Fragment fragment) {
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//        fragmentTransaction.replace(R.id.frameLayout, fragment);
+//        fragmentTransaction.commit();
+//    }
+}
+
+// What did 60 do when it get hungry?
+// 68
+// .
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>

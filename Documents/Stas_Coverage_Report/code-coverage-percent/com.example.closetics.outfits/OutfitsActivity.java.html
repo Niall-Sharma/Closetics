@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OutfitsActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics.outfits</a> &gt; <span class="el_source">OutfitsActivity.java</span></div><h1>OutfitsActivity.java</h1><pre class="source lang-java linenums">package com.example.closetics.outfits;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.example.closetics.DashboardFragment;
+import com.example.closetics.MainActivity;
+import com.example.closetics.R;
+import com.example.closetics.UserManager;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+<span class="fc" id="L28">public class OutfitsActivity extends AppCompatActivity {</span>
+
+    private Button addOutfitButton;
+    private TextView noOutfitsText;
+    private Button backButton;
+    private ListView outfitsList;
+    private OutfitsListAdapter adapter;
+<span class="fc" id="L35">    private Boolean setDashboard = false;</span>
+
+
+    private List&lt;Long&gt; outfitIds;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="fc" id="L42">        super.onCreate(savedInstanceState);</span>
+<span class="fc" id="L43">        setContentView(R.layout.activity_outfits);</span>
+
+<span class="fc" id="L45">        addOutfitButton = findViewById(R.id.outfits_add_button);</span>
+<span class="fc" id="L46">        outfitsList = findViewById(R.id.outfits_list);</span>
+<span class="fc" id="L47">        noOutfitsText = findViewById(R.id.outfits_no_outfits_text);</span>
+<span class="fc" id="L48">        backButton = findViewById(R.id.outfits_back_button);</span>
+
+
+
+        // Initialize the adapter with an empty list (data will be added later)
+<span class="fc" id="L53">        adapter = new OutfitsListAdapter(this, new ArrayList&lt;&gt;());</span>
+<span class="fc" id="L54">        outfitsList.setAdapter(adapter);</span>
+
+<span class="fc" id="L56">        addOutfitButton.setOnClickListener(v -&gt; {</span>
+<span class="fc" id="L57">            Intent intent = new Intent(OutfitsActivity.this, EditOutfitActivity.class);</span>
+<span class="fc" id="L58">            startActivity(intent);</span>
+<span class="fc" id="L59">        });</span>
+
+<span class="fc" id="L61">        backButton.setOnClickListener(v -&gt; {</span>
+<span class="nc" id="L62">            Intent intent = new Intent(OutfitsActivity.this, MainActivity.class);</span>
+<span class="nc" id="L63">            startActivity(intent);</span>
+<span class="nc" id="L64">        });</span>
+
+<span class="fc" id="L66">        outfitsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {</span>
+            @Override
+            public void onItemClick(AdapterView&lt;?&gt; parent, View view, int position, long id) {
+                // open EditOutfitActivity with outfit id as a parameter
+//                Object listItem = outfitsList.getItemAtPosition(position);
+<span class="fc" id="L71">                long selectedId = outfitIds.get(position);</span>
+<span class="fc" id="L72">                Intent intent = new Intent(OutfitsActivity.this, EditOutfitActivity.class);</span>
+<span class="fc" id="L73">                intent.putExtra(&quot;OUTFIT_ID&quot;, selectedId);</span>
+<span class="fc" id="L74">                startActivity(intent);</span>
+<span class="fc" id="L75">            }</span>
+        });
+
+
+        //Ashten's code, outfits activity is reused in the dashboard with slight modifications!
+<span class="fc" id="L80">        Bundle bundle = getIntent().getExtras();</span>
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">        if (bundle != null){</span>
+<span class="nc" id="L82">            String start  = &quot;Choose &quot;;</span>
+<span class="nc" id="L83">            setDashboard = true;</span>
+<span class="nc" id="L84">            addOutfitButton.setVisibility(View.INVISIBLE);</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">            if (bundle.getBoolean(&quot;setTomorrow&quot;)) {</span>
+<span class="nc" id="L86">                String s = start + &quot;Tomorrow's Outfit&quot;;</span>
+<span class="nc" id="L87">                noOutfitsText.setText(s);</span>
+<span class="nc" id="L88">                noOutfitsText.setVisibility(View.VISIBLE);</span>
+<span class="nc" id="L89">            }else {</span>
+<span class="nc" id="L90">                String s = start + &quot;Today's Outfit&quot;;</span>
+<span class="nc" id="L91">                noOutfitsText.setText(s);</span>
+<span class="nc" id="L92">                noOutfitsText.setVisibility(View.VISIBLE);</span>
+            }
+                //Clicking an outfit now sends that outfit ID to dashboard!
+<span class="nc" id="L95">                outfitsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {</span>
+                    @Override
+                    public void onItemClick(AdapterView&lt;?&gt; parent, View view, int position, long id) {
+
+                        //Send outfit ID to main instead!
+<span class="nc" id="L100">                        long selectedId = outfitIds.get(position);</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">                        if (noOutfitsText.getText().equals(&quot;Choose Tomorrow's Outfit&quot;)) {</span>
+<span class="nc" id="L102">                            OutfitManager.saveTomorrowDailyOutfit(OutfitsActivity.this, selectedId);</span>
+                        }
+                        else {
+<span class="nc" id="L105">                            OutfitManager.saveCurrentDailyOutfit(OutfitsActivity.this, selectedId);</span>
+<span class="nc" id="L106">                            DashboardFragment.addWornToday(getApplicationContext(), selectedId);</span>
+                        }
+
+<span class="nc" id="L109">                        Intent intent = new Intent(OutfitsActivity.this, MainActivity.class);</span>
+<span class="nc" id="L110">                        startActivity(intent);</span>
+<span class="nc" id="L111">                    }</span>
+                });
+
+
+            }
+
+
+
+<span class="fc" id="L119">        populateOutfitsList(UserManager.getUserID(getApplicationContext()));</span>
+<span class="fc" id="L120">    }</span>
+
+    private void populateOutfitsList(long userId) {
+<span class="fc" id="L123">        OutfitManager.getAllOutfitsRequest(getApplicationContext(), userId,</span>
+<span class="fc" id="L124">                new Response.Listener&lt;JSONArray&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONArray response) {
+<span class="fc" id="L127">                        Log.d(&quot;Volley Response&quot;, response.toString());</span>
+
+                        // hide no outfits text if there are outfits
+<span class="pc bpc" id="L130" title="2 of 4 branches missed.">                        if (response.length() &gt; 0 &amp;&amp; !setDashboard) {</span>
+<span class="fc" id="L131">                            noOutfitsText.setVisibility(TextView.GONE);</span>
+                        }
+
+<span class="fc" id="L134">                        outfitIds = new ArrayList&lt;&gt;();</span>
+
+                        // parse the JSON array and add data to the adapter
+<span class="fc bfc" id="L137" title="All 2 branches covered.">                        for (int i = 0; i &lt; response.length(); i++) {</span>
+                            try {
+<span class="fc" id="L139">                                JSONObject outfit = response.getJSONObject(i);</span>
+
+<span class="fc" id="L141">                                long id = outfit.getLong(&quot;outfitId&quot;);</span>
+<span class="fc" id="L142">                                String name = outfit.getString(&quot;outfitName&quot;);</span>
+
+                                // create list item, but not add it bc clothes aren't ready
+<span class="fc" id="L145">                                OutfitsListItem item = new OutfitsListItem(outfit, id, name);</span>
+
+<span class="fc" id="L147">                                getAllClothesAndSave(id, item);</span>
+<span class="nc" id="L148">                            } catch (JSONException e) {</span>
+<span class="nc" id="L149">                                Log.e(&quot;JSON Error&quot;, e.toString());</span>
+<span class="fc" id="L150">                            }</span>
+                        }
+<span class="fc" id="L152">                    }</span>
+                },
+<span class="fc" id="L154">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L157">                        Log.e(&quot;Volley Error&quot;, error.toString());</span>
+<span class="nc" id="L158">                    }</span>
+                });
+<span class="fc" id="L160">    }</span>
+
+    private void getAllClothesAndSave(long outfitId, OutfitsListItem item) {
+<span class="fc" id="L163">        OutfitManager.getAllOutfitItemsRequest(getApplicationContext(), outfitId,</span>
+<span class="fc" id="L164">                new Response.Listener&lt;JSONArray&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONArray response) {
+<span class="fc" id="L167">                        Log.d(&quot;Volley Response&quot;, response.toString());</span>
+
+<span class="fc" id="L169">                        List&lt;JSONObject&gt; clothes = new ArrayList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L171" title="All 2 branches covered.">                        for (int i = 0; i &lt; response.length(); i++) {</span>
+                            try {
+<span class="fc" id="L173">                                JSONObject clothing = response.getJSONObject(i);</span>
+<span class="fc" id="L174">                                clothes.add(clothing);</span>
+<span class="nc" id="L175">                            } catch (JSONException e) {</span>
+<span class="nc" id="L176">                                Log.e(&quot;JSON Error&quot;, e.toString());</span>
+<span class="fc" id="L177">                            }</span>
+                        }
+
+                        // set clothes list and add item to the adapter
+<span class="fc" id="L181">                        item.setClothes(clothes);</span>
+<span class="fc" id="L182">                        adapter.add(item);</span>
+
+                        // save id for click handling
+                        // add id at the same time as item to keep correct order in-between callbacks
+<span class="fc" id="L186">                        outfitIds.add(outfitId);</span>
+<span class="fc" id="L187">                    }</span>
+                },
+<span class="fc" id="L189">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L192">                        Log.e(&quot;Volley Error&quot;, error.toString());</span>
+<span class="nc" id="L193">                    }</span>
+                });
+<span class="fc" id="L195">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>

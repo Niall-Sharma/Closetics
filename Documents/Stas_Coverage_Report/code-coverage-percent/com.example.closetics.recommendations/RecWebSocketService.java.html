@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RecWebSocketService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics.recommendations</a> &gt; <span class="el_source">RecWebSocketService.java</span></div><h1>RecWebSocketService.java</h1><pre class="source lang-java linenums">package com.example.closetics.recommendations;
+
+import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.IBinder;
+import android.util.Log;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.example.closetics.MainActivity;
+import com.example.closetics.UserManager;
+
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.handshake.ServerHandshake;
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+
+public class RecWebSocketService extends Service {
+<span class="nc" id="L24">    private final String URL = MainActivity.SERVER_WS_URL + &quot;/recommendation/&quot;; // + {{userId}}</span>
+
+    private WebSocketClient webSocket;
+
+    private boolean isConnected;
+
+    // Listen to the messages from Activities
+    // Forward the message to its designated Websocket connection
+<span class="nc" id="L32">    private BroadcastReceiver messageReceiver = new BroadcastReceiver() {</span>
+        @Override
+        public void onReceive(Context context, Intent intent) {
+<span class="nc" id="L35">            String message = intent.getStringExtra(&quot;message&quot;);</span>
+
+<span class="nc bnc" id="L37" title="All 4 branches missed.">            if (webSocket != null &amp;&amp; isConnected) {</span>
+<span class="nc" id="L38">                webSocket.send(message);</span>
+<span class="nc" id="L39">                Log.d(&quot;RecWebSocket&quot;, &quot;Message sent: &quot; + message);</span>
+            } else {
+<span class="nc" id="L41">                Log.d(&quot;RecWebSocket&quot;, &quot;WebSocket is closed, message not sent: &quot; + message);</span>
+            }
+<span class="nc" id="L43">        }</span>
+    };
+
+<span class="nc" id="L46">    public RecWebSocketService() {</span>
+<span class="nc" id="L47">        webSocket = null;</span>
+<span class="nc" id="L48">        isConnected = false;</span>
+<span class="nc" id="L49">    }</span>
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+<span class="nc" id="L53">        Log.d(&quot;RecWebSocket&quot;, &quot;Received intent&quot;);</span>
+<span class="nc bnc" id="L54" title="All 4 branches missed.">        if (intent != null &amp;&amp; intent.getAction() != null) {</span>
+<span class="nc" id="L55">            String action = intent.getAction();</span>
+<span class="nc bnc" id="L56" title="All 2 branches missed.">            if (action.equals(&quot;RecWebSocketConnect&quot;)) {</span>
+                //String URL = intent.getStringExtra(&quot;URL&quot;); // eg, &quot;ws://localhost:8080/chat/1/uname&quot;
+<span class="nc" id="L58">                connectWebSocket();</span>
+<span class="nc bnc" id="L59" title="All 2 branches missed.">            } else if (action.equals(&quot;RecWebSocketDisconnect&quot;)) {</span>
+<span class="nc" id="L60">                disconnectWebSocket();</span>
+            }
+        }
+<span class="nc" id="L63">        return START_STICKY;</span>
+    }
+
+    @Override
+    public void onCreate() {    // Register BroadcastReceiver to listen for messages from Activities
+<span class="nc" id="L68">        super.onCreate();</span>
+<span class="nc" id="L69">        LocalBroadcastManager</span>
+<span class="nc" id="L70">                .getInstance(this)</span>
+<span class="nc" id="L71">                .registerReceiver(messageReceiver, new IntentFilter(&quot;RecWebSocketSendMessage&quot;));</span>
+<span class="nc" id="L72">    }</span>
+
+    @Override
+    public void onDestroy() {   // Close WebSocket connection to prevent memory leaks
+<span class="nc" id="L76">        super.onDestroy();</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">        if (webSocket != null) {</span>
+<span class="nc" id="L78">            webSocket.close();</span>
+<span class="nc" id="L79">            isConnected = false;</span>
+        }
+<span class="nc" id="L81">        LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);</span>
+<span class="nc" id="L82">        Log.d(&quot;RecWebSocket&quot;, &quot;WebSocket closed on Destroy&quot;);</span>
+<span class="nc" id="L83">    }</span>
+
+    @Override
+    public IBinder onBind(Intent intent) {
+<span class="nc" id="L87">        return null;</span>
+    }
+
+    // Initialize WebSocket client and define callback for message reception
+    private void connectWebSocket() {
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        if (isConnected) {</span>
+<span class="nc" id="L93">            Log.d(&quot;RecWebSocket&quot;, &quot;Connection attempt, but WebSocket is already connected&quot;);</span>
+<span class="nc" id="L94">            return;</span>
+        }
+
+        try {
+<span class="nc" id="L98">            URI serverURI = URI.create(URL + UserManager.getUserID(getApplicationContext()));</span>
+<span class="nc" id="L99">            WebSocketClient client = new WebSocketClient(serverURI) {</span>
+                @Override
+                public void onOpen(ServerHandshake handShakeData) {
+<span class="nc" id="L102">                    Log.d(&quot;RecWebSocket&quot;, &quot;On Open. URI: &quot; + serverURI.toString());</span>
+<span class="nc" id="L103">                    isConnected = true;</span>
+<span class="nc" id="L104">                }</span>
+
+                @Override
+                public void onMessage(String message) {
+<span class="nc" id="L108">                    Intent intent = new Intent(&quot;RecWebSocketMessageReceived&quot;);</span>
+<span class="nc" id="L109">                    intent.putExtra(&quot;message&quot;, message);</span>
+<span class="nc" id="L110">                    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);</span>
+
+<span class="nc" id="L112">                    Log.d(&quot;RecWebSocket&quot;, &quot;On Message. Message: &quot; + message);</span>
+<span class="nc" id="L113">                }</span>
+
+                @Override
+                public void onClose(int code, String reason, boolean remote) {
+<span class="nc" id="L117">                    Log.d(&quot;RecWebSocket&quot;, &quot;On Close. Code: &quot; + code + &quot;, Reason: &quot; + reason);</span>
+<span class="nc" id="L118">                    isConnected = false;</span>
+<span class="nc" id="L119">                }</span>
+
+                @Override
+                public void onError(Exception ex) {
+<span class="nc" id="L123">                    Log.d(&quot;RecWebSocket&quot;, &quot;On Error: &quot; + ex.toString());</span>
+<span class="nc" id="L124">                }</span>
+            };
+
+<span class="nc" id="L127">            client.connectBlocking(); // connect to the websocket</span>
+<span class="nc" id="L128">            webSocket = client;</span>
+<span class="nc" id="L129">            isConnected = true;</span>
+
+<span class="nc" id="L131">        } catch (Exception e) {</span>
+<span class="nc" id="L132">            Log.e(&quot;RecWebSocket Error&quot;, &quot;Connection Error: &quot; + e.toString());</span>
+<span class="nc" id="L133">        }</span>
+<span class="nc" id="L134">    }</span>
+
+    private void disconnectWebSocket() {
+<span class="nc bnc" id="L137" title="All 4 branches missed.">        if (webSocket != null &amp;&amp; isConnected) {</span>
+<span class="nc" id="L138">            webSocket.close();</span>
+<span class="nc" id="L139">            isConnected = false;</span>
+        }
+<span class="nc" id="L141">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>

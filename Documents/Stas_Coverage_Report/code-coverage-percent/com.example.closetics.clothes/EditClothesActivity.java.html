@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EditClothesActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics.clothes</a> &gt; <span class="el_source">EditClothesActivity.java</span></div><h1>EditClothesActivity.java</h1><pre class="source lang-java linenums">package com.example.closetics.clothes;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.example.closetics.MainActivity;
+import com.example.closetics.R;
+import com.example.closetics.UserManager;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Map;
+
+<span class="nc" id="L34">public class EditClothesActivity extends AppCompatActivity {</span>
+    private Button finalSubmission;
+    private TabLayout tabLayout;
+    private ClothesDataViewModel clothesDataViewModel;
+    private ViewPager2 viewPager;
+    private FragmentStateAdapter pagerAdapter;
+    private long clothingId;
+    private ClothingItem clothingItem;
+
+
+
+
+
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L48">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L49">        setContentView(R.layout.activity_edit_clothes);</span>
+
+<span class="nc" id="L51">        finalSubmission = findViewById(R.id.submit_button);</span>
+<span class="nc" id="L52">        tabLayout = findViewById(R.id.tabLayout);</span>
+
+<span class="nc" id="L54">        viewPager = findViewById(R.id.edit_pager);</span>
+
+        //This needs an innner class
+<span class="nc" id="L57">        pagerAdapter = new EditClothesActivity.ScreenSlidePagerAdapter(this);</span>
+
+<span class="nc" id="L59">        clothesDataViewModel = new ViewModelProvider(this).get(ClothesDataViewModel.class);</span>
+
+        //Initialize the fragments list
+<span class="nc" id="L62">        clothesDataViewModel.setFragmentsSize(ClothesActivity.NUM_FRAGMENTS);</span>
+
+        //Set the viewpager
+<span class="nc" id="L65">        viewPager.setAdapter(pagerAdapter);</span>
+        //Set tab mediator
+<span class="nc" id="L67">        new TabLayoutMediator(tabLayout, viewPager, ((tab, position) -&gt;{</span>
+<span class="nc" id="L68">            tab.setText(String.valueOf(position+1));</span>
+<span class="nc" id="L69">        } )).attach();</span>
+
+        //Set the clothingId and clothingItem instance variables
+<span class="nc" id="L72">        Intent intent = getIntent();</span>
+
+<span class="nc" id="L74">        clothingId = intent.getLongExtra(&quot;clothingId&quot;, 0);</span>
+<span class="nc" id="L75">        clothingItem = (ClothingItem) intent.getSerializableExtra(&quot;clothingItem&quot;);</span>
+
+<span class="nc" id="L77">        finalSubmission.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+
+<span class="nc" id="L81">                ArrayList&lt;MutableLiveData&lt;String&gt;&gt; fragments = clothesDataViewModel.getFragments();</span>
+<span class="nc" id="L82">                getAndUpdateClothing(getApplicationContext(), ClothesActivity.URL, fragments);</span>
+
+
+<span class="nc" id="L85">            }</span>
+        });
+
+
+
+
+<span class="nc" id="L91">    }</span>
+
+    private void getAndUpdateClothing(Context context, String URL, ArrayList&lt;MutableLiveData&lt;String&gt;&gt; fragments) {
+<span class="nc" id="L94">        ClothesManager.getClothingRequest(context, clothingId, URL, new Response.Listener&lt;JSONObject&gt;() {</span>
+            @Override
+            public void onResponse(JSONObject response) {
+<span class="nc" id="L97">                Log.d(&quot;Volley Response&quot;, response.toString());</span>
+                JSONObject updateObject;
+                try {
+<span class="nc" id="L100">                    updateObject = putUpdatedFields(response, fragments);</span>
+
+<span class="nc" id="L102">                } catch (JSONException e) {</span>
+<span class="nc" id="L103">                    throw new RuntimeException(e);</span>
+<span class="nc" id="L104">                }</span>
+<span class="nc" id="L105">                updateClothing(context, updateObject, URL);</span>
+
+<span class="nc" id="L107">            }</span>
+
+<span class="nc" id="L109">        }, new Response.ErrorListener() {</span>
+            @Override
+            public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L112">                Log.e(&quot;Volley Error&quot;, error.toString());</span>
+<span class="nc" id="L113">            }</span>
+        });
+<span class="nc" id="L115">    }</span>
+
+
+
+
+    private void updateClothing(Context context, JSONObject object, String URL){
+<span class="nc" id="L121">        ClothesManager.updateClothingRequest(context, object, URL, new Response.Listener&lt;JSONObject&gt;() {</span>
+            @Override
+            public void onResponse(JSONObject response) {
+<span class="nc" id="L124">                Log.d(&quot;Volley Response&quot;, response.toString());</span>
+<span class="nc" id="L125">            }</span>
+<span class="nc" id="L126">        }, new Response.ErrorListener() {</span>
+            @Override
+            public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L129">                Log.e(&quot;Volley Error&quot;, error.toString());</span>
+<span class="nc" id="L130">            }</span>
+        });
+
+
+<span class="nc" id="L134">    }</span>
+
+
+    private JSONObject putUpdatedFields(JSONObject response, ArrayList&lt;MutableLiveData&lt;String&gt;&gt; fragments) throws JSONException {
+<span class="nc" id="L138">        String favorite = fragments.get(0).getValue();</span>
+<span class="nc" id="L139">        String size = fragments.get(1).getValue();</span>
+<span class="nc" id="L140">        String color = fragments.get(2).getValue();</span>
+<span class="nc" id="L141">        String dateBought = fragments.get(3).getValue();</span>
+<span class="nc" id="L142">        String brand = fragments.get(6).getValue();</span>
+<span class="nc" id="L143">        String itemName = fragments.get(5).getValue();</span>
+<span class="nc" id="L144">        String material = fragments.get(7).getValue();</span>
+<span class="nc" id="L145">        String price = fragments.get(4).getValue();</span>
+
+<span class="nc bnc" id="L147" title="All 2 branches missed.">        if (favorite!=null) {</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">            if (favorite.toLowerCase().trim().equals(&quot;true&quot;)) {</span>
+<span class="nc" id="L149">                ClothesManager.nullCheck(&quot;favorite&quot;, true, response);</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">            } else if (favorite.toLowerCase().trim().equals(&quot;false&quot;)){</span>
+<span class="nc" id="L151">                ClothesManager.nullCheck(&quot;favorite&quot;, false, response);</span>
+            }
+        }
+
+<span class="nc" id="L155">        ClothesManager.nullCheck(&quot;size&quot;, size, response);</span>
+<span class="nc" id="L156">        ClothesManager.nullCheck(&quot;color&quot;, color, response);</span>
+<span class="nc" id="L157">        ClothesManager.nullCheck(&quot;dateBought&quot;, dateBought, response);</span>
+<span class="nc" id="L158">        ClothesManager.nullCheck(&quot;brand&quot;, brand, response);</span>
+<span class="nc" id="L159">        ClothesManager.nullCheck(&quot;itemName&quot;, itemName, response);</span>
+<span class="nc" id="L160">        ClothesManager.nullCheck(&quot;material&quot;, material, response);</span>
+<span class="nc" id="L161">        ClothesManager.nullCheck(&quot;price&quot;, price, response);</span>
+
+<span class="nc" id="L163">        return response;</span>
+
+    }
+
+    private class ScreenSlidePagerAdapter extends FragmentStateAdapter {
+
+<span class="nc" id="L169">        public ScreenSlidePagerAdapter(EditClothesActivity editClothesActivity) {</span>
+<span class="nc" id="L170">            super(editClothesActivity);</span>
+<span class="nc" id="L171">        }</span>
+
+        @NonNull
+        @Override
+        public Fragment createFragment(int position) {
+
+<span class="nc" id="L177">            return EditClothesFragment.newInstance(position, clothesDataViewModel, clothingItem);</span>
+        }
+
+        @Override
+        public int getItemCount() {
+
+<span class="nc" id="L183">            return ClothesActivity.NUM_FRAGMENTS;</span>
+        }
+    }
+
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>

@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PaymentActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics.payment</a> &gt; <span class="el_source">PaymentActivity.java</span></div><h1>PaymentActivity.java</h1><pre class="source lang-java linenums">package com.example.closetics.payment;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.example.closetics.MainActivity;
+import com.example.closetics.R;
+
+import com.example.closetics.UserManager;
+import com.example.closetics.outfits.OutfitManager;
+import com.stripe.android.PaymentConfiguration;
+import com.stripe.android.paymentsheet.*;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+<span class="nc" id="L25">public class PaymentActivity extends AppCompatActivity {</span>
+<span class="nc" id="L26">    private final String STRIPE_PUBLISHABLE_KEY = &quot;pk_test_51RBJo6PBUCiZ3v4PB9Mg76Yxtmg9NCpNaFHQWPjLL9VSNbPw4MmY5aQ3XZmLN7tiAKc2XKz3PbCGPT0l7hXrZW2Z00R4dNM1Su&quot;;</span>
+
+    private ImageButton backButton;
+    private Button basicBuyButton, premiumBuyButton;
+    private TextView currentTierText, currentTierDescriptionText;
+    private TextView basicTierText, basicTierDescriptionText;
+    private TextView premiumTierText, premiumTierDescriptionText;
+
+    private PaymentSheet paymentSheet;
+    private String paymentIntentClientSecret;
+    private String paymentIntentId;
+    private PaymentSheet.CustomerConfiguration customerConfig;
+
+    private String userTier;
+    private boolean isBuyingBasic;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L44">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L45">        setContentView(R.layout.activity_payment);</span>
+
+<span class="nc" id="L47">        backButton = findViewById(R.id.payment_back_button);</span>
+<span class="nc" id="L48">        basicBuyButton = findViewById(R.id.payment_basic_buy_button);</span>
+<span class="nc" id="L49">        premiumBuyButton = findViewById(R.id.payment_premium_buy_button);</span>
+<span class="nc" id="L50">        currentTierText = findViewById(R.id.payment_current_tier_name_text);</span>
+<span class="nc" id="L51">        currentTierDescriptionText = findViewById(R.id.payment_current_tier_description_text);</span>
+<span class="nc" id="L52">        basicTierText = findViewById(R.id.payment_basic_tier_text);</span>
+<span class="nc" id="L53">        basicTierDescriptionText = findViewById(R.id.payment_basic_tier_description_text);</span>
+<span class="nc" id="L54">        premiumTierText = findViewById(R.id.payment_premium_tier_text);</span>
+<span class="nc" id="L55">        premiumTierDescriptionText = findViewById(R.id.payment_premium_tier_description_text);</span>
+
+<span class="nc" id="L57">        paymentSheet = new PaymentSheet(this, this::onPaymentSheetResult);</span>
+
+<span class="nc" id="L59">        PaymentConfiguration.init(getApplicationContext(), STRIPE_PUBLISHABLE_KEY);</span>
+
+<span class="nc" id="L61">        backButton.setOnClickListener(v -&gt; {</span>
+            // return to Main
+<span class="nc" id="L63">            Intent intent = new Intent(PaymentActivity.this, MainActivity.class);</span>
+<span class="nc" id="L64">            intent.putExtra(&quot;OPEN_FRAGMENT&quot;, 3); // open fragment Profile</span>
+<span class="nc" id="L65">            startActivity(intent);</span>
+<span class="nc" id="L66">        });</span>
+
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        if (UserManager.getUsername(getApplicationContext()) != null) {</span>
+<span class="nc" id="L69">            basicBuyButton.setOnClickListener(v -&gt; {</span>
+<span class="nc" id="L70">                buyBasic(UserManager.getUserID(getApplicationContext()));</span>
+<span class="nc" id="L71">            });</span>
+
+<span class="nc" id="L73">            premiumBuyButton.setOnClickListener(v -&gt; {</span>
+<span class="nc" id="L74">                buyPremium(UserManager.getUserID(getApplicationContext()));</span>
+<span class="nc" id="L75">            });</span>
+        }
+
+        // get and populate current tier data
+<span class="nc" id="L79">        getUserTier(UserManager.getUserID(getApplicationContext()));</span>
+<span class="nc" id="L80">    }</span>
+
+    private void buyBasic(long userId) {
+<span class="nc" id="L83">        PaymentManager.createPaymentRequest(getApplicationContext(), userId, 499, &quot;Basic&quot;,</span>
+<span class="nc" id="L84">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+<span class="nc" id="L87">                        Log.d(&quot;Volley Response&quot;, &quot;Success creating payment: &quot; + response.toString());</span>
+
+                        try {
+<span class="nc" id="L90">                            paymentIntentClientSecret = response.getString(&quot;clientSecret&quot;);</span>
+<span class="nc" id="L91">                            paymentIntentId = response.getString(&quot;paymentIntentId&quot;);</span>
+
+<span class="nc" id="L93">                            isBuyingBasic = true;</span>
+<span class="nc" id="L94">                            presentPaymentSheet();</span>
+<span class="nc" id="L95">                        } catch (JSONException e) {</span>
+<span class="nc" id="L96">                            Log.e(&quot;JSON Error&quot;, &quot;Error parsing payment clientSecret: &quot; + e.toString());</span>
+<span class="nc" id="L97">                        }</span>
+<span class="nc" id="L98">                    }</span>
+                },
+<span class="nc" id="L100">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L103">                        Log.e(&quot;Volley Error&quot;, &quot;Error creating payment: &quot; + error.toString());</span>
+<span class="nc" id="L104">                    }</span>
+                });
+<span class="nc" id="L106">    }</span>
+
+    private void buyPremium(long userId) {
+<span class="nc" id="L109">        PaymentManager.createPaymentRequest(getApplicationContext(), userId, 699, &quot;Premium&quot;,</span>
+<span class="nc" id="L110">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+<span class="nc" id="L113">                        Log.d(&quot;Volley Response&quot;, &quot;Success creating payment: &quot; + response.toString());</span>
+
+                        try {
+<span class="nc" id="L116">                            paymentIntentClientSecret = response.getString(&quot;clientSecret&quot;);</span>
+<span class="nc" id="L117">                            paymentIntentId = response.getString(&quot;paymentIntentId&quot;);</span>
+
+<span class="nc" id="L119">                            isBuyingBasic = false;</span>
+<span class="nc" id="L120">                            presentPaymentSheet();</span>
+<span class="nc" id="L121">                        } catch (JSONException e) {</span>
+<span class="nc" id="L122">                            Log.e(&quot;JSON Error&quot;, &quot;Error parsing payment clientSecret: &quot; + e.toString());</span>
+<span class="nc" id="L123">                        }</span>
+<span class="nc" id="L124">                    }</span>
+                },
+<span class="nc" id="L126">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L129">                        Log.e(&quot;Volley Error&quot;, &quot;Error creating payment: &quot; + error.toString());</span>
+<span class="nc" id="L130">                    }</span>
+                });
+<span class="nc" id="L132">    }</span>
+
+    private void presentPaymentSheet() {
+<span class="nc" id="L135">        final PaymentSheet.Configuration configuration = new PaymentSheet.Configuration.Builder(&quot;Closetics, Inc.&quot;)</span>
+                // .customer(customerConfig)
+                // Set `allowsDelayedPaymentMethods` to true if your business handles payment methods
+                // delayed notification payment methods like US bank accounts.
+                // .allowsDelayedPaymentMethods(true)
+<span class="nc" id="L140">                .build();</span>
+<span class="nc" id="L141">        paymentSheet.presentWithPaymentIntent(</span>
+                paymentIntentClientSecret//,
+                //configuration
+        );
+<span class="nc" id="L145">    }</span>
+
+    private void onPaymentSheetResult(final PaymentSheetResult paymentSheetResult) {
+<span class="nc bnc" id="L148" title="All 2 branches missed.">        if (paymentSheetResult instanceof PaymentSheetResult.Canceled) {</span>
+<span class="nc" id="L149">            Log.d(&quot;PaymentSheetResult&quot;, &quot;Canceled&quot;);</span>
+
+<span class="nc" id="L151">            confirmPayment();</span>
+<span class="nc bnc" id="L152" title="All 2 branches missed.">        } else if (paymentSheetResult instanceof PaymentSheetResult.Failed) {</span>
+<span class="nc" id="L153">            Log.e(&quot;PaymentSheetResult&quot;, &quot;Got error: &quot;, ((PaymentSheetResult.Failed) paymentSheetResult).getError());</span>
+
+<span class="nc" id="L155">            confirmPayment();</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">        } else if (paymentSheetResult instanceof PaymentSheetResult.Completed) {</span>
+            // Display for example, an order confirmation screen
+<span class="nc" id="L158">            Log.d(&quot;PaymentSheetResult&quot;, &quot;Completed&quot;);</span>
+
+<span class="nc" id="L160">            confirmPayment();</span>
+            //updateUserTier();
+
+            // return to Main
+<span class="nc" id="L164">            Intent intent = new Intent(PaymentActivity.this, MainActivity.class);</span>
+<span class="nc" id="L165">            intent.putExtra(&quot;OPEN_FRAGMENT&quot;, 3); // open fragment Profile</span>
+<span class="nc" id="L166">            startActivity(intent);</span>
+        }
+<span class="nc" id="L168">    }</span>
+
+    private void getUserTier(long userId) {
+<span class="nc" id="L171">        UserManager.getUserByIdRequest(getApplicationContext(), userId,</span>
+<span class="nc" id="L172">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+<span class="nc" id="L175">                        Log.d(&quot;Volley Response&quot;, &quot;Success getting user for tier: &quot; + response);</span>
+
+                        try {
+<span class="nc" id="L178">                            userTier = null;</span>
+<span class="nc bnc" id="L179" title="All 2 branches missed.">                            if (response.has(&quot;userTier&quot;)) {</span>
+<span class="nc" id="L180">                                userTier = response.getString(&quot;userTier&quot;);</span>
+                            }
+
+<span class="nc" id="L183">                            populateUserTier();</span>
+                        }
+<span class="nc" id="L185">                        catch (JSONException e) {</span>
+<span class="nc" id="L186">                            Log.e(&quot;JSON Error&quot;, &quot;Error getting user object for tier: &quot; + e.toString());</span>
+<span class="nc" id="L187">                        }</span>
+<span class="nc" id="L188">                    }</span>
+                },
+<span class="nc" id="L190">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L193">                        Log.e(&quot;Volley Error&quot;, &quot;Error getting user for tier: &quot; + error.toString());</span>
+<span class="nc" id="L194">                    }</span>
+                });
+<span class="nc" id="L196">    }</span>
+
+    private void populateUserTier() {
+<span class="nc bnc" id="L199" title="All 2 branches missed.">        if (userTier == null) userTier = &quot;Free&quot;;</span>
+
+<span class="nc bnc" id="L201" title="All 2 branches missed.">        if (userTier.equals(&quot;Basic&quot;)) {</span>
+<span class="nc" id="L202">            currentTierText.setText(&quot;Basic&quot;);</span>
+<span class="nc" id="L203">            currentTierDescriptionText.setText(&quot;+   Clothes limit: 30\n+   Outfits limit: 30\n+   All Free features\n+   Wearing statistics&quot;);</span>
+            // Hide buying Basic UI
+<span class="nc" id="L205">            basicTierText.setVisibility(TextView.GONE);</span>
+<span class="nc" id="L206">            basicTierDescriptionText.setVisibility(TextView.GONE);</span>
+<span class="nc" id="L207">            basicBuyButton.setVisibility(TextView.GONE);</span>
+<span class="nc bnc" id="L208" title="All 2 branches missed.">        } else if (userTier.equals(&quot;Premium&quot;)) {</span>
+<span class="nc" id="L209">            currentTierText.setText(&quot;Premium&quot;);</span>
+<span class="nc" id="L210">            currentTierDescriptionText.setText(&quot;+   Clothes limit: Unlimited\n+   Outfits limit: Unlimited\n+   All Basic features\n+   Leaderboard access\n+   Cosmetic badge&quot;);</span>
+            // Hide buying Basic UI
+<span class="nc" id="L212">            basicTierText.setVisibility(TextView.GONE);</span>
+<span class="nc" id="L213">            basicTierDescriptionText.setVisibility(TextView.GONE);</span>
+<span class="nc" id="L214">            basicBuyButton.setVisibility(TextView.GONE);</span>
+            // Hide buying Premium UI
+<span class="nc" id="L216">            premiumTierText.setVisibility(TextView.GONE);</span>
+<span class="nc" id="L217">            premiumTierDescriptionText.setVisibility(TextView.GONE);</span>
+<span class="nc" id="L218">            premiumBuyButton.setVisibility(TextView.GONE);</span>
+        }
+        // No changes needed if Free
+<span class="nc" id="L221">    }</span>
+
+    private void confirmPayment() {
+<span class="nc" id="L224">        PaymentManager.confirmPaymentRequest(getApplicationContext(), paymentIntentId,</span>
+<span class="nc" id="L225">                new Response.Listener&lt;String&gt;() {</span>
+                    @Override
+                    public void onResponse(String response) {
+<span class="nc" id="L228">                        Log.d(&quot;Volley Response&quot;, &quot;Success confirming payment: &quot; + response);</span>
+<span class="nc" id="L229">                    }</span>
+                },
+<span class="nc" id="L231">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L234">                        Log.e(&quot;Volley Error&quot;, &quot;Error confirming payment: &quot; + error.toString());</span>
+<span class="nc" id="L235">                    }</span>
+                });
+<span class="nc" id="L237">    }</span>
+
+    private void updateUserTier() {
+<span class="nc" id="L240">        UserManager.updateUserTierRequest(getApplicationContext(), UserManager.getUserID(getApplicationContext()),</span>
+<span class="nc bnc" id="L241" title="All 2 branches missed.">                isBuyingBasic ? &quot;Basic&quot; : &quot;Premium&quot;,</span>
+<span class="nc" id="L242">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+<span class="nc" id="L245">                        Log.d(&quot;Volley Response&quot;, &quot;Success changing user tier: &quot; + response.toString());</span>
+<span class="nc" id="L246">                    }</span>
+                },
+<span class="nc" id="L248">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L251">                        Log.e(&quot;Volley Error&quot;, &quot;Error changing user tier: &quot; + error.toString());</span>
+<span class="nc" id="L252">                    }</span>
+                });
+<span class="nc" id="L254">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>

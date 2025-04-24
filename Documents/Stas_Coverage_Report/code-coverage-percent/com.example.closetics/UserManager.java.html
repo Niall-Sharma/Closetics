@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics</a> &gt; <span class="el_source">UserManager.java</span></div><h1>UserManager.java</h1><pre class="source lang-java linenums">package com.example.closetics;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.example.closetics.outfits.OutfitManager;
+
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+<span class="nc" id="L23">public class UserManager {</span>
+
+    private static final String URL_GET_USER_BY_ID = MainActivity.SERVER_URL + &quot;/users/&quot;; // + {{userId}}
+    private static final String URL_PUT_UPDATE_USER = MainActivity.SERVER_URL + &quot;/updateUser&quot;;
+    private static final String URL_GET_SEARCH_USERS_BY_USERNAME = MainActivity.SERVER_URL + &quot;/searchUsersByUsername/&quot;; // + {{username}}
+    private static final String URL_PUT_ADD_FOLLOWING = MainActivity.SERVER_URL + &quot;/addFollowing/&quot;; // + {{id}}/{{followingId}}
+    private static final String URL_PUT_REMOVE_FOLLOWING = MainActivity.SERVER_URL + &quot;/removeFollowing/&quot;; // + {{id}}/{{followingId}}
+    private static final String URL_GET_FOLLOWING = MainActivity.SERVER_URL + &quot;/userprofile/following/&quot;; // + {{id}}
+    private static final String URL_GET_FOLLOWERS = MainActivity.SERVER_URL + &quot;/userprofile/followers/&quot;; // + {{id}}
+    private static final String URL_GET_USERPROFILE = MainActivity.SERVER_URL + &quot;/userprofile/&quot;; // + {{id}}
+
+    public static final String SHARED_PREFERENCES_FILE_NAME = &quot;CloseticsPreferences&quot;;
+    private static final String TOKEN_PARAM = &quot;logInToken&quot;;
+    private static final String USERNAME_PARAM = &quot;username&quot;;
+    private static final String USER_ID_PARAM = &quot;userID&quot;;
+<span class="fc" id="L38">    private static final ArrayList&lt;String&gt; SECURITY_QUESTIONS= new ArrayList&lt;&gt;(Arrays.asList(</span>
+    &quot;What is your mother's maiden name?&quot;, &quot;What was the name of your first pet?&quot;,
+            &quot;What is the name of the street you grew up on?&quot; ,&quot;What is your favorite color?&quot;, &quot;What was the name of your first school?&quot;, &quot;What was your childhood nickname?&quot;
+            , &quot;In what city were you born?&quot;, &quot;What is your favorite food?&quot;, &quot;What was your first car?&quot;, &quot;What is the name of your childhood best friend?&quot;));
+
+
+
+    //These methods store the data in sharedPreferences
+    //Shared preferences used when a value needs to persist across app sessions
+
+    public static void saveLoginToken(Context context, String token) {
+        //Access the shared preferences file make it private to this app
+<span class="fc" id="L50">        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);</span>
+<span class="fc" id="L51">        SharedPreferences.Editor editor = prefs.edit();</span>
+<span class="fc" id="L52">        editor.putString(TOKEN_PARAM, token);</span>
+<span class="fc" id="L53">        editor.apply();</span>
+<span class="fc" id="L54">    }</span>
+
+    public static String getLoginToken(Context context) {
+        //Access the shared preferences file make it private to this app
+<span class="nc" id="L58">        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);</span>
+<span class="nc" id="L59">        return prefs.getString(TOKEN_PARAM, null);</span>
+    }
+
+    public static void saveUsername(Context context, String username) {
+        //Access the shared preferences file make it private to this app
+<span class="fc" id="L64">        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);</span>
+<span class="fc" id="L65">        SharedPreferences.Editor editor = prefs.edit();</span>
+<span class="fc" id="L66">        editor.putString(USERNAME_PARAM, username);</span>
+<span class="fc" id="L67">        editor.apply();</span>
+<span class="fc" id="L68">    }</span>
+    public static String getUsername(Context context) {
+        //Access the shared preferences file make it private to this app
+<span class="fc" id="L71">        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);</span>
+<span class="fc" id="L72">        return prefs.getString(USERNAME_PARAM, null);</span>
+    }
+
+    //**** Might need to store these as ints for the backend ****
+    public static long getUserID(Context context) {
+<span class="fc" id="L77">        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);</span>
+<span class="fc" id="L78">        return prefs.getLong(USER_ID_PARAM, -1);</span>
+    }
+
+    public static void saveUserID(Context context, long userID){
+<span class="fc" id="L82">        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);</span>
+<span class="fc" id="L83">        SharedPreferences.Editor editor = prefs.edit();</span>
+<span class="fc" id="L84">        editor.putLong(USER_ID_PARAM, userID);</span>
+<span class="fc" id="L85">        editor.apply();</span>
+<span class="fc" id="L86">    }</span>
+
+    public static void clearSavedData(Context context){
+<span class="fc" id="L89">        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);</span>
+<span class="fc" id="L90">        SharedPreferences.Editor editor = prefs.edit();</span>
+<span class="fc" id="L91">        editor.putString(TOKEN_PARAM, null);</span>
+<span class="fc" id="L92">        editor.putString(USERNAME_PARAM, null);</span>
+<span class="fc" id="L93">        editor.putLong(USER_ID_PARAM, -1);</span>
+<span class="fc" id="L94">        editor.putLong(OutfitManager.CURRENT_OUTFIT_PARAM, -1);</span>
+<span class="fc" id="L95">        editor.putLong(OutfitManager.TOMORROW_OUTFIT_PARAM, -1);</span>
+<span class="fc" id="L96">        editor.apply();</span>
+<span class="fc" id="L97">    }</span>
+
+
+    public static ArrayList&lt;String&gt; getSecurityQuestions(){
+<span class="fc" id="L101">        return SECURITY_QUESTIONS;</span>
+    }
+
+    public static boolean validateUsername(String username){
+<span class="nc" id="L105">        String pattern = &quot;[0-9A-Za-z]{3,16}&quot;;</span>
+<span class="nc" id="L106">        return username.matches(pattern);</span>
+    }
+
+    /**
+     * This uses a post request to send the user's input for username and password so that
+     * authentication is handled in the backend versus the frontend (more secure than get requests
+     * to the frontend)
+     *
+     * @param context
+     * @param username
+     * @param password
+     * @param URL
+     * @param responseListener
+     * @param errorListener
+     */
+    public static void loginRequest(Context context, String username, String password, String URL,
+                                    Response.Listener&lt;JSONObject&gt; responseListener,
+                                    Response.ErrorListener errorListener) {
+
+        //Create the json object of the login data (username and password)
+<span class="nc" id="L126">        JSONObject loginData = new JSONObject();</span>
+
+        //Use try catch blocks when creating JSON objects
+        try {
+<span class="nc" id="L130">            loginData.put(&quot;username&quot;, username);</span>
+<span class="nc" id="L131">            loginData.put(&quot;password&quot;, password);</span>
+<span class="nc" id="L132">        } catch (JSONException e) {</span>
+<span class="nc" id="L133">            Log.e(&quot;JSON Error&quot;, e.toString());</span>
+<span class="nc" id="L134">            return;</span>
+<span class="nc" id="L135">        }</span>
+
+
+        //The post request
+<span class="nc" id="L139">        JsonObjectRequest request = new JsonObjectRequest(</span>
+                Request.Method.POST,
+                URL,
+                loginData, responseListener, errorListener);
+        //Add request to the volley singleton request queue
+<span class="nc" id="L144">        VolleySingleton.getInstance(context).addToRequestQueue(request);</span>
+<span class="nc" id="L145">    }</span>
+
+
+    /**
+     * This uses a post request to create a new user with given username and password
+     *
+     * @param context
+     * @param username
+     * @param email
+     * @param password
+     * @param URL
+     * @param responseListener
+     * @param errorListener
+     */
+    public static void signupRequest(Context context, String username, String email, String password, String securityAnswer1,
+                                     String securityAnswer2, int securityQuestion1, int securityQuestion2,
+                                     String URL,
+                                    Response.Listener&lt;JSONObject&gt; responseListener,
+                                    Response.ErrorListener errorListener) {
+
+        //Create the json object of the login data (username and password)
+<span class="fc" id="L166">        JSONObject signupData = new JSONObject();</span>
+
+        //Use try catch blocks when creating JSON objects
+        try {
+<span class="fc" id="L170">            signupData.put(&quot;username&quot;, username);</span>
+<span class="fc" id="L171">            signupData.put(&quot;email&quot;, email);</span>
+<span class="fc" id="L172">            signupData.put(&quot;password&quot;, password);</span>
+
+<span class="fc" id="L174">            signupData.put(&quot;sQA1&quot;, securityAnswer1);</span>
+<span class="fc" id="L175">            signupData.put(&quot;sQID1&quot;, securityQuestion1);</span>
+<span class="fc" id="L176">            signupData.put(&quot;sQA2&quot;, securityAnswer2);</span>
+<span class="fc" id="L177">            signupData.put(&quot;sQID2&quot;, securityQuestion2);</span>
+<span class="nc" id="L178">        } catch (JSONException e) {</span>
+<span class="nc" id="L179">            Log.e(&quot;JSON Error&quot;, e.toString());</span>
+<span class="nc" id="L180">            return;</span>
+<span class="fc" id="L181">        }</span>
+
+
+        //The post request
+<span class="fc" id="L185">        JsonObjectRequest request = new JsonObjectRequest(</span>
+                Request.Method.POST,
+                URL,
+                signupData, responseListener, errorListener);
+        //Add request to the volley singleton request queue
+<span class="fc" id="L190">        VolleySingleton.getInstance(context).addToRequestQueue(request);</span>
+<span class="fc" id="L191">    }</span>
+
+
+    public static void updatePasswordRequest(Context context, long userId, long securityQuestionId, String securityQuestionAnswer,
+                                             String newPassword, String URL,
+                                             Response.Listener&lt;JSONObject&gt; responseListener,
+                                             Response.ErrorListener errorListener) {
+        //Create the json object of the updatePassword data
+<span class="nc" id="L199">        JSONObject updatePasswordData = new JSONObject();</span>
+
+        //Use try catch blocks when creating JSON objects
+        try {
+<span class="nc" id="L203">            updatePasswordData.put(&quot;id&quot;, userId);</span>
+<span class="nc" id="L204">            updatePasswordData.put(&quot;securityQuestionId&quot;, securityQuestionId );</span>
+<span class="nc" id="L205">            updatePasswordData.put(&quot;securityQuestionAnswer&quot;, securityQuestionAnswer);</span>
+<span class="nc" id="L206">            updatePasswordData.put(&quot;newPassword&quot;, newPassword);</span>
+<span class="nc" id="L207">        } catch (JSONException e) {</span>
+<span class="nc" id="L208">            Log.e(&quot;JSON Error&quot;, e.toString());</span>
+<span class="nc" id="L209">            return;</span>
+<span class="nc" id="L210">        }</span>
+
+        //The post request
+<span class="nc" id="L213">        JsonObjectRequest request = new JsonObjectRequest(</span>
+                Request.Method.PUT,
+                URL,
+                updatePasswordData, responseListener, errorListener);
+        //Add request to the volley singleton request queue
+<span class="nc" id="L218">        VolleySingleton.getInstance(context).addToRequestQueue(request);</span>
+<span class="nc" id="L219">    }</span>
+
+
+    public static void editUserRequest(Context context, long userId, String newUsername, String newEmail, String URL,
+                                           Response.Listener&lt;JSONObject&gt; responseListener,
+                                           Response.ErrorListener errorListener){
+
+<span class="nc" id="L226">        JSONObject updateUsernameData = new JSONObject();</span>
+
+        try {
+<span class="nc" id="L229">            updateUsernameData.put(&quot;userId&quot;, userId);</span>
+            
+            // Do not send if null
+<span class="nc bnc" id="L232" title="All 2 branches missed.">            if (newUsername != null){</span>
+<span class="nc" id="L233">                updateUsernameData.put(&quot;username&quot;, newUsername);</span>
+            }
+<span class="nc bnc" id="L235" title="All 2 branches missed.">            if (newEmail != null) {</span>
+<span class="nc" id="L236">                updateUsernameData.put(&quot;email&quot;, newEmail);</span>
+            }
+<span class="nc" id="L238">        } catch (Exception e) {</span>
+<span class="nc" id="L239">            Log.e(&quot;JSON Error&quot;, e.toString());</span>
+<span class="nc" id="L240">            return;</span>
+<span class="nc" id="L241">        }</span>
+
+<span class="nc" id="L243">        JsonObjectRequest request = new JsonObjectRequest(</span>
+                Request.Method.PUT,
+                URL,
+                updateUsernameData, responseListener, errorListener);
+
+<span class="nc" id="L248">        VolleySingleton.getInstance(context).addToRequestQueue(request);</span>
+<span class="nc" id="L249">    }</span>
+
+
+    /**
+     * This uses a post request to create a new user with given username and password
+     *
+     * @param context
+     * @param username
+     * @param URL
+     * @param responseListener
+     * @param errorListener
+     */
+    public static void deleteUserRequest(Context context, String username, String URL, String getUserByUsernameURL,
+                                     Response.Listener&lt;String&gt; responseListener,
+                                     Response.ErrorListener errorListener) {
+
+        // use GET request to getUserByUsernameURL to get the user's id
+        // to then delete user by id
+<span class="nc" id="L267">        JsonObjectRequest request = new JsonObjectRequest(</span>
+                Request.Method.GET,
+                getUserByUsernameURL + username, // add username to the URL
+                null,
+<span class="nc" id="L271">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+<span class="nc" id="L275">                            long id = response.getLong(&quot;userId&quot;);</span>
+
+                            // call delete by id method
+<span class="nc" id="L278">                            UserManager.deleteUserRequest(context, id, URL, responseListener, errorListener);</span>
+                        }
+<span class="nc" id="L280">                        catch (JSONException e) {</span>
+<span class="nc" id="L281">                            Log.e(&quot;JSON Error&quot;, &quot;Get user by username Error: &quot; + e.toString());</span>
+<span class="nc" id="L282">                        }</span>
+<span class="nc" id="L283">                    }</span>
+                },
+                errorListener);
+        //Add request to the volley singleton request queue
+<span class="nc" id="L287">        VolleySingleton.getInstance(context).addToRequestQueue(request);</span>
+<span class="nc" id="L288">    }</span>
+
+
+    public static void deleteUserRequest(Context context, long id, String URL,
+                                         Response.Listener&lt;String&gt; responseListener,
+                                         Response.ErrorListener errorListener) {
+<span class="fc" id="L294">        StringRequest request = new StringRequest(</span>
+                Request.Method.DELETE,
+                URL + id, // add id to the URL
+                responseListener, errorListener);
+        //Add request to the volley singleton request queue
+<span class="fc" id="L299">        VolleySingleton.getInstance(context).addToRequestQueue(request);</span>
+<span class="fc" id="L300">    }</span>
+
+
+    public static void getUserByUsernameRequest(Context context, String username, String URL,
+                                         Response.Listener&lt;JSONObject&gt; responseListener,
+                                         Response.ErrorListener errorListener) {
+
+        // use GET request to getUserByUsernameURL to get the user's id
+        // to then delete user by id
+<span class="fc" id="L309">        JsonObjectRequest request = new JsonObjectRequest(</span>
+                Request.Method.GET,
+                URL + username, // add username to the URL
+                null,
+                responseListener,
+                errorListener);
+        //Add request to the volley singleton request queue
+<span class="fc" id="L316">        VolleySingleton.getInstance(context).addToRequestQueue(request);</span>
+<span class="fc" id="L317">    }</span>
+
+
+    public static void searchUsersByUsernameRequest(Context context, String username,
+                                                Response.Listener&lt;JSONArray&gt; responseListener,
+                                                Response.ErrorListener errorListener) {
+
+<span class="fc" id="L324">        JsonArrayRequest request = new JsonArrayRequest(</span>
+                Request.Method.GET,
+                URL_GET_SEARCH_USERS_BY_USERNAME + username, // add username to the URL
+                null,
+                responseListener,
+                errorListener);
+        //Add request to the volley singleton request queue
+<span class="fc" id="L331">        VolleySingleton.getInstance(context).addToRequestQueue(request);</span>
+<span class="fc" id="L332">    }</span>
+
+
+    // TODO: DELETE THIS
+    public static void getUserByIdRequest(Context context, String userId, String URL,
+                                          Response.Listener&lt;JSONObject&gt; responseListener,
+                                          Response.ErrorListener errorListener){
+
+<span class="nc" id="L340">        JsonObjectRequest request = new JsonObjectRequest(</span>
+                Request.Method.GET,
+                URL + userId, // add username to the URL
+                null,
+                responseListener,
+                errorListener);
+        //Add request to the volley singleton request queue
+<span class="nc" id="L347">        VolleySingleton.getInstance(context).addToRequestQueue(request);</span>
+
+<span class="nc" id="L349">    }</span>
+
+
+    public static void getUserByIdRequest(Context context, long userId,
+                                          Response.Listener&lt;JSONObject&gt; responseListener,
+                                          Response.ErrorListener errorListener){
+
+<span class="nc" id="L356">        JsonObjectRequest request = new JsonObjectRequest(</span>
+                Request.Method.GET,
+                URL_GET_USER_BY_ID + userId, // add id to the URL
+                null,
+                responseListener,
+                errorListener);
+        //Add request to the volley singleton request queue
+<span class="nc" id="L363">        VolleySingleton.getInstance(context).addToRequestQueue(request);</span>
+<span class="nc" id="L364">    }</span>
+
+
+    public static void addFollowingRequest(Context context, long userId, long followingUserId,
+                                             Response.Listener&lt;JSONObject&gt; responseListener,
+                                             Response.ErrorListener errorListener) {
+
+        //The post request
+<span class="nc" id="L372">        JsonObjectRequest request = new JsonObjectRequest(</span>
+                Request.Method.PUT,
+                URL_PUT_ADD_FOLLOWING + userId + &quot;/&quot; + followingUserId,
+                null, responseListener, errorListener);
+        //Add request to the volley singleton request queue
+<span class="nc" id="L377">        VolleySingleton.getInstance(context).addToRequestQueue(request);</span>
+<span class="nc" id="L378">    }</span>
+
+
+    public static void removeFollowingRequest(Context context, long userId, long followingUserId,
+                                           Response.Listener&lt;JSONObject&gt; responseListener,
+                                           Response.ErrorListener errorListener) {
+
+        //The post request
+<span class="nc" id="L386">        JsonObjectRequest request = new JsonObjectRequest(</span>
+                Request.Method.PUT,
+                URL_PUT_REMOVE_FOLLOWING + userId + &quot;/&quot; + followingUserId,
+                null, responseListener, errorListener);
+        //Add request to the volley singleton request queue
+<span class="nc" id="L391">        VolleySingleton.getInstance(context).addToRequestQueue(request);</span>
+<span class="nc" id="L392">    }</span>
+
+
+    public static void getFollowingListRequest(Context context, long id,
+                                              Response.Listener&lt;JSONArray&gt; responseListener,
+                                              Response.ErrorListener errorListener) {
+
+        //The post request
+<span class="fc" id="L400">        JsonArrayRequest request = new JsonArrayRequest(</span>
+                Request.Method.GET,
+                URL_GET_FOLLOWING + id,
+                null, responseListener, errorListener);
+        //Add request to the volley singleton request queue
+<span class="fc" id="L405">        VolleySingleton.getInstance(context).addToRequestQueue(request);</span>
+<span class="fc" id="L406">    }</span>
+
+
+    public static void getFollowersListRequest(Context context, long id,
+                                               Response.Listener&lt;JSONArray&gt; responseListener,
+                                               Response.ErrorListener errorListener) {
+
+        //The post request
+<span class="fc" id="L414">        JsonArrayRequest request = new JsonArrayRequest(</span>
+                Request.Method.GET,
+                URL_GET_FOLLOWERS + id,
+                null, responseListener, errorListener);
+        //Add request to the volley singleton request queue
+<span class="fc" id="L419">        VolleySingleton.getInstance(context).addToRequestQueue(request);</span>
+<span class="fc" id="L420">    }</span>
+
+
+    public static void getUserProfileRequest(Context context, long id,
+                                               Response.Listener&lt;JSONObject&gt; responseListener,
+                                               Response.ErrorListener errorListener) {
+
+        //The post request
+<span class="fc" id="L428">        JsonObjectRequest request = new JsonObjectRequest(</span>
+                Request.Method.GET,
+                URL_GET_USERPROFILE + id,
+                null, responseListener, errorListener);
+        //Add request to the volley singleton request queue
+<span class="fc" id="L433">        VolleySingleton.getInstance(context).addToRequestQueue(request);</span>
+<span class="fc" id="L434">    }</span>
+
+
+    public static void updateUserTierRequest(Context context, long userId, String newTier,
+                                         Response.Listener&lt;JSONObject&gt; responseListener,
+                                         Response.ErrorListener errorListener) {
+
+        // use GET request to get user object
+        // to then updateUser with new tier
+<span class="nc" id="L443">        JsonObjectRequest request = new JsonObjectRequest(</span>
+                Request.Method.GET,
+                URL_GET_USER_BY_ID + userId,
+                null,
+<span class="nc" id="L447">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            // do this to throw an error in case if something changed
+<span class="nc" id="L452">                            String oldTier = response.getString(&quot;userTier&quot;);</span>
+
+                            // call update tier with object method
+<span class="nc" id="L455">                            UserManager.updateUserTierRequest(context, response, newTier, responseListener, errorListener);</span>
+                        }
+<span class="nc" id="L457">                        catch (JSONException e) {</span>
+<span class="nc" id="L458">                            Log.e(&quot;JSON Error&quot;, &quot;Error getting user object to update tier: &quot; + e.toString());</span>
+<span class="nc" id="L459">                        }</span>
+<span class="nc" id="L460">                    }</span>
+                },
+                errorListener);
+        //Add request to the volley singleton request queue
+<span class="nc" id="L464">        VolleySingleton.getInstance(context).addToRequestQueue(request);</span>
+<span class="nc" id="L465">    }</span>
+
+
+    public static void updateUserTierRequest(Context context, JSONObject user, String newTier,
+                                             Response.Listener&lt;JSONObject&gt; responseListener,
+                                             Response.ErrorListener errorListener) {
+
+        try {
+<span class="nc" id="L473">            user.put(&quot;userTier&quot;, newTier);</span>
+<span class="nc" id="L474">        } catch (JSONException e) {</span>
+<span class="nc" id="L475">            Log.e(&quot;JSON Error&quot;, &quot;Error changing user object to update tier: &quot; + e.toString());</span>
+<span class="nc" id="L476">        }</span>
+
+        // use GET request to get user object
+        // to then updateUser with new tier
+<span class="nc" id="L480">        JsonObjectRequest request = new JsonObjectRequest(</span>
+                Request.Method.PUT,
+                URL_PUT_UPDATE_USER,
+                user,
+                responseListener,
+                errorListener);
+        //Add request to the volley singleton request queue
+<span class="nc" id="L487">        VolleySingleton.getInstance(context).addToRequestQueue(request);</span>
+<span class="nc" id="L488">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>
