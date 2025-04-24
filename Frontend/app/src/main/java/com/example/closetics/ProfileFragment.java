@@ -18,6 +18,11 @@ import com.example.closetics.follow.FollowActivity;
 import com.example.closetics.payment.PaymentActivity;
 import com.example.closetics.settings.SettingsActivity;
 
+/**
+ * One of the Fragments of the MainActivity. Represents current user's profile
+ * or a login screen when not logged in.
+ * Contains all the personal account management.
+ */
 public class ProfileFragment extends Fragment {
 
     private TextView usernameText;  // define username textview variable
@@ -30,6 +35,9 @@ public class ProfileFragment extends Fragment {
     private ImageButton settingsButton;
     private Button tierButton;
 
+    /**
+     * Required empty public constructor
+     */
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -157,6 +165,10 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Stops the Recommendations WebSocket.
+     * Should be called every time a user logs out or deletes their account.
+     */
     private void stopRecWebSocket() {
         Intent serviceIntent = new Intent(getActivity(), com.example.closetics.recommendations.RecWebSocketService.class);
         serviceIntent.setAction("RecWebSocketDisconnect");
