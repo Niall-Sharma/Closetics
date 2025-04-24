@@ -166,8 +166,6 @@ public class StasSystemTest {
      * First, logs out of current user account.
      * Second, creates a new user account.
      * Then, deletes newly created account.
-     *
-     * Note: Not working because of SearchView >:(
      */
     @Test
     public void searchUsersTest(){
@@ -208,10 +206,10 @@ public class StasSystemTest {
         // search for 'test'
         //onView(withId(R.id.rec_search)).perform(typeText("test"));
         onView(withId(R.id.rec_search)).perform(typeSearchViewText("test"));
-        sleep();
+        sleep(1000);
 
         //onData(allOf(is(instanceOf(String.class)), is("testAshten"))).check(matches(isDisplayed()));
-        onView(first(withText("testAshten"))).check(matches(isDisplayed()));
+        onView(withText("testAshten")).check(matches(isDisplayed()));
 
         // search for 'user'
         //onView(withId(R.id.rec_search)).perform(replaceText("user"));
@@ -228,15 +226,15 @@ public class StasSystemTest {
 //        onData(allOf(is(instanceOf(String.class)), is("testAshten"))).check(matches(not(isDisplayed())));
 
         onView(withId(R.id.rec_users_recycler)).perform(scrollTo(hasDescendant(withText("user1"))));
-        onView(first(withText("user1"))).check(matches(isDisplayed()));
+        onView(withText("user1")).check(matches(isDisplayed()));
         onView(withId(R.id.rec_users_recycler)).perform(scrollTo(hasDescendant(withText("user3"))));
-        onView(first(withText("user3"))).check(matches(isDisplayed()));
+        onView(withText("user3")).check(matches(isDisplayed()));
         onView(withId(R.id.rec_users_recycler)).perform(scrollTo(hasDescendant(withText("user6"))));
-        onView(first(withText("user6"))).check(matches(isDisplayed()));
+        onView(withText("user6")).check(matches(isDisplayed()));
         onView(withId(R.id.rec_users_recycler)).perform(scrollTo(hasDescendant(withText("user9"))));
-        onView(first(withText("user9"))).check(matches(isDisplayed()));
+        onView(withText("user9")).check(matches(isDisplayed()));
         onView(withId(R.id.rec_users_recycler)).perform(scrollTo(hasDescendant(withText("user10"))));
-        onView(first(withText("user10"))).check(matches(isDisplayed()));
+        onView(withText("user10")).check(matches(isDisplayed()));
 
         //onView(withId(R.id.rec_users_recycler)).perform(scrollTo(hasDescendant(withText("user11"))));
         onView(withText("user11")).check(doesNotExist());
@@ -246,7 +244,7 @@ public class StasSystemTest {
         // click on 'user3'
         //onData(allOf(is(instanceOf(String.class)), is("user3"))).perform(click());
         onView(withId(R.id.rec_users_recycler)).perform(scrollTo(hasDescendant(withText("user3"))));
-        onView(first(withText("user3"))).perform(click());
+        onView(withText("user3")).perform(click());
         sleep();
 
         intended(hasComponent(PublicProfileActivity.class.getName()));
@@ -258,7 +256,7 @@ public class StasSystemTest {
 
         // check that 'user3' is still displayed
         //onData(allOf(is(instanceOf(String.class)), is("user3"))).check(matches(isDisplayed()));
-        onView(first(withText("user3"))).check(matches(isDisplayed()));
+        onView(withText("user3")).check(matches(isDisplayed()));
 
         // close search
         onView(withId(R.id.rec_back_button)).perform(click());
