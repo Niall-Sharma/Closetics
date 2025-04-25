@@ -106,6 +106,10 @@ public class MainActivity extends AppCompatActivity {
 //        });
     }
 
+    /**
+     * Starts the Recommendations WebSocket if the user is logged in.
+     * Should be called every time the app opens.
+     */
     private void startRecWebSocket() {
         Intent serviceIntent = new Intent(this, com.example.closetics.recommendations.RecWebSocketService.class);
         serviceIntent.setAction("RecWebSocketConnect");

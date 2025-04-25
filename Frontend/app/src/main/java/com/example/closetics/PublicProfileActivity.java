@@ -26,6 +26,12 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+/**
+ * Activity that displays a public profile of a user
+ * with passed id.
+ *
+ * Requires "USER_ID" extra parameter of type long
+ */
 public class PublicProfileActivity extends AppCompatActivity {
 
     private TextView usernameText, nameText;
@@ -88,6 +94,12 @@ public class PublicProfileActivity extends AppCompatActivity {
         populateOutfits(userId);
     }
 
+    /**
+     * Requsets all user's clothes by user ID from the server
+     * to display their number.
+     *
+     * @param userId - id of the user whose profile to display
+     */
     private void populateClothes(long userId) {
         FollowManager.getAllUserClothesRequest(getApplicationContext(), userId,
                 new Response.Listener<JSONArray>() {
@@ -107,6 +119,12 @@ public class PublicProfileActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Requsets all user's outfits by user ID from the server
+     * to display their number.
+     *
+     * @param userId - id of the user whose profile to display
+     */
     private void populateOutfits(long userId) {
         OutfitManager.getAllOutfitsRequest(getApplicationContext(), userId,
                 new Response.Listener<JSONArray>() {
@@ -126,6 +144,13 @@ public class PublicProfileActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Requsets user's followers and following lists
+     * by user ID from the server to display their number
+     * and whether currently logged in user is following this user.
+     *
+     * @param userId - id of the user whose profile to display
+     */
     private void populateFollow(long userId) {
         UserManager.getUserProfileRequest(getApplicationContext(), userId,
                 new Response.Listener<JSONObject>() {
@@ -182,6 +207,12 @@ public class PublicProfileActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Make a request to make currently logged in user follow this user
+     * (whose profile is displayed).
+     *
+     * @param followingId - this profile's user's id
+     */
     private void follow(long followingId) {
         UserManager.addFollowingRequest(getApplicationContext(), UserManager.getUserID(getApplicationContext()), followingId,
                 new Response.Listener<JSONObject>() {
@@ -198,6 +229,12 @@ public class PublicProfileActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Make a request to make currently logged in user unfollow this user
+     * (whose profile is displayed).
+     *
+     * @param followingId - this profile's user's id
+     */
     private void unfollow(long followingId) {
         UserManager.removeFollowingRequest(getApplicationContext(), UserManager.getUserID(getApplicationContext()), followingId,
                 new Response.Listener<JSONObject>() {

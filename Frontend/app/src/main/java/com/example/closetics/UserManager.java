@@ -107,7 +107,8 @@ public class UserManager {
     }
 
     /**
-     * This uses a post request to send the user's input for username and password so that
+     * POST request.
+     * Sends the user's input for username and password so that
      * authentication is handled in the backend versus the frontend (more secure than get requests
      * to the frontend)
      *
