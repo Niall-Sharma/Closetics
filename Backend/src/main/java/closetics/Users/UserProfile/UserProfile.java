@@ -99,4 +99,5 @@ public class UserProfile{
   public void removeOutfit(Outfit outfit){
     outfits.remove(outfit);
   }
+  public void setId(long id){this.id = id;}
 }
