@@ -12,6 +12,15 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.example.closetics.R;
 import com.google.android.material.tabs.TabLayout;
 
+/**
+ * Activity that displays 2 tabs with followers and following lists
+ * of a user with passed id.
+ *
+ * Requires "USER_ID" extra parameter of type long
+ * Requires "IS_FOLLOWING" extra parameter of type boolean
+ *  - true  - initially display following list
+ *  - false - initially display followers list
+ */
 public class FollowActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
