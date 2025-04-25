@@ -76,7 +76,7 @@ public class ViewClothesFragment extends Fragment {
             }
         });
         recyclerView.setAdapter(adapter);
-        recyclerView.setHasFixedSize(true);
+        //recyclerView.setHasFixedSize(true);
 
         return view;
     }
