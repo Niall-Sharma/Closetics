@@ -43,9 +43,6 @@ public class ForgotPasswordFragment extends Fragment {
     private TextView errorText;
     private long userId;
 
-    private static final String URL = "http://10.0.2.2:8080/updatePassword";
-
-
     //private USERNAME
 
 
@@ -156,7 +153,7 @@ public class ForgotPasswordFragment extends Fragment {
                     setErrorMessage("Please answer the security question");
                     return;
                 }
-                updatePassword(getActivity().getApplicationContext(),userId, securityKey, securityAnswer, newPass, URL);
+                updatePassword(getActivity().getApplicationContext(),userId, securityKey, securityAnswer, newPass);
 
             }
         });
@@ -177,8 +174,8 @@ public class ForgotPasswordFragment extends Fragment {
         errorText.setVisibility(TextView.VISIBLE);
     }
 
-    private void updatePassword(Context context, long userId, long securityKey, String securityAnswer, String newPass, String URL){
-        UserManager.updatePasswordRequest(context, userId, securityKey, securityAnswer, newPass, URL,
+    private void updatePassword(Context context, long userId, long securityKey, String securityAnswer, String newPass){
+        UserManager.updatePasswordRequest(context, userId, securityKey, securityAnswer, newPass,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

@@ -15,11 +15,9 @@ import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.HttpURLConnection;
-import java.util.InputMismatchException;
 
 public class EditUserActivity extends AppCompatActivity {
 
@@ -34,7 +32,6 @@ public class EditUserActivity extends AppCompatActivity {
     private Button submit;
     private Button cancel;
     private TextView errorText;
-    private final String URL = MainActivity.SERVER_URL + "/updateUser";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,13 +68,13 @@ public class EditUserActivity extends AppCompatActivity {
                     setErrorMessage("Please enter either a new email, new username, or both");
                 }
                 else {
-                if (username.isEmpty()){
-                    username = null;
-                }
-                if (email.isEmpty()){
-                    email = null;
-                }
-                    UserManager.editUserRequest(getApplicationContext(), UserManager.getUserID(getApplicationContext()), username, email, URL,
+                    if (username.isEmpty()){
+                        username = null;
+                    }
+                    if (email.isEmpty()){
+                        email = null;
+                    }
+                    UserManager.updateUserRequest(getApplicationContext(), UserManager.getUserID(getApplicationContext()), username, email,
                             new Response.Listener<JSONObject>() {
                                 @Override
                                 public void onResponse(JSONObject response) {
@@ -93,7 +90,6 @@ public class EditUserActivity extends AppCompatActivity {
 
                                 }
                             },
-
                             new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
@@ -118,8 +114,7 @@ public class EditUserActivity extends AppCompatActivity {
                             });
                 }
 
-
-                }
+            }
 
         });
 

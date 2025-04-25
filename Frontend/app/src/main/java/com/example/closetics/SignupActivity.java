@@ -31,9 +31,6 @@ import java.util.ArrayList;
  */
 public class SignupActivity extends AppCompatActivity {
 
-    private static final String URL_SIGNUP = MainActivity.SERVER_URL + "/signup";
-    private static final String URL_GET_USER_BY_USERNAME = MainActivity.SERVER_URL + "/users/username/"; // +{{username}}
-
     private EditText usernameEditText;  // define username edittext variable
     private EditText emailEditText;  // define email edittext variable
     private EditText passwordEditText;  // define password edittext variable
@@ -168,7 +165,7 @@ public class SignupActivity extends AppCompatActivity {
      * @param securityAnswer2 - answers to security question 2
      */
     private void signUp(String username, String email, String password, String securityAnswer1, String securityAnswer2) {
-        UserManager.signupRequest(getApplicationContext(), username, email, password, securityAnswer1, securityAnswer2, securityQuestion1, securityQuestion2, URL_SIGNUP,
+        UserManager.signupRequest(getApplicationContext(), username, email, password, securityAnswer1, securityAnswer2, securityQuestion1, securityQuestion2,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -274,7 +271,7 @@ public class SignupActivity extends AppCompatActivity {
      * @param username
      */
     private void saveUserId(String username) {
-        UserManager.getUserByUsernameRequest(getApplicationContext(), username, URL_GET_USER_BY_USERNAME,
+        UserManager.getUserByUsernameRequest(getApplicationContext(), username,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

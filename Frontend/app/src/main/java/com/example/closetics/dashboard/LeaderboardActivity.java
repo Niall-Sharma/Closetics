@@ -400,28 +400,26 @@ public class LeaderboardActivity extends AppCompatActivity {
         });
     }
     private void getUsername(long userId, LeaderboardItem item, UsernameCallback callback){
-        UserManager.getUserByIdRequest(this, String.valueOf(userId), MainActivity.SERVER_URL + "/users/", new Response.Listener<JSONObject>() {
+        UserManager.getUserByIdRequest(this, userId,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String username = response.getString("username");
+                            callback.onSuccess(username, item.getRank(), item.getCategoryValue());
+                            callback.onFinish();
 
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    String username = response.getString("username");
-                    callback.onSuccess(username, item.getRank(), item.getCategoryValue());
-                    callback.onFinish();
-
-                } catch (JSONException e) {
-                    callback.onError(e.toString());
-
-                }
-
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                callback.onError(error.toString());
-            }
-        });
+                        } catch (JSONException e) {
+                            callback.onError(e.toString());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        callback.onError(error.toString());
+                    }
+                });
 
 
     }

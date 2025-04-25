@@ -23,9 +23,6 @@ import java.net.HttpURLConnection;
 
 public class DeleteUserActivity extends AppCompatActivity {
 
-    private static final String URL_DELETE_USER = MainActivity.SERVER_URL + "/users/"; // +{{id}}
-    private static final String URL_GET_USER_BY_USERNAME = MainActivity.SERVER_URL + "/users/username/"; // +{{username}}
-
     private Button yesButton;
     private Button noButton;
     private TextView errorText;
@@ -58,7 +55,7 @@ public class DeleteUserActivity extends AppCompatActivity {
     }
 
     private void deleteUser(long id) {
-        UserManager.deleteUserRequest(getApplicationContext(), id, URL_DELETE_USER,
+        UserManager.deleteUserRequest(getApplicationContext(), id,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
