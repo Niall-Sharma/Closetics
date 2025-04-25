@@ -188,4 +188,26 @@ public class OutfitController {
         }
     }
 
+    @PutMapping("/addLike/{outfitId}/{userId}")
+    public ResponseEntity<Outfit> addLike(@PathVariable long outfitId, @PathVariable long userId){
+        Outfit outfit = outfitRepository.findById(outfitId).orElseThrow(() -> new RuntimeException("Outfit Not Found"));
+        UserProfile userProfile = uProfileRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Profile Not Found"));
+
+        outfit.addUserProfileLike(userProfile);
+
+        outfitRepository.save(outfit);
+        return ResponseEntity.ok(outfit);
+    }
+
+    @PutMapping("/removeLike/{outfitId}/{userId}")
+    public ResponseEntity<Outfit> removeLike(@PathVariable long outfitId, @PathVariable long userId){
+        Outfit outfit = outfitRepository.findById(outfitId).orElseThrow(() -> new RuntimeException("Outfit Not Found"));
+        UserProfile userProfile = uProfileRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Profile Not Found"));
+
+        outfit.removeUserProfileLike(userProfile);
+
+        outfitRepository.save(outfit);
+        return ResponseEntity.ok(outfit);
+    }
+
 }

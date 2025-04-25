@@ -3,10 +3,14 @@ package closetics.Outfits;
 import closetics.Clothes.Clothing;
 import closetics.Statistics.OutfitStats;
 import closetics.Users.User;
+import closetics.Users.UserProfile.UserProfile;
+import closetics.Users.UserProfile.UserProfileDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Entity(name = "outfit_table")
 public class Outfit {
@@ -36,7 +40,13 @@ public class Outfit {
             "dateBought", "brand", "imagePath", "itemName", "material", "price", "type", "specialType", "creationDate", "clothingType"})
     private List<Clothing> outfitItems;
 
-
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_likes",
+            joinColumns = @JoinColumn(name = "outfit_id"),
+            inverseJoinColumns = @JoinColumn(name = "")
+    )
+    private List<UserProfile> userProfileLikes;
 
     private String outfitName;
     private LocalDate creationDate;
@@ -78,5 +88,24 @@ public class Outfit {
     public Outfit setOutfitStats(OutfitStats outfitStats) {
         this.outfitStats = outfitStats;
         return this;
+    }
+
+    public List<UserProfileDTO> getUserProfileLikes() {
+        return this.userProfileLikes
+                .stream()
+                .map(p -> new UserProfileDTO(p, 1))
+                .toList();
+    }
+
+    public void setUserProfileLikes(List<UserProfile> userProfileLikes) {
+        this.userProfileLikes = userProfileLikes;
+    }
+
+    public void addUserProfileLike(UserProfile user){
+        this.userProfileLikes.add(user);
+    }
+
+    public void removeUserProfileLike(UserProfile user){
+        this.userProfileLikes.remove(user);
     }
 }

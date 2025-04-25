@@ -9,6 +9,7 @@ import closetics.Outfits.Outfit;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
+import org.springframework.data.repository.cdi.Eager;
 
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
@@ -31,6 +32,8 @@ public class UserProfile{
           inverseJoinColumns = @JoinColumn(name = "outfit_id")
   )
   private List<Outfit> outfits = new ArrayList<>();
+
+
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
