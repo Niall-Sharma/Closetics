@@ -7,6 +7,7 @@ import closetics.Payment.transactions.TransactionRepository;
 import closetics.Users.User;
 import closetics.Users.UserProfile.UserProfile;
 import closetics.Users.UserProfile.UserProfileController;
+import closetics.Users.UserRepository;
 import com.stripe.Stripe;
 import com.stripe.model.PaymentIntent;
 import com.stripe.param.PaymentIntentCreateParams;
@@ -40,6 +41,9 @@ public class PaymentControllerTest {
     @MockBean
     private TransactionRepository transactionRepository;
 
+    @MockBean
+    private UserRepository userRepository;
+
     private TransactionHistory sampleTransaction;
     private User user;
 
@@ -58,13 +62,23 @@ public class PaymentControllerTest {
 
     @Test
     void testCreatePaymentSuccess() throws Exception {
-        Map<String, Object> request = Map.of(
-                "amount", 1000,
-                "userId", 1L,
-                "tier", "Premium"
-        );
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(transactionRepository.save(any(TransactionHistory.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-
+        mockMvc.perform(post("/payments/createPayment")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                    {
+                        "amount": 1000,
+                        "userId": 1,
+                        "tier": "Premium"
+                    }
+                    """))
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.clientSecret").exists(),
+                        jsonPath("$.paymentIntentId").exists()
+                );
     }
 
     @Test
