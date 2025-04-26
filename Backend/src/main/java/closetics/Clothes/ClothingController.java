@@ -28,8 +28,8 @@ public class ClothingController {
     }
 
     @GetMapping(path = "/getClothing/{id}")
-    public Optional<Clothing> getClothing(@PathVariable long id) {
-        return clothingRepository.findById(id);
+    public Clothing getClothing(@PathVariable long id) {
+        return clothingRepository.findById(id).get();
     }
 
     @GetMapping(path = "/getClothing/special_type/{userId}/{type}")

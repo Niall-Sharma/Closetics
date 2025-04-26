@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = MainApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(SpringRunner.class)
-public class BraydenSystemTest {
+public class OutfitAndStatsSystemTest {
     @LocalServerPort
     int port;
 
