@@ -50,6 +50,7 @@ public class PaymentController{
           @ApiResponse(responseCode = "400", description = "Invalid request parameters or Stripe error",
                   content = @Content(mediaType = "application/json"))
   })
+  @PostMapping("/createPayment")
   public ResponseEntity<Map<String,Object>> createPayment(@RequestBody Map<String,Object> request){
     try{
       long amount = Long.parseLong(request.get("amount").toString());
