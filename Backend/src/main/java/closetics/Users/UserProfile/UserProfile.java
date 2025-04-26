@@ -57,6 +57,8 @@ public class UserProfile{
     this.isPublic = isPublic;
   }
 
+
+
   public UserProfile(){}
 
   public List<Outfit> getOutfits(){
