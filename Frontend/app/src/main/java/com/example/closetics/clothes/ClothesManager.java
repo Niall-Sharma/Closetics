@@ -23,7 +23,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+
+/**
+ * Clothes manager is a helper class with public static methods.
+ * It takes care of adding endpoint requests to the volley request queue for the /clothes endpoint.
+ *
+ */
 public class ClothesManager {
+
+
 
 
     /*
