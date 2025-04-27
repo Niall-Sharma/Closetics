@@ -148,7 +148,7 @@ public class SignupActivity extends AppCompatActivity {
     /**
      * Displays given string as an error message to the user.
      *
-     * @param message - new error message to be displayed
+     * @param message new error message to be displayed
      */
     private void setErrorMessage(String message) {
         errorText.setText(message);
@@ -158,11 +158,11 @@ public class SignupActivity extends AppCompatActivity {
     /**
      * Sends a sign up request for a user with given parameters.
      *
-     * @param username
-     * @param email
-     * @param password
-     * @param securityAnswer1 - answers to security question 1
-     * @param securityAnswer2 - answers to security question 2
+     * @param username new user's username
+     * @param email new user's email
+     * @param password new user's password
+     * @param securityAnswer1 answer to security question 1
+     * @param securityAnswer2 answer to security question 2
      */
     private void signUp(String username, String email, String password, String securityAnswer1, String securityAnswer2) {
         UserManager.signupRequest(getApplicationContext(), username, email, password, securityAnswer1, securityAnswer2, securityQuestion1, securityQuestion2,
@@ -268,7 +268,7 @@ public class SignupActivity extends AppCompatActivity {
      * Sends request to get ID of a user with given username
      * and saves it.
      *
-     * @param username
+     * @param username user's username
      */
     private void saveUserId(String username) {
         UserManager.getUserByUsernameRequest(getApplicationContext(), username,

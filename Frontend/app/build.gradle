@@ -42,7 +42,8 @@ dependencies {
     implementation 'androidx.preference:preference-ktx:1.2.0'
     implementation 'com.stripe:stripe-android:21.9.0'
     implementation 'com.stripe:financial-connections:21.9.0'
-    implementation files('C:\\Users\\ashte\\AppData\\Local\\Android\\Sdk\\platforms\\android-35\\android.jar')
+    //implementation files('C:/Users/stasb/AppData/Local/Android/Sdk/platforms/android-35/android.jar')
+    //implementation files('C:/Users/ashte/AppData/Local/Android/Sdk/platforms/android-35/android.jar')
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'

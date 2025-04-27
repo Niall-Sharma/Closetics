@@ -19,6 +19,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * Helper class with User-related HTTP requests.
+ */
 public class UserManager {
 
     private static final String URL_POST_LOGIN = MainActivity.SERVER_URL + "/login";

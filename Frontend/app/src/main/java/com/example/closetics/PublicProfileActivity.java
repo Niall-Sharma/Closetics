@@ -70,6 +70,12 @@ public class PublicProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Setups all user-related button onClick listeners
+     * and then calls separate methods to populate Clothes, Outfits, and Follow lists data.
+     *
+     * @param userId id of the user whose profile to display
+     */
     private void populateUserData(long userId) {
         // set listeners only if user id was passed
         followingButton.setOnClickListener(v -> {
@@ -95,10 +101,10 @@ public class PublicProfileActivity extends AppCompatActivity {
     }
 
     /**
-     * Requsets all user's clothes by user ID from the server
+     * Requests all user's clothes by user ID from the server
      * to display their number.
      *
-     * @param userId - id of the user whose profile to display
+     * @param userId id of the user whose profile to display
      */
     private void populateClothes(long userId) {
         FollowManager.getAllUserClothesRequest(getApplicationContext(), userId,
@@ -120,10 +126,10 @@ public class PublicProfileActivity extends AppCompatActivity {
     }
 
     /**
-     * Requsets all user's outfits by user ID from the server
+     * Requests all user's outfits by user ID from the server
      * to display their number.
      *
-     * @param userId - id of the user whose profile to display
+     * @param userId id of the user whose profile to display
      */
     private void populateOutfits(long userId) {
         OutfitManager.getAllOutfitsRequest(getApplicationContext(), userId,
@@ -145,11 +151,11 @@ public class PublicProfileActivity extends AppCompatActivity {
     }
 
     /**
-     * Requsets user's followers and following lists
+     * Requests user's followers and following lists
      * by user ID from the server to display their number
      * and whether currently logged in user is following this user.
      *
-     * @param userId - id of the user whose profile to display
+     * @param userId id of the user whose profile to display
      */
     private void populateFollow(long userId) {
         UserManager.getUserProfileRequest(getApplicationContext(), userId,
@@ -211,7 +217,7 @@ public class PublicProfileActivity extends AppCompatActivity {
      * Make a request to make currently logged in user follow this user
      * (whose profile is displayed).
      *
-     * @param followingId - this profile's user's id
+     * @param followingId this profile's user's id
      */
     private void follow(long followingId) {
         UserManager.addFollowingRequest(getApplicationContext(), UserManager.getUserID(getApplicationContext()), followingId,
@@ -233,7 +239,7 @@ public class PublicProfileActivity extends AppCompatActivity {
      * Make a request to make currently logged in user unfollow this user
      * (whose profile is displayed).
      *
-     * @param followingId - this profile's user's id
+     * @param followingId this profile's user's id
      */
     private void unfollow(long followingId) {
         UserManager.removeFollowingRequest(getApplicationContext(), UserManager.getUserID(getApplicationContext()), followingId,

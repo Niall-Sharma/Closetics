@@ -17,6 +17,9 @@ import com.example.closetics.VolleySingleton;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/**
+ * Helper class with Outfit-related HTTP requests.
+ */
 public class OutfitManager {
 
     private static final String URL_GET_ALL_USER_OUTFITS = MainActivity.SERVER_URL + "/getAllUserOutfits/"; // + {{userId}}

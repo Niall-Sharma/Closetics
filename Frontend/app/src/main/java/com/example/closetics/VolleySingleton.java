@@ -25,7 +25,7 @@ public class VolleySingleton {
      * Private Constructor.
      * Should not be called directly (and therefore is private).
      *
-     * @param context
+     * @param context current application context
      */
     private VolleySingleton(Context context) {
         ctx = context;
@@ -53,7 +53,7 @@ public class VolleySingleton {
      * Creates a new instance only if not initialized before
      * (so only on the first call).
      *
-     * @param context - current application context
+     * @param context current application context
      * @return The only instance of VolleySingleton class
      */
     public static synchronized VolleySingleton getInstance(Context context) {
@@ -82,8 +82,8 @@ public class VolleySingleton {
     /**
      * Adds given request to the current HTTP request queue.
      *
-     * @param req - request to add
-     * @param <T> - generic type of the request
+     * @param req request to add
+     * @param <T> generic type of the request
      */
     public <T> void addToRequestQueue(Request<T> req) {
         getRequestQueue().add(req);

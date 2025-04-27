@@ -241,7 +241,7 @@ public class RecommendationsFragment extends Fragment {
      * Takes a JSON array with Outfits received from the WebSocket and
      * add them to the end of the current recommendations feed.
      *
-     * @param message - a JSON array of Outfits in the String format
+     * @param message a JSON array of Outfits in the String format
      */
     private void addMoreRecommendations(String message) {
         // Mock outfits
@@ -310,7 +310,7 @@ public class RecommendationsFragment extends Fragment {
      * contain given String as a substring.
      * Then displays new search results.
      *
-     * @param username - substring of the username to search for
+     * @param username substring of the username to search for
      */
     private void searchUsers(String username) {
         UserManager.searchUsersByUsernameRequest(getActivity().getApplicationContext(), username,

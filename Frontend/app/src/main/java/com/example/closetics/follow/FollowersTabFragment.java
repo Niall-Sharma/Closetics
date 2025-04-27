@@ -29,6 +29,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Fragment that represents the Followers tab of FollowActivity.
+ *
+ * Requires "USER_ID" extra parameter of type long
+ */
 public class FollowersTabFragment extends Fragment {
 
     private TextView emptyText;
@@ -37,6 +42,9 @@ public class FollowersTabFragment extends Fragment {
 
     private long userId;
 
+    /**
+     * Required empty public constructor.
+     */
     public FollowersTabFragment() {
         // Required empty public constructor
     }
@@ -89,6 +97,15 @@ public class FollowersTabFragment extends Fragment {
         return view;
     }
 
+    /**
+     * First step in populating Followers list.
+     * Requests currently logged in user's following list
+     * to know which of the displayed users are followed
+     * by currently logged in user.
+     * Then calls next populateFollowers() with newly acquired list.
+     *
+     * @param userId id of the user whose list will be displayed
+     */
     private void populateFollowers(long userId) {
         // first get logged in user's following list
         UserManager.getFollowingListRequest(getActivity().getApplicationContext(), UserManager.getUserID(getActivity().getApplicationContext()),
@@ -119,6 +136,13 @@ public class FollowersTabFragment extends Fragment {
                 });
     }
 
+    /**
+     * Second step in populating Followers list.
+     * Requests followers list of the user whose list is to be displayed.
+     * Then populated list adapter.
+     *
+     * @param userId id of the user whose list will be displayed
+     */
     private void populateFollowers(long userId, List<Long> myFollowingIds) {
         // mock values for testing
 //        ArrayList<FollowUsersListItem> mockListItems = new ArrayList<>();

@@ -19,10 +19,20 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+/**
+ * Helper class with Follow-related HTTP requests.
+ */
 public class FollowManager {
     private static final String URL_GET_ALL_USER_CLOTHES = MainActivity.SERVER_URL + "/getClothing/user/"; // + {{userId}}
 
 
+    /**
+     *
+     * @param context
+     * @param userId
+     * @param responseListener
+     * @param errorListener
+     */
     public static void getAllUserClothesRequest(Context context, long userId,
                                                 Response.Listener<JSONArray> responseListener,
                                                 Response.ErrorListener errorListener) {
