@@ -17,6 +17,10 @@ import com.example.closetics.outfits.OutfitsActivity;
 
 public class ClothesFragment extends Fragment {
 
+    //Hello this is a new comment so that I can test the pipeline hopefully this is a big enough
+    //Comment
+    //HELLLEOEOOEEIOPEWJWJNJNWEFIJ
+    //
     private Button clothesButton;
     private Button outfitsButton;
     private TextView loginText;
