@@ -46,6 +46,7 @@ import java.util.HashMap;
 
 public class ClothesActivity extends AppCompatActivity {
 
+
     private static HashMap<Long,Long> clothingTypeCounts = new HashMap<>();
     private Button addClothes;
     private Button testCamera;
