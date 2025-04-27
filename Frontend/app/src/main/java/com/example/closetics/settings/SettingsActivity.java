@@ -11,7 +11,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.closetics.MainActivity;
-import com.example.closetics.R;
+//import com.example.closetics.R;
 
 public class SettingsActivity extends AppCompatActivity {
 

@@ -31,6 +31,12 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * Activity that allows the user to edit the details of a clothing item.
+ * This activity utilizes a ViewPager2 to navigate between different fragments, where each fragment
+ * corresponds to a different field of the clothing item to be edited. It also handles the submission
+ * of the updated data to the backend.
+ */
 public class EditClothesActivity extends AppCompatActivity {
     private Button finalSubmission;
     private TabLayout tabLayout;
@@ -40,56 +46,54 @@ public class EditClothesActivity extends AppCompatActivity {
     private long clothingId;
     private ClothingItem clothingItem;
 
-
-
-
-
+    /**
+     * Called when the activity is created. Initializes the layout, fragments, and setup necessary
+     * for the activity. Sets up a ViewPager2 with fragments, a TabLayout for tab navigation,
+     * and sets up a click listener for the submission button.
+     *
+     * @param savedInstanceState Bundle containing any saved state from previous instances of this activity.
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_clothes);
 
         finalSubmission = findViewById(R.id.submit_button);
         tabLayout = findViewById(R.id.tabLayout);
-
         viewPager = findViewById(R.id.edit_pager);
 
-        //This needs an innner class
+        // Initialize the pager adapter and set it for the ViewPager
         pagerAdapter = new EditClothesActivity.ScreenSlidePagerAdapter(this);
-
         clothesDataViewModel = new ViewModelProvider(this).get(ClothesDataViewModel.class);
 
-        //Initialize the fragments list
+        // Initialize the fragments size
         clothesDataViewModel.setFragmentsSize(ClothesActivity.NUM_FRAGMENTS);
 
-        //Set the viewpager
+        // Set the ViewPager adapter and TabLayout mediator
         viewPager.setAdapter(pagerAdapter);
-        //Set tab mediator
-        new TabLayoutMediator(tabLayout, viewPager, ((tab, position) ->{
-            tab.setText(String.valueOf(position+1));
-        } )).attach();
+        new TabLayoutMediator(tabLayout, viewPager, ((tab, position) -> {
+            tab.setText(String.valueOf(position + 1));
+        })).attach();
 
-        //Set the clothingId and clothingItem instance variables
+        // Set the clothingId and clothingItem instance variables from the Intent
         Intent intent = getIntent();
-
         clothingId = intent.getLongExtra("clothingId", 0);
         clothingItem = (ClothingItem) intent.getSerializableExtra("clothingItem");
 
-        finalSubmission.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                ArrayList<MutableLiveData<String>> fragments = clothesDataViewModel.getFragments();
-                getAndUpdateClothing(getApplicationContext(), ClothesActivity.URL, fragments);
-
-
-            }
+        // Set onClickListener for the final submission button
+        finalSubmission.setOnClickListener(v -> {
+            ArrayList<MutableLiveData<String>> fragments = clothesDataViewModel.getFragments();
+            getAndUpdateClothing(getApplicationContext(), ClothesActivity.URL, fragments);
         });
-
-
-
-
     }
 
+    /**
+     * Sends a request to retrieve the current details of the clothing item, then updates the
+     * item with the new data from the fragments and submits the update.
+     *
+     * @param context The context from which the request is made.
+     * @param URL The URL for the clothing item data.
+     * @param fragments The list of fragments containing the updated data.
+     */
     private void getAndUpdateClothing(Context context, String URL, ArrayList<MutableLiveData<String>> fragments) {
         ClothesManager.getClothingRequest(context, clothingId, URL, new Response.Listener<JSONObject>() {
             @Override
@@ -98,14 +102,11 @@ public class EditClothesActivity extends AppCompatActivity {
                 JSONObject updateObject;
                 try {
                     updateObject = putUpdatedFields(response, fragments);
-
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
                 updateClothing(context, updateObject, URL);
-
             }
-
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -114,10 +115,14 @@ public class EditClothesActivity extends AppCompatActivity {
         });
     }
 
-
-
-
-    private void updateClothing(Context context, JSONObject object, String URL){
+    /**
+     * Sends a request to update the clothing item on the server with the modified data.
+     *
+     * @param context The context from which the request is made.
+     * @param object The updated clothing item data.
+     * @param URL The URL for the update request.
+     */
+    private void updateClothing(Context context, JSONObject object, String URL) {
         ClothesManager.updateClothingRequest(context, object, URL, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -129,11 +134,17 @@ public class EditClothesActivity extends AppCompatActivity {
                 Log.e("Volley Error", error.toString());
             }
         });
-
-
     }
 
-
+    /**
+     * Updates the clothing item fields in the response object with values from the fragments.
+     * Null values are handled by the ClothesManager's nullCheck method.
+     *
+     * @param response The current clothing item data.
+     * @param fragments The list of fragments with updated data.
+     * @return The updated response object with new clothing details.
+     * @throws JSONException If there is an error processing the JSON data.
+     */
     private JSONObject putUpdatedFields(JSONObject response, ArrayList<MutableLiveData<String>> fragments) throws JSONException {
         String favorite = fragments.get(0).getValue();
         String size = fragments.get(1).getValue();
@@ -144,10 +155,11 @@ public class EditClothesActivity extends AppCompatActivity {
         String material = fragments.get(7).getValue();
         String price = fragments.get(4).getValue();
 
-        if (favorite!=null) {
+        // Update fields with non-null values
+        if (favorite != null) {
             if (favorite.toLowerCase().trim().equals("true")) {
                 ClothesManager.nullCheck("favorite", true, response);
-            } else if (favorite.toLowerCase().trim().equals("false")){
+            } else if (favorite.toLowerCase().trim().equals("false")) {
                 ClothesManager.nullCheck("favorite", false, response);
             }
         }
@@ -161,30 +173,46 @@ public class EditClothesActivity extends AppCompatActivity {
         ClothesManager.nullCheck("price", price, response);
 
         return response;
-
     }
 
+    /**
+     * Adapter for the ViewPager2 that manages the fragments for editing the clothing item.
+     */
     private class ScreenSlidePagerAdapter extends FragmentStateAdapter {
 
+        /**
+         * Constructor for the pager adapter.
+         *
+         * @param editClothesActivity The parent activity for the ViewPager2.
+         */
         public ScreenSlidePagerAdapter(EditClothesActivity editClothesActivity) {
             super(editClothesActivity);
         }
 
+        /**
+         * Creates a new fragment for the given position.
+         *
+         * @param position The position of the fragment in the ViewPager2.
+         * @return A new instance of the EditClothesFragment for the given position.
+         */
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-
             return EditClothesFragment.newInstance(position, clothesDataViewModel, clothingItem);
         }
 
+        /**
+         * Returns the total number of fragments in the adapter.
+         *
+         * @return The number of fragments.
+         */
         @Override
         public int getItemCount() {
-
             return ClothesActivity.NUM_FRAGMENTS;
         }
     }
-
-
-
-
 }
+
+
+
+
