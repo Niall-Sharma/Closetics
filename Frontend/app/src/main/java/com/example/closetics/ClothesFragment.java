@@ -45,8 +45,6 @@ public class ClothesFragment extends Fragment {
             loginText.setVisibility(TextView.GONE);
             clothesButton.setVisibility(TextView.VISIBLE);
             outfitsButton.setVisibility(TextView.VISIBLE);
-            //
-
         }
 
         clothesButton.setOnClickListener(v -> {
