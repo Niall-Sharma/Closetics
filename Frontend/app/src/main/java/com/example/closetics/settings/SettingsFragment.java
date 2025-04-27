@@ -11,7 +11,7 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
 
 import com.example.closetics.DeleteUserActivity;
-import com.example.closetics.R;
+//import com.example.closetics.R;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
     @Override

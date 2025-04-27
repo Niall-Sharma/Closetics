@@ -35,6 +35,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+
+/**
+ * Activity that handles displaying the statistics related to the user's outfits and clothing items.
+ * It displays both overall stats and category-specific stats (Clothing, Outfits).
+ */
 public class StatisticsActivity extends AppCompatActivity {
     private ImageButton back;
     private Button outfitStats;
@@ -67,6 +72,13 @@ public class StatisticsActivity extends AppCompatActivity {
 
 
 
+    /**
+     * Initializes the activity and sets up the UI components and event listeners.
+     * It fetches and displays various statistics such as the number of outfits, total closet value,
+     * most worn items, and weather-specific clothing stats.
+     *
+     * @param savedInstanceState The saved instance state from a previous instance of the activity.
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -157,11 +169,22 @@ public class StatisticsActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Displays a fragment inside the statistics container based on the provided tag and fragment.
+     *
+     * @param tag The tag of the fragment.
+     * @param fragment The fragment to display.
+     */
     private void showFragment(String tag, Fragment fragment){
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.stats_categories_container, fragment, tag);
         transaction.commit();
     }
+    /**
+     * Removes a fragment based on the given tag.
+     *
+     * @param tag The tag of the fragment to remove.
+     */
     private void deleteFragment(String tag){
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentByTag(tag);
@@ -171,8 +194,9 @@ public class StatisticsActivity extends AppCompatActivity {
         }
     }
 
-    /*
-    Note: Come back to these!
+
+    /**
+     * Fetches and sets the total number of outfits from the server.
      */
     private void setTotalOutfitsCount(){
         OutfitManager.getAllOutfitsRequest(this, UserManager.getUserID(this), new Response.Listener<JSONArray>() {
@@ -204,8 +228,8 @@ public class StatisticsActivity extends AppCompatActivity {
             }
         });
     }
-    /*
-    Figure out a better way to find total closet value without having to fully scan all clothes
+    /**
+     * Fetches and sets the total closet value and total number of clothing items from the server.
      */
     private void setTotalClosetValueAndTotalClothing(){
         ClothesManager.getClothingByUserRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONArray>() {
@@ -260,18 +284,33 @@ public class StatisticsActivity extends AppCompatActivity {
     }
 
 
-
+    /**
+     * Changes the object in which the allOutfitStatsObjects is referring to
+     * @param objects
+     */
     private void setAllOutfitStatsObjects(ArrayList<ClothingStatItem> objects){
         allOutfitStatsObjects = objects;
     }
+
+    /**
+     * Sets the activities two cards invisible
+     */
     private void setCardsInvisible(){
         card1.setVisibility(View.GONE);
         card2.setVisibility(View.GONE);
     }
+
+    /**
+     * Sets the activities two cards as visible
+     */
     private void setCardsVisible(){
         card1.setVisibility(View.VISIBLE);
         card2.setVisibility(View.VISIBLE);
     }
+
+    /**
+     * Fetches and sets the user's most expensive outfit
+     */
     private void setMostExpensiveOutfit(){
         StatisticsManager.mostExpensiveOutfitRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
             @Override
@@ -294,6 +333,11 @@ public class StatisticsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Fetches a users particular outfit via the outfit ID, used for setting most expensive outfit.
+     * @param outfitId long outfit ID corresponding to a unique outfit
+     * @param price String price
+     */
     private void getOutfit(long outfitId, String price){
         OutfitManager.getOutfitRequest(this, outfitId, new Response.Listener<JSONObject>() {
             @Override
@@ -314,6 +358,10 @@ public class StatisticsActivity extends AppCompatActivity {
             }
         });
     }
+
+    /**
+     * Fetches and sets a user's most worn outfit.
+     */
     private void setMostWornOutfit(){
         StatisticsManager.mostWornOutfitRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
             @Override
@@ -338,6 +386,9 @@ public class StatisticsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Fetches and sets a users most expensive piece of clothing.
+     */
     private void setMostExpensiveClothing(){
         StatisticsManager.mostExpensiveClothingRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
             @Override
@@ -362,6 +413,10 @@ public class StatisticsActivity extends AppCompatActivity {
             }
         });
     }
+
+    /**
+     * Fetches and sets a users most worn outfit.
+     */
     private void setMostWornClothingItem(){
         StatisticsManager.mostWornClothingRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
             @Override
@@ -385,6 +440,12 @@ public class StatisticsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * If the backend sends a null response, the provided textView with "none" and log
+     * the error.
+     * @param error the volley error
+     * @param text a particular TextView
+     */
    private void weatherRequestNull(VolleyError error, TextView text){
        if (error.networkResponse == null){
            String s = "none";
@@ -393,6 +454,9 @@ public class StatisticsActivity extends AppCompatActivity {
        Log.e("error", error.toString());
    }
 
+    /**
+     * Fetches and sets the number of clothing items suitable for cold weather.
+     */
     private void setColdClothing() {
         StatisticsManager.coldestAverageClothingRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
             @Override
@@ -419,6 +483,9 @@ public class StatisticsActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Fetches and sets the number of clothing items suitable for warm weather.
+     */
     private void setWarmClothing(){
         StatisticsManager.warmestAverageClothingRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
             @Override
@@ -444,6 +511,10 @@ public class StatisticsActivity extends AppCompatActivity {
         });
     }
 
+
+    /**
+     * Fetches and sets a users outfit's largest average high temperature
+     */
     private void setWarmOutfit(){
         StatisticsManager.warmestAverageOutfitRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
             @Override
@@ -470,6 +541,10 @@ public class StatisticsActivity extends AppCompatActivity {
             }
         });
     }
+
+    /**
+     * Fetches and sets a user's outfit's lowest average low temperature.
+     */
     private void setColdOutfit(){
         StatisticsManager.coldestAverageOutfitRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
             @Override
@@ -494,6 +569,12 @@ public class StatisticsActivity extends AppCompatActivity {
             }
         });
     }
+
+    /**
+     * Fetches and sets the number of outfits a particular clothing item is apart of.
+     * @param clothingId a clothing ID
+     * @param statItem a stat item
+     */
     private void setNumberOfOutfitsIn(long clothingId, ClothingStatItem statItem){
         StatisticsManager.calcNumberOfOutfitsInRequest(this, clothingId, MainActivity.SERVER_URL, new Response.Listener<String>() {
             @Override
