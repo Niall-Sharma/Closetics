@@ -82,7 +82,7 @@ android-build:
     - ./gradlew build               # gradle build
   only:
     refs:
-      - main                        # only to trigger the pipeline when changes are pushed to 'main'
+      - Ashten_CICD                        # only to trigger the pipeline when changes are pushed to 'main'
     changes:
       - Frontend/**/*               # more specifically - only when changes are made inside the 'Frontend' folder
 
@@ -99,6 +99,6 @@ android-test:
      - ./gradlew test               # gradle test
   only:
     refs:
-      - main          # only to trigger the pipeline when changes are pushed to 'main'
+      - Ashten_CICD          # only to trigger the pipeline when changes are pushed to 'main'
     changes:
       - Frontend/**/*               # more specifically - only when changes are made inside the 'Frontend' folder
