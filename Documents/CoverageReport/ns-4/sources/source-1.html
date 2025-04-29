@@ -1,0 +1,186 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Outfit</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">closetics.Outfits</a>
+</div>
+
+<h1>Coverage Summary for Class: Outfit (closetics.Outfits)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Outfit</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (8/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    36.4%
+  </span>
+  <span class="absValue">
+    (8/22)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package closetics.Outfits;
+&nbsp;
+&nbsp;import closetics.Clothes.Clothing;
+&nbsp;import closetics.Statistics.OutfitStats;
+&nbsp;import closetics.Users.User;
+&nbsp;import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+&nbsp;import jakarta.persistence.*;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Entity(name = &quot;outfit_table&quot;)
+&nbsp;public class Outfit {
+&nbsp;
+&nbsp;    @Id
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    private long outfitId;
+&nbsp;
+&nbsp;    @ManyToOne
+&nbsp;    @JoinColumn(name = &quot;user_id&quot;, nullable = false)
+&nbsp;    @JsonIgnoreProperties({&quot;email&quot;, &quot;password&quot;, &quot;userTier&quot;,
+&nbsp;            &quot;sQA1&quot;, &quot;sQID1&quot;, &quot;sQA2&quot;, &quot;sQID2&quot;, &quot;sQA3&quot;, &quot;sQID3&quot;})
+&nbsp;    private User user;
+&nbsp;
+&nbsp;    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+&nbsp;    @JoinColumn(name = &quot;stat_id&quot;)
+&nbsp;    @JsonIgnoreProperties(&quot;datesWorn&quot;)
+&nbsp;    private OutfitStats outfitStats;
+&nbsp;
+&nbsp;    @ManyToMany(fetch = FetchType.EAGER)
+&nbsp;    @JoinTable(
+&nbsp;            name = &quot;outfit_items&quot;,
+&nbsp;            joinColumns = @JoinColumn(name = &quot;outfit_id&quot;),
+&nbsp;            inverseJoinColumns = @JoinColumn(name = &quot;clothing_id&quot;)
+&nbsp;    )
+&nbsp;    @JsonIgnoreProperties({&quot;favorite&quot;, &quot;size&quot;, &quot;color&quot;,
+&nbsp;            &quot;dateBought&quot;, &quot;brand&quot;, &quot;imagePath&quot;, &quot;itemName&quot;, &quot;material&quot;, &quot;price&quot;, &quot;type&quot;, &quot;specialType&quot;, &quot;creationDate&quot;, &quot;clothingType&quot;})
+&nbsp;    private List&lt;Clothing&gt; outfitItems;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    private String outfitName;
+&nbsp;    private LocalDate creationDate;
+&nbsp;    private boolean favorite;
+&nbsp;
+<b class="nc">&nbsp;    public Outfit(long outfitId, User user, String outfitName, boolean favorite, List&lt;Clothing&gt; outfitItems) {</b>
+<b class="nc">&nbsp;        this.outfitId = outfitId;</b>
+<b class="nc">&nbsp;        this.user = user;</b>
+<b class="nc">&nbsp;        this.outfitName = outfitName;</b>
+<b class="nc">&nbsp;        this.favorite = favorite;</b>
+<b class="nc">&nbsp;        this.outfitItems = outfitItems;</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public Outfit(){}</b>
+&nbsp;
+<b class="fc">&nbsp;    public long getOutfitId() {return outfitId;}</b>
+<b class="nc">&nbsp;    public void setOutfitId(long outfitId) {this.outfitId = outfitId;}</b>
+&nbsp;
+<b class="fc">&nbsp;    public User getUser() {return user;}</b>
+<b class="nc">&nbsp;    public void setUser(User user) {this.user = user;}</b>
+&nbsp;
+<b class="fc">&nbsp;    public String getOutfitName() {return outfitName;}</b>
+<b class="nc">&nbsp;    public void setOutfitName(String outfitName) {this.outfitName = outfitName;}</b>
+&nbsp;
+<b class="fc">&nbsp;    public LocalDate getCreationDate() {return creationDate;}</b>
+<b class="nc">&nbsp;    public void setCreationDate(LocalDate creationDate) {this.creationDate = creationDate;}</b>
+&nbsp;
+<b class="fc">&nbsp;    public boolean getFavorite() {return favorite;}</b>
+&nbsp;    public void setFavorite(boolean favorite) {
+<b class="nc">&nbsp;        this.favorite = favorite;}</b>
+&nbsp;
+<b class="fc">&nbsp;    public List&lt;Clothing&gt; getOutfitItems() {return outfitItems;}</b>
+<b class="nc">&nbsp;    public void setOutfitItems(List&lt;Clothing&gt; outfitItems) {this.outfitItems = outfitItems;}</b>
+&nbsp;
+&nbsp;    public OutfitStats getOutfitStats() {
+<b class="fc">&nbsp;        return outfitStats;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Outfit setOutfitStats(OutfitStats outfitStats) {
+<b class="nc">&nbsp;        this.outfitStats = outfitStats;</b>
+<b class="nc">&nbsp;        return this;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-26 17:47</div>
+</div>
+</body>
+</html>

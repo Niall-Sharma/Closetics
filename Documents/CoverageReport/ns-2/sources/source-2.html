@@ -1,0 +1,243 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ClothingController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">closetics.Clothes</a>
+</div>
+
+<h1>Coverage Summary for Class: ClothingController (closetics.Clothes)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ClothingController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/56)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package closetics.Clothes;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;import closetics.Statistics.ClothingStats;
+&nbsp;import closetics.Users.User;
+&nbsp;import closetics.Users.UserRepository;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import closetics.Statistics.ClothingStatRepository;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;@RestController
+<b class="nc">&nbsp;public class ClothingController {</b>
+&nbsp;    @Autowired
+&nbsp;    ClothingRepository clothingRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    ClothingStatRepository clothingStatRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    UserRepository userRepository;
+&nbsp;
+&nbsp;    @GetMapping(path = &quot;/getAllClothing&quot;)
+&nbsp;    public List&lt;Clothing&gt; getAllClothing() {
+<b class="nc">&nbsp;        return clothingRepository.findAll();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(path = &quot;/getClothing/{id}&quot;)
+&nbsp;    public Optional&lt;Clothing&gt; getClothing(@PathVariable long id) {
+<b class="nc">&nbsp;        return clothingRepository.findById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(path = &quot;/getClothing/special_type/{userId}/{type}&quot;)
+&nbsp;    public List&lt;Clothing&gt; getClothingBySpecialType(@PathVariable(&quot;userId&quot;) long userId, @PathVariable(&quot;type&quot;) long type){
+<b class="nc">&nbsp;        return clothingRepository.findBySpecialType(userId, type);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(path = &quot;/getClothing/type/{userId}/{type}&quot;)
+&nbsp;    public List&lt;Clothing&gt; getClothingByType(@PathVariable(&quot;userId&quot;) long userId, @PathVariable(&quot;type&quot;) long type){
+<b class="nc">&nbsp;        return clothingRepository.findByType(userId, type);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(path = &quot;/getClothing/user/{userId}&quot;)
+&nbsp;    public List&lt;Clothing&gt; getClothingByUser(@PathVariable long userId){
+<b class="nc">&nbsp;      return clothingRepository.findByUserId(userId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(path = &quot;/createClothing&quot;)
+&nbsp;    public ResponseEntity&lt;Clothing&gt; createClothing(@RequestBody ClothingMinimal request) {
+<b class="nc">&nbsp;        long user_id = request.getUserId();</b>
+<b class="nc">&nbsp;        User user = userRepository.findById(user_id).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</b>
+<b class="nc">&nbsp;        Clothing clothing = new Clothing();</b>
+<b class="nc">&nbsp;        clothing.setBrand(request.getBrand());</b>
+<b class="nc">&nbsp;        clothing.setColor(request.getColor());</b>
+<b class="nc">&nbsp;        clothing.setDateBought(request.getDateBought());</b>
+<b class="nc">&nbsp;        clothing.setFavorite(request.getFavorite());</b>
+<b class="nc">&nbsp;        clothing.setImagePath(request.getImagePath());</b>
+<b class="nc">&nbsp;        clothing.setItemName(request.getItemName());</b>
+<b class="nc">&nbsp;        clothing.setMaterial(request.getMaterial());</b>
+<b class="nc">&nbsp;        clothing.setPrice(request.getPrice());</b>
+<b class="nc">&nbsp;        clothing.setSize(request.getSize());</b>
+<b class="nc">&nbsp;        clothing.setSpecialType(request.getSpecialType());</b>
+<b class="nc">&nbsp;        clothing.setClothingType(request.getClothingType());</b>
+<b class="nc">&nbsp;        clothing.setCreationDate(LocalDate.now());</b>
+<b class="nc">&nbsp;        clothing.setUser(user);</b>
+&nbsp;
+<b class="nc">&nbsp;        Clothing savedClothing = clothingRepository.save(clothing);</b>
+<b class="nc">&nbsp;        ClothingStats clothingStats = clothingStatRepository.save(new ClothingStats(savedClothing.getClothesId()));</b>
+<b class="nc">&nbsp;        Clothing statClothing = savedClothing.setClothingStats(clothingStats);</b>
+<b class="nc">&nbsp;        Clothing clothingWithStats = clothingRepository.save(statClothing);</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(clothingWithStats);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(path = &quot;/deleteClothing/{itemId}&quot;)
+&nbsp;    public void deleteClothing(@PathVariable long itemId) {
+<b class="nc">&nbsp;        clothingRepository.deleteById(itemId);</b>
+<b class="nc">&nbsp;        clothingStatRepository.deleteById((itemId));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping (path = &quot;/updateClothing&quot;)
+&nbsp;    public ResponseEntity&lt;Clothing&gt; updateClothing(@RequestBody ClothingMinimal request){
+&nbsp;        try {
+<b class="nc">&nbsp;            Clothing clothing = clothingRepository.findById(request.getClothingId())</b>
+<b class="nc">&nbsp;                    .orElseThrow(() -&gt; new RuntimeException(&quot;Clothing Item not found&quot;));</b>
+<b class="nc">&nbsp;            clothing.setBrand(request.getBrand());</b>
+<b class="nc">&nbsp;            clothing.setColor(request.getColor());</b>
+<b class="nc">&nbsp;            clothing.setDateBought(request.getDateBought());</b>
+<b class="nc">&nbsp;            clothing.setFavorite(request.getFavorite());</b>
+<b class="nc">&nbsp;            clothing.setImagePath(request.getImagePath());</b>
+<b class="nc">&nbsp;            clothing.setItemName(request.getItemName());</b>
+<b class="nc">&nbsp;            clothing.setMaterial(request.getMaterial());</b>
+<b class="nc">&nbsp;            clothing.setPrice(request.getPrice());</b>
+<b class="nc">&nbsp;            clothing.setSize(request.getSize());</b>
+<b class="nc">&nbsp;            clothing.setSpecialType(request.getSpecialType());</b>
+<b class="nc">&nbsp;            clothing.setClothingType(request.getClothingType());</b>
+<b class="nc">&nbsp;            clothingRepository.save(clothing);</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(clothing);</b>
+<b class="nc">&nbsp;        } catch (RuntimeException e) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/swapFavoriteOnClothing/{clothing_Id}&quot;)
+&nbsp;    public ResponseEntity&lt;Clothing&gt; swapFavorite(@PathVariable long clothing_Id) {
+<b class="nc">&nbsp;        Optional&lt;Clothing&gt; clothingOptional = clothingRepository.findById(clothing_Id);</b>
+&nbsp;
+<b class="nc">&nbsp;        if (clothingOptional.isPresent()) {</b>
+<b class="nc">&nbsp;            Clothing clothing = clothingOptional.get();</b>
+<b class="nc">&nbsp;            if (clothing.getFavorite()) {</b>
+<b class="nc">&nbsp;                clothing.setFavorite(false);</b>
+<b class="nc">&nbsp;                clothingRepository.save(clothing);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                clothing.setFavorite(true);</b>
+<b class="nc">&nbsp;                clothingRepository.save(clothing);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            return ResponseEntity.ok(clothing);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-26 17:47</div>
+</div>
+</body>
+</html>
