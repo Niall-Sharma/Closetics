@@ -33,7 +33,8 @@ public class UserProfile{
   )
   private List<Outfit> outfits = new ArrayList<>();
 
-
+  @ManyToMany(mappedBy = "userProfileLikes")
+  private List<Outfit> likedOutfits;
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(

@@ -44,7 +44,7 @@ public class Outfit {
     @JoinTable(
             name = "user_likes",
             joinColumns = @JoinColumn(name = "outfit_id"),
-            inverseJoinColumns = @JoinColumn(name = "")
+            inverseJoinColumns = @JoinColumn(name = "user_profile_id")
     )
     private List<UserProfile> userProfileLikes;
 
