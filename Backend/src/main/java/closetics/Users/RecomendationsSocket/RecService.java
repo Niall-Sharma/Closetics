@@ -38,6 +38,9 @@ public class RecService {
                 long count = outfitRepository.count();
                 long randId = Math.max(1, Math.round(Math.random() * count));
                 outfitRepository.findById(randId).ifPresent(o -> {
+                    if (o.getOutfitItems() == null) {
+                        o.setOutfitItems(new ArrayList<>());
+                    }
                     o.getOutfitItems().size();
                     recs.add(o);
                 });

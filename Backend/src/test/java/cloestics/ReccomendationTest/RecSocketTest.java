@@ -1,6 +1,7 @@
 package cloestics.ReccomendationTest;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -15,7 +16,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import closetics.Outfits.Outfit;
 import closetics.Users.User;
 import closetics.Users.UserRepository;
+
+import java.io.IOException;
 import java.util.*;
+
+import jakarta.websocket.Session;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,33 +47,40 @@ public class RecSocketTest {
     @MockBean
     private RecService recService;
 
-    private UserProfile profile1;
-    private UserProfile profile2;
-    private User user1;
-    private User user2;
+    private RecSocket recSocket;
 
     @BeforeEach
     void setup() {
-        // Create two user profiles and users
-        profile1 = new UserProfile();
-        profile1.setId(1L);
-        profile1.setIsPublic(true);
 
-        profile2 = new UserProfile();
-        profile2.setId(2L);
-        profile2.setIsPublic(false);
 
-        user1 = new User();
-        user1.setUserId(1);
-        user1.SetUserProfile(profile1);
+        recSocket.setUserRepository(userRepository);
+        recSocket.setOutfitRepository(outfitRepository);
+        recSocket.setUserProfileRepository(uRepository);
 
-        user2 = new User();
-        user2.setUserId(2);
-        user2.SetUserProfile(profile2);
+        recService = new RecService(outfitRepository);
 
-        profile1.addFollowing(profile2);
+        recSocket.setRecommendationService(recService);
 
-        
     }
 
+    @Test
+    void testOnOpen() throws IOException{
+        Session session = mock(Session.class);
+        long userId = 1L;
+
+        UserProfile mockUserProfile = new UserProfile();
+        List<UserProfile> following = new ArrayList<>();
+        UserProfile followed = new UserProfile();
+        Outfit outfit = new Outfit();
+        followed.addOutfit(outfit);
+        mockUserProfile.addFollowing(followed);
+        followed.addFollower(mockUserProfile);
+
+        when(uRepository.findById(userId)).thenReturn(Optional.of(mockUserProfile));
+        when(mockUserProfile.getFollowing()).thenReturn(mockUserProfile.getFollowing());
+
+        recSocket.onOpen(session, userId);
+
+        // No assertions, just ensuring no exceptions
+    }
 }
