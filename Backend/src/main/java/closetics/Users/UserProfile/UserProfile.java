@@ -34,7 +34,7 @@ public class UserProfile{
   private List<Outfit> outfits = new ArrayList<>();
 
   @ManyToMany(mappedBy = "userProfileLikes")
-  private List<Outfit> likedOutfits;
+  private List<Outfit> likedOutfits = new ArrayList<>();
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
