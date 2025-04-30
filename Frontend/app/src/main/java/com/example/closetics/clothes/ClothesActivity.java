@@ -78,7 +78,7 @@ public class ClothesActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
     private TypeGridRecyclerViewAdapter gridRecyclerViewAdapter;
 
-    public static final int NUM_FRAGMENTS = 8;
+    public static final int NUM_FRAGMENTS = 9;
     private ClothesDataViewModel clothesDataViewModel;
 
     private TabLayout tabLayout;
@@ -123,6 +123,9 @@ public class ClothesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 activityItemsVisibility();
+                Intent intent = new Intent(getApplicationContext(), CameraActivity.class);
+                startActivity(intent);
+
                 clothesDataViewModel = new ViewModelProvider(clothesActivity).get(ClothesDataViewModel.class);
                 clothesDataViewModel.setFragmentsSize(NUM_FRAGMENTS);
                 viewPager.setAdapter(pagerAdapter);
