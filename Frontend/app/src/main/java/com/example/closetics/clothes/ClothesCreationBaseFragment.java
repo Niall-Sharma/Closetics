@@ -36,8 +36,11 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.closetics.R;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 public class ClothesCreationBaseFragment extends Fragment{
     private Button submit;
@@ -49,6 +52,7 @@ public class ClothesCreationBaseFragment extends Fragment{
     private ViewPager2 viewPager;
     private int position;
     private ImageView imageView;
+    private String internalStoragePath;
     //Camera
     private int correctFacingCamera = CameraCharacteristics.AUTOMOTIVE_LENS_FACING_EXTERIOR_FRONT;
     private Uri imageUri;
@@ -57,7 +61,8 @@ public class ClothesCreationBaseFragment extends Fragment{
     private final ActivityResultLauncher<Intent> cameraLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK) {
-                    clothesDataViewModel.setFragment(position, imageUri.toString());
+                    String path = copyImageToInternalStorage(imageUri);
+                    clothesDataViewModel.setFragment(position, path);
                     try {
                         imageView.setImageBitmap(resizeImage(imageUri, 150, 150));
                     } catch (IOException e) {
@@ -257,13 +262,32 @@ public class ClothesCreationBaseFragment extends Fragment{
         values.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/Closetics");
 
         imageUri = requireActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-        //Note: for now this is fine as what is being sent to the backend, will only work locally
-
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
         cameraLauncher.launch(intent);
     }
+
+    //This copies the image to internal storage keeping it safe from deletion, also can easily be changed to return a file instead once
+    //backend has functionality completed
+    private String copyImageToInternalStorage(Uri sourceUri) {
+        try (InputStream inputStream = requireContext().getContentResolver().openInputStream(sourceUri)) {
+            File internalFile = new File(requireContext().getFilesDir(), "closetics_" + System.currentTimeMillis() + ".jpg");
+            try (OutputStream outputStream = new FileOutputStream(internalFile)) {
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+            }
+            // Now you can safely send this file to the backend
+            return internalFile.getAbsoluteFile().toString();
+        } catch (IOException e) {
+            Log.e("Exception", e.toString());
+            return null;
+        }
+    }
+
 
 
 

@@ -146,7 +146,7 @@ public class ClothesActivity extends AppCompatActivity {
         });
 
         testCamera.setOnClickListener(v -> {
-            Intent intent = new Intent(this, CameraActivity.class);
+            Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         });
     }
@@ -172,7 +172,7 @@ public class ClothesActivity extends AppCompatActivity {
      * @param type     the type of clothing to fetch
      */
     private void getClothingByType(Context context, long userId, String URL, long type) {
-        ClothesManager.getClothingByTypeRequest(context, userId, URL, type, new Response.Listener<JSONArray>() {
+        ClothesManager.getClothingByTypeRequest(context, userId, URL + "/getClothing", type, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 Log.d("Volley Response", response.toString());
