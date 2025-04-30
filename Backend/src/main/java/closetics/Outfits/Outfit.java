@@ -8,6 +8,7 @@ import closetics.Users.UserProfile.UserProfileDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -46,7 +47,7 @@ public class Outfit {
             joinColumns = @JoinColumn(name = "outfit_id"),
             inverseJoinColumns = @JoinColumn(name = "user_profile_id")
     )
-    private List<UserProfile> userProfileLikes;
+    private List<UserProfile> userProfileLikes = new ArrayList<>();
 
     private String outfitName;
     private LocalDate creationDate;
