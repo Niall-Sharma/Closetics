@@ -1,5 +1,8 @@
 package com.example.closetics.clothes;
 
+import static android.app.PendingIntent.getActivity;
+
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.closetics.MainActivity;
@@ -17,7 +21,21 @@ import java.util.HashMap;
 
 public class TypeGridRecyclerViewAdapter extends RecyclerView.Adapter<TypeGridRecyclerViewAdapter.MyViewHolder> {
 
-    int [] imageResource;
+    int [] imageResources = {
+            R.drawable.accessories_icon,
+            R.drawable.activewear_icon,
+            R.drawable.bottoms_icon,
+            R.drawable.dress_icon,
+            R.drawable.footwear_icon,
+            R.drawable.formalwear_icon,
+            //Outerwear icon here:
+            R.drawable.tops_icon,
+            R.drawable.seasonal_icon,
+            R.drawable.sleepwear_icon,
+            R.drawable.tops_icon,
+            R.drawable.undergarments_icon,
+            R.drawable.workwear_icon
+    };
     HashMap<Long,Long> counts;
     OnItemClickListener clickListener;
 
@@ -40,11 +58,12 @@ public class TypeGridRecyclerViewAdapter extends RecyclerView.Adapter<TypeGridRe
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         long longRealPosition = holder.getBindingAdapterPosition();
         int realPosition = holder.getBindingAdapterPosition();
-        //Sets the changing views from the innerclass
+
+        //Set the proper imageView drawable
+        holder.imageView.setImageResource(imageResources[realPosition]);
 
         //holder.imageView.setImageResource(imageResource[position]);
         //Note: 1 based indexing for the hashmap keys
-        String type = MainActivity.CLOTHING_TYPES.get((realPosition+1));
         holder.typeText.setText(MainActivity.CLOTHING_TYPES.get(realPosition+1));
         String count = String.valueOf(counts.get(longRealPosition+1));
 
@@ -82,6 +101,8 @@ public class TypeGridRecyclerViewAdapter extends RecyclerView.Adapter<TypeGridRe
         ImageView imageView;
         TextView typeText;
         TextView countText;
+
+
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
