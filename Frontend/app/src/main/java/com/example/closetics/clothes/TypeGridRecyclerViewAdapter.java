@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.closetics.MainActivity;
@@ -29,7 +28,7 @@ public class TypeGridRecyclerViewAdapter extends RecyclerView.Adapter<TypeGridRe
             R.drawable.footwear_icon,
             R.drawable.formalwear_icon,
             //Outerwear icon here:
-            R.drawable.tops_icon,
+            R.drawable.outerwear_icon,
             R.drawable.seasonal_icon,
             R.drawable.sleepwear_icon,
             R.drawable.tops_icon,
