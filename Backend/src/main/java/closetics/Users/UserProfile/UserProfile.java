@@ -105,4 +105,11 @@ public class UserProfile{
   public void removeOutfit(Outfit outfit){
     outfits.remove(outfit);
   }
+  public List<Outfit> getLikedOutfits() {
+    return likedOutfits;
+  }
+
+  public void setLikedOutfits(List<Outfit> likedOutfits) {
+    this.likedOutfits = likedOutfits;
+  }
 }
