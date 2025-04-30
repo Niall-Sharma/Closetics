@@ -21,6 +21,7 @@ public class TransactionController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved all transactions",
                     content = @Content(mediaType = "application/json"))
     })
+    @GetMapping("/history")
     public ResponseEntity<List<TransactionHistory>> GetAllTransaction(){
         List<TransactionHistory> history = transactionRepository.findAll();
         return ResponseEntity.ok(history);
@@ -49,7 +50,8 @@ public class TransactionController {
                     content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "Transaction not found",
                     content = @Content(mediaType = "application/json"))
-    })    @DeleteMapping("/history/{id}")
+    })
+    @DeleteMapping("/history/{id}")
     public ResponseEntity<?> DeleteTransactionHistory(@PathVariable long id){
         try {
             TransactionHistory history = transactionRepository.findById(id).orElseThrow(() -> new RuntimeException("Transaction Not Found"));

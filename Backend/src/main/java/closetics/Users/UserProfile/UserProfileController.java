@@ -34,7 +34,8 @@ public class UserProfileController{
           @ApiResponse(responseCode = "200", description = "Successfully retrieved user profile",
                   content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserProfileDTO.class))),
           @ApiResponse(responseCode = "404", description = "User profile not found", content = @Content)
-  })  @GetMapping(path = "/userprofile/{id}")
+  })
+  @GetMapping(path = "/userprofile/{id}")
   public UserProfileDTO GetUserProfile(@PathVariable long id){
     return new UserProfileDTO(userRepository.findById(id).orElseThrow(() -> new RuntimeException("User Profile not found")).GetUserProfile(), 2);
   }
@@ -44,6 +45,7 @@ public class UserProfileController{
           @ApiResponse(responseCode = "200", description = "Successfully retrieved all user profiles",
                   content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserProfileDTO.class)))
   })
+  @GetMapping(path = "/userprofile")
   public List<UserProfileDTO> GetAllUserProfiles(){
     return uRepository.findAll().stream().map(p -> new UserProfileDTO(p, 2)).toList();
   }
@@ -54,7 +56,8 @@ public class UserProfileController{
           @ApiResponse(responseCode = "201", description = "Successfully created user profile",
                   content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserProfileDTO.class))),
           @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content)
-  })  @PostMapping(path = "/userprofile")
+  })
+  @PostMapping(path = "/userprofile")
   public UserProfileDTO CreateUserProfile(@RequestBody UserProfile userProfile){
     uRepository.save(userProfile);
     return new UserProfileDTO(userProfile, 2);
@@ -65,7 +68,8 @@ public class UserProfileController{
           @ApiResponse(responseCode = "200", description = "Successfully added following",
                   content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserProfileDTO.class))),
           @ApiResponse(responseCode = "404", description = "User profile not found", content = @Content)
-  })  @PutMapping(path = "/addFollowing/{id}/{followingId}")
+  })
+  @PutMapping(path = "/addFollowing/{id}/{followingId}")
   public UserProfileDTO AddFollowingToProfile(@PathVariable("id") long id, @PathVariable("followingId") long followingId){
     UserProfile userProfile = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User Profile Not Found")).GetUserProfile();
     UserProfile followingUser = userRepository.findById(followingId).orElseThrow(() -> new RuntimeException("Following User Profile Not Found")).GetUserProfile();
@@ -84,7 +88,8 @@ public class UserProfileController{
           @ApiResponse(responseCode = "200", description = "Successfully removed following",
                   content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserProfileDTO.class))),
           @ApiResponse(responseCode = "404", description = "User profile not found", content = @Content)
-  })  @PutMapping(path = "/removeFollowing/{id}/{followingId}")
+  })
+  @PutMapping(path = "/removeFollowing/{id}/{followingId}")
   public UserProfileDTO RemoveFollowingFromProfile(@PathVariable("id") long id, @PathVariable("followingId") long followingId){
     UserProfile userProfile = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User Profile Not Found")).GetUserProfile();
     UserProfile followingUser = userRepository.findById(followingId).orElseThrow(() -> new RuntimeException("Following User Profile Not Found")).GetUserProfile();
@@ -100,7 +105,8 @@ public class UserProfileController{
           @ApiResponse(responseCode = "200", description = "Successfully retrieved followers list",
                   content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserProfileDTO.class))),
           @ApiResponse(responseCode = "404", description = "User profile not found", content = @Content)
-  })  @GetMapping("/userprofile/followers/{id}")
+  })
+  @GetMapping("/userprofile/followers/{id}")
   public List<UserProfileDTO> GetFollowers(@PathVariable("id") Long id){
     UserProfile userProfile = uRepository.findById(id).orElseThrow(() -> new RuntimeException("User Profile Not Found"));
     UserProfileDTO userProfileDTO = new UserProfileDTO(userProfile, 2);
@@ -112,7 +118,8 @@ public class UserProfileController{
           @ApiResponse(responseCode = "200", description = "Successfully retrieved following list",
                   content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserProfileDTO.class))),
           @ApiResponse(responseCode = "404", description = "User profile not found", content = @Content)
-  })  @GetMapping("/userprofile/following/{id}")
+  })
+  @GetMapping("/userprofile/following/{id}")
   public List<UserProfileDTO> GetFollowing(@PathVariable("id") Long id){
     UserProfile userProfile = uRepository.findById(id).orElseThrow(() -> new RuntimeException("User Profile Not Found"));
     UserProfileDTO userProfileDTO = new UserProfileDTO(userProfile, 2);
@@ -125,7 +132,8 @@ public class UserProfileController{
           @ApiResponse(responseCode = "200", description = "Successfully retrieved user's outfits",
                   content = @Content(mediaType = "application/json", schema = @Schema(implementation = Outfit.class))),
           @ApiResponse(responseCode = "404", description = "User profile not found", content = @Content)
-  })  @GetMapping("/userprofile/outfits/{id}")
+  })
+  @GetMapping("/userprofile/outfits/{id}")
   public List<Outfit> GetOutfits(@PathVariable("id") Long id){
     return uRepository.findById(id).get().getOutfits();
   }
@@ -135,7 +143,8 @@ public class UserProfileController{
           @ApiResponse(responseCode = "200", description = "Successfully changed public setting",
                   content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserProfileDTO.class))),
           @ApiResponse(responseCode = "404", description = "User profile not found", content = @Content)
-  })  @PutMapping("/userprofile/swappublicsetting/{id}")
+  })
+  @PutMapping("/userprofile/swappublicsetting/{id}")
   public UserProfileDTO swapFavorite(@PathVariable long id) {
     UserProfile userProfile = uRepository.findById(id).orElseThrow(() -> new RuntimeException("User Profile Not Found"));
     if (userProfile != null) {
