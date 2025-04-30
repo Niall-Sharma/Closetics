@@ -35,8 +35,9 @@ public class ClothesDataViewModel extends ViewModel {
     }
 
     //Get a fragments data at a specific index
-    public MutableLiveData<String> getFragment(int index){
-        return fragments.get(index);
+    public String getFragment(int index){
+        MutableLiveData<String> g = fragments.get(index);
+        return g.getValue();
     }
 
     public ArrayList<MutableLiveData<String>> getFragments(){

@@ -4,24 +4,25 @@ package com.example.closetics.clothes;
 import java.io.Serializable;
 
 public class ClothingItem implements Serializable {
-    public static String[] createClothesQuestions= { "Would you like to favorite this item?","Size of this item?","What color is it?","What date was it bought?",
+    public static String[] createClothesQuestions= { "Take an Image", "Would you like to favorite this item?","Size of this item?","What color is it?","What date was it bought?",
             "What is its price?", "What would you like to call this piece of clothing?",
-            "What is the brand?", "What material is it?"
+            "What is the brand?", "What material is it?", "Choose clothing item type", "Choose special type"
     };
+
     private String favorite;
     private String size;
     private String color;
     private String dateBought;
     private String brand;
-    //private String imagePath1;
+    private String imagePath;
     //private String imagePath2;
     //private String imagePath3;
     private String itemName;
     private String material;
     private String price;
     //private long userId;
-    //private long type;
-    //private long specialType;
+    private long type;
+    private long specialType;
 
 
     public ClothingItem (String favorite, String size, String color, String dateBought, String brand,

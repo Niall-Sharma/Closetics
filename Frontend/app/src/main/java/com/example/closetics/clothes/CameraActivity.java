@@ -45,12 +45,15 @@ public class CameraActivity extends AppCompatActivity {
     private final ActivityResultLauncher<Intent> cameraLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK) {
-                    imageView.setImageURI(imageUri);
+                    //imageView.setImageURI(imageUri);
+                    finish();
                 } else {
                     // Cleanup if the photo wasn't actually taken
                     if (imageUri != null) {
                         getContentResolver().delete(imageUri, null, null);
                         imageUri = null;
+                        finish();
+
                     }
                 }
             });
