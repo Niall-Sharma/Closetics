@@ -179,7 +179,7 @@ public class ClothingController {
             value = {
                     @ApiResponse(responseCode = "200", description = "Image succesfully saved"),
                     @ApiResponse(responseCode = "404", description = "Clothing not found"),
-                    
+
             }
     )
     @PutMapping("/addImage/{clothing_id}")
