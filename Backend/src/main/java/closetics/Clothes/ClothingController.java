@@ -1,7 +1,12 @@
 package closetics.Clothes;
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+import closetics.Clothes.ClothingImages.Image;
+import closetics.Clothes.ClothingImages.ImageRepository;
 import closetics.Statistics.ClothingStats;
 import closetics.Users.User;
 import closetics.Users.UserRepository;
@@ -18,6 +23,7 @@ import closetics.Statistics.ClothingStatRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @Tag(name = "Clothing Items", description = "Endpoints for managing individual clothing items")
@@ -30,6 +36,9 @@ public class ClothingController {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    ImageRepository imageRepository;
 
     @Operation(summary = "Get all clothing items (globally)", description = "Retrieves a list of all clothing items across all users. Use with caution, potentially large response.")
     @ApiResponses(value = {
@@ -104,7 +113,6 @@ public class ClothingController {
         clothing.setColor(request.getColor());
         clothing.setDateBought(request.getDateBought());
         clothing.setFavorite(request.getFavorite());
-        clothing.setImagePath(request.getImagePath());
         clothing.setItemName(request.getItemName());
         clothing.setMaterial(request.getMaterial());
         clothing.setPrice(request.getPrice());
@@ -150,7 +158,6 @@ public class ClothingController {
             clothing.setColor(request.getColor());
             clothing.setDateBought(request.getDateBought());
             clothing.setFavorite(request.getFavorite());
-            clothing.setImagePath(request.getImagePath());
             clothing.setItemName(request.getItemName());
             clothing.setMaterial(request.getMaterial());
             clothing.setPrice(request.getPrice());
@@ -161,6 +168,34 @@ public class ClothingController {
             return ResponseEntity.ok(clothing);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+    }
+
+    @Operation(summary = "Add an image to a clothing item")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Image succesfully saved")
+            }
+    )
+    @PutMapping("/addImage/{clothing_id}")
+    public ResponseEntity<Clothing> addImage(
+            @Parameter(description = "ID of the clothing item to modify") @PathVariable long clothing_Id,
+            @org.springframework.web.bind.annotation.RequestBody MultipartFile imageFile){
+        try {
+            File destinationFile = new File("/home/"+File.separator + imageFile.getOriginalFilename());
+            imageFile.transferTo(destinationFile);
+
+            Image image = new Image();
+            image.setFilePath(destinationFile.getAbsolutePath());
+
+            Clothing clothing = clothingRepository.findById(clothing_Id).orElseThrow(() -> new RuntimeException("Clothing not found"));
+            clothing.setImagePath(image);
+            clothingRepository.save(clothing);
+
+            return ResponseEntity.ok().body(clothing);
+        }catch (IOException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
     }
