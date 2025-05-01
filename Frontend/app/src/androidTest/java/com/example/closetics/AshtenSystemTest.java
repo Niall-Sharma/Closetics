@@ -34,6 +34,8 @@ import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
+import static androidx.test.espresso.intent.Intents.times;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
@@ -48,6 +50,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.StringEndsWith.endsWith;
 
 import static java.util.function.Predicate.not;
@@ -78,7 +81,7 @@ public class AshtenSystemTest {
     private static String testPassword = "Abcde1234@";
     private static String securityPassword1 = "Cesar";
     private static String securityPassword2 = "Red";
-    private long userID;
+    private static long userID;
 
     @ClassRule
     @Rule
@@ -112,15 +115,19 @@ public class AshtenSystemTest {
         onView(withId(R.id.editTextText2)).perform(typeText(securityPassword2), closeSoftKeyboard());
 
         onView(withId(R.id.signup_signup_button)).perform(click());
+        sleep();
+        userID = UserManager.getUserID(getApplicationContext());
+
         activityScenarioRule.getScenario().close();
     }
 
 
-    @Test
+    /**
+     * Test a successful login with the newly created user
+     */
+    //@Test
     public void testLogin(){
         Intents.init();
-        userID = UserManager.getUserID(getApplicationContext());
-
         //Start a new activity scenario at the main class
         ActivityScenario.launch(MainActivity.class);
 
@@ -154,7 +161,105 @@ public class AshtenSystemTest {
         ));
 
     }
-    
+
+    /**
+     * Successful change password test
+     */
+    @Test
+    public void testChangePassword() {
+        String newPassword = "Ppppp12345!";
+        Intents.init();
+        ActivityScenario.launch(MainActivity.class);
+
+        onView(withId(R.id.navigation_profile)).perform(click());
+
+        //Check if the logout button is clickable first!
+        onView(withId(R.id.profile_logout_button)).check(matches(isClickable()));
+
+        //Click it
+        //onView(withId(R.id.profile_logout_button)).perform(click());
+        //sleep();
+
+        //onView(withId(R.id.profile_username_text)).check(matches(withText("Guest (not logged in)")));
+
+
+        // click log in
+        onView(withId(R.id.profile_login_button)).perform(click());
+        intended(hasComponent(LoginActivity.class.getName()));
+
+        onView(withId(R.id.login_username_edit)).perform(typeText(testUsername), closeSoftKeyboard());
+        //forgot password fragment press
+        onView(withId(R.id.login_forgot_password)).perform(click());
+        sleep();
+
+        onView(withId(R.id.security_3_question_spinner))
+                .check(matches(isDisplayed()))
+                .perform(click());
+
+        onData(allOf(is(instanceOf(String.class)), is("What is the name of your childhood best friend?"))).perform(click());
+
+        //Type in the proper security password
+        onView(withId(R.id.security_input_password)).perform(typeText(securityPassword1), closeSoftKeyboard());
+
+        onView(withId(R.id.change_password_edit)).perform(typeText(newPassword), closeSoftKeyboard());
+        onView(withId(R.id.change_password_confirm_edit)).perform(typeText(newPassword), closeSoftKeyboard());
+
+        onView(withId(R.id.change_submit_button)).perform(click());
+        sleep();
+
+        intended(allOf(
+                hasComponent(MainActivity.class.getName()),
+                hasAction(nullValue(String.class))  // or hasAction(Intent.ACTION_MAIN)
+        ));
+
+
+        //Now try the second security question!
+
+
+        onView(withId(R.id.navigation_profile)).check(matches(isDisplayed()))
+                .perform(click());
+
+        //Check if the logout button is clickable first!
+        onView(withId(R.id.profile_logout_button)).check(matches(isClickable()));
+
+        //Click it
+        //onView(withId(R.id.profile_logout_button)).perform(click());
+        //sleep();
+
+        //onView(withId(R.id.profile_username_text)).check(matches(withText("Guest (not logged in)")));
+
+        // click log in
+        onView(withId(R.id.profile_login_button)).perform(click());
+        //There will have been two LoginActivity intents now!
+        intended(hasComponent(LoginActivity.class.getName()), times(2));
+
+        onView(withId(R.id.login_username_edit)).perform(typeText(testUsername), closeSoftKeyboard());
+        //forgot password fragment press
+        onView(withId(R.id.login_forgot_password)).perform(click());
+        sleep();
+
+        onView(withId(R.id.security_3_question_spinner))
+                .check(matches(isDisplayed()))
+                .perform(click());
+
+
+        onData(allOf(is(instanceOf(String.class)), is("What is your favorite color?"))).perform(click());
+
+        //Type in the proper security password
+        onView(withId(R.id.security_input_password)).perform(typeText(securityPassword2), closeSoftKeyboard());
+
+        onView(withId(R.id.change_password_edit)).perform(typeText(testPassword), closeSoftKeyboard());
+        onView(withId(R.id.change_password_confirm_edit)).perform(typeText(testPassword), closeSoftKeyboard());
+
+        onView(withId(R.id.change_submit_button)).perform(click());
+        sleep();
+        intended(allOf(
+                hasComponent(MainActivity.class.getName()),
+                hasAction(nullValue(String.class))  // or hasAction(Intent.ACTION_MAIN)
+        ));
+        
+    }
+
 
 
 

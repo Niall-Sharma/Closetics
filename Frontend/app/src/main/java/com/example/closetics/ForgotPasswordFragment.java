@@ -193,8 +193,11 @@ public class ForgotPasswordFragment extends Fragment {
                             }
                             else{
                                 //Password change successful, change screen
-                                Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
+                                Intent intent = new Intent(getActivity(), MainActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
+                                getActivity().finish();  // Finish LoginActivity if necessary
+
                             }
                         } catch (JSONException e) {
                             Log.d("JSON Error", e.toString());
