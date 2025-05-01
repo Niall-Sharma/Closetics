@@ -52,6 +52,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.StringEndsWith.endsWith;
+import static org.junit.Assert.assertEquals;
 
 import static java.util.function.Predicate.not;
 
@@ -61,6 +62,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.util.List;
 
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
@@ -73,6 +75,7 @@ import okhttp3.mockwebserver.RecordedRequest;
 
 public class AshtenSystemTest {
 
+    private static String adbPath = "C:\\Users\\ashte\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe";
     private static final int SIMULATED_DELAY_MS = 500;
     private CountingIdlingResource idlingResource;
 
@@ -94,7 +97,8 @@ public class AshtenSystemTest {
      */
     //@BeforeClass
     public static void launchActivity() {
-
+        //disableAnimations();
+        /*
         ActivityScenario.launch(new Intent(Intent.ACTION_MAIN)
                 .setClassName("com.example.closetics", "com.example.closetics.SignupActivity"));
 
@@ -119,153 +123,139 @@ public class AshtenSystemTest {
         userID = UserManager.getUserID(getApplicationContext());
 
         activityScenarioRule.getScenario().close();
+
+         */
     }
 
 
     /**
      * Test a successful login with the newly created user
      */
-    //@Test
+    @Test
     public void testLogin(){
         performLogin();
+        sleep();
+        Intents.release();
         activityScenarioRule.getScenario().close();
-
     }
+
 
     /**
      * Successful change password test
      */
-    //@Test
+    @Test
     public void testChangePassword() {
         String newPassword = "Ppppp12345!";
         Intents.init();
         ActivityScenario.launch(MainActivity.class);
 
-        onView(withId(R.id.navigation_profile)).perform(click());
+        onView(withId(R.id.navigation_profile)).check(matches(isDisplayed()))
+                .perform(click());
+        sleep();
 
-        //Check if the logout button is clickable first!
-        onView(withId(R.id.profile_logout_button)).check(matches(isClickable()));
+        onView(withId(R.id.profile_logout_button)).check(matches(isClickable())).perform(click());
+        sleep();
 
-        //Click it
-        //onView(withId(R.id.profile_logout_button)).perform(click());
-        //sleep();
-
-        //onView(withId(R.id.profile_username_text)).check(matches(withText("Guest (not logged in)")));
+        onView(withId(R.id.profile_login_button)).check(matches(isDisplayed()))
+                .perform(click());
 
 
-        // click log in
-        onView(withId(R.id.profile_login_button)).perform(click());
+
         intended(hasComponent(LoginActivity.class.getName()));
 
         onView(withId(R.id.login_username_edit)).perform(typeText(testUsername), closeSoftKeyboard());
-        //forgot password fragment press
         onView(withId(R.id.login_forgot_password)).perform(click());
         sleep();
 
-        onView(withId(R.id.security_3_question_spinner))
-                .check(matches(isDisplayed()))
-                .perform(click());
-
+        onView(withId(R.id.security_3_question_spinner)).perform(click());
         onData(allOf(is(instanceOf(String.class)), is("What is the name of your childhood best friend?"))).perform(click());
+        sleep();
 
-        //Type in the proper security password
         onView(withId(R.id.security_input_password)).perform(typeText(securityPassword1), closeSoftKeyboard());
-
         onView(withId(R.id.change_password_edit)).perform(typeText(newPassword), closeSoftKeyboard());
         onView(withId(R.id.change_password_confirm_edit)).perform(typeText(newPassword), closeSoftKeyboard());
 
         onView(withId(R.id.change_submit_button)).perform(click());
         sleep();
 
-        intended(allOf(
-                hasComponent(MainActivity.class.getName()),
-                hasAction(nullValue(String.class))  // or hasAction(Intent.ACTION_MAIN)
-        ));
+        intended(allOf(hasComponent(MainActivity.class.getName()), hasAction(nullValue(String.class))));
+        sleep();
 
+        onView(withId(R.id.navigation_profile)).perform(click());
+        sleep();
 
-        //Now try the second security question!
-
-
-        onView(withId(R.id.navigation_profile)).check(matches(isDisplayed()))
-                .perform(click());
-
-        //Check if the logout button is clickable first!
         onView(withId(R.id.profile_logout_button)).check(matches(isClickable()));
+        sleep();
 
-        //Click it
-        //onView(withId(R.id.profile_logout_button)).perform(click());
-        //sleep();
-
-        //onView(withId(R.id.profile_username_text)).check(matches(withText("Guest (not logged in)")));
-
-        // click log in
         onView(withId(R.id.profile_login_button)).perform(click());
-        //There will have been two LoginActivity intents now!
+        sleep();
+
         intended(hasComponent(LoginActivity.class.getName()), times(2));
 
         onView(withId(R.id.login_username_edit)).perform(typeText(testUsername), closeSoftKeyboard());
-        //forgot password fragment press
         onView(withId(R.id.login_forgot_password)).perform(click());
         sleep();
 
-        onView(withId(R.id.security_3_question_spinner))
-                .check(matches(isDisplayed()))
-                .perform(click());
-
-
+        onView(withId(R.id.security_3_question_spinner)).perform(click());
         onData(allOf(is(instanceOf(String.class)), is("What is your favorite color?"))).perform(click());
+        sleep();
 
-        //Type in the proper security password
         onView(withId(R.id.security_input_password)).perform(typeText(securityPassword2), closeSoftKeyboard());
-
         onView(withId(R.id.change_password_edit)).perform(typeText(testPassword), closeSoftKeyboard());
         onView(withId(R.id.change_password_confirm_edit)).perform(typeText(testPassword), closeSoftKeyboard());
 
         onView(withId(R.id.change_submit_button)).perform(click());
         sleep();
-        intended(allOf(
-                hasComponent(MainActivity.class.getName()),
-                hasAction(nullValue(String.class))  // or hasAction(Intent.ACTION_MAIN)
-        ));
+
+        List<Intent> allIntents = Intents.getIntents();
+
+        long mainActivityLaunchCount = allIntents.stream()
+                .filter(intent -> MainActivity.class.getName().equals(intent.getComponent().getClassName()))
+                .count();
+
+        assertEquals(3, mainActivityLaunchCount);
+
+        Intents.release();
         activityScenarioRule.getScenario().close();
-
-
     }
+
     @Test
     public void editUser(){
         performLogin();
+        sleep();
 
         String newUsername = "SystemAshten";
+
         onView(withId(R.id.navigation_profile)).perform(click());
-        //Edit user button
+        sleep();
+
         onView(withId(R.id.profile_edit_user_button)).perform(click());
-        //Make sure the activity opens
+        sleep();
+
         intended(hasComponent(EditUserActivity.class.getName()));
 
-        //Edit both email and username edit texts
         onView(withId(R.id.change_username_edit)).perform(typeText(newUsername), closeSoftKeyboard());
         onView(withId(R.id.change_email_new_edit)).perform(typeText(testEmail), closeSoftKeyboard());
 
-        //Edit user submit
         onView(withId(R.id.edit_user_submit)).perform(click());
         sleep();
+
         onView(withId(R.id.navigation_profile)).perform(click());
+        sleep();
 
-        //Check if the new username is there!
         onView(withId(R.id.profile_username_text)).check(matches(withText(newUsername)));
-        //Now change it back
 
-        //Edit user button
         onView(withId(R.id.profile_edit_user_button)).perform(click());
-        //Make sure the activity opens
+        sleep();
+
         intended(hasComponent(EditUserActivity.class.getName()), times(2));
+
         onView(withId(R.id.change_username_edit)).perform(typeText(testUsername), closeSoftKeyboard());
         onView(withId(R.id.edit_user_submit)).perform(click());
+        sleep();
 
-
-
+        Intents.release();
         activityScenarioRule.getScenario().close();
-
     }
 
 
@@ -373,6 +363,15 @@ public class AshtenSystemTest {
 
     private static void sleep() {
         sleep(SIMULATED_DELAY_MS);
+    }
+    private static void disableAnimations(){
+        try{
+            Runtime.getRuntime().exec(adbPath + " shell settings put global window_animation_scale 0");
+            Runtime.getRuntime().exec(adbPath + " shell settings put global transition_animation_scale 0");
+            Runtime.getRuntime().exec(adbPath + " shell settings put global animator_duration_scale 0");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static void sleep(final int delay_ms) {
