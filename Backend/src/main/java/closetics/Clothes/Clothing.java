@@ -22,7 +22,12 @@ public class Clothing {
     private String color;
     private String dateBought;
     private String brand;
-    private Image image = null;
+
+    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JoinColumn(name = "image_id")
+    private Image image;
+
+
     private String itemName;
     private String material;
     private String price;
@@ -126,7 +131,7 @@ public class Clothing {
     public Image getImagePath() {
         return image;
     }
-    public void setImagePath(Image imagePath) {
+    public void setImage(Image imagePath) {
         this.image = imagePath;
     }
 

@@ -1,6 +1,7 @@
 package closetics.Clothes;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +22,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import closetics.Statistics.ClothingStatRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -175,7 +177,9 @@ public class ClothingController {
     @Operation(summary = "Add an image to a clothing item")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "Image succesfully saved")
+                    @ApiResponse(responseCode = "200", description = "Image succesfully saved"),
+                    @ApiResponse(responseCode = "404", description = "Clothing not found"),
+                    
             }
     )
     @PutMapping("/addImage/{clothing_id}")
@@ -183,14 +187,18 @@ public class ClothingController {
             @Parameter(description = "ID of the clothing item to modify") @PathVariable long clothing_Id,
             @org.springframework.web.bind.annotation.RequestBody MultipartFile imageFile){
         try {
+            Clothing clothing = clothingRepository.findById(clothing_Id).orElseThrow(() -> new RuntimeException("Clothing not found"));
+
             File destinationFile = new File("/home/"+File.separator + imageFile.getOriginalFilename());
             imageFile.transferTo(destinationFile);
 
             Image image = new Image();
             image.setFilePath(destinationFile.getAbsolutePath());
+            image.setId(clothing.getClothesId());
+            image.readImage();
+            imageRepository.save(image);
 
-            Clothing clothing = clothingRepository.findById(clothing_Id).orElseThrow(() -> new RuntimeException("Clothing not found"));
-            clothing.setImagePath(image);
+            clothing.setImage(image);
             clothingRepository.save(clothing);
 
             return ResponseEntity.ok().body(clothing);
@@ -198,6 +206,19 @@ public class ClothingController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
+    }
+
+    @Operation(summary = "Returns the clothing image")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Image returned"),
+                    @ApiResponse(responseCode = "404", description = "Image not found")
+            }
+    )
+    @GetMapping(value = "/images/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getImage(@Parameter(description = "ID of the clothing item") @PathVariable long id) throws IOException {
+        Image image = imageRepository.findById(id).orElseThrow(() -> new RuntimeException("Image not found"));
+        return ResponseEntity.ok().body(image.getImageData());
     }
 
     @Operation(summary = "Toggle the favorite status of a clothing item", description = "Sets a clothing item's favorite status to true if false, and vice versa.")
