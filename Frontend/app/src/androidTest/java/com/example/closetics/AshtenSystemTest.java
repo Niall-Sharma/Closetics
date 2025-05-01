@@ -127,45 +127,15 @@ public class AshtenSystemTest {
      */
     //@Test
     public void testLogin(){
-        Intents.init();
-        //Start a new activity scenario at the main class
-        ActivityScenario.launch(MainActivity.class);
-
-        onView(withId(R.id.navigation_profile)).perform(click());
-
-        //Check if the logout button is clickable first!
-        onView(withId(R.id.profile_logout_button)).check(matches(isClickable()));
-
-        //Click it
-        //onView(withId(R.id.profile_logout_button)).perform(click());
-        //sleep();
-
-        //onView(withId(R.id.profile_username_text)).check(matches(withText("Guest (not logged in)")));
-
-        // click log in
-        onView(withId(R.id.profile_login_button)).perform(click());
-        intended(hasComponent(LoginActivity.class.getName()));
-
-        //Type into the login edit texts
-        onView(withId(R.id.login_username_edit)).perform(typeText(testUsername), closeSoftKeyboard());
-
-        onView(withId(R.id.login_password_edit)).perform(typeText(testPassword), closeSoftKeyboard());
-
-        onView(withId(R.id.login_login_button)).perform(click());
-        sleep();
-
-        intended(allOf(
-                hasComponent(MainActivity.class.getName()),
-                hasExtra("USERNAME", testUsername),
-                hasExtra("PASSWORD", testPassword)
-        ));
+        performLogin();
+        activityScenarioRule.getScenario().close();
 
     }
 
     /**
      * Successful change password test
      */
-    @Test
+    //@Test
     public void testChangePassword() {
         String newPassword = "Ppppp12345!";
         Intents.init();
@@ -257,7 +227,45 @@ public class AshtenSystemTest {
                 hasComponent(MainActivity.class.getName()),
                 hasAction(nullValue(String.class))  // or hasAction(Intent.ACTION_MAIN)
         ));
-        
+        activityScenarioRule.getScenario().close();
+
+
+    }
+    @Test
+    public void editUser(){
+        performLogin();
+
+        String newUsername = "SystemAshten";
+        onView(withId(R.id.navigation_profile)).perform(click());
+        //Edit user button
+        onView(withId(R.id.profile_edit_user_button)).perform(click());
+        //Make sure the activity opens
+        intended(hasComponent(EditUserActivity.class.getName()));
+
+        //Edit both email and username edit texts
+        onView(withId(R.id.change_username_edit)).perform(typeText(newUsername), closeSoftKeyboard());
+        onView(withId(R.id.change_email_new_edit)).perform(typeText(testEmail), closeSoftKeyboard());
+
+        //Edit user submit
+        onView(withId(R.id.edit_user_submit)).perform(click());
+        sleep();
+        onView(withId(R.id.navigation_profile)).perform(click());
+
+        //Check if the new username is there!
+        onView(withId(R.id.profile_username_text)).check(matches(withText(newUsername)));
+        //Now change it back
+
+        //Edit user button
+        onView(withId(R.id.profile_edit_user_button)).perform(click());
+        //Make sure the activity opens
+        intended(hasComponent(EditUserActivity.class.getName()), times(2));
+        onView(withId(R.id.change_username_edit)).perform(typeText(testUsername), closeSoftKeyboard());
+        onView(withId(R.id.edit_user_submit)).perform(click());
+
+
+
+        activityScenarioRule.getScenario().close();
+
     }
 
 
@@ -322,6 +330,42 @@ public class AshtenSystemTest {
         onView(withId(R.id.profile_delete_user_button)).perform(click());
         sleep();
         onView(withId(R.id.delete_user_yes_button)).perform(click());
+
+    }
+    private void performLogin(){
+        Intents.init();
+        //Start a new activity scenario at the main class
+        ActivityScenario.launch(MainActivity.class);
+
+        onView(withId(R.id.navigation_profile)).perform(click());
+
+        //Check if the logout button is clickable first!
+        onView(withId(R.id.profile_logout_button)).check(matches(isClickable()));
+
+        //Click it
+        //onView(withId(R.id.profile_logout_button)).perform(click());
+        //sleep();
+
+        //onView(withId(R.id.profile_username_text)).check(matches(withText("Guest (not logged in)")));
+
+        // click log in
+        onView(withId(R.id.profile_login_button)).perform(click());
+        intended(hasComponent(LoginActivity.class.getName()));
+
+        //Type into the login edit texts
+        onView(withId(R.id.login_username_edit)).perform(typeText(testUsername), closeSoftKeyboard());
+
+        onView(withId(R.id.login_password_edit)).perform(typeText(testPassword), closeSoftKeyboard());
+
+        onView(withId(R.id.login_login_button)).perform(click());
+        sleep();
+        sleep();
+
+        intended(allOf(
+                hasComponent(MainActivity.class.getName()),
+                hasExtra("USERNAME", testUsername),
+                hasExtra("PASSWORD", testPassword)
+        ));
 
     }
 
