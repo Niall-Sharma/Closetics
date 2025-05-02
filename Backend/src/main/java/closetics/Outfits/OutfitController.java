@@ -219,7 +219,7 @@ public class OutfitController {
                 return ResponseEntity.ok().body(true);
             }
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok().body(false);
     }
 
 }
