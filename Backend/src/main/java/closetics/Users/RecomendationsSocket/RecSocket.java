@@ -19,9 +19,6 @@ import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Controller;
 
 import closetics.Outfits.Outfit;
@@ -29,14 +26,14 @@ import closetics.Outfits.OutfitRepository;
 import closetics.Users.UserProfile.UserProfile;
 import closetics.Users.UserProfile.UserProfileRepository;
 
-@Controller    
+@Controller
 @ServerEndpoint(value = "/recommendation/{uid}")
 public class RecSocket {
 
-	private static UserProfileRepository UserProfileRepository; 
+	private static UserProfileRepository UserProfileRepository;
   private static OutfitRepository OutfitRepository;
   private static UserRepository UserRepository;
-    private static RecService recommendationService;
+//    private static RecService recommendationService;
 
 	@Autowired
 	public void setUserProfileRepository(UserProfileRepository repo) {
@@ -54,9 +51,9 @@ public class RecSocket {
     }
 
     @Autowired
-    public void setRecommendationService(RecService service) {
-        recommendationService = service;
-    }
+//    public void setRecommendationService(RecService service) {
+//        recommendationService = service;
+//    }
 
 	// Store all socket session and their corresponding username.
 	private static Map<Session, Long> sessionUsernameMap = new Hashtable<>();
@@ -81,20 +78,20 @@ public class RecSocket {
     }
     followingOutfitMap.put(UID, followingOutfits);
 
-		
+
 	}
 
 	@OnMessage
-	public void onMessage(String message, Session session) throws IOException {
+	public void onMessage(Session session, String message) throws IOException {
 
 		long UID = sessionUsernameMap.get(session);
-    
+
     sendRec(UID);
 
 
 
 	}
-    
+
 	@OnClose
 	public void onClose(Session session) throws IOException {
 
@@ -110,7 +107,6 @@ public class RecSocket {
 		throwable.printStackTrace();
 	}
 
-  //Maybe take stats into consideration when deciding on what recomendations to pick
 	private void sendRec(long UID) {
         int recSize = 5;
         List<Outfit> recList = new ArrayList<>();
