@@ -36,6 +36,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.closetics.R;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -56,13 +57,14 @@ public class ClothesCreationBaseFragment extends Fragment{
     //Camera
     private int correctFacingCamera = CameraCharacteristics.AUTOMOTIVE_LENS_FACING_EXTERIOR_FRONT;
     private Uri imageUri;
+    public static byte[] byteArray;
 
     //Launches the default camera app
     private final ActivityResultLauncher<Intent> cameraLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK) {
-                    String path = copyImageToInternalStorage(imageUri);
-                    clothesDataViewModel.setFragment(position, path);
+                    byteArray = getImageByteArrayFromUri(imageUri);
+                    clothesDataViewModel.setFragment(position, "s");
                     try {
                         imageView.setImageBitmap(resizeImage(imageUri, 150, 150));
                     } catch (IOException e) {
@@ -268,25 +270,25 @@ public class ClothesCreationBaseFragment extends Fragment{
         cameraLauncher.launch(intent);
     }
 
-    //This copies the image to internal storage keeping it safe from deletion, also can easily be changed to return a file instead once
-    //backend has functionality completed
-    private String copyImageToInternalStorage(Uri sourceUri) {
-        try (InputStream inputStream = requireContext().getContentResolver().openInputStream(sourceUri)) {
-            File internalFile = new File(requireContext().getFilesDir(), "closetics_" + System.currentTimeMillis() + ".jpg");
-            try (OutputStream outputStream = new FileOutputStream(internalFile)) {
-                byte[] buffer = new byte[4096];
-                int bytesRead;
-                while ((bytesRead = inputStream.read(buffer)) != -1) {
-                    outputStream.write(buffer, 0, bytesRead);
-                }
-            }
-            // Now you can safely send this file to the backend
-            return internalFile.getAbsoluteFile().toString();
+
+    private byte[] getImageByteArrayFromUri(Uri sourceUri) {
+        try {
+            // Decode bitmap from the URI
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), sourceUri);
+
+            // Compress the bitmap to a PNG or JPEG byte array
+            ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteStream); // or Bitmap.CompressFormat.PNG
+
+            return byteStream.toByteArray();
+
         } catch (IOException e) {
-            Log.e("Exception", e.toString());
+            Log.e("ImageConversionError", e.toString());
             return null;
         }
+
     }
+
 
 
 

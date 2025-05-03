@@ -140,8 +140,9 @@ public class ClothesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ArrayList<MutableLiveData<String>> fragments = clothesDataViewModel.getFragments();
-                saveClothing(getApplicationContext(), fragments, URL, UserManager.getUserID(getApplicationContext()));
+                //saveClothing(getApplicationContext(), fragments, URL, UserManager.getUserID(getApplicationContext()));
                 //Need to add the image to the new clothing item
+                addImage(38);
 
                 ClothesActivity.getUserClothing(context, UserManager.getUserID(getApplicationContext()), URL);
             }
@@ -280,6 +281,7 @@ public class ClothesActivity extends AppCompatActivity {
                 Log.d("Save Clothing response", response.toString());
                 try {
                     Long id = response.getLong("clothesId");
+                    addImage(id);
 
                 } catch (JSONException e) {
                     Log.e("ID error", e.toString());
@@ -294,6 +296,21 @@ public class ClothesActivity extends AppCompatActivity {
                 Log.e("Volley Error Response", error.toString());
             }
         });
+    }
+    private void addImage(long clothingId){
+        ClothesManager.addImage(this, clothingId, ClothesCreationBaseFragment.byteArray, MainActivity.SERVER_URL, new Response.Listener<NetworkResponse>() {
+            @Override
+            public void onResponse(NetworkResponse response) {
+                Log.d("Add image good", response.toString());
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Add image bad", error.toString());
+
+            }
+        });
+
     }
 
     /**
