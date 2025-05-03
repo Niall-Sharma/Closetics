@@ -94,10 +94,11 @@ public class ClothesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_clothes);
 
         addClothes = findViewById(R.id.add_clothes);
+        clothesActivityBack = findViewById(R.id.activity_back);
+        clothesActivityBack.setVisibility(View.GONE);
         testCamera = findViewById(R.id.view_clothes);
         finalSubmission = findViewById(R.id.final_submission);
         card = findViewById(R.id.card_view);
-
         tabLayout = findViewById(R.id.tabLayout);
         tabLayout.setVisibility(View.GONE);
         finalSubmission.setVisibility(View.GONE);
@@ -123,7 +124,6 @@ public class ClothesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 activityItemsVisibility();
-
 
                 clothesDataViewModel = new ViewModelProvider(clothesActivity).get(ClothesDataViewModel.class);
                 clothesDataViewModel.setFragmentsSize(NUM_FRAGMENTS);
@@ -151,7 +151,12 @@ public class ClothesActivity extends AppCompatActivity {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         });
+        clothesActivityBack.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ClothesActivity.class);
+            startActivity(intent);
+        });
     }
+
 
     /**
      * Hides certain UI elements and shows the fragment creation views.
@@ -161,6 +166,7 @@ public class ClothesActivity extends AppCompatActivity {
         testCamera.setVisibility(View.GONE);
         tabLayout.setVisibility(View.VISIBLE);
         finalSubmission.setVisibility(View.VISIBLE);
+        clothesActivityBack.setVisibility(View.VISIBLE);
         gridRecyclerView.setVisibility(View.GONE);
         card.setVisibility(View.GONE);
     }

@@ -46,6 +46,18 @@
     </androidx.cardview.widget.CardView>
 
     <Button
+        android:id="@+id/activity_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/card_view"
+        tools:layout_constraintBottom_toBottomOf="parent"
+        tools:layout_constraintTop_toBottomOf="@id/card_view" />
+
+    <Button
         android:id="@+id/view_clothes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -53,6 +65,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/card_view"
+        tools:layout_constraintBottom_toBottomOf="parent"
         tools:layout_constraintTop_toBottomOf="@id/card_view" />
 
     <LinearLayout
@@ -68,7 +82,7 @@
 
         <Button
             android:id="@+id/add_clothes"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Add Clothes" />
 

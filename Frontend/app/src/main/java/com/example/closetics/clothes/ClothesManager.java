@@ -12,6 +12,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.closetics.MainActivity;
 import com.example.closetics.VolleyMultipartRequest;
 import com.example.closetics.VolleySingleton;
@@ -271,7 +272,7 @@ public class ClothesManager {
 
 
     }
-    public static void addImage(Context context, Long clothingId,  String URL,
+    public static void addImage(Context context, Long clothingId, byte[] imageBytes,  String URL,
                                 Response.Listener<NetworkResponse> responseListener,
                                 Response.ErrorListener errorListener) {
         String addImageUrl = URL + "/addImage/" + clothingId;
@@ -281,9 +282,10 @@ public class ClothesManager {
         VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(
             Request.Method.PUT, addImageUrl, responseListener, errorListener);
 
-        multipartRequest.addFile("");
+        multipartRequest.addFile("imageFile", new VolleyMultipartRequest.DataPart("upload.jpg", imageBytes,  "image/jpeg"));
 
-
+        Volley.newRequestQueue(context).add(multipartRequest);
+        
 
 
         /*

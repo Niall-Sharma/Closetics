@@ -8,6 +8,20 @@ public class ClothingItem implements Serializable {
             "What is its price?", "What would you like to call this piece of clothing?",
             "What is the brand?", "What material is it?", "Choose clothing item type", "Choose special type"
     };
+    public static int[][] typeConnections = {
+            {10, 14, 15, 9, 8, 16},
+            {6, 5, 1, 66, 2},
+            {23, 17, },
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {}
+
+    };
 
     private String favorite;
     private String size;
@@ -15,8 +29,6 @@ public class ClothingItem implements Serializable {
     private String dateBought;
     private String brand;
     private String imagePath;
-    //private String imagePath2;
-    //private String imagePath3;
     private String itemName;
     private String material;
     private String price;
