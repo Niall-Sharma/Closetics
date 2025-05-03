@@ -1,5 +1,8 @@
 package com.example.closetics.recommendations;
 
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +14,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.example.closetics.MainActivity;
+import com.example.closetics.PublicProfileActivity;
 import com.example.closetics.R;
+import com.example.closetics.UserManager;
+import com.example.closetics.outfits.OutfitManager;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,11 +56,9 @@ public class RecOutfitsListAdapter extends RecyclerView.Adapter<RecOutfitsListAd
         holder.usernameText.setText(username);
         holder.statsText.setText(stats);
         holder.dateText.setText("Posted on " + date);
-        if (item.isLiked()) {
-            holder.likeButton.setImageResource(R.drawable.heart);
-        } else {
-            holder.likeButton.setImageResource(R.drawable.heart_outline);
-        }
+
+        // init like button functionality
+        initLike(holder, item);
 
         // set images
         // TODO: set proper images format here
@@ -62,17 +71,16 @@ public class RecOutfitsListAdapter extends RecyclerView.Adapter<RecOutfitsListAd
         holder.viewPager2.setAdapter(imagesListAdapter);
 
         holder.usernameText.setOnClickListener(v -> {
-            // TODO: open public profile by username
-        });
-
-        holder.likeButton.setOnClickListener(v -> {
-            item.setLiked(!item.isLiked());
-            if (item.isLiked()) {
-                holder.likeButton.setImageResource(R.drawable.heart);
+            if (UserManager.getUsername(item.getContext()).equals(item.getUsername())) {
+                // open your profile if clicked on your username
+                Intent intent = new Intent(item.getContext(), MainActivity.class);
+                intent.putExtra("OPEN_FRAGMENT", 3); // open fragment Profile
+                item.getActivity().startActivity(intent);
             } else {
-                holder.likeButton.setImageResource(R.drawable.heart_outline);
+                Intent intent = new Intent(item.getContext(), PublicProfileActivity.class);
+                intent.putExtra("USER_ID", item.getId());
+                item.getActivity().startActivity(intent);
             }
-            // TODO: make like http req
         });
     }
 
@@ -84,6 +92,76 @@ public class RecOutfitsListAdapter extends RecyclerView.Adapter<RecOutfitsListAd
     public void addItem(RecOutfitsListItem item) {
         items.add(item);
         notifyItemInserted(items.size() - 1);
+    }
+
+    private void initLike(@NonNull ViewHolder holder, RecOutfitsListItem item) {
+        OutfitManager.isLikedOutfitRequest(item.getContext(), item.getId(), UserManager.getUserID(item.getContext()),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("Volley Response", "Successful get like info of " + item.getId());
+
+                        // set initial like state
+                        item.setLiked("true".equals(response));
+
+                        // set like icon
+                        if (item.isLiked()) {
+                            holder.likeButton.setImageResource(R.drawable.heart);
+                        } else {
+                            holder.likeButton.setImageResource(R.drawable.heart_outline);
+                        }
+
+                        // set like listener only if got correct like info
+                        holder.likeButton.setOnClickListener(v -> {
+                            item.setLiked(!item.isLiked());
+                            if (item.isLiked()) {
+                                holder.likeButton.setImageResource(R.drawable.heart);
+                                like(item.getContext(), item.getId());
+                            } else {
+                                holder.likeButton.setImageResource(R.drawable.heart_outline);
+                                unlike(item.getContext(), item.getId());
+                            }
+                        });
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("Volley Error", "Error getting like info of " + item.getId() + ", Error: " + error.toString());
+                    }
+                });
+    }
+
+    private void like(Context context, long outfitId) {
+        OutfitManager.addLikeRequest(context, outfitId, UserManager.getUserID(context),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("Volley Response", "Successful liked " + outfitId);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("Volley Error", "Error liking " + outfitId + ", Error: " + error.toString());
+                    }
+                });
+    }
+
+    private void unlike(Context context, long outfitId) {
+        OutfitManager.addLikeRequest(context, outfitId, UserManager.getUserID(context),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("Volley Response", "Successful unliked " + outfitId);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("Volley Error", "Error unliking " + outfitId + ", Error: " + error.toString());
+                    }
+                });
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

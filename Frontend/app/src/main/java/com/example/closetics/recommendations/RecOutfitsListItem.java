@@ -1,5 +1,10 @@
 package com.example.closetics.recommendations;
 
+import android.app.Activity;
+import android.content.Context;
+
+import androidx.fragment.app.FragmentActivity;
+
 import java.util.List;
 
 public class RecOutfitsListItem {
@@ -10,8 +15,10 @@ public class RecOutfitsListItem {
     private String stats;
     private String date;
     private boolean isLiked;
+    private FragmentActivity activity;
 
-    public RecOutfitsListItem(long id, String name, String username, List<Integer> imageIds, String stats, String date, boolean isLiked) {
+    public RecOutfitsListItem(FragmentActivity activity, long id, String name, String username, List<Integer> imageIds, String stats, String date, boolean isLiked) {
+        this.activity = activity;
         this.id = id;
         this.name = name;
         this.username = username;
@@ -19,6 +26,14 @@ public class RecOutfitsListItem {
         this.stats = stats;
         this.date = date;
         this.isLiked = isLiked;
+    }
+
+    public Context getActivity() {
+        return activity;
+    }
+
+    public Context getContext() {
+        return activity.getApplicationContext();
     }
 
     public long getId() {
