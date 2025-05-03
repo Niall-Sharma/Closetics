@@ -31,6 +31,9 @@ public class OutfitManager {
     private static final String URL_GET_ALL_USER_CLOTHES = MainActivity.SERVER_URL + "/getClothing/user/"; // + {{userId}}
     private static final String URL_PUT_REMOVE_ITEM = MainActivity.SERVER_URL + "/removeItemFromOutfit/"; // + {{outfitId}} + / + {{clothingId}}
     private static final String URL_PUT_ADD_ITEM = MainActivity.SERVER_URL + "/addItemToOutfit/"; // + {{outfitId}} + / + {{clothingId}}
+    private static final String URL_PUT_REMOVE_LIKE = MainActivity.SERVER_URL + "/removeLike/"; // + {{outfitId}} + / + {{userId}}
+    private static final String URL_PUT_ADD_LIKE = MainActivity.SERVER_URL + "/addLike/"; // + {{outfitId}} + / + {{userId}}
+    private static final String URL_GET_IS_LIKED_OUTFIT = MainActivity.SERVER_URL + "/likedOutfit/"; // + {{outfitId}} + / + {{userId}}
 
     public static final String CURRENT_OUTFIT_PARAM = "currentOutfitId";
     public static final String TOMORROW_OUTFIT_PARAM = "tomorrowOutfitId";
@@ -216,5 +219,46 @@ public class OutfitManager {
         VolleySingleton.getInstance(context).addToRequestQueue(jsonObjReq);
     }
 
+    public static void addLikeRequest(Context context, long outfitId, long userId,
+                                             Response.Listener<JSONObject> responseListener,
+                                             Response.ErrorListener errorListener) {
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(
+                Request.Method.PUT,
+                URL_PUT_ADD_LIKE + outfitId + "/" + userId,
+                null,
+                responseListener, errorListener);
+
+        // Adding request to request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(jsonObjReq);
+    }
+
+    public static void removeLikeRequest(Context context, long outfitId, long userId,
+                                      Response.Listener<JSONObject> responseListener,
+                                      Response.ErrorListener errorListener) {
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(
+                Request.Method.PUT,
+                URL_PUT_REMOVE_LIKE + outfitId + "/" + userId,
+                null,
+                responseListener, errorListener);
+
+        // Adding request to request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(jsonObjReq);
+    }
+
+
+    public static void isLikedOutfitRequest(Context context, long outfitId, long userId,
+                                           Response.Listener<String> responseListener,
+                                           Response.ErrorListener errorListener) {
+
+        StringRequest StringReq = new StringRequest(
+                Request.Method.GET,
+                URL_GET_IS_LIKED_OUTFIT + outfitId + "/" + userId,
+                responseListener, errorListener);
+
+        // Adding request to request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(StringReq);
+    }
 
 }
