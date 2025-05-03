@@ -141,6 +141,8 @@ public class ClothesActivity extends AppCompatActivity {
             public void onClick(View v) {
                 ArrayList<MutableLiveData<String>> fragments = clothesDataViewModel.getFragments();
                 saveClothing(getApplicationContext(), fragments, URL, UserManager.getUserID(getApplicationContext()));
+                //Need to add the image to the new clothing item
+
                 ClothesActivity.getUserClothing(context, UserManager.getUserID(getApplicationContext()), URL);
             }
         });
@@ -267,7 +269,18 @@ public class ClothesActivity extends AppCompatActivity {
         ClothesManager.saveClothingRequest(context, fragments, userId, URL, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.d("Volley Response", response.toString());
+                //the response is a json object! the json object we just created! we need the
+                //clothing id of this item so that we can add the image!
+                Log.d("Save Clothing response", response.toString());
+                try {
+                    Long id = response.getLong("clothesId");
+
+                } catch (JSONException e) {
+                    Log.e("ID error", e.toString());
+                }
+
+
+
             }
         }, new Response.ErrorListener() {
             @Override

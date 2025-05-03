@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonArrayRequest;
@@ -12,6 +13,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
 import com.example.closetics.MainActivity;
+import com.example.closetics.VolleyMultipartRequest;
 import com.example.closetics.VolleySingleton;
 
 import org.json.JSONArray;
@@ -65,14 +67,14 @@ public class ClothesManager {
 
     public static void saveClothingRequest(Context context, ArrayList<MutableLiveData<String>> fragments, long userId,
     String URL, Response.Listener<JSONObject> responseListener, Response.ErrorListener errorListener) {
-        String favorite = fragments.get(0).getValue();
-        String size = fragments.get(1).getValue();
-        String color = fragments.get(2).getValue();
-        String dateBought = fragments.get(3).getValue();
-        String brand = fragments.get(6).getValue();
-        String itemName = fragments.get(5).getValue();
-        String material = fragments.get(7).getValue();
-        String price = fragments.get(4).getValue();
+        String favorite = fragments.get(1).getValue();
+        String size = fragments.get(2).getValue();
+        String color = fragments.get(3).getValue();
+        String dateBought = fragments.get(4).getValue();
+        String brand = fragments.get(7).getValue();
+        String itemName = fragments.get(6).getValue();
+        String material = fragments.get(8).getValue();
+        String price = fragments.get(5).getValue();
 
 
         //Create the json object of the saveClothing data
@@ -269,6 +271,33 @@ public class ClothesManager {
 
 
     }
+    public static void addImage(Context context, Long clothingId,  String URL,
+                                Response.Listener<NetworkResponse> responseListener,
+                                Response.ErrorListener errorListener) {
+        String addImageUrl = URL + "/addImage/" + clothingId;
+
+
+        //Create the responselistener and error listener in the clothes activity
+        VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(
+            Request.Method.PUT, addImageUrl, responseListener, errorListener);
+
+        multipartRequest.addFile("");
+
+
+
+
+        /*
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.PUT,
+                addImageUrl,
+                URL,
+                responseListener,
+                errorListener
+        );
+        */
+
+    //VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
 
 
 
@@ -295,5 +324,5 @@ public class ClothesManager {
     }
 
 
-
 }
+
