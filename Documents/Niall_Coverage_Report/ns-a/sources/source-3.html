@@ -48,18 +48,18 @@ Current scope:     <a href="../../index.html">all classes</a>
   <td class="name">AuthorizationAspect</td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/1)
+    (1/1)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    50%
   </span>
   <span class="absValue">
-    (0/2)
+    (1/2)
   </span>
 </td>
 <td class="coverageStat">
@@ -72,10 +72,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    14.3%
   </span>
   <span class="absValue">
-    (0/9)
+    (1/7)
   </span>
 </td>
 </tr>
@@ -103,21 +103,21 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;@Aspect
 &nbsp;@Component
-<b class="nc">&nbsp;public class AuthorizationAspect {</b>
+<b class="fc">&nbsp;public class AuthorizationAspect {</b>
 &nbsp;
 &nbsp;    @Autowired
 &nbsp;    private TokenService tokenService;
 &nbsp;
 &nbsp;    @Around(&quot;@annotation(closetics.Users.Auth.RequiresAuth)&quot;)
 &nbsp;    public Object authorizeRequest(ProceedingJoinPoint joinPoint) throws Throwable {
-<b class="nc">&nbsp;        HttpServletRequest request =</b>
+&nbsp;        HttpServletRequest request =
 <b class="nc">&nbsp;                ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())</b>
 <b class="nc">&nbsp;                        .getRequest();</b>
 &nbsp;
 <b class="nc">&nbsp;        String token = request.getHeader(&quot;Authorization&quot;);</b>
 <b class="nc">&nbsp;        if (token == null || !tokenService.validateToken(token)) {</b>
 <b class="nc">&nbsp;            throw new ResponseStatusException(</b>
-<b class="nc">&nbsp;                    HttpStatus.UNAUTHORIZED, &quot;Invalid or missing token&quot;</b>
+&nbsp;                    HttpStatus.UNAUTHORIZED, &quot;Invalid or missing token&quot;
 &nbsp;            );
 &nbsp;        }
 &nbsp;
@@ -147,7 +147,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-04-25 13:34</div>
+    <div style="float:right;">generated on 2025-05-01 16:32</div>
 </div>
 </body>
 </html>

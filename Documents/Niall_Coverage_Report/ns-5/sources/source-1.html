@@ -48,18 +48,18 @@ Current scope:     <a href="../../index.html">all classes</a>
   <td class="name">PaymentController</td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/1)
+    (1/1)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    75%
   </span>
   <span class="absValue">
-    (0/4)
+    (3/4)
   </span>
 </td>
 <td class="coverageStat">
@@ -72,10 +72,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    45.9%
   </span>
   <span class="absValue">
-    (0/37)
+    (17/37)
   </span>
 </td>
 </tr>
@@ -111,7 +111,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;@RestController
 &nbsp;@RequestMapping(&quot;/payments&quot;)
-<b class="nc">&nbsp;public class PaymentController{</b>
+<b class="fc">&nbsp;public class PaymentController{</b>
 &nbsp;
 &nbsp;  
 &nbsp;  @Autowired
@@ -125,33 +125,33 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;  @PostConstruct
 &nbsp;  public void init(){
-<b class="nc">&nbsp;    Stripe.apiKey = apiKey;</b>
+<b class="fc">&nbsp;    Stripe.apiKey = apiKey;</b>
 &nbsp;  }
 &nbsp;
 &nbsp;  @PostMapping(&quot;/createPayment&quot;)
 &nbsp;  public ResponseEntity&lt;Map&lt;String,Object&gt;&gt; createPayment(@RequestBody Map&lt;String,Object&gt; request){
 &nbsp;    try{
-<b class="nc">&nbsp;      long amount = Long.parseLong(request.get(&quot;amount&quot;).toString());</b>
-<b class="nc">&nbsp;      long UID = Long.parseLong(request.get(&quot;userId&quot;).toString());</b>
-<b class="nc">&nbsp;      String tier = request.get(&quot;tier&quot;).toString();</b>
+<b class="fc">&nbsp;      long amount = Long.parseLong(request.get(&quot;amount&quot;).toString());</b>
+<b class="fc">&nbsp;      long UID = Long.parseLong(request.get(&quot;userId&quot;).toString());</b>
+<b class="fc">&nbsp;      String tier = request.get(&quot;tier&quot;).toString();</b>
 &nbsp;
-<b class="nc">&nbsp;      Map&lt;String, String&gt; metadata = new HashMap&lt;&gt;();</b>
-<b class="nc">&nbsp;      metadata.put(&quot;userId&quot;, String.valueOf(UID));</b>
-<b class="nc">&nbsp;      metadata.put(&quot;tier&quot;, tier);</b>
+<b class="fc">&nbsp;      Map&lt;String, String&gt; metadata = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;      metadata.put(&quot;userId&quot;, String.valueOf(UID));</b>
+<b class="fc">&nbsp;      metadata.put(&quot;tier&quot;, tier);</b>
 &nbsp;
-<b class="nc">&nbsp;      PaymentIntentCreateParams params = PaymentIntentCreateParams.builder().setAmount(amount).setCurrency(&quot;usd&quot;).putAllMetadata(metadata).build();</b>
-<b class="nc">&nbsp;      PaymentIntent intent = PaymentIntent.create(params);</b>
+<b class="fc">&nbsp;      PaymentIntentCreateParams params = PaymentIntentCreateParams.builder().setAmount(amount).setCurrency(&quot;usd&quot;).putAllMetadata(metadata).build();</b>
+<b class="fc">&nbsp;      PaymentIntent intent = PaymentIntent.create(params);</b>
 &nbsp;
-<b class="nc">&nbsp;      Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();</b>
-<b class="nc">&nbsp;      response.put(&quot;clientSecret&quot;, intent.getClientSecret());</b>
-<b class="nc">&nbsp;      response.put(&quot;paymentIntentId&quot;, intent.getId());</b>
+<b class="fc">&nbsp;      Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;      response.put(&quot;clientSecret&quot;, intent.getClientSecret());</b>
+<b class="fc">&nbsp;      response.put(&quot;paymentIntentId&quot;, intent.getId());</b>
 &nbsp;
-<b class="nc">&nbsp;      User user = userRepository.findById(UID).orElseThrow(() -&gt; new RuntimeException(&quot;User Not Found&quot;));</b>
+<b class="fc">&nbsp;      User user = userRepository.findById(UID).orElseThrow(() -&gt; new RuntimeException(&quot;User Not Found&quot;));</b>
 &nbsp;
 &nbsp;
-<b class="nc">&nbsp;      TransactionHistory transactionHistory = new TransactionHistory(user, intent.getCurrency(), intent.getStatus(), intent.getAmount(), intent.getId(), tier);</b>
-<b class="nc">&nbsp;      tRepository.save(transactionHistory);</b>
-<b class="nc">&nbsp;      return ResponseEntity.ok(response);</b>
+<b class="fc">&nbsp;      TransactionHistory transactionHistory = new TransactionHistory(user, intent.getCurrency(), intent.getStatus(), intent.getAmount(), intent.getId(), tier);</b>
+<b class="fc">&nbsp;      tRepository.save(transactionHistory);</b>
+<b class="fc">&nbsp;      return ResponseEntity.ok(response);</b>
 &nbsp;
 &nbsp;    }
 <b class="nc">&nbsp;    catch(Exception e){</b>
@@ -210,7 +210,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-04-25 13:34</div>
+    <div style="float:right;">generated on 2025-05-01 16:32</div>
 </div>
 </body>
 </html>
