@@ -190,7 +190,7 @@ public class ClothingController {
         try {
             Clothing clothing = clothingRepository.findById(clothing_Id).orElseThrow(() -> new RuntimeException("Clothing not found"));
 
-            File destinationFile = new File("/images/"+File.separator + imageFile.getOriginalFilename());
+            File destinationFile = new File("/images/"+File.separator + clothing_Id + "_" + clothing.getUser().getUserId() + "_" + imageFile.getOriginalFilename());
             if(!Files.exists(destinationFile.toPath().getParent())){
                 Files.createDirectories(destinationFile.toPath().getParent());
             }
