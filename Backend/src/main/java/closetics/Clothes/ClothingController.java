@@ -228,6 +228,19 @@ public class ClothingController {
         return ResponseEntity.ok().body(Files.readAllBytes(imageFile.toPath()));
     }
 
+    @Operation(summary = "Returns the clothing image")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Image returned"),
+                    @ApiResponse(responseCode = "404", description = "Image not found")
+            }
+    )
+    @GetMapping(value = "/clothingImages/{clothing_id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getImageByClothing(@Parameter(description = "ID of the clothing item") @PathVariable long clothing_id) throws IOException {
+        Image image = imageRepository.findById(clothing_id).orElseThrow(() -> new RuntimeException("Image not found"));
+        File imageFile = new File(image.getFilePath());
+        return ResponseEntity.ok().body(Files.readAllBytes(imageFile.toPath()));
+    }
     @Operation(summary = "Toggle the favorite status of a clothing item", description = "Sets a clothing item's favorite status to true if false, and vice versa.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Favorite status toggled successfully",
