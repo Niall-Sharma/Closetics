@@ -9,18 +9,18 @@ public class ClothingItem implements Serializable {
             "What is the brand?", "What material is it?", "Choose clothing item type", "Choose special type"
     };
     public static int[][] typeConnections = {
-            {10, 14, 15, 9, 8, 16},
+            {10, 14, 15, 9, 8, 16, 46, 11, 13, 12},
             {6, 5, 1, 66, 2},
-            {23, 17, },
-            {},
-            {},
-            {},
-            {},
-            {},
-            {},
-            {},
-            {}
-
+            {23, 17, 21, 4, 19, 20, 18},
+            {27, 28, 30, 44, 48, 31, 24, 26, 25, 32, 29},
+            {34, 38, 36, 37, 39, 25, 41, 33, 40},
+            {51, 45, 44, 48, 42, 43},
+            {50, 49, 56, 54, 59, 63, 55},
+            {60, 62, 57, 58},
+            {61, 60, 62},
+            {67, 72, 71, 68, 70, 66, 65},
+            {75, 73, 76, 77, 1, 74},
+            {81, 13, 11, 12, 82, 80, 78}
     };
 
     private String favorite;

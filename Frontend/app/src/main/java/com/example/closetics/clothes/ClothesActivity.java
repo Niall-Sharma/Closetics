@@ -41,6 +41,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * ClothesActivity is responsible for managing the clothing-related
@@ -85,7 +86,7 @@ public class ClothesActivity extends AppCompatActivity {
     public static final String URL = MainActivity.SERVER_URL;
 
     private ViewPager2 viewPager;
-    private FragmentStateAdapter pagerAdapter;
+    private ScreenSlidePagerAdapter pagerAdapter;
 
 
     @Override
@@ -348,7 +349,9 @@ public class ClothesActivity extends AppCompatActivity {
     /**
      * Inner class for managing fragment creation inside the ViewPager2 widget.
      */
-    private class ScreenSlidePagerAdapter extends FragmentStateAdapter {
+    public class ScreenSlidePagerAdapter extends FragmentStateAdapter {
+
+        private final Map<Integer, Fragment> fragmentMap = new HashMap<>();
 
         /**
          * Constructs a new ScreenSlidePagerAdapter.
@@ -362,12 +365,20 @@ public class ClothesActivity extends AppCompatActivity {
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-            return ClothesCreationBaseFragment.newInstance(position, clothesDataViewModel);
+            Fragment fragment = ClothesCreationBaseFragment.newInstance(position, clothesDataViewModel, pagerAdapter);
+            fragmentMap.put(position, fragment);
+            return fragment;
         }
 
         @Override
         public int getItemCount() {
             return NUM_FRAGMENTS;
+        }
+
+
+
+        public Fragment getFragment(int position) {
+            return fragmentMap.get(position);
         }
     }
 }

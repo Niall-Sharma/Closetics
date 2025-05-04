@@ -37,12 +37,14 @@ import java.util.Map;
  * corresponds to a different field of the clothing item to be edited. It also handles the submission
  * of the updated data to the backend.
  */
+
+
 public class EditClothesActivity extends AppCompatActivity {
     private Button finalSubmission;
     private TabLayout tabLayout;
     private ClothesDataViewModel clothesDataViewModel;
     private ViewPager2 viewPager;
-    private FragmentStateAdapter pagerAdapter;
+    private ScreenSlidePagerAdapter pagerAdapter;
     private long clothingId;
     private ClothingItem clothingItem;
 
@@ -212,6 +214,9 @@ public class EditClothesActivity extends AppCompatActivity {
         }
     }
 }
+
+
+
 
 
 
