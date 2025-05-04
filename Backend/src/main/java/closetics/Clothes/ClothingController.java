@@ -237,7 +237,7 @@ public class ClothingController {
     )
     @GetMapping(value = "/clothingImages/{clothing_id}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getImageByClothing(@Parameter(description = "ID of the clothing item") @PathVariable long clothing_id) throws IOException {
-        Image image = imageRepository.findById(clothing_id).orElseThrow(() -> new RuntimeException("Image not found"));
+        Image image = imageRepository.findByUserId(clothing_id).orElseThrow(() -> new RuntimeException("Image not found"));
         File imageFile = new File(image.getFilePath());
         return ResponseEntity.ok().body(Files.readAllBytes(imageFile.toPath()));
     }
