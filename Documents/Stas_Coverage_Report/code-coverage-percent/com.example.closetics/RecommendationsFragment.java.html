@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RecommendationsFragment.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics</a> &gt; <span class="el_source">RecommendationsFragment.java</span></div><h1>RecommendationsFragment.java</h1><pre class="source lang-java linenums">package com.example.closetics;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
+import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.example.closetics.recommendations.RecOutfitsListAdapter;
+import com.example.closetics.recommendations.RecOutfitsListItem;
+import com.example.closetics.recommendations.RecUsersListAdapter;
+import com.example.closetics.recommendations.RecUsersListItem;
+import com.example.closetics.recommendations.RecWebSocketService;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class RecommendationsFragment extends Fragment {
+
+<span class="nc" id="L43">    private final String[] INT_TO_MONTH = {</span>
+            &quot;January&quot;, &quot;February&quot;, &quot;March&quot;, &quot;April&quot;,
+            &quot;May&quot;, &quot;June&quot;, &quot;July&quot;, &quot;August&quot;,
+            &quot;September&quot;, &quot;October&quot;, &quot;November&quot;, &quot;December&quot;
+    };
+
+    private SearchView search;
+    private ImageButton backButton;
+    private RecyclerView outfitsRecycler, usersRecycler;
+
+    private RecOutfitsListAdapter outfitsAdapter;
+    private RecUsersListAdapter usersAdapter;
+
+    private boolean isStateOutfits;
+    private boolean isReceiving;
+    private boolean isAddingRecommendationsInProgress;
+
+    // For receiving new outfits from websocket
+<span class="nc" id="L61">    private BroadcastReceiver messageReceiver = new BroadcastReceiver() {</span>
+        @Override
+        public void onReceive(Context context, Intent intent) {
+<span class="nc" id="L64">            String message = intent.getStringExtra(&quot;message&quot;);</span>
+
+<span class="nc" id="L66">            getActivity().runOnUiThread(() -&gt; {</span>
+<span class="nc" id="L67">                addMoreRecommendations(message);</span>
+<span class="nc" id="L68">            });</span>
+<span class="nc" id="L69">        }</span>
+    };
+
+<span class="nc" id="L72">    public RecommendationsFragment() {</span>
+        // Required empty public constructor
+<span class="nc" id="L74">    }</span>
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+<span class="nc" id="L80">        View view = inflater.inflate(R.layout.fragment_recommendations, container, false);</span>
+
+        // TODO: redirect to login when not logged in
+
+        // attempt to start websocket
+<span class="nc" id="L85">        startWebSocket();</span>
+
+        // initialize UI elements
+<span class="nc" id="L88">        search = view.findViewById(R.id.rec_search);</span>
+<span class="nc" id="L89">        search.setQuery(&quot;&quot;, false); // clear search</span>
+<span class="nc" id="L90">        backButton = view.findViewById(R.id.rec_back_button);</span>
+<span class="nc" id="L91">        outfitsRecycler = view.findViewById(R.id.rec_outfits_recycler);</span>
+<span class="nc" id="L92">        usersRecycler = view.findViewById(R.id.rec_users_recycler);</span>
+
+<span class="nc" id="L94">        isStateOutfits = true;</span>
+<span class="nc" id="L95">        updateState();</span>
+
+<span class="nc" id="L97">        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(messageReceiver,</span>
+                new IntentFilter(&quot;RecWebSocketMessageReceived&quot;));
+<span class="nc" id="L99">        Log.d(&quot;RecommendationsFragment&quot;, &quot;Receiver registered&quot;);</span>
+<span class="nc" id="L100">        isReceiving = true;</span>
+
+<span class="nc" id="L102">        isAddingRecommendationsInProgress = false;</span>
+
+        // initialize recycler views
+<span class="nc" id="L105">        outfitsAdapter = new RecOutfitsListAdapter(new ArrayList&lt;RecOutfitsListItem&gt;());</span>
+<span class="nc" id="L106">        RecyclerView.LayoutManager outfitsLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());</span>
+<span class="nc" id="L107">        outfitsRecycler.setLayoutManager(outfitsLayoutManager);</span>
+<span class="nc" id="L108">        outfitsRecycler.setItemAnimator(new DefaultItemAnimator());</span>
+<span class="nc" id="L109">        outfitsRecycler.setAdapter(outfitsAdapter);</span>
+
+<span class="nc" id="L111">        usersAdapter = new RecUsersListAdapter(new ArrayList&lt;RecUsersListItem&gt;(), item -&gt; {</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">            if (item.getId() == UserManager.getUserID(getActivity().getApplicationContext())) {</span>
+                // open your profile if clicked on your username
+<span class="nc" id="L114">                Intent intent = new Intent(getActivity(), MainActivity.class);</span>
+<span class="nc" id="L115">                intent.putExtra(&quot;OPEN_FRAGMENT&quot;, 3); // open fragment Profile</span>
+<span class="nc" id="L116">                startActivity(intent);</span>
+<span class="nc" id="L117">            } else {</span>
+<span class="nc" id="L118">                Intent intent = new Intent(getActivity(), PublicProfileActivity.class);</span>
+<span class="nc" id="L119">                intent.putExtra(&quot;USER_ID&quot;, item.getId());</span>
+<span class="nc" id="L120">                startActivity(intent);</span>
+            }
+            //Toast.makeText(getContext(), &quot;Clicked: &quot; + item.getUsername(), Toast.LENGTH_SHORT).show();
+<span class="nc" id="L123">        });</span>
+<span class="nc" id="L124">        RecyclerView.LayoutManager usersLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());</span>
+<span class="nc" id="L125">        usersRecycler.setLayoutManager(usersLayoutManager);</span>
+<span class="nc" id="L126">        usersRecycler.setItemAnimator(new DefaultItemAnimator());</span>
+<span class="nc" id="L127">        usersRecycler.setAdapter(usersAdapter);</span>
+
+        // onClick logic
+<span class="nc" id="L130">        search.setOnSearchClickListener(v -&gt; {</span>
+<span class="nc bnc" id="L131" title="All 2 branches missed.">            if (isStateOutfits) {</span>
+<span class="nc" id="L132">                isStateOutfits = false;</span>
+<span class="nc" id="L133">                updateState();</span>
+            }
+<span class="nc" id="L135">        });</span>
+
+<span class="nc" id="L137">        backButton.setOnClickListener(v -&gt; {</span>
+<span class="nc" id="L138">            isStateOutfits = true;</span>
+<span class="nc" id="L139">            usersAdapter.clearItems(); // clear search results</span>
+<span class="nc" id="L140">            search.setQuery(&quot;&quot;, false); // clear search</span>
+<span class="nc" id="L141">            search.setIconified(true); // collapse searchbar</span>
+<span class="nc" id="L142">            updateState();</span>
+<span class="nc" id="L143">        });</span>
+
+        // load more outfits after scrolling far enough
+<span class="nc" id="L146">        outfitsRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {</span>
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+<span class="nc" id="L149">                super.onScrollStateChanged(recyclerView, newState);</span>
+<span class="nc" id="L150">            }</span>
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                // if user sees one before last outfit
+<span class="nc bnc" id="L155" title="All 4 branches missed.">                if (!isAddingRecommendationsInProgress &amp;&amp; ((LinearLayoutManager)recyclerView.getLayoutManager()).findLastVisibleItemPosition() &gt;= outfitsAdapter.getItemCount() - 2) {</span>
+<span class="nc" id="L156">                    isAddingRecommendationsInProgress = true; // prevent sending requests until previous one finishes</span>
+<span class="nc" id="L157">                    requestMoreRecommendations();</span>
+                }
+<span class="nc" id="L159">            }</span>
+        });
+
+        // search users logic
+<span class="nc" id="L163">        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {</span>
+            @Override
+            public boolean onQueryTextChange(String newText) {
+<span class="nc" id="L166">                newText = newText.replaceAll(&quot;[^a-zA-Z0-9]&quot;, &quot;&quot;); // remove all invalid chars</span>
+<span class="nc bnc" id="L167" title="All 2 branches missed.">                if (newText.length() &gt; 1) {</span>
+<span class="nc" id="L168">                    searchUsers(newText);</span>
+                } else {
+<span class="nc" id="L170">                    usersAdapter.clearItems(); // clear search if less than 2 chars inputted</span>
+                }
+<span class="nc" id="L172">                return true;</span>
+            }
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+<span class="nc" id="L177">                search.clearFocus();</span>
+<span class="nc" id="L178">                return true;</span>
+            }
+        });
+
+<span class="nc" id="L182">        requestMoreRecommendations();</span>
+
+<span class="nc" id="L184">        return view;</span>
+    }
+
+    @Override
+    public void onStart() {
+<span class="nc" id="L189">        super.onStart();</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">        if (!isReceiving) {</span>
+<span class="nc" id="L191">            LocalBroadcastManager.getInstance(getActivity()).registerReceiver(messageReceiver,</span>
+                    new IntentFilter(&quot;RecWebSocketMessageReceived&quot;));
+<span class="nc" id="L193">            Log.d(&quot;RecommendationsFragment&quot;, &quot;Started, Receiver registered&quot;);</span>
+<span class="nc" id="L194">            isReceiving = true;</span>
+        }
+<span class="nc" id="L196">    }</span>
+
+    @Override
+    public void onStop() {
+<span class="nc bnc" id="L200" title="All 2 branches missed.">        if (isReceiving) {</span>
+<span class="nc" id="L201">            super.onStop();</span>
+<span class="nc" id="L202">            LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(messageReceiver);</span>
+<span class="nc" id="L203">            Log.d(&quot;RecommendationsFragment&quot;, &quot;Stopped, Receiver unregistered&quot;);</span>
+<span class="nc" id="L204">            isReceiving = false;</span>
+        }
+<span class="nc" id="L206">    }</span>
+
+    private void startWebSocket() {
+<span class="nc" id="L209">        Intent serviceIntent = new Intent(getActivity(), RecWebSocketService.class);</span>
+<span class="nc" id="L210">        serviceIntent.setAction(&quot;RecWebSocketConnect&quot;);</span>
+<span class="nc" id="L211">        getActivity().startService(serviceIntent);</span>
+<span class="nc" id="L212">        Log.d(&quot;RecommendationsFragment&quot;, &quot;WebSocket started&quot;);</span>
+<span class="nc" id="L213">    }</span>
+
+    private void requestMoreRecommendations() {
+<span class="nc" id="L216">        Intent intent = new Intent(&quot;RecWebSocketSendMessage&quot;);</span>
+<span class="nc" id="L217">        intent.putExtra(&quot;message&quot;, &quot;5&quot;); // put a number of outfits here</span>
+<span class="nc" id="L218">        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);</span>
+
+<span class="nc" id="L220">        Log.d(&quot;RecommendationsFragment&quot;, &quot;Requested more outfits: 5&quot;);</span>
+<span class="nc" id="L221">    }</span>
+
+    private void addMoreRecommendations(String message) {
+        // Mock outfits
+//        RecOutfitsListItem mockOutfit = new RecOutfitsListItem(1, &quot;My old shoes&quot;, &quot;bob002&quot;, Arrays.asList(R.drawable.clothing_mock_img, R.drawable.clothing_mock_img, R.drawable.clothing_mock_img), &quot;Very expensive&quot;, &quot;February 3, 1976&quot;, false);
+//        for (int i = 0; i &lt; 10; i++) {
+//            outfitsAdapter.addItem(mockOutfit);
+//        }
+
+<span class="nc" id="L230">        Log.d(&quot;RecommendationsFragment&quot;, &quot;Received outfits: &quot; + message);</span>
+
+        JSONArray outfitObjects;
+        try {
+<span class="nc" id="L234">            outfitObjects = new JSONArray(message);</span>
+<span class="nc" id="L235">        } catch (JSONException e) {</span>
+<span class="nc" id="L236">            Log.e(&quot;RecommendationsFragment Error&quot;, &quot;JSON Exception from received outfits: &quot; + e.toString());</span>
+<span class="nc" id="L237">            isAddingRecommendationsInProgress = false;</span>
+<span class="nc" id="L238">            return;</span>
+<span class="nc" id="L239">        }</span>
+
+<span class="nc bnc" id="L241" title="All 2 branches missed.">        for (int i = 0; i &lt; outfitObjects.length(); i++) {</span>
+            try {
+<span class="nc" id="L243">                JSONObject outfit = outfitObjects.getJSONObject(i);</span>
+
+<span class="nc" id="L245">                long id = outfit.getLong(&quot;outfitId&quot;);</span>
+<span class="nc" id="L246">                String name = outfit.getString(&quot;outfitName&quot;);</span>
+<span class="nc" id="L247">                String username = outfit.getJSONObject(&quot;user&quot;).getString(&quot;username&quot;);</span>
+<span class="nc" id="L248">                String stats = &quot;No stats for now&quot;; // TODO: add stats stats</span>
+//                int year = outfit.getJSONArray(&quot;creationDate&quot;).getInt(0);
+//                int month = outfit.getJSONArray(&quot;creationDate&quot;).getInt(1);
+//                int day = outfit.getJSONArray(&quot;creationDate&quot;).getInt(2);
+<span class="nc" id="L252">                int year = 2025, month = 4, day = 6;</span>
+<span class="nc" id="L253">                String date = INT_TO_MONTH[month - 1] + &quot; &quot; + day + &quot;, &quot; + year;</span>
+<span class="nc" id="L254">                boolean isLiked = false; // TODO: add likes support</span>
+                // TODO: add actual images
+<span class="nc" id="L256">                List&lt;Integer&gt; imageIds = Arrays.asList(R.drawable.clothing_mock_img, R.drawable.clothing_mock_img, R.drawable.clothing_mock_img);</span>
+
+<span class="nc" id="L258">                outfitsAdapter.addItem(new RecOutfitsListItem(id, name, username, imageIds, stats, date, isLiked));</span>
+<span class="nc" id="L259">            } catch (JSONException e) {</span>
+<span class="nc" id="L260">                Log.e(&quot;RecommendationsFragment Error&quot;, &quot;JSON Exception. Could not add outfit &quot; + i + &quot;: &quot; + e.toString());</span>
+<span class="nc" id="L261">            }</span>
+        }
+
+<span class="nc" id="L264">        isAddingRecommendationsInProgress = false;</span>
+<span class="nc" id="L265">    }</span>
+
+    private void updateState() {
+<span class="nc bnc" id="L268" title="All 2 branches missed.">        if (isStateOutfits) {</span>
+<span class="nc" id="L269">            backButton.setVisibility(TextView.GONE);</span>
+<span class="nc" id="L270">            usersRecycler.setVisibility(TextView.GONE);</span>
+<span class="nc" id="L271">            outfitsRecycler.setVisibility(TextView.VISIBLE);</span>
+        } else {
+<span class="nc" id="L273">            backButton.setVisibility(TextView.VISIBLE);</span>
+<span class="nc" id="L274">            usersRecycler.setVisibility(TextView.VISIBLE);</span>
+<span class="nc" id="L275">            outfitsRecycler.setVisibility(TextView.GONE);</span>
+        }
+<span class="nc" id="L277">    }</span>
+
+    private void searchUsers(String username) {
+<span class="nc" id="L280">        UserManager.searchUsersByUsernameRequest(getActivity().getApplicationContext(), username,</span>
+<span class="nc" id="L281">                new Response.Listener&lt;JSONArray&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+<span class="nc" id="L285">                            Log.d(&quot;Volley Response&quot;, &quot;Successful Search by username &quot; + username + &quot;: &quot; + response.toString());</span>
+
+<span class="nc" id="L287">                            ArrayList&lt;RecUsersListItem&gt; usersListItems = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L288" title="All 2 branches missed.">                            for (int i = 0; i &lt; response.length(); i++) {</span>
+<span class="nc" id="L289">                                JSONObject user = response.getJSONObject(i);</span>
+<span class="nc" id="L290">                                usersListItems.add(new RecUsersListItem(user.getLong(&quot;userId&quot;), user.getString(&quot;username&quot;)));</span>
+                            }
+
+<span class="nc" id="L293">                            usersAdapter.setNewItems(usersListItems);</span>
+                        }
+<span class="nc" id="L295">                        catch (JSONException e) {</span>
+<span class="nc" id="L296">                            Log.e(&quot;JSON Error&quot;, &quot;Search users by username &quot; + username + &quot; Error: &quot; + e.toString());</span>
+<span class="nc" id="L297">                        }</span>
+<span class="nc" id="L298">                    }</span>
+                },
+<span class="nc" id="L300">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L303">                        Log.e(&quot;Volley Error&quot;, &quot;Get user by username &quot; + username + &quot; Error: &quot; + error.toString());</span>
+<span class="nc" id="L304">                    }</span>
+                });
+<span class="nc" id="L306">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>

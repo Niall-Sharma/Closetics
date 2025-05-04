@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EditOutfitActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics.outfits</a> &gt; <span class="el_source">EditOutfitActivity.java</span></div><h1>EditOutfitActivity.java</h1><pre class="source lang-java linenums">package com.example.closetics.outfits;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.example.closetics.R;
+import com.example.closetics.UserManager;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+<span class="fc" id="L23">public class EditOutfitActivity extends AppCompatActivity {</span>
+
+    private EditText outfitNameEdit;
+    private Button addClothingButton;
+    private Button deleteButton;
+    private Button doneButton;
+    private ListView clothesList;
+    private EditOutfitClothingListAdapter adapter;
+
+    private JSONObject outfitJsonObject;
+    private long outfitId;
+    private String outfitName;
+    private boolean isFavorite;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="fc" id="L39">        super.onCreate(savedInstanceState);</span>
+<span class="fc" id="L40">        setContentView(R.layout.activity_edit_outfit);</span>
+
+<span class="fc" id="L42">        outfitNameEdit = findViewById(R.id.edit_outfit_name_edit);</span>
+<span class="fc" id="L43">        addClothingButton = findViewById(R.id.edit_outfit_add_clothing_button);</span>
+<span class="fc" id="L44">        deleteButton = findViewById(R.id.edit_outfit_delete_button);</span>
+<span class="fc" id="L45">        doneButton = findViewById(R.id.edit_outfit_done_button);</span>
+<span class="fc" id="L46">        clothesList = findViewById(R.id.edit_outfit_clothes_list);</span>
+
+        // Initialize the adapter with an empty list (data will be added later)
+<span class="fc" id="L49">        adapter = new EditOutfitClothingListAdapter(this, new ArrayList&lt;&gt;());</span>
+<span class="fc" id="L50">        clothesList.setAdapter(adapter);</span>
+
+<span class="fc" id="L52">        Bundle extras = getIntent().getExtras();</span>
+<span class="fc" id="L53">        outfitId = -1;</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        if (extras != null) {</span>
+<span class="fc" id="L55">            outfitId = extras.getLong(&quot;OUTFIT_ID&quot;, -1);</span>
+        }
+<span class="fc" id="L57">        outfitName = null;</span>
+<span class="fc" id="L58">        outfitJsonObject = null;</span>
+
+<span class="fc" id="L60">        addClothingButton.setOnClickListener(v -&gt; {</span>
+<span class="fc" id="L61">            updateStoredJsonAndSaveChanges();</span>
+
+<span class="fc" id="L63">            Intent intent = new Intent(EditOutfitActivity.this, SelectClothesActivity.class);</span>
+<span class="fc" id="L64">            intent.putExtra(&quot;OUTFIT_ID&quot;, outfitId);</span>
+<span class="fc" id="L65">            startActivity(intent);</span>
+<span class="fc" id="L66">        });</span>
+
+<span class="fc" id="L68">        deleteButton.setOnClickListener(v -&gt; {</span>
+<span class="fc" id="L69">            deleteOutfit();</span>
+<span class="fc" id="L70">        });</span>
+
+<span class="fc" id="L72">        doneButton.setOnClickListener(v -&gt; {</span>
+<span class="fc" id="L73">            updateStoredJsonAndSaveChanges();</span>
+
+<span class="fc" id="L75">            Intent intent = new Intent(EditOutfitActivity.this, OutfitsActivity.class);</span>
+<span class="fc" id="L76">            startActivity(intent);</span>
+<span class="fc" id="L77">        });</span>
+
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        if (outfitId == -1) {</span>
+<span class="fc" id="L80">            createOutfit(&quot;New Outfit&quot;);</span>
+        } else {
+<span class="fc" id="L82">            populateOutfitInfo();</span>
+<span class="fc" id="L83">            populateClothesList();</span>
+        }
+<span class="fc" id="L85">    }</span>
+
+    private void populateOutfitInfo() {
+<span class="fc" id="L88">        OutfitManager.getOutfitRequest(getApplicationContext(), outfitId,</span>
+<span class="fc" id="L89">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+<span class="fc" id="L92">                        Log.d(&quot;Volley Response&quot;, response.toString());</span>
+
+<span class="fc" id="L94">                        outfitJsonObject = response;</span>
+
+                        // parse the JSON array and add data to the adapter
+                        try {
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">                            outfitName = response.has(&quot;outfitName&quot;) ? response.getString(&quot;outfitName&quot;) : &quot;&quot;;</span>
+                            // set edit to the most recent name
+<span class="fc" id="L100">                            outfitNameEdit.setText(outfitName);</span>
+<span class="nc" id="L101">                        } catch (JSONException e) {</span>
+<span class="nc" id="L102">                            Log.e(&quot;JSON Error&quot;, e.toString());</span>
+<span class="fc" id="L103">                        }</span>
+<span class="fc" id="L104">                    }</span>
+                },
+<span class="fc" id="L106">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L109">                        Log.e(&quot;Volley Error&quot;, &quot;Error getting outfit: &quot; + error.toString());</span>
+<span class="nc" id="L110">                    }</span>
+                });
+<span class="fc" id="L112">    }</span>
+
+    private void populateClothesList() {
+<span class="fc" id="L115">        OutfitManager.getAllOutfitItemsRequest(getApplicationContext(), outfitId,</span>
+<span class="fc" id="L116">                new Response.Listener&lt;JSONArray&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONArray response) {
+<span class="fc" id="L119">                        Log.d(&quot;Volley Response&quot;, response.toString());</span>
+
+<span class="fc bfc" id="L121" title="All 2 branches covered.">                        for (int i = 0; i &lt; response.length(); i++) {</span>
+                            try {
+<span class="fc" id="L123">                                JSONObject clothing = response.getJSONObject(i);</span>
+
+<span class="fc" id="L125">                                long clothingId = clothing.getLong(&quot;clothesId&quot;);</span>
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">                                String name = clothing.has(&quot;itemName&quot;) ? clothing.getString(&quot;itemName&quot;) : null;</span>
+<span class="pc bpc" id="L127" title="1 of 2 branches missed.">                                String color = clothing.has(&quot;color&quot;) ? clothing.getString(&quot;color&quot;) : null;</span>
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">                                int typeId = clothing.has(&quot;clothingType&quot;) ? clothing.getInt(&quot;clothingType&quot;) : -1;</span>
+<span class="pc bpc" id="L129" title="1 of 2 branches missed.">                                int specialTypeId = clothing.has(&quot;specialType&quot;) ? clothing.getInt(&quot;specialType&quot;) : -1;</span>
+
+                                // create and add item
+<span class="fc" id="L132">                                EditOutfitClothingListItem item = new EditOutfitClothingListItem(getApplicationContext(), clothing,</span>
+<span class="fc" id="L133">                                        clothingId, outfitId, name, color, typeId, specialTypeId);</span>
+<span class="fc" id="L134">                                adapter.add(item);</span>
+<span class="nc" id="L135">                            } catch (JSONException e) {</span>
+<span class="nc" id="L136">                                Log.e(&quot;JSON Error&quot;, &quot;Error parsing clothing: &quot; + e.toString());</span>
+<span class="fc" id="L137">                            }</span>
+                        }
+<span class="fc" id="L139">                    }</span>
+                },
+<span class="fc" id="L141">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L144">                        Log.e(&quot;Volley Error&quot;, &quot;Error getting clothes: &quot; + error.toString());</span>
+<span class="nc" id="L145">                    }</span>
+                });
+<span class="fc" id="L147">    }</span>
+
+    private void updateStoredJsonAndSaveChanges() {
+<span class="fc" id="L150">        OutfitManager.getOutfitRequest(getApplicationContext(), outfitId,</span>
+<span class="fc" id="L151">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+<span class="fc" id="L154">                        Log.d(&quot;Volley Response&quot;, &quot;Successfully got outfit &quot; + outfitId + &quot; to save: &quot; + response.toString());</span>
+
+<span class="fc" id="L156">                        outfitJsonObject = response;</span>
+
+<span class="fc" id="L158">                        saveChanges();</span>
+<span class="fc" id="L159">                    }</span>
+                },
+<span class="fc" id="L161">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L164">                        Log.e(&quot;Volley Error&quot;, &quot;Error getting outfit &quot; + outfitId + &quot; to save: &quot; + error.toString());</span>
+<span class="nc" id="L165">                    }</span>
+                });
+<span class="fc" id="L167">    }</span>
+
+    private void createOutfit(String name) {
+<span class="fc" id="L170">        OutfitManager.createOutfitRequest(getApplicationContext(), UserManager.getUserID(getApplicationContext()), name,</span>
+<span class="fc" id="L171">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+<span class="fc" id="L174">                        Log.d(&quot;Volley Response&quot;, &quot;Successfully created outfit: &quot; + response.toString());</span>
+
+<span class="fc" id="L176">                        outfitJsonObject = response;</span>
+<span class="fc" id="L177">                        outfitName = name;</span>
+<span class="fc" id="L178">                        outfitNameEdit.setText(outfitName);</span>
+
+                        // parse the JSON array and add data to the adapter
+                        try {
+<span class="fc" id="L182">                            outfitId = response.getLong(&quot;outfitId&quot;);</span>
+<span class="nc" id="L183">                        } catch (JSONException e) {</span>
+<span class="nc" id="L184">                            Log.e(&quot;JSON Error&quot;, &quot;Error parsing new outfit: &quot; + e.toString());</span>
+<span class="fc" id="L185">                        }</span>
+<span class="fc" id="L186">                    }</span>
+                },
+<span class="fc" id="L188">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L191">                        Log.e(&quot;Volley Error&quot;, &quot;Error creating outfit: &quot; + error.toString());</span>
+<span class="nc" id="L192">                    }</span>
+                });
+<span class="fc" id="L194">    }</span>
+
+    private void saveChanges() {
+        // can't save if there is no outfit
+<span class="pc bpc" id="L198" title="2 of 4 branches missed.">        if (outfitId == -1 || outfitName == null) {</span>
+<span class="nc" id="L199">            Log.e(&quot;EditOutfitActivity&quot;, &quot;Error when saving outfit: outfitId == -1 or outfitName == null&quot;);</span>
+<span class="nc" id="L200">            return;</span>
+        }
+
+<span class="fc" id="L203">        JSONObject updateObject = new JSONObject();</span>
+
+        try {
+            // clone object
+<span class="fc" id="L207">            updateObject = new JSONObject(outfitJsonObject.toString());</span>
+
+            // update name
+<span class="fc" id="L210">            updateObject.put(&quot;outfitName&quot;, outfitNameEdit.getText().toString());</span>
+
+            // remove creation date
+<span class="fc" id="L213">            updateObject.remove(&quot;creationDate&quot;);</span>
+
+<span class="nc" id="L215">        } catch (JSONException e) {</span>
+<span class="nc" id="L216">            Log.e(&quot;JSON Error&quot;, outfitNameEdit.getText().toString() + &quot; : &quot; + e.toString());</span>
+<span class="nc" id="L217">            return;</span>
+<span class="fc" id="L218">        }</span>
+
+<span class="fc" id="L220">        OutfitManager.updateOutfitRequest(getApplicationContext(), updateObject,</span>
+<span class="fc" id="L221">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+<span class="fc" id="L224">                        Log.d(&quot;Volley Response&quot;, &quot;Successfully saved outfit: &quot; + response.toString());</span>
+
+<span class="fc" id="L226">                        outfitJsonObject = response;</span>
+<span class="fc" id="L227">                    }</span>
+                },
+<span class="fc" id="L229">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="fc" id="L232">                        Log.e(&quot;Volley Error&quot;, &quot;Error saving outfit: &quot; + error.toString());</span>
+<span class="fc" id="L233">                    }</span>
+                });
+<span class="fc" id="L235">    }</span>
+
+    private void deleteOutfit() {
+<span class="fc" id="L238">        OutfitManager.deleteOutfitRequest(getApplicationContext(), outfitId,</span>
+<span class="fc" id="L239">                new Response.Listener&lt;String&gt;() {</span>
+                    @Override
+                    public void onResponse(String response) {
+<span class="fc" id="L242">                        Log.d(&quot;Volley Response&quot;, &quot;Successfully deleted outfit: &quot; + response.toString());</span>
+
+                        // switch activities only if deleted successfully
+<span class="fc" id="L245">                        Intent intent = new Intent(EditOutfitActivity.this, OutfitsActivity.class);</span>
+<span class="fc" id="L246">                        startActivity(intent);</span>
+<span class="fc" id="L247">                    }</span>
+                },
+<span class="fc" id="L249">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L252">                        Log.e(&quot;Volley Error&quot;, &quot;Error deleting outfit: &quot; + error.toString());</span>
+<span class="nc" id="L253">                    }</span>
+                });
+<span class="fc" id="L255">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>

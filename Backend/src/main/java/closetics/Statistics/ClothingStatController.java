@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 import java.util.List;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -76,16 +78,17 @@ public class ClothingStatController {
 
     @GetMapping(path = "/getUsersColdestAvgClothing/{userId}")
     public Clothing coldestAvgClothing(@PathVariable long userId) {
-        return clothingRepository.findTopByUserIdOrderByAvgLowTempAsc(userId)
-                .orElse(null);
+        Pageable pageable = PageRequest.of(0, 1);
+        List<Clothing> results = clothingRepository.findTopByUserIdOrderByAvgLowTempAsc(userId, pageable);
+        return results.isEmpty() ? null : results.get(0);
     }
 
     @GetMapping(path = "/getUsersWarmestAvgClothing/{userId}")
     public Clothing warmestAvgClothing(@PathVariable long userId) {
-        return clothingRepository.findTopByUserIdOrderByAvgHighTempDesc(userId)
-                .orElse(null);
+        Pageable pageable = PageRequest.of(0, 1);
+        List<Clothing> results = clothingRepository.findTopByUserIdOrderByAvgHighTempDesc(userId, pageable);
+        return results.isEmpty() ? null : results.get(0);
     }
-
 
     private void calculateAvgTemps(ClothingStats clothingStats) {
         List<WornRecord> validRecords = clothingStats.getDatesWorn().stream()

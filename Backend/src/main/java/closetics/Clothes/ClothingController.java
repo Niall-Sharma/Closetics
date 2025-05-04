@@ -5,6 +5,14 @@ import java.util.Optional;
 import closetics.Statistics.ClothingStats;
 import closetics.Users.User;
 import closetics.Users.UserRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import closetics.Statistics.ClothingStatRepository;
 import org.springframework.http.HttpStatus;
@@ -12,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@Tag(name = "Clothing Items", description = "Endpoints for managing individual clothing items")
 public class ClothingController {
     @Autowired
     ClothingRepository clothingRepository;
@@ -22,33 +31,72 @@ public class ClothingController {
     @Autowired
     UserRepository userRepository;
 
+    @Operation(summary = "Get all clothing items (globally)", description = "Retrieves a list of all clothing items across all users. Use with caution, potentially large response.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved list of all clothing",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class))) // Specify Clothing in List
+    })
     @GetMapping(path = "/getAllClothing")
     public List<Clothing> getAllClothing() {
         return clothingRepository.findAll();
     }
 
+    @Operation(summary = "Get a clothing item by ID", description = "Retrieves a specific clothing item by its unique ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved clothing item",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Clothing.class))),
+            @ApiResponse(responseCode = "404", description = "Clothing item not found", content = @Content)
+    })
     @GetMapping(path = "/getClothing/{id}")
-    public Optional<Clothing> getClothing(@PathVariable long id) {
+    public Optional<Clothing> getClothing(@Parameter(description = "ID of the clothing item to retrieve") @PathVariable long id) {
         return clothingRepository.findById(id);
     }
 
+    @Operation(summary = "Get clothing items by special type for a user", description = "Retrieves clothing items of a specific 'special type' (e.g., seasonal) for a given user.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved list of clothing items",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class))) // Specify Clothing in List
+    })
     @GetMapping(path = "/getClothing/special_type/{userId}/{type}")
-    public List<Clothing> getClothingBySpecialType(@PathVariable("userId") long userId, @PathVariable("type") long type){
+    public List<Clothing> getClothingBySpecialType(
+            @Parameter(description = "ID of the user") @PathVariable("userId") long userId,
+            @Parameter(description = "Special type identifier (numeric)") @PathVariable("type") long type){
         return clothingRepository.findBySpecialType(userId, type);
     }
 
+    @Operation(summary = "Get clothing items by clothing type for a user", description = "Retrieves clothing items of a specific clothing type (e.g., shirt, pants) for a given user.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved list of clothing items",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class))) // Specify Clothing in List
+    })
     @GetMapping(path = "/getClothing/type/{userId}/{type}")
-    public List<Clothing> getClothingByType(@PathVariable("userId") long userId, @PathVariable("type") long type){
+    public List<Clothing> getClothingByType(
+            @Parameter(description = "ID of the user") @PathVariable("userId") long userId,
+            @Parameter(description = "Clothing type identifier (numeric)") @PathVariable("type") long type){
         return clothingRepository.findByType(userId, type);
     }
 
+    @Operation(summary = "Get all clothing items for a specific user", description = "Retrieves all clothing items belonging to a specific user.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved list of user's clothing items",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class))) // Specify Clothing in List
+    })
     @GetMapping(path = "/getClothing/user/{userId}")
-    public List<Clothing> getClothingByUser(@PathVariable long userId){
+    public List<Clothing> getClothingByUser(@Parameter(description = "ID of the user") @PathVariable long userId){
       return clothingRepository.findByUserId(userId);
     }
 
+    @Operation(summary = "Create a new clothing item", description = "Adds a new clothing item for the specified user and initializes its statistics.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Clothing item created successfully",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Clothing.class))),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
+    })
     @PostMapping(path = "/createClothing")
-    public ResponseEntity<Clothing> createClothing(@RequestBody ClothingMinimal request) {
+    public ResponseEntity<Clothing> createClothing(
+            @RequestBody(description = "Details of the clothing item to create. Requires userId and other clothing properties.", required = true,
+                    content = @Content(schema = @Schema(implementation = ClothingMinimal.class)))
+            @org.springframework.web.bind.annotation.RequestBody ClothingMinimal request) {
         long user_id = request.getUserId();
         User user = userRepository.findById(user_id).orElseThrow(() -> new RuntimeException("User not found"));
         Clothing clothing = new Clothing();
@@ -73,14 +121,28 @@ public class ClothingController {
         return ResponseEntity.ok(clothingWithStats);
     }
 
+    @Operation(summary = "Delete a clothing item", description = "Deletes a clothing item and its associated statistics by its ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Clothing item deleted successfully", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Clothing item or statistics not found (deletion might partially succeed)", content = @Content)
+    })
     @DeleteMapping(path = "/deleteClothing/{itemId}")
-    public void deleteClothing(@PathVariable long itemId) {
+    public void deleteClothing(@Parameter(description = "ID of the clothing item to delete") @PathVariable long itemId) {
         clothingRepository.deleteById(itemId);
         clothingStatRepository.deleteById((itemId));
     }
 
+    @Operation(summary = "Update an existing clothing item", description = "Updates the properties of an existing clothing item.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Clothing item updated successfully",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Clothing.class))),
+            @ApiResponse(responseCode = "404", description = "Clothing item not found", content = @Content)
+    })
     @PutMapping (path = "/updateClothing")
-    public ResponseEntity<Clothing> updateClothing(@RequestBody ClothingMinimal request){
+    public ResponseEntity<Clothing> updateClothing(
+            @RequestBody(description = "Details of the clothing item to update. Requires clothingId. Include other properties to modify them.", required = true,
+                    content = @Content(schema = @Schema(implementation = ClothingMinimal.class)))
+            @org.springframework.web.bind.annotation.RequestBody ClothingMinimal request){
         try {
             Clothing clothing = clothingRepository.findById(request.getClothingId())
                     .orElseThrow(() -> new RuntimeException("Clothing Item not found"));
@@ -103,8 +165,14 @@ public class ClothingController {
 
     }
 
+    @Operation(summary = "Toggle the favorite status of a clothing item", description = "Sets a clothing item's favorite status to true if false, and vice versa.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Favorite status toggled successfully",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Clothing.class))),
+            @ApiResponse(responseCode = "404", description = "Clothing item not found", content = @Content)
+    })
     @PutMapping("/swapFavoriteOnClothing/{clothing_Id}")
-    public ResponseEntity<Clothing> swapFavorite(@PathVariable long clothing_Id) {
+    public ResponseEntity<Clothing> swapFavorite(@Parameter(description = "ID of the clothing item to modify") @PathVariable long clothing_Id) {
         Optional<Clothing> clothingOptional = clothingRepository.findById(clothing_Id);
 
         if (clothingOptional.isPresent()) {

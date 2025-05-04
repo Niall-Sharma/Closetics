@@ -1,0 +1,144 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > TransactionController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">closetics.Payment.transactions</a>
+</div>
+
+<h1>Coverage Summary for Class: TransactionController (closetics.Payment.transactions)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TransactionController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    25%
+  </span>
+  <span class="absValue">
+    (1/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    10%
+  </span>
+  <span class="absValue">
+    (1/10)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package closetics.Payment.transactions;
+&nbsp;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@RequestMapping(&quot;/transactions&quot;)
+&nbsp;@RestController
+<b class="fc">&nbsp;public class TransactionController {</b>
+&nbsp;    @Autowired
+&nbsp;    TransactionRepository transactionRepository;
+&nbsp;
+&nbsp;    @GetMapping(&quot;/history&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;TransactionHistory&gt;&gt; GetAllTransaction(){
+<b class="nc">&nbsp;        List&lt;TransactionHistory&gt; history = transactionRepository.findAll();</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(history);</b>
+&nbsp;    }
+&nbsp;    @GetMapping(&quot;/history/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; GetUserTransactions(@PathVariable long id){
+&nbsp;        try {
+<b class="nc">&nbsp;            List&lt;TransactionHistory&gt; history = transactionRepository.findByUserId(id).orElseThrow(() -&gt; new RuntimeException(&quot;Transactions Not Found&quot;));</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(history);</b>
+&nbsp;        } catch (RuntimeException e) {
+<b class="nc">&nbsp;            return ResponseEntity.badRequest().body(&quot;Error occurred: &quot; + e.getMessage());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;    @DeleteMapping(&quot;/history/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; DeleteTransactionHistory(@PathVariable long id){
+&nbsp;        try {
+<b class="nc">&nbsp;            TransactionHistory history = transactionRepository.findById(id).orElseThrow(() -&gt; new RuntimeException(&quot;Transaction Not Found&quot;));</b>
+<b class="nc">&nbsp;            transactionRepository.deleteById(id);</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(history);</b>
+&nbsp;        } catch (RuntimeException e) {
+<b class="nc">&nbsp;            return ResponseEntity.badRequest().body(&quot;Error occurred: &quot; + e.getMessage());</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-17 20:54</div>
+</div>
+</body>
+</html>

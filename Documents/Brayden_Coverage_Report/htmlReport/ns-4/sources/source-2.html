@@ -1,0 +1,307 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > OutfitController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">closetics.Outfits</a>
+</div>
+
+<h1>Coverage Summary for Class: OutfitController (closetics.Outfits)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OutfitController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (10/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (14/28)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    91.9%
+  </span>
+  <span class="absValue">
+    (79/86)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package closetics.Outfits;
+&nbsp;
+&nbsp;import closetics.Clothes.Clothing;
+&nbsp;import closetics.Clothes.ClothingRepository;
+&nbsp;import closetics.Statistics.*;
+&nbsp;import closetics.Users.User;
+&nbsp;import closetics.Users.UserRepository;
+&nbsp;import closetics.Users.UserProfile.UserProfile;
+&nbsp;import closetics.Users.UserProfile.UserProfileRepository;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@RestController
+<b class="fc">&nbsp;public class OutfitController {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    OutfitRepository outfitRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    ClothingRepository clothingRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    UserRepository userRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    OutfitStatRepository outfitStatRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    ClothingStatRepository clothingStatRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    UserProfileRepository uProfileRepository;
+&nbsp;
+&nbsp;    @GetMapping(path = &quot;/getOutfit/{outfitId}&quot;)
+&nbsp;    public ResponseEntity&lt;Outfit&gt; getOutfit(@PathVariable long outfitId) {
+<b class="fc">&nbsp;        return outfitRepository.findById(outfitId)</b>
+<b class="fc">&nbsp;                .map(ResponseEntity::ok)</b>
+<b class="fc">&nbsp;                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(path = &quot;/getAllUserOutfits/{userId}&quot;)
+&nbsp;    public List&lt;Outfit&gt; getAllUserOutfits(@PathVariable long userId) {
+<b class="fc">&nbsp;        return outfitRepository.findAllByUserId(userId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(path = &quot;/createOutfit&quot;)
+&nbsp;    public ResponseEntity&lt;Outfit&gt; createOutfit(@RequestBody OutfitMinimal request) {
+<b class="fc">&nbsp;        long user_id = request.getUserId();</b>
+<b class="fc">&nbsp;        User user = userRepository.findById(user_id).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</b>
+<b class="fc">&nbsp;        long numOfUserOutfits = outfitRepository.countByUserUserId(user_id);</b>
+<b class="pc">&nbsp;        if ((user.getUserTier().equals(&quot;Free&quot;) &amp;&amp; numOfUserOutfits &gt;= 15) || (user.getUserTier().equals(&quot;Basic&quot;) &amp;&amp; numOfUserOutfits &gt;= 30)) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        Outfit outfit = new Outfit();</b>
+<b class="fc">&nbsp;        outfit.setUser(user);</b>
+<b class="fc">&nbsp;        outfit.setCreationDate(LocalDate.now());</b>
+<b class="fc">&nbsp;        outfit.setOutfitName(request.getOutfitName());</b>
+<b class="fc">&nbsp;        outfit.setFavorite(request.getFavorite());</b>
+<b class="pc">&nbsp;        if (outfit.getOutfitItems() == null) {</b>
+<b class="fc">&nbsp;            outfit.setOutfitItems(new ArrayList&lt;&gt;()); // Ensure the list is initialized</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        Outfit savedOutfit =  outfitRepository.save(outfit);</b>
+<b class="fc">&nbsp;        UserProfile uProfile = outfit.getUser().GetUserProfile();</b>
+<b class="fc">&nbsp;        OutfitStats outfitStats = outfitStatRepository.save(new OutfitStats(savedOutfit.getOutfitId()));</b>
+<b class="fc">&nbsp;        Outfit statOutfit = savedOutfit.setOutfitStats(outfitStats);</b>
+<b class="fc">&nbsp;        Outfit outfitWithStats =  outfitRepository.save(statOutfit);</b>
+<b class="fc">&nbsp;        uProfile.addOutfit(outfitWithStats);</b>
+<b class="fc">&nbsp;        uProfileRepository.save(uProfile);</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(outfitWithStats);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(path = &quot;/updateOutfit&quot;)
+&nbsp;    public ResponseEntity&lt;Outfit&gt; updateOutfit(@RequestBody OutfitMinimal request) {
+&nbsp;        try {
+<b class="fc">&nbsp;            Outfit outfit = outfitRepository.findById(request.getOutfitId())</b>
+<b class="fc">&nbsp;                    .orElseThrow(() -&gt; new RuntimeException(&quot;Outfit Item not found&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;            List&lt;Clothing&gt; items = new ArrayList&lt;&gt;();</b>
+<b class="pc">&nbsp;            if (request.getOutfitItems() != null) {</b>
+<b class="fc">&nbsp;                for (Long id : request.getOutfitItems()) {</b>
+<b class="fc">&nbsp;                    clothingRepository.findById(id).ifPresent(items::add);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            outfit.setOutfitItems(items);</b>
+<b class="fc">&nbsp;            outfit.setOutfitName(request.getOutfitName());</b>
+<b class="fc">&nbsp;            outfit.setFavorite(request.getFavorite());</b>
+&nbsp;
+<b class="fc">&nbsp;            outfitRepository.save(outfit);</b>
+<b class="fc">&nbsp;            return ResponseEntity.ok(outfit);</b>
+&nbsp;        } catch (RuntimeException e) {
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(path = &quot;/deleteOutfit/{outfitId}&quot;)
+&nbsp;    public void deleteOutfit(@PathVariable long outfitId) {
+&nbsp;
+<b class="fc">&nbsp;        Outfit outfit = outfitRepository.findById(outfitId).orElseThrow( () -&gt; new RuntimeException(&quot;Failed To Find Outfit&quot;));</b>
+<b class="fc">&nbsp;        UserProfile userProfile = outfit.getUser().GetUserProfile();</b>
+&nbsp;
+<b class="fc">&nbsp;        userProfile.removeOutfit(outfit);</b>
+&nbsp;
+<b class="fc">&nbsp;        outfitRepository.deleteById(outfitId);</b>
+<b class="fc">&nbsp;        outfitStatRepository.deleteById(outfitId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/addItemToOutfit/{outfitId}/{clothingId}&quot;)
+&nbsp;    public ResponseEntity&lt;Outfit&gt; addItemToOutfit(@PathVariable long outfitId, @PathVariable long clothingId) {
+<b class="fc">&nbsp;        Optional&lt;Outfit&gt; outfitOptional = outfitRepository.findById(outfitId);</b>
+&nbsp;
+<b class="pc">&nbsp;        if (outfitOptional.isPresent()) {</b>
+<b class="fc">&nbsp;            Outfit outfit = outfitOptional.get();</b>
+<b class="fc">&nbsp;            Clothing clothing = clothingRepository.findById(clothingId).orElseThrow(() -&gt; new RuntimeException(&quot;Clothing Not Found&quot;));</b>
+<b class="pc">&nbsp;            if (!outfit.getOutfitItems().contains(clothing)) { // Prevent duplicate entries</b>
+<b class="fc">&nbsp;                outfit.getOutfitItems().add(clothing);</b>
+<b class="fc">&nbsp;                outfitRepository.save(outfit);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            ClothingStats clothingStats = clothingStatRepository.findById(clothingId)</b>
+<b class="fc">&nbsp;                    .orElseThrow(() -&gt; new RuntimeException(&quot;Clothing Stat Item not found&quot;));</b>
+<b class="fc">&nbsp;            long numOfOutfitsIn = outfitRepository.countDistinctOutfitsContainingClothing(clothingId);</b>
+<b class="fc">&nbsp;            clothingStats.setNumberOfOutfitsIn(numOfOutfitsIn);</b>
+<b class="fc">&nbsp;            clothingStatRepository.save(clothingStats);</b>
+<b class="fc">&nbsp;            return ResponseEntity.ok(outfit);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/removeItemFromOutfit/{outfitId}/{clothingId}&quot;)
+&nbsp;    public ResponseEntity&lt;Outfit&gt; removeItemFromOutfit(@PathVariable long outfitId, @PathVariable long clothingId) {
+<b class="fc">&nbsp;        Optional&lt;Outfit&gt; outfitOptional = outfitRepository.findById(outfitId);</b>
+&nbsp;
+<b class="pc">&nbsp;        if (outfitOptional.isPresent()) {</b>
+<b class="fc">&nbsp;            Outfit outfit = outfitOptional.get();</b>
+<b class="fc">&nbsp;            Clothing clothing = clothingRepository.findById(clothingId).orElseThrow(() -&gt; new RuntimeException(&quot;Clothing Not Found&quot;));</b>
+<b class="pc">&nbsp;            if (outfit.getOutfitItems().contains(clothing)) { // Check if it exists before removing</b>
+<b class="fc">&nbsp;                outfit.getOutfitItems().remove(clothing);</b>
+<b class="fc">&nbsp;                outfitRepository.save(outfit);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            ClothingStats clothingStats = clothingStatRepository.findById(clothingId)</b>
+<b class="fc">&nbsp;                    .orElseThrow(() -&gt; new RuntimeException(&quot;Clothing Stat Item not found&quot;));</b>
+<b class="fc">&nbsp;            long numOfOutfitsIn = outfitRepository.countDistinctOutfitsContainingClothing(clothingId);</b>
+<b class="fc">&nbsp;            clothingStats.setNumberOfOutfitsIn(numOfOutfitsIn);</b>
+<b class="fc">&nbsp;            clothingStatRepository.save(clothingStats);</b>
+<b class="fc">&nbsp;            return ResponseEntity.ok(outfit);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(path = &quot;/getAllOutfitItems/{outfitId}&quot;)
+&nbsp;    public List&lt;Clothing&gt; getAllOutfitItems(@PathVariable long outfitId) {
+<b class="fc">&nbsp;        Outfit outfit = outfitRepository.findById(outfitId)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new RuntimeException(&quot;Outfit Item not found&quot;));</b>
+<b class="fc">&nbsp;        List&lt;Clothing&gt; clothes = new ArrayList&lt;&gt;();</b>
+<b class="pc">&nbsp;        if (outfit != null) {</b>
+<b class="fc">&nbsp;           clothes = outfit.getOutfitItems();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return clothes;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/swapFavoriteOnOutfit/{outfitId}&quot;)
+&nbsp;    public ResponseEntity&lt;Outfit&gt; swapFavorite(@PathVariable long outfitId) {
+<b class="fc">&nbsp;        Optional&lt;Outfit&gt; outfitOptional = outfitRepository.findById(outfitId);</b>
+&nbsp;
+<b class="pc">&nbsp;        if (outfitOptional.isPresent()) {</b>
+<b class="fc">&nbsp;            Outfit outfit = outfitOptional.get();</b>
+<b class="pc">&nbsp;            if (outfit.getFavorite()) {</b>
+<b class="fc">&nbsp;                outfit.setFavorite(false);</b>
+<b class="fc">&nbsp;                outfitRepository.save(outfit);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                outfit.setFavorite(true);</b>
+<b class="nc">&nbsp;                outfitRepository.save(outfit);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            return ResponseEntity.ok(outfit);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return ResponseEntity.notFound().build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-17 20:54</div>
+</div>
+</body>
+</html>

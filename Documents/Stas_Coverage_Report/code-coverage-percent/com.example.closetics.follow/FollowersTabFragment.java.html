@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FollowersTabFragment.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics.follow</a> &gt; <span class="el_source">FollowersTabFragment.java</span></div><h1>FollowersTabFragment.java</h1><pre class="source lang-java linenums">package com.example.closetics.follow;
+
+import android.content.Intent;
+import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.example.closetics.MainActivity;
+import com.example.closetics.PublicProfileActivity;
+import com.example.closetics.R;
+import com.example.closetics.UserManager;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class FollowersTabFragment extends Fragment {
+
+    private TextView emptyText;
+    private RecyclerView recycler;
+    private FollowUsersListAdapter adapter;
+
+    private long userId;
+
+<span class="fc" id="L40">    public FollowersTabFragment() {</span>
+        // Required empty public constructor
+<span class="fc" id="L42">    }</span>
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+<span class="fc" id="L48">        View view = inflater.inflate(R.layout.fragment_followers_tab, container, false);</span>
+
+        // get userId whose lists we are displaying
+<span class="fc" id="L51">        Bundle extras = getActivity().getIntent().getExtras();</span>
+<span class="fc" id="L52">        userId = -1;</span>
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">        if (extras != null) {</span>
+<span class="fc" id="L54">            userId = extras.getLong(&quot;USER_ID&quot;, -1);</span>
+        }
+
+        // initialize ui
+<span class="fc" id="L58">        emptyText = view.findViewById(R.id.followers_tab_empty_text);</span>
+<span class="fc" id="L59">        recycler = view.findViewById(R.id.followers_tab_recycler);</span>
+
+        // hide empty text by default
+<span class="fc" id="L62">        emptyText.setVisibility(TextView.GONE);</span>
+
+        // initialize recycler
+<span class="fc" id="L65">        adapter = new FollowUsersListAdapter(new ArrayList&lt;FollowUsersListItem&gt;(), item -&gt; {</span>
+<span class="nc bnc" id="L66" title="All 2 branches missed.">            if (item.getId() == UserManager.getUserID(getActivity().getApplicationContext())) {</span>
+                // open your profile if clicked on your username
+<span class="nc" id="L68">                Intent intent = new Intent(getActivity(), MainActivity.class);</span>
+<span class="nc" id="L69">                intent.putExtra(&quot;OPEN_FRAGMENT&quot;, 3); // open fragment Profile</span>
+<span class="nc" id="L70">                startActivity(intent);</span>
+<span class="nc" id="L71">            } else {</span>
+<span class="nc" id="L72">                Intent intent = new Intent(getActivity(), PublicProfileActivity.class);</span>
+<span class="nc" id="L73">                intent.putExtra(&quot;USER_ID&quot;, item.getId());</span>
+<span class="nc" id="L74">                startActivity(intent);</span>
+            }
+            //Toast.makeText(getContext(), &quot;Clicked: &quot; + item.getUsername(), Toast.LENGTH_SHORT).show();
+<span class="nc" id="L77">        });</span>
+<span class="fc" id="L78">        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());</span>
+<span class="fc" id="L79">        recycler.setLayoutManager(layoutManager);</span>
+<span class="fc" id="L80">        recycler.setItemAnimator(new DefaultItemAnimator());</span>
+<span class="fc" id="L81">        recycler.setAdapter(adapter);</span>
+
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">        if (userId == -1) {</span>
+<span class="nc" id="L84">            Log.e(&quot;FollowersTabFragment&quot;, &quot;User Id not passed&quot;);</span>
+        } else {
+<span class="fc" id="L86">            populateFollowers(userId);</span>
+        }
+
+<span class="fc" id="L89">        return view;</span>
+    }
+
+    private void populateFollowers(long userId) {
+        // first get logged in user's following list
+<span class="fc" id="L94">        UserManager.getFollowingListRequest(getActivity().getApplicationContext(), UserManager.getUserID(getActivity().getApplicationContext()),</span>
+<span class="fc" id="L95">                new Response.Listener&lt;JSONArray&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+<span class="fc" id="L99">                            Log.d(&quot;Volley Response&quot;, &quot;Successful get following of current user: &quot; + response.toString());</span>
+
+<span class="fc" id="L101">                            ArrayList&lt;Long&gt; myFollowingIds = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">                            for (int i = 0; i &lt; response.length(); i++) {</span>
+<span class="fc" id="L103">                                myFollowingIds.add(response.getJSONObject(i).getLong(&quot;id&quot;));</span>
+                            }
+
+                            // continue call with following ids on hand
+<span class="fc" id="L107">                            populateFollowers(userId, myFollowingIds);</span>
+                        }
+<span class="nc" id="L109">                        catch (JSONException e) {</span>
+<span class="nc" id="L110">                            Log.e(&quot;JSON Error&quot;, &quot;Get following of current user Error: &quot; + e.toString());</span>
+<span class="fc" id="L111">                        }</span>
+<span class="fc" id="L112">                    }</span>
+                },
+<span class="fc" id="L114">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L117">                        Log.e(&quot;Volley Error&quot;, &quot;Get following of current user Error: &quot; + error.toString());</span>
+<span class="nc" id="L118">                    }</span>
+                });
+<span class="fc" id="L120">    }</span>
+
+    private void populateFollowers(long userId, List&lt;Long&gt; myFollowingIds) {
+        // mock values for testing
+//        ArrayList&lt;FollowUsersListItem&gt; mockListItems = new ArrayList&lt;&gt;();
+//        for (int i = 0; i &lt; 10; i++) {
+//            mockListItems.add(new FollowUsersListItem(getActivity().getApplicationContext(),
+//                    i + 1, &quot;mockUser&quot; + (i + 1),
+//                    i % 2 == 0));
+//        }
+//        adapter.setNewItems(mockListItems);
+//        return;
+
+<span class="fc" id="L133">        UserManager.getFollowersListRequest(getActivity().getApplicationContext(), userId,</span>
+<span class="fc" id="L134">                new Response.Listener&lt;JSONArray&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+<span class="fc" id="L138">                            Log.d(&quot;Volley Response&quot;, &quot;Successful get followers of &quot; + userId + &quot;: &quot; + response.toString());</span>
+
+<span class="fc" id="L140">                            ArrayList&lt;FollowUsersListItem&gt; usersListItems = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">                            for (int i = 0; i &lt; response.length(); i++) {</span>
+<span class="fc" id="L142">                                JSONObject user = response.getJSONObject(i);</span>
+
+<span class="fc" id="L144">                                boolean isFollowing = myFollowingIds.contains(user.getLong(&quot;id&quot;));</span>
+
+<span class="fc" id="L146">                                usersListItems.add(new FollowUsersListItem(getActivity().getApplicationContext(),</span>
+<span class="fc" id="L147">                                        user.getLong(&quot;id&quot;), user.getString(&quot;username&quot;),</span>
+                                        isFollowing));
+                            }
+
+                            // update recycler only if there is anything in the list
+<span class="pc bpc" id="L152" title="1 of 2 branches missed.">                            if (usersListItems.isEmpty()) {</span>
+<span class="nc" id="L153">                                emptyText.setVisibility(TextView.VISIBLE);</span>
+                            } else {
+<span class="fc" id="L155">                                adapter.setNewItems(usersListItems);</span>
+                            }
+                        }
+<span class="nc" id="L158">                        catch (JSONException e) {</span>
+<span class="nc" id="L159">                            Log.e(&quot;JSON Error&quot;, &quot;Get followers of &quot; + userId + &quot; Error: &quot; + e.toString());</span>
+<span class="fc" id="L160">                        }</span>
+<span class="fc" id="L161">                    }</span>
+                },
+<span class="fc" id="L163">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L166">                        Log.e(&quot;Volley Error&quot;, &quot;Get followers of &quot; + userId + &quot; Error: &quot; + error.toString());</span>
+<span class="nc" id="L167">                    }</span>
+                });
+<span class="fc" id="L169">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>

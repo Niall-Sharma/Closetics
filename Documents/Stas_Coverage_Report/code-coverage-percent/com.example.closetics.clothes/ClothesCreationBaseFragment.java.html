@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ClothesCreationBaseFragment.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics.clothes</a> &gt; <span class="el_source">ClothesCreationBaseFragment.java</span></div><h1>ClothesCreationBaseFragment.java</h1><pre class="source lang-java linenums">package com.example.closetics.clothes;
+
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
+
+import com.example.closetics.R;
+
+public class ClothesCreationBaseFragment extends Fragment{
+    private Button submit;
+    private TextView clothesTextView;
+    private EditText inputField;
+    private ClothesDataViewModel clothesDataViewModel;
+    private ViewPager2 viewPager;
+    private int position;
+
+
+    //Add camera functionality
+    //Likely will need to add more fields to this and more fragments!!!
+
+
+<span class="nc" id="L33">    public ClothesCreationBaseFragment(ClothesDataViewModel clothesDataViewModel){</span>
+<span class="nc" id="L34">        this.clothesDataViewModel = clothesDataViewModel;</span>
+
+<span class="nc" id="L36">    }</span>
+    /*
+    Second constructor for editing viewpager
+     */
+<span class="nc" id="L40">    public ClothesCreationBaseFragment(ClothesDataViewModel clothesDataViewModel, String answeredQuestions ){</span>
+
+<span class="nc" id="L42">    }</span>
+
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+<span class="nc" id="L49">        View view = inflater.inflate(R.layout.fragment_add_clothes, container, false);</span>
+<span class="nc" id="L50">        super.onCreate(savedInstanceState);</span>
+
+<span class="nc" id="L52">        position = getArguments().getInt(&quot;count&quot;);</span>
+<span class="nc" id="L53">        int index = position;</span>
+
+<span class="nc" id="L55">        submit = view.findViewById(R.id.add_button);</span>
+<span class="nc" id="L56">        clothesTextView = view.findViewById(R.id.question_text);</span>
+<span class="nc" id="L57">        inputField = view.findViewById(R.id.input_edit);</span>
+
+<span class="nc" id="L59">        clothesTextView.setText(ClothingItem.createClothesQuestions[index]);</span>
+
+        //Grab the viewpager
+<span class="nc" id="L62">        viewPager = requireActivity().findViewById(R.id.edit_pager);</span>
+
+<span class="nc" id="L64">        inputField.addTextChangedListener(new TextWatcher() {</span>
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+<span class="nc" id="L69">            }</span>
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+<span class="nc" id="L74">            }</span>
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //Update the arrayList when text is changed
+
+                //If there is a change set it in the arrayList
+<span class="nc bnc" id="L81" title="All 2 branches missed.">                if (!(s.toString().equals(&quot;&quot;))) {</span>
+<span class="nc" id="L82">                    clothesDataViewModel.setFragment(index, inputField.getText().toString().trim());</span>
+                }
+<span class="nc" id="L84">            }</span>
+        });
+<span class="nc" id="L86">        submit.setOnClickListener(new View.OnClickListener() {</span>
+            //Swipe on next button
+            @Override
+            public void onClick(View v) {
+<span class="nc bnc" id="L90" title="All 2 branches missed.">                if (viewPager!=null){</span>
+<span class="nc" id="L91">                    viewPager.setCurrentItem(viewPager.getCurrentItem()+1, true);</span>
+                }
+<span class="nc" id="L93">            }</span>
+        });
+
+
+<span class="nc" id="L97">        return view;</span>
+    }
+
+    public EditText getInputField() {
+<span class="nc" id="L101">        return inputField;</span>
+    }
+    public int getPosition(){
+<span class="nc" id="L104">        return position;</span>
+    }
+
+    public static ClothesCreationBaseFragment newInstance(int fragmentCount, ClothesDataViewModel clothesDataViewModel) {
+        //Create a new forgot password fragment
+<span class="nc" id="L109">        ClothesCreationBaseFragment fragment = new ClothesCreationBaseFragment(clothesDataViewModel);</span>
+<span class="nc" id="L110">        Bundle args = new Bundle();</span>
+<span class="nc" id="L111">        args.putInt(&quot;count&quot;, fragmentCount);</span>
+<span class="nc" id="L112">        fragment.setArguments(args);</span>
+<span class="nc" id="L113">        return fragment;</span>
+    }
+
+
+
+}
+
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>

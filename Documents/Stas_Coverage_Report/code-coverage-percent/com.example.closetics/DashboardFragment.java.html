@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DashboardFragment.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics</a> &gt; <span class="el_source">DashboardFragment.java</span></div><h1>DashboardFragment.java</h1><pre class="source lang-java linenums">package com.example.closetics;
+
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
+
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.example.closetics.clothes.ClothesManager;
+import com.example.closetics.dashboard.LeaderboardActivity;
+import com.example.closetics.dashboard.SetTodaysOutfitFragment;
+import com.example.closetics.dashboard.StatisticsActivity;
+
+import com.example.closetics.dashboard.StatisticsManager;
+import com.example.closetics.dashboard.StatisticsRecyclerViewAdapter;
+import com.example.closetics.outfits.OutfitManager;
+import com.example.closetics.outfits.OutfitsActivity;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class DashboardFragment extends Fragment {
+
+
+
+    private Button leaderboard;
+    private Button userStatistics;
+    private Button setTomorrow;
+    private long current;
+    private long tomorrow;
+    private ImageButton login;
+    private TextView outfitName;
+    private TextView outfitInsights;
+    private TextView todaysDate;
+    private ImageView outfitImage;
+    private JSONObject outfitStats;
+    private TextView wornCount;
+    private TextView outfitTotalCount;
+    private TextView averageLowTemperature;
+
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private StatisticsRecyclerViewAdapter adapter;
+
+
+    /*
+    Note add a viewpager2 for the outfit images
+     */
+
+<span class="fc" id="L72">    public DashboardFragment() {</span>
+        // Required empty public constructor
+<span class="fc" id="L74">    }</span>
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        // Inflate the layout for this fragment
+<span class="fc" id="L81">        View view = inflater.inflate(R.layout.fragment_dashboard, container, false);</span>
+<span class="fc" id="L82">        leaderboard = view.findViewById(R.id.leaderboardButton);</span>
+<span class="fc" id="L83">        userStatistics = view.findViewById(R.id.userStatsButton);</span>
+<span class="fc" id="L84">        setTomorrow = view.findViewById(R.id.setTomorrowButton);</span>
+<span class="fc" id="L85">        login = view.findViewById(R.id.loginPageButton);</span>
+<span class="fc" id="L86">        outfitImage = view.findViewById(R.id.imageView2);</span>
+<span class="fc" id="L87">        todaysDate = view.findViewById(R.id.todaysDate);</span>
+<span class="fc" id="L88">        outfitName = view.findViewById(R.id.outfitName);</span>
+<span class="fc" id="L89">        outfitInsights = view.findViewById(R.id.outfitStats);</span>
+<span class="fc" id="L90">        wornCount = view.findViewById(R.id.wornCount);</span>
+<span class="fc" id="L91">        outfitTotalCount = view.findViewById(R.id.outfitTotalCount);</span>
+<span class="fc" id="L92">        averageLowTemperature = view.findViewById(R.id.averageLowTemperature);</span>
+
+
+
+<span class="fc" id="L96">        current = OutfitManager.getCurrentDailyOutfit(getActivity());</span>
+<span class="fc" id="L97">        tomorrow = OutfitManager.getTomorrowDailyOutfit(getActivity());</span>
+
+<span class="fc" id="L99">        Log.d(&quot;current&quot;, String.valueOf(OutfitManager.getCurrentDailyOutfit(getActivity())));</span>
+<span class="fc" id="L100">        Log.d(&quot;tommorow&quot;, String.valueOf(OutfitManager.getTomorrowDailyOutfit(getActivity())));</span>
+
+
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">        if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.O) {</span>
+<span class="fc" id="L104">            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(&quot;MM-dd-yyyy&quot;);</span>
+<span class="fc" id="L105">            LocalDate today = LocalDate.now();</span>
+<span class="fc" id="L106">            String formattedDate = today.format(formatter);</span>
+<span class="fc" id="L107">            todaysDate.setText(formattedDate);</span>
+
+        }
+
+        //No set outfit for today
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">        if (current == -1){</span>
+<span class="fc" id="L113">            String s = &quot;Set Today's Outfit&quot;;</span>
+<span class="fc" id="L114">            setTomorrow.setText(s);</span>
+<span class="fc" id="L115">            outfitName.setText(&quot;Please set an Outfit!&quot;);</span>
+
+        }
+        //Current is set!
+<span class="pc bpc" id="L119" title="1 of 2 branches missed.">        if (current != -1){</span>
+<span class="nc" id="L120">            String s = &quot;Set Tomorrow's Outfit&quot;;</span>
+<span class="nc" id="L121">            setTomorrow.setText(s);</span>
+<span class="nc" id="L122">            getOutfit();</span>
+<span class="nc" id="L123">            String s1 = String.valueOf(current);</span>
+<span class="nc" id="L124">            outfitName.setText(s1);</span>
+        }
+
+
+
+
+
+
+
+<span class="fc" id="L133">        setTomorrow.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L136">                Intent intent = new Intent(getActivity(), OutfitsActivity.class);</span>
+
+                //If current is false, set current
+<span class="nc bnc" id="L139" title="All 2 branches missed.">                if (current == -1){</span>
+<span class="nc" id="L140">                    intent.putExtra(&quot;setTomorrow&quot;, false);</span>
+
+
+                }
+                else{
+<span class="nc" id="L145">                    intent.putExtra(&quot;setTomorrow&quot;, true);</span>
+
+                }
+<span class="nc" id="L148">                startActivity(intent);</span>
+<span class="nc" id="L149">            }</span>
+        });
+
+<span class="fc" id="L152">        leaderboard.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L155">                Intent intent = new Intent(getActivity(), LeaderboardActivity.class);</span>
+<span class="nc" id="L156">                startActivity(intent);</span>
+
+<span class="nc" id="L158">            }</span>
+        });
+
+<span class="fc" id="L161">        userStatistics.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L164">                Intent intent = new Intent(getActivity(), StatisticsActivity.class);</span>
+<span class="nc" id="L165">                startActivity(intent);</span>
+
+<span class="nc" id="L167">            }</span>
+        });
+
+
+<span class="fc" id="L171">        return view;</span>
+    }
+
+    private void getOutfit(){
+<span class="nc" id="L175">        OutfitManager.getOutfitRequest(getActivity(), current, new Response.Listener&lt;JSONObject&gt;() {</span>
+            @Override
+            public void onResponse(JSONObject response) {
+<span class="nc" id="L178">                Log.d(&quot;get outfit&quot;, response.toString());</span>
+                try {
+<span class="nc" id="L180">                    String name = response.getString(&quot;outfitName&quot;);</span>
+<span class="nc" id="L181">                    outfitName.setText(name);</span>
+<span class="nc" id="L182">                    name+=&quot; Insights&quot;;</span>
+<span class="nc" id="L183">                    outfitInsights.setText(name);</span>
+                    //Grab the images from the clothes
+                    //
+<span class="nc" id="L186">                    outfitStats = response.getJSONObject(&quot;outfitStats&quot;);</span>
+<span class="nc" id="L187">                    String worn = outfitStats.getString(&quot;timesWorn&quot;);</span>
+<span class="nc" id="L188">                    wornCount.setText(worn);</span>
+<span class="nc" id="L189">                    String lowTemp = outfitStats.getString(&quot;avgLowTemp&quot;);</span>
+<span class="nc" id="L190">                    String highTemp = outfitStats.getString(&quot;avgHighTemp&quot;);</span>
+<span class="nc" id="L191">                    outfitTotalCount.setText(highTemp);</span>
+<span class="nc" id="L192">                    averageLowTemperature.setText(lowTemp);</span>
+
+
+                    //Grab the image
+
+<span class="nc" id="L197">                } catch (JSONException e) {</span>
+<span class="nc" id="L198">                    Log.e(&quot;exception&quot;, e.toString());</span>
+<span class="nc" id="L199">                }</span>
+
+<span class="nc" id="L201">            }</span>
+<span class="nc" id="L202">        }, new Response.ErrorListener() {</span>
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+<span class="nc" id="L206">            }</span>
+        });
+<span class="nc" id="L208">    }</span>
+
+    private void showFragment(){
+        //NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment_activity_main);
+        //navController.navigate(R.id.set_todays_outfit_action);
+
+<span class="nc" id="L214">    }</span>
+
+    /*
+    Will need to add error
+     */
+    public static void addWornToday(Context context, long outfitId){
+<span class="nc" id="L220">        StatisticsManager.addWornOutfitTodayRequest(context,outfitId, MainActivity.SERVER_URL, new Response.Listener&lt;JSONObject&gt;() {</span>
+            @Override
+            public void onResponse(JSONObject response) {
+<span class="nc" id="L223">                Log.d(&quot;Add worn response&quot;, response.toString());</span>
+
+<span class="nc" id="L225">            }</span>
+<span class="nc" id="L226">        }, new Response.ErrorListener() {</span>
+            @Override
+            public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L229">                Log.e(&quot;Error worn&quot;, error.toString());</span>
+
+<span class="nc" id="L231">            }</span>
+        });
+<span class="nc" id="L233">    }</span>
+
+    /*
+    This is called by the android manifest!
+     */
+<span class="nc" id="L238">    public static class DateChangeReceiver extends BroadcastReceiver{</span>
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+<span class="nc bnc" id="L242" title="All 2 branches missed.">            if (Intent.ACTION_DATE_CHANGED.equals(intent.getAction())){</span>
+                //Swap tomorrow to current on next day
+<span class="nc" id="L244">                long clothingId = OutfitManager.getTomorrowDailyOutfit(context);</span>
+<span class="nc" id="L245">                OutfitManager.saveCurrentDailyOutfit(context, clothingId);</span>
+                //Reset tomorrow to -1
+<span class="nc" id="L247">                OutfitManager.saveTomorrowDailyOutfit(context, -1);</span>
+<span class="nc" id="L248">                addWornToday(context, clothingId);</span>
+            }
+<span class="nc" id="L250">        }</span>
+    }
+
+
+
+
+
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>

@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LoginActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics</a> &gt; <span class="el_source">LoginActivity.java</span></div><h1>LoginActivity.java</h1><pre class="source lang-java linenums">package com.example.closetics;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentContainer;
+import androidx.fragment.app.FragmentTransaction;
+
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.TextView;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
+//10.0.2.2
+<span class="nc" id="L38">public class LoginActivity extends AppCompatActivity {</span>
+
+    //Login functionality: Post requests to the backend
+
+    private EditText usernameEditText;  // define username edittext variable
+    private EditText passwordEditText;  // define password edittext variable
+    private Button loginButton;         // define login button variable
+    private Button signupButton;        // define signup button variable
+    private Button forgotPasswordButton;  //define forgotPassword button variable
+    private TextView errorText;
+    //To be sent to the forgot password fragment
+    private long id1;
+    private long id2;
+    private long userId;
+
+
+    private static final String URL_GET_USER_BY_USERNAME = MainActivity.SERVER_URL + &quot;/users/username/&quot;; // +{{username}}
+    private static final String URL = MainActivity.SERVER_URL + &quot;/login&quot;;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L60">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L61">        setContentView(R.layout.activity_login);            // link to Login activity XML</span>
+
+        // initialize UI elements
+<span class="nc" id="L64">        usernameEditText = findViewById(R.id.login_username_edit);</span>
+<span class="nc" id="L65">        passwordEditText = findViewById(R.id.login_password_edit);</span>
+<span class="nc" id="L66">        loginButton = findViewById(R.id.login_login_button);    // link to login button in the Login activity XML</span>
+<span class="nc" id="L67">        signupButton = findViewById(R.id.login_signup_button);  // link to signup button in the Login activity XML</span>
+<span class="nc" id="L68">        forgotPasswordButton = findViewById(R.id.login_forgot_password); //link to forgot password button in Login activity XML</span>
+<span class="nc" id="L69">        errorText = findViewById(R.id.login_error_text);</span>
+
+<span class="nc" id="L71">        errorText.setVisibility(TextView.GONE); // hide error message by default</span>
+
+
+        //Login Button
+<span class="nc" id="L75">        loginButton.setOnClickListener(v -&gt; {</span>
+<span class="nc" id="L76">            String username = usernameEditText.getText().toString();</span>
+<span class="nc" id="L77">            String password = passwordEditText.getText().toString();</span>
+            //Login request to the backend API
+<span class="nc" id="L79">            UserManager.loginRequest(getApplicationContext(), username, password, URL,</span>
+<span class="nc" id="L80">                    new Response.Listener&lt;JSONObject&gt;() {</span>
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            //Response is a JSON object from the backend end
+
+                            //Check if valid request, that is the only error possible onResponse
+<span class="nc" id="L86">                           String message = null;</span>
+                            try {
+<span class="nc" id="L88">                                 message = response.getString(&quot;message&quot;);</span>
+<span class="nc" id="L89">                            } catch (JSONException e) {</span>
+<span class="nc" id="L90">                                Log.e(&quot;JSON Error&quot;, e.toString());</span>
+<span class="nc" id="L91">                            }</span>
+
+
+<span class="nc bnc" id="L94" title="All 2 branches missed.">                            if (message.equals(&quot;Invalid Request&quot;)){</span>
+<span class="nc" id="L95">                                Log.e(&quot;Volley Error&quot;, &quot;Invalid Request&quot;);</span>
+<span class="nc" id="L96">                                setErrorMessage(&quot;Please provide both a username and email&quot;);</span>
+
+                            }
+                            //Successful login
+                            else {
+<span class="nc" id="L101">                                Log.d(&quot;Volley Response&quot;, &quot;Successful Login: &quot; + response.toString());</span>
+                                try {
+<span class="nc" id="L103">                                    String token = response.getString(&quot;token&quot;);//This grabs the string value of token JSON header</span>
+<span class="nc" id="L104">                                    long userID = response.getLong(&quot;user_id&quot;);</span>
+                                    //Save userID in shared preferences
+<span class="nc" id="L106">                                    UserManager.saveUserID(getApplicationContext(), userID);</span>
+                                    //Save session token in shared preferences
+<span class="nc" id="L108">                                    UserManager.saveLoginToken(getApplicationContext(), token);</span>
+                                    //Save username in shared preferences
+<span class="nc" id="L110">                                    UserManager.saveUsername(getApplicationContext(), username);</span>
+
+                                    // start websocket for recommendations
+<span class="nc" id="L113">                                    startRecWebSocket();</span>
+
+<span class="nc" id="L115">                                } catch (JSONException e) {</span>
+<span class="nc" id="L116">                                    Log.e(&quot;JSON Error&quot;, e.toString());</span>
+
+<span class="nc" id="L118">                                }</span>
+                                //Switch to main page on success
+<span class="nc" id="L120">                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);</span>
+<span class="nc" id="L121">                                intent.putExtra(&quot;USERNAME&quot;, username);</span>
+<span class="nc" id="L122">                                intent.putExtra(&quot;PASSWORD&quot;, password);</span>
+<span class="nc" id="L123">                                startActivity(intent);</span>
+
+                            }
+<span class="nc" id="L126">                        }</span>
+<span class="nc" id="L127">                    }, new Response.ErrorListener() {</span>
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L130">                            Log.e(&quot;Volley Error&quot;, error.toString());</span>
+
+                            //Handling timeout errors and unknown errors from Volley error
+<span class="nc bnc" id="L133" title="All 4 branches missed.">                            if (error instanceof TimeoutError || error instanceof NoConnectionError) {</span>
+<span class="nc" id="L134">                                setErrorMessage(&quot;Connection timeout&quot;);</span>
+<span class="nc" id="L135">                                return;</span>
+                            }
+<span class="nc bnc" id="L137" title="All 2 branches missed.">                            else if (error.networkResponse == null) {</span>
+<span class="nc" id="L138">                                setErrorMessage(&quot;Unknown error&quot;);</span>
+<span class="nc" id="L139">                                return;</span>
+                            }
+
+                            //Grab the status code ex.
+<span class="nc" id="L143">                            int statusCode = error.networkResponse.statusCode;</span>
+
+                            //500 error
+<span class="nc bnc" id="L146" title="All 2 branches missed.">                            if (statusCode == HttpURLConnection.HTTP_INTERNAL_ERROR) { //500 error</span>
+<span class="nc" id="L147">                                Log.e(&quot;Volley Error&quot;, &quot;Error 500:  (&quot; + error.toString() + &quot;)&quot;); //&quot;An error occurred during logging in&quot;</span>
+<span class="nc" id="L148">                                setErrorMessage(error.toString() + &quot; , Please try again!&quot;);</span>
+
+                            }
+                            //401 error
+                            else{
+<span class="nc bnc" id="L153" title="All 2 branches missed.">                                if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED){ //401 error</span>
+<span class="nc" id="L154">                                    Log.e(&quot;Volley Error&quot;, &quot;Error 401: Invalid username, email or password  (&quot; + error.toString() + &quot;)&quot;);</span>
+<span class="nc" id="L155">                                    setErrorMessage(&quot;Invalid username, email or password&quot;);</span>
+
+                                }
+
+                            }
+
+<span class="nc" id="L161">                        }</span>
+                    });
+<span class="nc" id="L163">        });</span>
+
+<span class="nc" id="L165">        signupButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L168">                Intent intent = new Intent(LoginActivity.this, SignupActivity.class);</span>
+<span class="nc" id="L169">                startActivity(intent);</span>
+
+<span class="nc" id="L171">            }</span>
+
+        });
+        //Forgot password onClick logic
+        //This click will bring up the fragment
+<span class="nc" id="L176">        forgotPasswordButton.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View view) {
+<span class="nc" id="L179">                String username = usernameEditText.getText().toString();</span>
+<span class="nc bnc" id="L180" title="All 2 branches missed.">                if (username.isEmpty()){</span>
+<span class="nc" id="L181">                    setErrorMessage(&quot;Please enter your username to change password&quot;);</span>
+                }
+                else{
+<span class="nc" id="L184">                    Log.d(&quot;Volley Debug&quot;, &quot;Making request to: &quot; + URL_GET_USER_BY_USERNAME + username);</span>
+<span class="nc" id="L185">                    getSecurityQuestionIDs(getApplicationContext(), URL_GET_USER_BY_USERNAME + username);</span>
+                    //Do not allow any more button presses while waiting
+<span class="nc" id="L187">                    forgotPasswordButton.setEnabled(false);</span>
+
+                }
+<span class="nc" id="L190">            }</span>
+        });
+<span class="nc" id="L192">    }</span>
+
+
+    private void showFragment(){
+<span class="nc" id="L196">        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();</span>
+        //New instance of forgotpassword fragment containing the id instance variables
+<span class="nc" id="L198">        Fragment fragment = ForgotPasswordFragment.newInstance(id1, id2, userId);</span>
+<span class="nc" id="L199">        transaction.replace(R.id.forgot_password_fragment_container, fragment, &quot;forgot_password_fragment&quot;);</span>
+<span class="nc" id="L200">        transaction.commit();</span>
+<span class="nc" id="L201">        Log.d(&quot;Fragment debug&quot;, String.valueOf(fragment.isAdded()));</span>
+
+<span class="nc" id="L203">    }</span>
+    private void setErrorMessage(String message) {
+<span class="nc" id="L205">        errorText.setText(message);</span>
+<span class="nc" id="L206">        errorText.setVisibility(TextView.VISIBLE);</span>
+<span class="nc" id="L207">    }</span>
+
+
+    //Get request to grab which security questions that were answered also grabs the userID
+    private void getSecurityQuestionIDs(Context context, String url) {
+        // Create a JsonObjectRequest for the GET request
+<span class="nc" id="L213">        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url,</span>
+                null,  // Request body is null for GET requests
+
+<span class="nc" id="L216">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+<span class="nc" id="L220">                            Log.d(&quot;Volley Response&quot;, &quot;Received JSON: &quot; + response.toString());</span>
+                            // Retrieve the two IDs from the response
+<span class="nc" id="L222">                            id1 = response.getLong(&quot;sQID1&quot;);  // Assuming the first ID is named &quot;id1&quot;</span>
+<span class="nc" id="L223">                            id2 = response.getLong(&quot;sQID2&quot;);// Assuming the second ID is named &quot;id2&quot;</span>
+<span class="nc" id="L224">                            userId = response.getLong(&quot;userId&quot;);</span>
+                            //show fragment only on response!!
+<span class="nc" id="L226">                            showFragment();</span>
+                            //Reset button functionality
+<span class="nc" id="L228">                            forgotPasswordButton.setEnabled(true);</span>
+
+<span class="nc" id="L230">                        } catch (JSONException e) {</span>
+<span class="nc" id="L231">                            Log.e(&quot;Volley Error&quot;, &quot;Error in user/username JSON&quot;);</span>
+<span class="nc" id="L232">                        }</span>
+<span class="nc" id="L233">                    }</span>
+                },
+<span class="nc" id="L235">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(com.android.volley.VolleyError error) {
+                        // Handle error
+<span class="nc" id="L239">                        Log.e(&quot;Volley Error&quot;, error.toString());</span>
+<span class="nc" id="L240">                        setErrorMessage(&quot;That username does not exist, please enter valid username&quot;);</span>
+<span class="nc" id="L241">                        forgotPasswordButton.setEnabled(true);</span>
+
+
+<span class="nc" id="L244">                    }</span>
+                });
+        // Add the request to the Volley request queue
+<span class="nc" id="L247">        VolleySingleton.getInstance(context).addToRequestQueue(request);</span>
+<span class="nc" id="L248">    }</span>
+
+    private void startRecWebSocket() {
+<span class="nc" id="L251">        Intent serviceIntent = new Intent(this, com.example.closetics.recommendations.RecWebSocketService.class);</span>
+<span class="nc" id="L252">        serviceIntent.setAction(&quot;RecWebSocketConnect&quot;);</span>
+<span class="nc" id="L253">        startService(serviceIntent);</span>
+<span class="nc" id="L254">        Log.d(&quot;LoginActivity&quot;, &quot;RecWebSocket started&quot;);</span>
+<span class="nc" id="L255">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>

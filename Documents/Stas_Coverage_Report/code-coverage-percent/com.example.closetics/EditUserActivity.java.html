@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EditUserActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics</a> &gt; <span class="el_source">EditUserActivity.java</span></div><h1>EditUserActivity.java</h1><pre class="source lang-java linenums">package com.example.closetics;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.NoConnectionError;
+import com.android.volley.Response;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.HttpURLConnection;
+import java.util.InputMismatchException;
+
+<span class="nc" id="L24">public class EditUserActivity extends AppCompatActivity {</span>
+
+
+    private EditText newUsername;
+    private EditText newEmail;
+
+
+    private String username;
+    private String email;
+
+    private Button submit;
+    private Button cancel;
+    private TextView errorText;
+<span class="nc" id="L37">    private final String URL = MainActivity.SERVER_URL + &quot;/updateUser&quot;;</span>
+
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L40">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L41">        setContentView(R.layout.activity_edit_user);</span>
+
+<span class="nc" id="L43">        newUsername = findViewById(R.id.change_username_edit);</span>
+<span class="nc" id="L44">        newEmail = findViewById(R.id.change_email_new_edit);</span>
+<span class="nc" id="L45">       submit = findViewById(R.id.edit_user_submit);</span>
+<span class="nc" id="L46">        cancel = findViewById(R.id.edit_user_cancel);</span>
+<span class="nc" id="L47">        errorText = findViewById(R.id.edit_error_text);</span>
+
+<span class="nc" id="L49">        errorText.setVisibility(TextView.GONE);</span>
+
+<span class="nc" id="L51">        cancel.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View view) {
+<span class="nc" id="L54">                returnMainActivity();</span>
+<span class="nc" id="L55">            }</span>
+        });
+
+
+        /*
+        This method still needs updated (error implementation for request and when usernames don't match)
+         */
+        //Small issue, on signup userID doesn't get updated!!!
+<span class="nc" id="L63">        submit.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View view) {
+<span class="nc" id="L66">                username = newUsername.getText().toString();</span>
+<span class="nc" id="L67">                email = newEmail.getText().toString();</span>
+                //Do not continue
+<span class="nc bnc" id="L69" title="All 4 branches missed.">                if (username.isEmpty() &amp;&amp; email.isEmpty()){</span>
+<span class="nc" id="L70">                    Log.d(&quot;User error&quot;, &quot;No field updated&quot;);</span>
+<span class="nc" id="L71">                    setErrorMessage(&quot;Please enter either a new email, new username, or both&quot;);</span>
+                }
+                else {
+<span class="nc bnc" id="L74" title="All 2 branches missed.">                if (username.isEmpty()){</span>
+<span class="nc" id="L75">                    username = null;</span>
+                }
+<span class="nc bnc" id="L77" title="All 2 branches missed.">                if (email.isEmpty()){</span>
+<span class="nc" id="L78">                    email = null;</span>
+                }
+<span class="nc" id="L80">                    UserManager.editUserRequest(getApplicationContext(), UserManager.getUserID(getApplicationContext()), username, email, URL,</span>
+<span class="nc" id="L81">                            new Response.Listener&lt;JSONObject&gt;() {</span>
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    //Overwrite new username in shared preferences
+
+<span class="nc" id="L86">                                    Log.d(&quot;Volley response&quot;, &quot;Succesful edit user&quot; + response.toString());</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">                                    if (username != null) {</span>
+                                        //overwrite username
+<span class="nc" id="L89">                                        UserManager.saveUsername(getApplicationContext(), username);</span>
+                                    }
+
+<span class="nc" id="L92">                                    returnMainActivity();</span>
+
+<span class="nc" id="L94">                                }</span>
+                            },
+
+<span class="nc" id="L97">                            new Response.ErrorListener() {</span>
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    //Add boilerplate volley errors
+<span class="nc" id="L101">                                    Log.e(&quot;Volley Error&quot;, &quot;Edit user error: &quot; + error.toString());</span>
+
+<span class="nc bnc" id="L103" title="All 4 branches missed.">                                    if (error instanceof TimeoutError || error instanceof NoConnectionError) {</span>
+<span class="nc" id="L104">                                        setErrorMessage(&quot;Connection timeout&quot;);</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">                                    } else if (error.networkResponse != null) {</span>
+<span class="nc" id="L106">                                        setErrorMessage(&quot;Error Code: &quot; + error.networkResponse.statusCode);</span>
+<span class="nc" id="L107">                                        Log.e(&quot;Volley Error&quot;, &quot;Error Code: &quot; + error.networkResponse.statusCode);</span>
+                                    } else {
+<span class="nc" id="L109">                                        setErrorMessage(&quot;Unknown edit user error&quot;);</span>
+                                    }
+<span class="nc" id="L111">                                    int statusCode = error.networkResponse.statusCode;</span>
+
+<span class="nc bnc" id="L113" title="All 2 branches missed.">                                    if (statusCode == HttpURLConnection.HTTP_CONFLICT) {</span>
+<span class="nc" id="L114">                                        Log.e(&quot;Volley Error&quot;, &quot;Error 409:  (&quot; + error.toString() + &quot;)&quot;); //&quot;A conflict occurred with email or username&quot;</span>
+<span class="nc" id="L115">                                        setErrorMessage(&quot;Username or email already in use, please choose another one&quot;);</span>
+                                    }
+<span class="nc" id="L117">                                }</span>
+                            });
+                }
+
+
+<span class="nc" id="L122">                }</span>
+
+        });
+
+
+<span class="nc" id="L127">    }</span>
+
+    private void returnMainActivity(){
+<span class="nc" id="L130">        Intent intent = new Intent(EditUserActivity.this, MainActivity.class);</span>
+<span class="nc" id="L131">        intent.putExtra(&quot;USERNAME&quot;, username);</span>
+<span class="nc" id="L132">        startActivity(intent);</span>
+
+<span class="nc" id="L134">    }</span>
+    private void setErrorMessage(String message) {
+<span class="nc" id="L136">        errorText.setText(message);</span>
+<span class="nc" id="L137">        errorText.setVisibility(TextView.VISIBLE);</span>
+<span class="nc" id="L138">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>

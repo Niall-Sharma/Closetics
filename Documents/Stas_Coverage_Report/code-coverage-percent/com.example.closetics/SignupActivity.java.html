@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SignupActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics</a> &gt; <span class="el_source">SignupActivity.java</span></div><h1>SignupActivity.java</h1><pre class="source lang-java linenums">package com.example.closetics;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
+
+import com.android.volley.NoConnectionError;
+import com.android.volley.Response;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.util.ArrayList;
+
+<span class="fc" id="L28">public class SignupActivity extends AppCompatActivity {</span>
+
+    private static final String URL_SIGNUP = MainActivity.SERVER_URL + &quot;/signup&quot;;
+    private static final String URL_GET_USER_BY_USERNAME = MainActivity.SERVER_URL + &quot;/users/username/&quot;; // +{{username}}
+
+    private EditText usernameEditText;  // define username edittext variable
+    private EditText emailEditText;  // define email edittext variable
+    private EditText passwordEditText;  // define password edittext variable
+    private EditText confirmEditText;// define confirm edittext variable
+    private EditText securityAnswerEditText1;
+    private EditText securityAnswerEditText2;
+    private Button loginButton;         // define login button variable
+    private Button signupButton;        // define signup button variable
+    private TextView errorText;
+    private Spinner securityAnswerSpinner1;
+    private Spinner securityAnswerSpinner2;
+
+    private int securityQuestion1;
+    private int securityQuestion2;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="fc" id="L50">        super.onCreate(savedInstanceState);</span>
+<span class="fc" id="L51">        setContentView(R.layout.activity_signup);</span>
+
+        // Initialize UI elements
+<span class="fc" id="L54">        securityAnswerSpinner1 = findViewById(R.id.signup_sq1_spinner);</span>
+<span class="fc" id="L55">        securityAnswerSpinner2 = findViewById(R.id.signup_sq2_spinner);</span>
+<span class="fc" id="L56">        securityAnswerEditText2= findViewById(R.id.signup_sq2_edit);</span>
+<span class="fc" id="L57">        securityAnswerEditText1 = findViewById(R.id.signup_sq1_edit);</span>
+<span class="fc" id="L58">        usernameEditText = findViewById(R.id.signup_username_edit);</span>
+<span class="fc" id="L59">        emailEditText = findViewById(R.id.signup_email_edit);</span>
+<span class="fc" id="L60">        passwordEditText = findViewById(R.id.signup_password_edit);</span>
+<span class="fc" id="L61">        confirmEditText = findViewById(R.id.signup_confirm_edit);</span>
+<span class="fc" id="L62">        loginButton = findViewById(R.id.signup_login_button);</span>
+<span class="fc" id="L63">        signupButton = findViewById(R.id.signup_signup_button);</span>
+<span class="fc" id="L64">        errorText = findViewById(R.id.signup_error_text);</span>
+
+<span class="fc" id="L66">        errorText.setVisibility(TextView.GONE); // hide error message by default</span>
+
+        //Set up spinners
+<span class="fc" id="L69">        ArrayList&lt;String&gt; securityAnswerItems = UserManager.getSecurityQuestions();</span>
+
+<span class="fc" id="L71">        ArrayAdapter&lt;String&gt; adapter1 = new ArrayAdapter&lt;String&gt;(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, securityAnswerItems);</span>
+<span class="fc" id="L72">        securityAnswerSpinner1.setAdapter(adapter1);</span>
+
+<span class="fc" id="L74">        ArrayAdapter&lt;String&gt; adapter2 = new ArrayAdapter&lt;String&gt;(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, securityAnswerItems);</span>
+<span class="fc" id="L75">        securityAnswerSpinner2.setAdapter(adapter2);</span>
+
+
+
+        //Save the selected question to send in request
+<span class="fc" id="L80">        securityAnswerSpinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()</span>
+<span class="fc" id="L81">            {</span>
+                @Override
+                public void onItemSelected(AdapterView&lt;?&gt; parent, View view, int position, long id) {
+<span class="fc" id="L84">                    String chosenQuestion = adapter1.getItem(position);</span>
+<span class="fc" id="L85">                    securityQuestion1 = position;</span>
+
+<span class="fc" id="L87">            }</span>
+
+            //First element in list when nothing selected
+                @Override
+                public void onNothingSelected(AdapterView&lt;?&gt; parent) {
+<span class="nc" id="L92">                    String chosenQuestion = securityAnswerItems.get(0);</span>
+<span class="nc" id="L93">                    securityQuestion1 = 0;</span>
+<span class="nc" id="L94">            }</span>
+            });
+
+
+<span class="fc" id="L98">        securityAnswerSpinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){</span>
+
+            @Override
+            public void onItemSelected(AdapterView&lt;?&gt; adapterView, View view, int position, long id) {
+<span class="fc" id="L102">                String chosenQuestion = adapter2.getItem(position);</span>
+<span class="fc" id="L103">                securityQuestion2 = position;</span>
+<span class="fc" id="L104">            }</span>
+
+            @Override
+            public void onNothingSelected(AdapterView&lt;?&gt; adapterView) {
+<span class="nc" id="L108">                String chosenQuestion = securityAnswerItems.get(0);</span>
+<span class="nc" id="L109">                securityQuestion2 = 0;</span>
+<span class="nc" id="L110">            }</span>
+        });
+
+
+
+
+
+        // On click listeners
+<span class="fc" id="L118">        loginButton.setOnClickListener(v -&gt; {</span>
+            // Switch to Login activity
+<span class="nc" id="L120">            Intent intent = new Intent(SignupActivity.this, LoginActivity.class);</span>
+<span class="nc" id="L121">            startActivity(intent);</span>
+<span class="nc" id="L122">        });</span>
+
+<span class="fc" id="L124">        signupButton.setOnClickListener(v -&gt; {</span>
+
+            /* grab strings from user inputs */
+<span class="fc" id="L127">            String username = usernameEditText.getText().toString().trim();</span>
+<span class="fc" id="L128">            String email = emailEditText.getText().toString().trim();</span>
+<span class="fc" id="L129">            String password = passwordEditText.getText().toString().trim();</span>
+<span class="fc" id="L130">            String confirm = confirmEditText.getText().toString().trim();</span>
+<span class="fc" id="L131">            String securityAnswer1 = securityAnswerEditText1.getText().toString().trim();</span>
+<span class="fc" id="L132">            String securityAnswer2 = securityAnswerEditText2.getText().toString().trim();</span>
+
+            //Check if the security questions were the same
+<span class="pc bpc" id="L135" title="1 of 2 branches missed.">            if (securityQuestion2 == securityQuestion1){</span>
+<span class="nc" id="L136">                setErrorMessage(&quot;Please choose two different security questions&quot;);</span>
+<span class="nc" id="L137">                return;</span>
+            }
+
+            //Check if security questions were answered
+<span class="pc bpc" id="L141" title="2 of 4 branches missed.">            if (securityAnswer1.isEmpty() || securityAnswer2.isEmpty()){</span>
+<span class="nc" id="L142">                setErrorMessage(&quot;Please answer the security questions&quot;);</span>
+<span class="nc" id="L143">                return;</span>
+            }
+
+<span class="pc bpc" id="L146" title="1 of 2 branches missed.">            if (!password.equals(confirm)) {</span>
+<span class="nc" id="L147">                setErrorMessage(&quot;Passwords must match&quot;);</span>
+<span class="nc" id="L148">                return;</span>
+            }
+
+            //Toast.makeText(getApplicationContext(), &quot;Signing up...&quot;, Toast.LENGTH_SHORT).show();
+
+<span class="fc" id="L153">            signUp(username, email, password, securityAnswer1, securityAnswer2);</span>
+<span class="fc" id="L154">        });</span>
+<span class="fc" id="L155">    }</span>
+
+    private void setErrorMessage(String message) {
+<span class="nc" id="L158">        errorText.setText(message);</span>
+<span class="nc" id="L159">        errorText.setVisibility(TextView.VISIBLE);</span>
+<span class="nc" id="L160">    }</span>
+
+    private void signUp(String username, String email, String password, String securityAnswer1, String securityAnswer2) {
+<span class="fc" id="L163">        UserManager.signupRequest(getApplicationContext(), username, email, password, securityAnswer1, securityAnswer2, securityQuestion1, securityQuestion2, URL_SIGNUP,</span>
+<span class="fc" id="L164">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+<span class="pc bpc" id="L168" title="1 of 2 branches missed.">                            if (response.has(&quot;Error&quot;)) { // handle error if it is present</span>
+<span class="nc" id="L169">                                String errorMessage = response.getString(&quot;Error&quot;);</span>
+<span class="nc" id="L170">                                Log.e(&quot;Volley Error&quot;, errorMessage);</span>
+
+                                // currently the oly error possible here is: username, email, or password is empty
+<span class="nc" id="L173">                                setErrorMessage(&quot;Please enter username, email, and password&quot;);</span>
+
+<span class="nc" id="L175">                                return;</span>
+                            }
+
+<span class="fc" id="L178">                            Log.d(&quot;Volley Response&quot;, &quot;Successful Signup: &quot; + response.toString());</span>
+
+                            // save token and username to shared prefs
+<span class="fc" id="L181">                            String token = response.getString(&quot;token&quot;);</span>
+<span class="fc" id="L182">                            UserManager.saveLoginToken(getApplicationContext(), token);</span>
+<span class="fc" id="L183">                            UserManager.saveUsername(getApplicationContext(), username);</span>
+
+<span class="fc" id="L185">                            saveUserId(username);</span>
+
+                            // return to MainActivity after successful signup and login
+<span class="fc" id="L188">                            Intent intent = new Intent(SignupActivity.this, MainActivity.class);</span>
+<span class="fc" id="L189">                            startActivity(intent);</span>
+                        }
+<span class="nc" id="L191">                        catch (JSONException e) {</span>
+<span class="nc" id="L192">                            Log.e(&quot;JSON Error&quot;, e.toString());</span>
+<span class="fc" id="L193">                        }</span>
+
+//                        if (errorMessage != null) { // username, email, or password is empty
+//                            setErrorMessage(&quot;Please enter username, email, and password&quot;);
+//                            return;
+//                        }
+//
+//                        // log in the user if signup was successful
+//                        login(username, password);
+<span class="fc" id="L202">                    }</span>
+                },
+<span class="fc" id="L204">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L207">                        Log.e(&quot;Volley Error&quot;, error.toString());</span>
+
+<span class="nc bnc" id="L209" title="All 4 branches missed.">                        if (error instanceof TimeoutError || error instanceof NoConnectionError) {</span>
+<span class="nc" id="L210">                            setErrorMessage(&quot;Connection timeout&quot;);</span>
+<span class="nc" id="L211">                            return;</span>
+                        }
+<span class="nc bnc" id="L213" title="All 2 branches missed.">                        else if (error.networkResponse == null) {</span>
+<span class="nc" id="L214">                            setErrorMessage(&quot;Unknown error&quot;);</span>
+<span class="nc" id="L215">                            return;</span>
+                        }
+<span class="nc" id="L217">                        int statusCode = error.networkResponse.statusCode;</span>
+<span class="nc" id="L218">                        String errorBody = &quot;&quot;;</span>
+
+                        // display error
+<span class="nc bnc" id="L221" title="All 2 branches missed.">                        if (statusCode == HttpURLConnection.HTTP_CONFLICT) {</span>
+<span class="nc" id="L222">                            Log.e(&quot;Volley Error&quot;, &quot;Error 409: Username already exists (&quot; + error.toString() + &quot;)&quot;);</span>
+<span class="nc" id="L223">                            setErrorMessage(&quot;A user with this username already exits&quot;);</span>
+                        }
+<span class="nc bnc" id="L225" title="All 2 branches missed.">                        else if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {</span>
+<span class="nc" id="L226">                            Log.e(&quot;Volley Error&quot;, &quot;Error 401: Invalid username or password or email (&quot; + error.toString() + &quot;)&quot;);</span>
+
+                            // get the error body (error message)
+                            try {
+<span class="nc bnc" id="L230" title="All 2 branches missed.">                                if (error.networkResponse.data != null) {</span>
+<span class="nc" id="L231">                                    errorBody = new String(error.networkResponse.data, &quot;UTF-8&quot;);</span>
+                                }
+                            }
+<span class="nc" id="L234">                            catch(UnsupportedEncodingException e) {</span>
+<span class="nc" id="L235">                                Log.e(&quot;Encoding Error&quot;, e.toString());</span>
+<span class="nc" id="L236">                            }</span>
+
+                            // display correct error message
+<span class="nc bnc" id="L239" title="All 2 branches missed.">                            if (errorBody.toLowerCase().contains(&quot;username&quot;)) { // invalid username</span>
+<span class="nc" id="L240">                                setErrorMessage(&quot;Invalid username\n&quot; +</span>
+                                        &quot;Username must be 3-16 characters long and\n&quot; +
+                                        &quot;contain only letters and numbers&quot;);
+                            }
+<span class="nc bnc" id="L244" title="All 2 branches missed.">                            else if (errorBody.toLowerCase().contains(&quot;email&quot;)) { // invalid email</span>
+<span class="nc" id="L245">                                setErrorMessage(&quot;Invalid email&quot;);</span>
+                            }
+                            else { // invalid password
+<span class="nc" id="L248">                                setErrorMessage(&quot;Invalid password\n&quot; +</span>
+                                        &quot;Password must be at least 8 characters long and\n&quot; +
+                                        &quot;contain a lower case letter, an upper case letter,\n&quot; +
+                                        &quot;a digit, a special symbol (@#$%^&amp;+=), no spaces&quot;);
+                            }
+                        }
+                        else {
+<span class="nc" id="L255">                            Log.e(&quot;Volley Error&quot;, &quot;Error: &quot; + statusCode);</span>
+<span class="nc" id="L256">                            setErrorMessage(&quot;Error code: &quot; + statusCode);</span>
+                        }
+<span class="nc" id="L258">                    }</span>
+                });
+<span class="fc" id="L260">    }</span>
+
+    private void saveUserId(String username) {
+<span class="fc" id="L263">        UserManager.getUserByUsernameRequest(getApplicationContext(), username, URL_GET_USER_BY_USERNAME,</span>
+<span class="fc" id="L264">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+<span class="fc" id="L268">                            Log.d(&quot;Volley Response&quot;, &quot;Successful User ID Save: &quot; + response.toString());</span>
+
+<span class="fc" id="L270">                            long id = response.getLong(&quot;userId&quot;);</span>
+<span class="fc" id="L271">                            UserManager.saveUserID(getApplicationContext(), id);</span>
+
+                            // start websocket for recommendations
+<span class="fc" id="L274">                            startRecWebSocket();</span>
+                        }
+<span class="nc" id="L276">                        catch (JSONException e) {</span>
+<span class="nc" id="L277">                            Log.e(&quot;JSON Error&quot;, &quot;Get user by username Error: &quot; + e.toString());</span>
+<span class="fc" id="L278">                        }</span>
+<span class="fc" id="L279">                    }</span>
+                },
+<span class="fc" id="L281">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L284">                        Log.e(&quot;Volley Error&quot;, &quot;Get user by username Error: &quot; + error.toString());</span>
+
+<span class="nc bnc" id="L286" title="All 4 branches missed.">                        if (error instanceof TimeoutError || error instanceof NoConnectionError) {</span>
+<span class="nc" id="L287">                            setErrorMessage(&quot;Connection timeout&quot;);</span>
+                        }
+<span class="nc bnc" id="L289" title="All 2 branches missed.">                        else if (error.networkResponse != null) {</span>
+<span class="nc" id="L290">                            setErrorMessage(&quot;Error Code: &quot; + error.networkResponse.statusCode);</span>
+<span class="nc" id="L291">                            Log.e(&quot;Volley Error&quot;, &quot;Error Code: &quot; + error.networkResponse.statusCode);</span>
+                        }
+                        else {
+<span class="nc" id="L294">                            setErrorMessage(&quot;Unknown Get user by username Error&quot;);</span>
+                        }
+<span class="nc" id="L296">                    }</span>
+                });
+<span class="fc" id="L298">    }</span>
+
+    private void startRecWebSocket() {
+<span class="fc" id="L301">        Intent serviceIntent = new Intent(this, com.example.closetics.recommendations.RecWebSocketService.class);</span>
+<span class="fc" id="L302">        serviceIntent.setAction(&quot;RecWebSocketConnect&quot;);</span>
+<span class="fc" id="L303">        startService(serviceIntent);</span>
+<span class="fc" id="L304">        Log.d(&quot;SignupActivity&quot;, &quot;RecWebSocket started&quot;);</span>
+<span class="fc" id="L305">    }</span>
+
+//    private void login(String username, String password) {
+//        UserManager.loginRequest(getApplicationContext(), username, password, URL_LOGIN,
+//                new Response.Listener&lt;JSONObject&gt;() {
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//                        try {
+//                            Log.d(&quot;Volley Response&quot;, &quot;Successful Login: &quot; + response.toString());
+//
+//                            // save token and username to shared prefs
+//                            String token = response.getString(&quot;token&quot;);
+//                            UserManager.saveLoginToken(getApplicationContext(), token);
+//                            UserManager.saveUsername(getApplicationContext(), username);
+//
+//                            // return to MainActivity after successful signup and login
+//                            Intent intent = new Intent(SignupActivity.this, MainActivity.class);
+//                            startActivity(intent);
+//                        }
+//                        catch (JSONException e) {
+//                            Log.e(&quot;JSON Error&quot;, e.toString());
+//                        }
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        Log.e(&quot;Volley Error&quot;, error.toString());
+//
+//                        if (error.networkResponse == null) {
+//                            setErrorMessage(&quot;Unknown login error&quot;);
+//                            return;
+//                        }
+//                        int statusCode = error.networkResponse.statusCode;
+//
+//                        if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) { // Invalid username or password
+//                            Log.e(&quot;Volley Error&quot;, &quot;Error 401: Invalid username or password&quot;);
+//                            try {
+//                                String errorBody = new String(error.networkResponse.data, &quot;UTF-8&quot;);
+//                                setErrorMessage(errorBody);
+//                            }
+//                            catch(UnsupportedEncodingException e){
+//                                Log.e(&quot;Encoding Error&quot;, e.toString());
+//                            }
+//                        }
+//                        else {
+//                            Log.e(&quot;Volley Error&quot;, &quot;Error &quot; + statusCode);
+//                            setErrorMessage(&quot;Error code: &quot; + statusCode);
+//                        }
+//                    }
+//                });
+//    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>

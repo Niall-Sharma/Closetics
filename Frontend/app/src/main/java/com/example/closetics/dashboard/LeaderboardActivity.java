@@ -152,20 +152,30 @@ public class LeaderboardActivity extends AppCompatActivity {
     }
 
 
-
+    /**
+     * Creates the websocket client and overrides the necessary methods including:
+     * onOpen and onMessage. Handles the proper cases and displays the correct data received from the websocket.
+     * @param uri
+     */
     private void setWebSocketClient(URI uri){
 
         webSocketClient = new WebSocketClient(uri) {
+
             @Override
             public void onOpen(ServerHandshake handshakedata) {
                 Log.d("LeaderboardWebsocket", "Connected to Websocket server!");
                 isConnected = true;
-                //Loading UI?
-                //Connected UI?
-
 
             }
 
+            /**
+             * Called when a message is received from the WebSocket server.
+             * This method processes the message, which is expected to be a JSON array containing leaderboard data.
+             * The message is parsed based on the current filter selection (e.g., "Most Expensive Clothing Items", "Largest Closet", or "Most Bougie Outfits").
+             * The method updates the leaderboard items and notifies the adapter to refresh the RecyclerView with the new data.
+             *
+             * @param message The message received from the WebSocket server. This is a JSON array containing leaderboard data.
+             */
             @Override
             public void onMessage(String message) {
                 Log.d("LeaderboardWebsocket", "Message received: " + message);
@@ -306,6 +316,7 @@ public class LeaderboardActivity extends AppCompatActivity {
                 }
 
 
+
             @Override
             public void onClose(int code, String reason, boolean remote) {
                 Log.d("Websocket", "Closed with reason: " + reason);
@@ -325,6 +336,10 @@ public class LeaderboardActivity extends AppCompatActivity {
         };
 
     }
+
+    /**
+     * Sets the websocket for the URI connection depending on current spinner position.
+     */
     private void setUri() {
         try {
             uri = new URI(WEB_SOCKET_URL + UserManager.getUsername(this) + "/" + spinnerPosition);
@@ -334,6 +349,9 @@ public class LeaderboardActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Connects the WebSocket client to the server.
+     */
     private void connectWebSocketClient(){
         setUri();
         setWebSocketClient(uri);
@@ -350,7 +368,6 @@ public class LeaderboardActivity extends AppCompatActivity {
     /*
     When the activity stops, stop sending messages and disconnect websocket
      */
-
     @Override
     protected void onStop(){
         super.onStop();
@@ -371,6 +388,17 @@ public class LeaderboardActivity extends AppCompatActivity {
             Log.d("WebSocket", "WebSocket closed in onDestroy.");
         }
     }
+
+    /**
+     * Retrieves user attributes from the outfit ID and invokes the provided callback with the results.
+     *
+     * This method makes a request to get user information based on the outfit ID, processes the response,
+     * and calls the provided `UsernameCallback` methods depending on success or failure.
+     *
+     * @param outfitId The ID of the outfit for which user attributes are being retrieved.
+     * @param item The leaderboard item associated with the user.
+     * @param callback A callback to handle the result of the request, providing success, error, or completion notifications.
+     */
     private void getUserAttributesFromOutfitId(long outfitId, LeaderboardItem item, UsernameCallback callback){
         OutfitManager.getOutfitRequest(this, outfitId, new Response.Listener<JSONObject>() {
             @Override
@@ -399,32 +427,49 @@ public class LeaderboardActivity extends AppCompatActivity {
             }
         });
     }
+
+    /**
+     * Retrieves the username for a given user ID and invokes the provided callback with the result.
+     *
+     * This method makes a request to fetch user data by user ID, processes the response, and calls
+     * the provided `UsernameCallback` methods with success or error notifications.
+     *
+     * @param userId The user ID for which the username is being fetched.
+     * @param item The leaderboard item associated with the user.
+     * @param callback A callback to handle the result of the request, providing success, error, or completion notifications.
+     */
     private void getUsername(long userId, LeaderboardItem item, UsernameCallback callback){
-        UserManager.getUserByIdRequest(this, String.valueOf(userId), MainActivity.SERVER_URL + "/users/", new Response.Listener<JSONObject>() {
+        UserManager.getUserByIdRequest(this, userId,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            String username = response.getString("username");
+                            callback.onSuccess(username, item.getRank(), item.getCategoryValue());
+                            callback.onFinish();
 
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    String username = response.getString("username");
-                    callback.onSuccess(username, item.getRank(), item.getCategoryValue());
-                    callback.onFinish();
-
-                } catch (JSONException e) {
-                    callback.onError(e.toString());
-
-                }
-
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                callback.onError(error.toString());
-            }
-        });
+                        } catch (JSONException e) {
+                            callback.onError(e.toString());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        callback.onError(error.toString());
+                    }
+                });
 
 
     }
+    /**
+     * Updates the adapter with a new list of leaderboard items.
+     *
+     * This method replaces the existing list of leaderboard items in the adapter and notifies
+     * the UI thread to refresh the display. If a `NullPointerException` occurs, it logs the error.
+     *
+     * @param objects The new list of leaderboard items to display in the UI.
+     */
     private void updateAdapter(ArrayList<LeaderboardItem> objects){
         //Replace adapter items
         adapterItems = objects;
@@ -438,6 +483,12 @@ public class LeaderboardActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Sets the adapter for the RecyclerView.
+     *
+     * This method initializes the adapter with the current list of leaderboard items
+     * and attaches it to the RecyclerView. It also sets up an item click listener for the adapter.
+     */
     private void setAdapter(){
 
         this.adapter = new LeaderboardRecyclerViewAdapter(adapterItems, new LeaderboardRecyclerViewAdapter.OnItemClickListener() {
@@ -451,14 +502,36 @@ public class LeaderboardActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(false);
     }
 
-    /*
-    Note: Work on this design, should this be an interface with it's
-    own file?
-     */
 
+
+
+
+    /**
+     * Interface to provide callback methods for handling username retrieval and asynchronicity.
+     *
+     * This interface defines the methods to be invoked during the success, error, or finish states
+     * of retrieving a username for a leaderboard item.
+     */
     public interface UsernameCallback {
+
+        /**
+         * Called when the username retrieval is successful.
+         *
+         * @param username The username retrieved.
+         * @param i The rank of the leaderboard item.
+         * @param value The category value of the leaderboard item.
+         */
         void onSuccess(String username, String i, String value);
+        /**
+         * Called when an error occurs during username retrieval.
+         *
+         * @param error The error message returned.
+         */
+
         void onError(String error);
+        /**
+         * Called when the operation is complete, regardless of success or failure.
+         */
         void onFinish();
     }
 

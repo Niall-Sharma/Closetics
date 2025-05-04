@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
@@ -20,10 +19,18 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * Helper class with User-related HTTP requests.
+ */
 public class UserManager {
 
-    private static final String URL_GET_USER_BY_ID = MainActivity.SERVER_URL + "/users/"; // + {{userId}}
+    private static final String URL_POST_LOGIN = MainActivity.SERVER_URL + "/login";
+    private static final String URL_POST_SIGNUP = MainActivity.SERVER_URL + "/signup";
+    private static final String URL_GET_USER_BY_ID = MainActivity.SERVER_URL + "/users/"; // + {{id}}
+    private static final String URL_GET_USER_BY_USERNAME = MainActivity.SERVER_URL + "/users/username/"; // + {{username}}
+    private static final String URL_PUT_UPDATE_PASSWORD = MainActivity.SERVER_URL + "/updatePassword";
     private static final String URL_PUT_UPDATE_USER = MainActivity.SERVER_URL + "/updateUser";
+    private static final String URL_DELETE_USER = MainActivity.SERVER_URL + "/users/"; // + {{id}}
     private static final String URL_GET_SEARCH_USERS_BY_USERNAME = MainActivity.SERVER_URL + "/searchUsersByUsername/"; // + {{username}}
     private static final String URL_PUT_ADD_FOLLOWING = MainActivity.SERVER_URL + "/addFollowing/"; // + {{id}}/{{followingId}}
     private static final String URL_PUT_REMOVE_FOLLOWING = MainActivity.SERVER_URL + "/removeFollowing/"; // + {{id}}/{{followingId}}
@@ -107,18 +114,18 @@ public class UserManager {
     }
 
     /**
-     * This uses a post request to send the user's input for username and password so that
+     * POST request.
+     * Sends the user's input for username and password so that
      * authentication is handled in the backend versus the frontend (more secure than get requests
      * to the frontend)
      *
      * @param context
      * @param username
      * @param password
-     * @param URL
      * @param responseListener
      * @param errorListener
      */
-    public static void loginRequest(Context context, String username, String password, String URL,
+    public static void loginRequest(Context context, String username, String password,
                                     Response.Listener<JSONObject> responseListener,
                                     Response.ErrorListener errorListener) {
 
@@ -138,7 +145,7 @@ public class UserManager {
         //The post request
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
-                URL,
+                URL_POST_LOGIN,
                 loginData, responseListener, errorListener);
         //Add request to the volley singleton request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
@@ -152,13 +159,11 @@ public class UserManager {
      * @param username
      * @param email
      * @param password
-     * @param URL
      * @param responseListener
      * @param errorListener
      */
     public static void signupRequest(Context context, String username, String email, String password, String securityAnswer1,
                                      String securityAnswer2, int securityQuestion1, int securityQuestion2,
-                                     String URL,
                                     Response.Listener<JSONObject> responseListener,
                                     Response.ErrorListener errorListener) {
 
@@ -184,15 +189,15 @@ public class UserManager {
         //The post request
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
-                URL,
+                URL_POST_SIGNUP,
                 signupData, responseListener, errorListener);
         //Add request to the volley singleton request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
 
-    public static void updatePasswordRequest(Context context, long userId, long securityQuestionId, String securityQuestionAnswer,
-                                             String newPassword, String URL,
+    public static void updatePasswordRequest(Context context, long userId, long securityQuestionId,
+                                             String securityQuestionAnswer, String newPassword,
                                              Response.Listener<JSONObject> responseListener,
                                              Response.ErrorListener errorListener) {
         //Create the json object of the updatePassword data
@@ -212,16 +217,16 @@ public class UserManager {
         //The post request
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.PUT,
-                URL,
+                URL_PUT_UPDATE_PASSWORD,
                 updatePasswordData, responseListener, errorListener);
         //Add request to the volley singleton request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
 
-    public static void editUserRequest(Context context, long userId, String newUsername, String newEmail, String URL,
-                                           Response.Listener<JSONObject> responseListener,
-                                           Response.ErrorListener errorListener){
+    public static void updateUserRequest(Context context, long userId, String newUsername, String newEmail,
+                                         Response.Listener<JSONObject> responseListener,
+                                         Response.ErrorListener errorListener){
 
         JSONObject updateUsernameData = new JSONObject();
 
@@ -242,7 +247,7 @@ public class UserManager {
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.PUT,
-                URL,
+                URL_PUT_UPDATE_USER,
                 updateUsernameData, responseListener, errorListener);
 
         VolleySingleton.getInstance(context).addToRequestQueue(request);
@@ -254,11 +259,10 @@ public class UserManager {
      *
      * @param context
      * @param username
-     * @param URL
      * @param responseListener
      * @param errorListener
      */
-    public static void deleteUserRequest(Context context, String username, String URL, String getUserByUsernameURL,
+    public static void deleteUserRequest(Context context, String username,
                                      Response.Listener<String> responseListener,
                                      Response.ErrorListener errorListener) {
 
@@ -266,7 +270,7 @@ public class UserManager {
         // to then delete user by id
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,
-                getUserByUsernameURL + username, // add username to the URL
+                URL_GET_USER_BY_USERNAME + username, // add username to the URL
                 null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -275,7 +279,7 @@ public class UserManager {
                             long id = response.getLong("userId");
 
                             // call delete by id method
-                            UserManager.deleteUserRequest(context, id, URL, responseListener, errorListener);
+                            UserManager.deleteUserRequest(context, id, responseListener, errorListener);
                         }
                         catch (JSONException e) {
                             Log.e("JSON Error", "Get user by username Error: " + e.toString());
@@ -288,30 +292,29 @@ public class UserManager {
     }
 
 
-    public static void deleteUserRequest(Context context, long id, String URL,
+    public static void deleteUserRequest(Context context, long id,
                                          Response.Listener<String> responseListener,
                                          Response.ErrorListener errorListener) {
         StringRequest request = new StringRequest(
                 Request.Method.DELETE,
-                URL + id, // add id to the URL
+                URL_DELETE_USER + id, // add id to the URL
                 responseListener, errorListener);
         //Add request to the volley singleton request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
 
-    public static void getUserByUsernameRequest(Context context, String username, String URL,
+    public static void getUserByUsernameRequest(Context context, String username,
                                          Response.Listener<JSONObject> responseListener,
                                          Response.ErrorListener errorListener) {
 
-        // use GET request to getUserByUsernameURL to get the user's id
-        // to then delete user by id
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,
-                URL + username, // add username to the URL
+                URL_GET_USER_BY_USERNAME + username, // add username to the URL
                 null,
                 responseListener,
                 errorListener);
+
         //Add request to the volley singleton request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
@@ -329,23 +332,6 @@ public class UserManager {
                 errorListener);
         //Add request to the volley singleton request queue
         VolleySingleton.getInstance(context).addToRequestQueue(request);
-    }
-
-
-    // TODO: DELETE THIS
-    public static void getUserByIdRequest(Context context, String userId, String URL,
-                                          Response.Listener<JSONObject> responseListener,
-                                          Response.ErrorListener errorListener){
-
-        JsonObjectRequest request = new JsonObjectRequest(
-                Request.Method.GET,
-                URL + userId, // add username to the URL
-                null,
-                responseListener,
-                errorListener);
-        //Add request to the volley singleton request queue
-        VolleySingleton.getInstance(context).addToRequestQueue(request);
-
     }
 
 

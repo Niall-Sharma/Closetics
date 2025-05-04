@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SelectClothesListAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics.outfits</a> &gt; <span class="el_source">SelectClothesListAdapter.java</span></div><h1>SelectClothesListAdapter.java</h1><pre class="source lang-java linenums">package com.example.closetics.outfits;
+
+import android.content.Context;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.example.closetics.MainActivity;
+import com.example.closetics.R;
+
+import org.json.JSONObject;
+
+import java.util.List;
+
+public class SelectClothesListAdapter extends ArrayAdapter&lt;SelectClothesListItem&gt; {
+
+    public SelectClothesListAdapter(Context context, List&lt;SelectClothesListItem&gt; items) {
+<span class="fc" id="L28">        super(context, 0, items);</span>
+<span class="fc" id="L29">    }</span>
+
+    @Override
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+        // Get the data item for this position
+<span class="fc" id="L34">        SelectClothesListItem item = getItem(position);</span>
+
+        // Check if an existing view is being reused, otherwise inflate the view
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">        if (convertView == null) {</span>
+<span class="fc" id="L38">            convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_select_clothes, parent, false);</span>
+        }
+
+        // Lookup view for data population
+<span class="fc" id="L42">        TextView nameText = convertView.findViewById(R.id.select_clothes_list_item_name_text);</span>
+<span class="fc" id="L43">        TextView colorText = convertView.findViewById(R.id.select_clothes_list_item_color_text);</span>
+<span class="fc" id="L44">        TextView typeText = convertView.findViewById(R.id.select_clothes_list_item_type_text);</span>
+<span class="fc" id="L45">        TextView specialTypeText = convertView.findViewById(R.id.select_clothes_list_item_special_type_text);</span>
+<span class="fc" id="L46">        CheckBox includedCheck = convertView.findViewById(R.id.select_clothes_list_item_check);</span>
+
+<span class="fc" id="L48">        includedCheck.setOnCheckedChangeListener(</span>
+<span class="fc" id="L49">                new CompoundButton.OnCheckedChangeListener() {</span>
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">                        if (isChecked) {</span>
+                            // add item to outfit
+<span class="fc" id="L54">                            OutfitManager.addClothingRequest(item.getContext(), item.getOutfitId(), item.getId(),</span>
+<span class="fc" id="L55">                                    new Response.Listener&lt;JSONObject&gt;() {</span>
+                                        @Override
+                                        public void onResponse(JSONObject response) {
+<span class="fc" id="L58">                                            Log.d(&quot;Volley Response&quot;, response.toString());</span>
+<span class="fc" id="L59">                                        }</span>
+                                    },
+<span class="fc" id="L61">                                    new Response.ErrorListener() {</span>
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L64">                                            Log.e(&quot;Volley Error&quot;, error.toString());</span>
+<span class="nc" id="L65">                                        }</span>
+                                    });
+                        } else {
+                            // delete item from outfit
+<span class="nc" id="L69">                            OutfitManager.removeClothingRequest(item.getContext(), item.getOutfitId(), item.getId(),</span>
+<span class="nc" id="L70">                                    new Response.Listener&lt;JSONObject&gt;() {</span>
+                                        @Override
+                                        public void onResponse(JSONObject response) {
+<span class="nc" id="L73">                                            Log.d(&quot;Volley Response&quot;, response.toString());</span>
+<span class="nc" id="L74">                                        }</span>
+                                    },
+<span class="nc" id="L76">                                    new Response.ErrorListener() {</span>
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L79">                                            Log.e(&quot;Volley Error&quot;, error.toString());</span>
+<span class="nc" id="L80">                                        }</span>
+                                    });
+                        }
+<span class="fc" id="L83">                    }</span>
+                });
+
+        // Populate the data into the template view using the data object
+<span class="fc" id="L87">        nameText.setText(item.getName());</span>
+<span class="fc" id="L88">        colorText.setText(&quot;Color: &quot; + item.getColor());</span>
+<span class="fc" id="L89">        typeText.setText(&quot;Type: &quot; + item.getType() + &quot;,&quot;);</span>
+<span class="fc" id="L90">        specialTypeText.setText(item.getSpecialType());</span>
+<span class="fc" id="L91">        includedCheck.setChecked(item.isInitiallyChecked());</span>
+
+        // Return the completed view to render on screen
+<span class="fc" id="L94">        return convertView;</span>
+    }
+
+    // make list items not clickable
+    @Override
+    public boolean isEnabled(int position) {
+<span class="fc" id="L100">        return false;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>
