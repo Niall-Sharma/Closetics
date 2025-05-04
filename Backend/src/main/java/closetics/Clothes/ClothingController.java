@@ -195,7 +195,6 @@ public class ClothingController {
             Image image = new Image();
             image.setFilePath(destinationFile.getAbsolutePath());
             image.setId(clothing.getClothesId());
-            image.readImage();
             imageRepository.save(image);
 
             clothing.setImage(image);
@@ -218,7 +217,8 @@ public class ClothingController {
     @GetMapping(value = "/images/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getImage(@Parameter(description = "ID of the clothing item") @PathVariable long id) throws IOException {
         Image image = imageRepository.findById(id).orElseThrow(() -> new RuntimeException("Image not found"));
-        return ResponseEntity.ok().body(image.getImageData());
+        File imageFile = new File(image.getFilePath());
+        return ResponseEntity.ok().body(Files.readAllBytes(imageFile.toPath()));
     }
 
     @Operation(summary = "Toggle the favorite status of a clothing item", description = "Sets a clothing item's favorite status to true if false, and vice versa.")
