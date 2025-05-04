@@ -33,7 +33,6 @@ public class RecSocket {
 	private static UserProfileRepository UserProfileRepository;
   private static OutfitRepository OutfitRepository;
   private static UserRepository UserRepository;
-//    private static RecService recommendationService;
 
 	@Autowired
 	public void setUserProfileRepository(UserProfileRepository repo) {
@@ -49,11 +48,6 @@ public class RecSocket {
   public void setUserRepository(UserRepository repo){
         UserRepository = repo;
     }
-
-    @Autowired
-//    public void setRecommendationService(RecService service) {
-//        recommendationService = service;
-//    }
 
 	// Store all socket session and their corresponding username.
 	private static Map<Session, Long> sessionUsernameMap = new Hashtable<>();
