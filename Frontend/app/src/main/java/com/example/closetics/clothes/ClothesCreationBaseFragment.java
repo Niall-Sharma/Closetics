@@ -57,7 +57,7 @@ public class ClothesCreationBaseFragment extends Fragment{
     private Spinner spinner;
     private Button takeImage;
     private ViewPager2 viewPager;
-    private ClothesActivity.ScreenSlidePagerAdapter pagerAdapter;
+    private CustomSlideAdapter pagerAdapter;
     private int position;
     private ImageView imageView;
     private ArrayAdapter<String> spinnerAdapter;
@@ -93,7 +93,7 @@ public class ClothesCreationBaseFragment extends Fragment{
 
 
 
-    public ClothesCreationBaseFragment(ClothesDataViewModel clothesDataViewModel, ClothesActivity.ScreenSlidePagerAdapter pagerAdapter){
+    public ClothesCreationBaseFragment(ClothesDataViewModel clothesDataViewModel, CustomSlideAdapter pagerAdapter){
         this.clothesDataViewModel = clothesDataViewModel;
         this.pagerAdapter = pagerAdapter;
 
@@ -317,7 +317,7 @@ public class ClothesCreationBaseFragment extends Fragment{
 
     }
 
-    public static ClothesCreationBaseFragment newInstance(int fragmentCount, ClothesDataViewModel clothesDataViewModel, ClothesActivity.ScreenSlidePagerAdapter pagerAdapter) {
+    public static ClothesCreationBaseFragment newInstance(int fragmentCount, ClothesDataViewModel clothesDataViewModel, CustomSlideAdapter pagerAdapter) {
         //Create a new forgot password fragment
         ClothesCreationBaseFragment fragment = new ClothesCreationBaseFragment(clothesDataViewModel, pagerAdapter);
         Bundle args = new Bundle();

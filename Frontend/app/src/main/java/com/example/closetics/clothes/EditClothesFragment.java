@@ -15,11 +15,13 @@ import androidx.viewpager2.widget.ViewPager2;
 public class EditClothesFragment extends ClothesCreationBaseFragment{
 
     private ClothingItem clothingItem;
+    private CustomSlideAdapter pagerAdapter;
 
 
-    public EditClothesFragment(ClothesDataViewModel clothesDataViewModel, ClothingItem clothingItem) {
-        super(clothesDataViewModel);
+    public EditClothesFragment(ClothesDataViewModel clothesDataViewModel, ClothingItem clothingItem, CustomSlideAdapter pagerAdapter) {
+        super(clothesDataViewModel, pagerAdapter);
         this.clothingItem =clothingItem;
+        this.pagerAdapter = pagerAdapter;
     }
 
     @Nullable
@@ -37,10 +39,10 @@ public class EditClothesFragment extends ClothesCreationBaseFragment{
     }
 
 
-    public static ClothesCreationBaseFragment newInstance(int position, ClothesDataViewModel clothesDataViewModel, ClothingItem clothingItem) {
+    public static ClothesCreationBaseFragment newInstance(int position, ClothesDataViewModel clothesDataViewModel, ClothingItem clothingItem, CustomSlideAdapter pagerAdapter) {
         Bundle args = new Bundle();
         args.putInt("count", position);
-        EditClothesFragment fragment = new EditClothesFragment(clothesDataViewModel, clothingItem);
+        EditClothesFragment fragment = new EditClothesFragment(clothesDataViewModel, clothingItem, pagerAdapter);
         fragment.setArguments(args);
         return fragment;
     }

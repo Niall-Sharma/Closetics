@@ -86,7 +86,7 @@ public class ClothesActivity extends AppCompatActivity {
     public static final String URL = MainActivity.SERVER_URL;
 
     private ViewPager2 viewPager;
-    private ScreenSlidePagerAdapter pagerAdapter;
+    private CustomSlideAdapter pagerAdapter;
 
 
     @Override
@@ -128,7 +128,7 @@ public class ClothesActivity extends AppCompatActivity {
 
                 clothesDataViewModel = new ViewModelProvider(clothesActivity).get(ClothesDataViewModel.class);
                 clothesDataViewModel.setFragmentsSize(NUM_FRAGMENTS);
-                viewPager.setAdapter(pagerAdapter);
+                viewPager.setAdapter((ScreenSlidePagerAdapter) pagerAdapter);
 
                 new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
                     tab.setText(String.valueOf(position + 1));
@@ -349,7 +349,7 @@ public class ClothesActivity extends AppCompatActivity {
     /**
      * Inner class for managing fragment creation inside the ViewPager2 widget.
      */
-    public class ScreenSlidePagerAdapter extends FragmentStateAdapter {
+    public class ScreenSlidePagerAdapter extends FragmentStateAdapter implements CustomSlideAdapter{
 
         private final Map<Integer, Fragment> fragmentMap = new HashMap<>();
 
@@ -377,6 +377,7 @@ public class ClothesActivity extends AppCompatActivity {
 
 
 
+        @Override
         public Fragment getFragment(int position) {
             return fragmentMap.get(position);
         }

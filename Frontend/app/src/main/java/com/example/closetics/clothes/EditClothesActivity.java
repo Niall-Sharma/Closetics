@@ -29,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -180,7 +181,9 @@ public class EditClothesActivity extends AppCompatActivity {
     /**
      * Adapter for the ViewPager2 that manages the fragments for editing the clothing item.
      */
-    private class ScreenSlidePagerAdapter extends FragmentStateAdapter {
+    public class ScreenSlidePagerAdapter extends FragmentStateAdapter implements CustomSlideAdapter{
+
+        private final Map<Integer, Fragment> fragmentMap = new HashMap<>();
 
         /**
          * Constructor for the pager adapter.
@@ -200,7 +203,9 @@ public class EditClothesActivity extends AppCompatActivity {
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-            return EditClothesFragment.newInstance(position, clothesDataViewModel, clothingItem);
+            Fragment fragment = EditClothesFragment.newInstance(position, clothesDataViewModel, clothingItem, pagerAdapter);
+            fragmentMap.put(position, fragment);
+            return fragment;
         }
 
         /**
@@ -211,6 +216,10 @@ public class EditClothesActivity extends AppCompatActivity {
         @Override
         public int getItemCount() {
             return ClothesActivity.NUM_FRAGMENTS;
+        }
+        @Override
+        public Fragment getFragment(int position) {
+            return fragmentMap.get(position);
         }
     }
 }
