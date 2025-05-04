@@ -198,7 +198,7 @@ public class ClothingController {
             try (InputStream is = imageFile.getInputStream()){
                 Files.copy(is, destinationFile.toPath());
             }
-            
+
             Image image = new Image();
             image.setFilePath(destinationFile.getAbsolutePath());
             image.setId(clothing.getClothesId());
