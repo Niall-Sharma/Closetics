@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -196,12 +197,11 @@ public class ClothingController {
             }
 
             try (InputStream is = imageFile.getInputStream()){
-                Files.copy(is, destinationFile.toPath());
+                Files.copy(is, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
 
             Image image = new Image();
             image.setFilePath(destinationFile.getAbsolutePath());
-            image.setId(clothing.getClothesId());
             imageRepository.save(image);
 
             clothing.setImage(image);
@@ -209,6 +209,7 @@ public class ClothingController {
 
             return ResponseEntity.ok().body(clothing);
         }catch (IOException e){
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
