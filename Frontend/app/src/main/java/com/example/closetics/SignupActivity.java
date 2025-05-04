@@ -12,42 +12,35 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.NoConnectionError;
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
+/**
+ * Activity that represents a Sign Up page.
+ * Is used to register new user accounts.
+ */
 public class SignupActivity extends AppCompatActivity {
-
-    private static final String URL_SIGNUP = MainActivity.SERVER_URL + "/signup";
-    private static final String URL_GET_USER_BY_USERNAME = MainActivity.SERVER_URL + "/users/username/"; // +{{username}}
 
     private EditText usernameEditText;  // define username edittext variable
     private EditText emailEditText;  // define email edittext variable
     private EditText passwordEditText;  // define password edittext variable
     private EditText confirmEditText;// define confirm edittext variable
-    private EditText securityAnswerEditText1;
-    private EditText securityAnswerEditText2;
+    private EditText securityAnswerEdit1;
+    private EditText securityAnswerEdit2;
     private Button loginButton;         // define login button variable
     private Button signupButton;        // define signup button variable
     private TextView errorText;
-    private Spinner securityAnswerSpinner1;
-    private Spinner securityAnswerSpinner2;
+    private Spinner securityAnswerSpinner1, securityAnswerSpinner2;
 
     private int securityQuestion1;
     private int securityQuestion2;
@@ -58,16 +51,16 @@ public class SignupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_signup);
 
         // Initialize UI elements
-        securityAnswerSpinner1 = findViewById(R.id.signup_sq1_spinner);
-        securityAnswerSpinner2 = findViewById(R.id.signup_sq2_spinner);
-        securityAnswerEditText2= findViewById(R.id.editTextText2);
-        securityAnswerEditText1 = findViewById(R.id.signup_sq1_edit);
         usernameEditText = findViewById(R.id.signup_username_edit);
         emailEditText = findViewById(R.id.signup_email_edit);
         passwordEditText = findViewById(R.id.signup_password_edit);
         confirmEditText = findViewById(R.id.signup_confirm_edit);
         loginButton = findViewById(R.id.signup_login_button);
         signupButton = findViewById(R.id.signup_signup_button);
+        securityAnswerSpinner1 = findViewById(R.id.signup_sq1_spinner);
+        securityAnswerSpinner2 = findViewById(R.id.signup_sq2_spinner);
+        securityAnswerEdit2 = findViewById(R.id.signup_sq2_edit);
+        securityAnswerEdit1 = findViewById(R.id.signup_sq1_edit);
         errorText = findViewById(R.id.signup_error_text);
 
         errorText.setVisibility(TextView.GONE); // hide error message by default
@@ -81,29 +74,24 @@ public class SignupActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, securityAnswerItems);
         securityAnswerSpinner2.setAdapter(adapter2);
 
-
-
         //Save the selected question to send in request
-        securityAnswerSpinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-            {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    String chosenQuestion = adapter1.getItem(position);
-                    securityQuestion1 = position;
+        securityAnswerSpinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String chosenQuestion = adapter1.getItem(position);
+                securityQuestion1 = position;
 
             }
 
             //First element in list when nothing selected
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
                     String chosenQuestion = securityAnswerItems.get(0);
                     securityQuestion1 = 0;
             }
-            });
-
+        });
 
         securityAnswerSpinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
                 String chosenQuestion = adapter2.getItem(position);
@@ -116,10 +104,6 @@ public class SignupActivity extends AppCompatActivity {
                 securityQuestion2 = 0;
             }
         });
-
-
-
-
 
         // On click listeners
         loginButton.setOnClickListener(v -> {
@@ -135,8 +119,8 @@ public class SignupActivity extends AppCompatActivity {
             String email = emailEditText.getText().toString().trim();
             String password = passwordEditText.getText().toString().trim();
             String confirm = confirmEditText.getText().toString().trim();
-            String securityAnswer1 = securityAnswerEditText1.getText().toString().trim();
-            String securityAnswer2 = securityAnswerEditText2.getText().toString().trim();
+            String securityAnswer1 = securityAnswerEdit1.getText().toString().trim();
+            String securityAnswer2 = securityAnswerEdit2.getText().toString().trim();
 
             //Check if the security questions were the same
             if (securityQuestion2 == securityQuestion1){
@@ -161,13 +145,27 @@ public class SignupActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Displays given string as an error message to the user.
+     *
+     * @param message new error message to be displayed
+     */
     private void setErrorMessage(String message) {
         errorText.setText(message);
         errorText.setVisibility(TextView.VISIBLE);
     }
 
+    /**
+     * Sends a sign up request for a user with given parameters.
+     *
+     * @param username new user's username
+     * @param email new user's email
+     * @param password new user's password
+     * @param securityAnswer1 answer to security question 1
+     * @param securityAnswer2 answer to security question 2
+     */
     private void signUp(String username, String email, String password, String securityAnswer1, String securityAnswer2) {
-        UserManager.signupRequest(getApplicationContext(), username, email, password, securityAnswer1, securityAnswer2, securityQuestion1, securityQuestion2, URL_SIGNUP,
+        UserManager.signupRequest(getApplicationContext(), username, email, password, securityAnswer1, securityAnswer2, securityQuestion1, securityQuestion2,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -266,8 +264,14 @@ public class SignupActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Sends request to get ID of a user with given username
+     * and saves it.
+     *
+     * @param username user's username
+     */
     private void saveUserId(String username) {
-        UserManager.getUserByUsernameRequest(getApplicationContext(), username, URL_GET_USER_BY_USERNAME,
+        UserManager.getUserByUsernameRequest(getApplicationContext(), username,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -304,6 +308,10 @@ public class SignupActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Starts the Recommendations WebSocket if the user is logged in.
+     * Should be called when user signs up successfully.
+     */
     private void startRecWebSocket() {
         Intent serviceIntent = new Intent(this, com.example.closetics.recommendations.RecWebSocketService.class);
         serviceIntent.setAction("RecWebSocketConnect");

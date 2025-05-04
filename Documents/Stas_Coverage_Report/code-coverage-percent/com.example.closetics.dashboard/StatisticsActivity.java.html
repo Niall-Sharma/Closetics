@@ -1,0 +1,519 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StatisticsActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics.dashboard</a> &gt; <span class="el_source">StatisticsActivity.java</span></div><h1>StatisticsActivity.java</h1><pre class="source lang-java linenums">package com.example.closetics.dashboard;
+
+import static android.app.PendingIntent.getActivity;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.example.closetics.MainActivity;
+import com.example.closetics.R;
+import com.example.closetics.UserManager;
+import com.example.closetics.clothes.ClothesManager;
+import com.example.closetics.clothes.ViewClothesFragment;
+import com.example.closetics.outfits.OutfitManager;
+import com.example.closetics.outfits.OutfitsActivity;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+<span class="nc" id="L38">public class StatisticsActivity extends AppCompatActivity {</span>
+    private ImageButton back;
+    private Button outfitStats;
+    private Button clothesStats;
+    private Button overallStats;
+    private TextView whichButton;
+
+    private TextView totalOutfitCount;
+    private TextView totalClosetCount;
+    private TextView totalClothingItems;
+    private TextView mostWornOutfit;
+    private TextView mostWornClothingItem;
+    private TextView mostExpensiveOutfit;
+    private TextView mostExpensiveClothing;
+    private TextView warmClothing;
+    private TextView coldClothing;
+    private TextView warmOutfit;
+    private TextView coldOutfit;
+
+    private CardView card1;
+    private CardView card2;
+
+<span class="nc" id="L60">    private ArrayList&lt;ClothingStatItem&gt; allOutfitStatsObjects = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L61">    private ArrayList&lt;ClothingStatItem&gt; allClothingStatsObjects = new ArrayList&lt;&gt;();</span>
+
+<span class="nc" id="L63">    private final String CLOTHES_STATS_TAG = &quot;Clothes Stats&quot;;</span>
+<span class="nc" id="L64">    private final String OUTFITS_STATS_TAG = &quot;Outfit Stats&quot;;</span>
+
+
+
+
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+<span class="nc" id="L72">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L73">        Context activity = this;</span>
+<span class="nc" id="L74">        setContentView(R.layout.activity_statistics);</span>
+
+<span class="nc" id="L76">        back = findViewById(R.id.backButton);</span>
+<span class="nc" id="L77">        whichButton = findViewById(R.id.categoryText);</span>
+<span class="nc" id="L78">        overallStats = findViewById(R.id.overallButton);</span>
+<span class="nc" id="L79">        clothesStats = findViewById(R.id.clothesButton);</span>
+<span class="nc" id="L80">        outfitStats = findViewById(R.id.outfitButton);</span>
+<span class="nc" id="L81">        whichButton.setText(&quot;Overall Stats&quot;);</span>
+
+        /*
+        Overall stats textViews
+         */
+<span class="nc" id="L86">        totalOutfitCount = findViewById(R.id.totalOutfitsCount);</span>
+<span class="nc" id="L87">        totalClosetCount = findViewById(R.id.totalClosetCount);</span>
+<span class="nc" id="L88">        totalClothingItems = findViewById(R.id.clothingCount);</span>
+<span class="nc" id="L89">        mostWornOutfit = findViewById(R.id.wornOutfit);</span>
+<span class="nc" id="L90">        mostWornClothingItem = findViewById(R.id.wornClothing);</span>
+<span class="nc" id="L91">        mostExpensiveOutfit = findViewById(R.id.expensiveOutfit);</span>
+<span class="nc" id="L92">        mostExpensiveClothing = findViewById(R.id.expensiveClothing);</span>
+<span class="nc" id="L93">        warmClothing = findViewById(R.id.warm_clothing);</span>
+<span class="nc" id="L94">        coldClothing = findViewById(R.id.cold_clothing);</span>
+<span class="nc" id="L95">        warmOutfit = findViewById(R.id.warm_outfit);</span>
+<span class="nc" id="L96">        coldOutfit = findViewById(R.id.cold_outfit);</span>
+
+<span class="nc" id="L98">        card1 = findViewById(R.id.cardView);</span>
+<span class="nc" id="L99">        card2 = findViewById(R.id.cardView2);</span>
+
+
+
+<span class="nc" id="L103">        setMostExpensiveOutfit();</span>
+<span class="nc" id="L104">        setMostWornOutfit();</span>
+<span class="nc" id="L105">        setMostExpensiveClothing();</span>
+<span class="nc" id="L106">        setMostWornClothingItem();</span>
+<span class="nc" id="L107">        setTotalOutfitsCount();</span>
+<span class="nc" id="L108">        setTotalClosetValueAndTotalClothing();</span>
+
+<span class="nc" id="L110">        setColdClothing();</span>
+<span class="nc" id="L111">        setWarmClothing();</span>
+<span class="nc" id="L112">        setColdOutfit();</span>
+<span class="nc" id="L113">        setWarmOutfit();</span>
+
+
+
+
+<span class="nc" id="L118">        back.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L121">                Intent intent = new Intent(activity, MainActivity.class);</span>
+<span class="nc" id="L122">                startActivity(intent);</span>
+<span class="nc" id="L123">            }</span>
+        });
+<span class="nc" id="L125">        clothesStats.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L128">                whichButton.setText(CLOTHES_STATS_TAG);</span>
+<span class="nc" id="L129">                Fragment fragment = new ClothesStatsFragment(allClothingStatsObjects);</span>
+<span class="nc" id="L130">                setCardsInvisible();</span>
+<span class="nc" id="L131">                showFragment(CLOTHES_STATS_TAG, fragment);</span>
+
+
+
+
+<span class="nc" id="L136">            }</span>
+        });
+<span class="nc" id="L138">        outfitStats.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L141">                whichButton.setText(OUTFITS_STATS_TAG);</span>
+<span class="nc" id="L142">                Fragment fragment = new OutfitStatsFragment(allOutfitStatsObjects);</span>
+<span class="nc" id="L143">                setCardsInvisible();</span>
+<span class="nc" id="L144">                showFragment(OUTFITS_STATS_TAG, fragment);</span>
+<span class="nc" id="L145">            }</span>
+        });
+<span class="nc" id="L147">        overallStats.setOnClickListener(new View.OnClickListener() {</span>
+            @Override
+            public void onClick(View v) {
+<span class="nc" id="L150">                String tag = (String)whichButton.getText();</span>
+<span class="nc" id="L151">                whichButton.setText(&quot;Overall Stats&quot;);</span>
+<span class="nc" id="L152">                deleteFragment(tag);</span>
+<span class="nc" id="L153">                setCardsVisible();</span>
+<span class="nc" id="L154">            }</span>
+        });
+
+
+<span class="nc" id="L158">    }</span>
+
+    private void showFragment(String tag, Fragment fragment){
+<span class="nc" id="L161">        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();</span>
+<span class="nc" id="L162">        transaction.replace(R.id.stats_categories_container, fragment, tag);</span>
+<span class="nc" id="L163">        transaction.commit();</span>
+<span class="nc" id="L164">    }</span>
+    private void deleteFragment(String tag){
+<span class="nc" id="L166">        FragmentManager fragmentManager = getSupportFragmentManager();</span>
+<span class="nc" id="L167">        Fragment fragment = fragmentManager.findFragmentByTag(tag);</span>
+
+<span class="nc bnc" id="L169" title="All 2 branches missed.">        if (fragment != null){</span>
+<span class="nc" id="L170">            fragmentManager.beginTransaction().remove(fragment).commit();</span>
+        }
+<span class="nc" id="L172">    }</span>
+
+    /*
+    Note: Come back to these!
+     */
+    private void setTotalOutfitsCount(){
+<span class="nc" id="L178">        OutfitManager.getAllOutfitsRequest(this, UserManager.getUserID(this), new Response.Listener&lt;JSONArray&gt;() {</span>
+            @Override
+            public void onResponse(JSONArray response) {
+<span class="nc" id="L181">               totalOutfitCount.setText(String.valueOf(response.length()));</span>
+<span class="nc" id="L182">                ArrayList&lt;ClothingStatItem&gt; statsObjects = new ArrayList&lt;&gt;();</span>
+
+<span class="nc bnc" id="L184" title="All 2 branches missed.">                for (int i =0; i &lt; response.length(); i++){</span>
+                   try {
+<span class="nc" id="L186">                       JSONObject object = response.getJSONObject(i);</span>
+<span class="nc" id="L187">                       Log.d(&quot;outfit check&quot;, object.toString());</span>
+<span class="nc" id="L188">                       JSONObject stats = object.getJSONObject(&quot;outfitStats&quot;);</span>
+<span class="nc" id="L189">                       String name = object.getString(&quot;outfitName&quot;);</span>
+<span class="nc" id="L190">                       long outfitId = object.getLong(&quot;outfitId&quot;);</span>
+<span class="nc" id="L191">                       ClothingStatItem c = new ClothingStatItem(stats, name, outfitId);</span>
+<span class="nc" id="L192">                       statsObjects.add(c);</span>
+<span class="nc" id="L193">                   } catch (JSONException e) {</span>
+<span class="nc" id="L194">                       Log.e(&quot;exception&quot;, e.toString());</span>
+<span class="nc" id="L195">                   }</span>
+
+               }
+<span class="nc" id="L198">                setAllOutfitStatsObjects(statsObjects);</span>
+<span class="nc" id="L199">            }</span>
+<span class="nc" id="L200">        }, new Response.ErrorListener() {</span>
+            @Override
+            public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L203">                Log.e(&quot;Outfit count error&quot;, error.toString());</span>
+<span class="nc" id="L204">            }</span>
+        });
+<span class="nc" id="L206">    }</span>
+    /*
+    Figure out a better way to find total closet value without having to fully scan all clothes
+     */
+    private void setTotalClosetValueAndTotalClothing(){
+<span class="nc" id="L211">        ClothesManager.getClothingByUserRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener&lt;JSONArray&gt;() {</span>
+            @Override
+            public void onResponse(JSONArray response) {
+
+<span class="nc" id="L215">                int totalClosetValue =0;</span>
+
+<span class="nc bnc" id="L217" title="All 2 branches missed.">                if (allClothingStatsObjects != null){</span>
+<span class="nc" id="L218">                    allClothingStatsObjects.clear();</span>
+                }
+<span class="nc bnc" id="L220" title="All 2 branches missed.">                for (int i =0; i&lt;response.length(); i++){</span>
+                    try {
+
+<span class="nc" id="L223">                        JSONObject object = response.getJSONObject(i);</span>
+<span class="nc" id="L224">                        Log.d(&quot;object&quot;, object.toString());</span>
+
+                        /*
+                        Grab the numberOfOutfitsIn field
+                         */
+<span class="nc" id="L229">                        JSONObject statObject = object.getJSONObject(&quot;clothingStats&quot;);</span>
+<span class="nc" id="L230">                        String name = object.getString(&quot;itemName&quot;);</span>
+<span class="nc" id="L231">                        long clothesId = object.getLong(&quot;clothesId&quot;);</span>
+<span class="nc" id="L232">                        ClothingStatItem statItem = new ClothingStatItem(statObject, name, clothesId);</span>
+<span class="nc" id="L233">                        setNumberOfOutfitsIn(clothesId, statItem);</span>
+                        //Add the json object to the arrayList
+<span class="nc" id="L235">                        Log.d(&quot;statObject&quot;, statObject.toString());</span>
+
+                        /*
+                        Check if price is not null
+                         */
+<span class="nc bnc" id="L240" title="All 2 branches missed.">                        if (!object.getString(&quot;price&quot;) .equals(&quot;null&quot;)){</span>
+<span class="nc" id="L241">                            int price = object.getInt(&quot;price&quot;);</span>
+<span class="nc" id="L242">                            totalClosetValue +=price;</span>
+                        }
+
+<span class="nc" id="L245">                    } catch (JSONException e) {</span>
+<span class="nc" id="L246">                        Log.e(&quot;exception&quot;, e.toString());</span>
+<span class="nc" id="L247">                    }</span>
+                }
+<span class="nc" id="L249">                totalClothingItems.setText(String.valueOf(response.length()));</span>
+<span class="nc" id="L250">                totalClosetCount.setText(String.valueOf(totalClosetValue));</span>
+
+
+<span class="nc" id="L253">            }</span>
+<span class="nc" id="L254">        }, new Response.ErrorListener() {</span>
+            @Override
+            public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L257">                Log.e(&quot;Clothing total price error&quot;, error.toString());</span>
+<span class="nc" id="L258">            }</span>
+        });
+<span class="nc" id="L260">    }</span>
+
+
+
+    private void setAllOutfitStatsObjects(ArrayList&lt;ClothingStatItem&gt; objects){
+<span class="nc" id="L265">        allOutfitStatsObjects = objects;</span>
+<span class="nc" id="L266">    }</span>
+    private void setCardsInvisible(){
+<span class="nc" id="L268">        card1.setVisibility(View.GONE);</span>
+<span class="nc" id="L269">        card2.setVisibility(View.GONE);</span>
+<span class="nc" id="L270">    }</span>
+    private void setCardsVisible(){
+<span class="nc" id="L272">        card1.setVisibility(View.VISIBLE);</span>
+<span class="nc" id="L273">        card2.setVisibility(View.VISIBLE);</span>
+<span class="nc" id="L274">    }</span>
+    private void setMostExpensiveOutfit(){
+<span class="nc" id="L276">        StatisticsManager.mostExpensiveOutfitRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener&lt;JSONObject&gt;() {</span>
+            @Override
+            public void onResponse(JSONObject response) {
+<span class="nc" id="L279">                Log.d(&quot;Most expensive&quot;, response.toString());</span>
+                try {
+<span class="nc" id="L281">                    getOutfit(response.getLong(&quot;outfitId&quot;), response.getString(&quot;totalPrice&quot;));</span>
+
+<span class="nc" id="L283">                } catch (JSONException e) {</span>
+<span class="nc" id="L284">                    Log.e(&quot;exception&quot;, e.toString());</span>
+<span class="nc" id="L285">                }</span>
+
+<span class="nc" id="L287">            }</span>
+<span class="nc" id="L288">        }, new Response.ErrorListener() {</span>
+            @Override
+            public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L291">                Log.e(&quot;Most expensive clothing request&quot;, error.toString());</span>
+
+<span class="nc" id="L293">            }</span>
+        });
+<span class="nc" id="L295">    }</span>
+
+    private void getOutfit(long outfitId, String price){
+<span class="nc" id="L298">        OutfitManager.getOutfitRequest(this, outfitId, new Response.Listener&lt;JSONObject&gt;() {</span>
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+<span class="nc" id="L302">                    Log.d(&quot;outfit&quot;, response.toString());</span>
+<span class="nc" id="L303">                    String s = &quot;Name: &quot; + response.getString(&quot;outfitName&quot;) +&quot;\nPrice: &quot; + price;</span>
+<span class="nc" id="L304">                    mostExpensiveOutfit.setText(s);</span>
+<span class="nc" id="L305">                } catch (JSONException e) {</span>
+<span class="nc" id="L306">                    Log.e(&quot;exception&quot;, e.toString());</span>
+<span class="nc" id="L307">                }</span>
+
+<span class="nc" id="L309">            }</span>
+<span class="nc" id="L310">        }, new Response.ErrorListener() {</span>
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+<span class="nc" id="L314">            }</span>
+        });
+<span class="nc" id="L316">    }</span>
+    private void setMostWornOutfit(){
+<span class="nc" id="L318">        StatisticsManager.mostWornOutfitRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener&lt;JSONObject&gt;() {</span>
+            @Override
+            public void onResponse(JSONObject response) {
+<span class="nc" id="L321">                Log.d(&quot;check&quot;, response.toString());</span>
+                try {
+<span class="nc" id="L323">                    String name = response.getString(&quot;outfitName&quot;);</span>
+<span class="nc" id="L324">                    JSONObject object = response.getJSONObject(&quot;outfitStats&quot;);</span>
+<span class="nc" id="L325">                    String timesWorn = object.getString(&quot;timesWorn&quot;);</span>
+<span class="nc" id="L326">                    String s = &quot;Name: &quot; + name + &quot;\nTimes Worn: &quot; + timesWorn;</span>
+<span class="nc" id="L327">                    mostWornOutfit.setText(s);</span>
+<span class="nc" id="L328">                } catch (JSONException e) {</span>
+<span class="nc" id="L329">                    Log.e(&quot;exception&quot;, e.toString());</span>
+<span class="nc" id="L330">                }</span>
+
+<span class="nc" id="L332">            }</span>
+<span class="nc" id="L333">        }, new Response.ErrorListener() {</span>
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+<span class="nc" id="L337">            }</span>
+        });
+<span class="nc" id="L339">    }</span>
+
+    private void setMostExpensiveClothing(){
+<span class="nc" id="L342">        StatisticsManager.mostExpensiveClothingRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener&lt;JSONObject&gt;() {</span>
+            @Override
+            public void onResponse(JSONObject response) {
+<span class="nc" id="L345">                Log.d(&quot;expensive clothing&quot;, response.toString());</span>
+                try {
+<span class="nc" id="L347">                    String name = response.getString(&quot;itemName&quot;);</span>
+<span class="nc" id="L348">                    String price = response.getString(&quot;price&quot;);</span>
+<span class="nc bnc" id="L349" title="All 2 branches missed.">                    if (price.equals(&quot;null&quot;)){</span>
+<span class="nc" id="L350">                        price = &quot;none&quot;;</span>
+                    }
+<span class="nc" id="L352">                    String s = &quot;Name: &quot; + name + &quot;\nPrice: &quot; + price;</span>
+<span class="nc" id="L353">                    mostExpensiveClothing.setText(s);</span>
+<span class="nc" id="L354">                } catch (JSONException e) {</span>
+<span class="nc" id="L355">                    Log.e(&quot;exception&quot;, e.toString());</span>
+<span class="nc" id="L356">                }</span>
+<span class="nc" id="L357">            }</span>
+<span class="nc" id="L358">        }, new Response.ErrorListener() {</span>
+            @Override
+            public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L361">                Log.e(&quot;error&quot;, error.toString());</span>
+<span class="nc" id="L362">            }</span>
+        });
+<span class="nc" id="L364">    }</span>
+    private void setMostWornClothingItem(){
+<span class="nc" id="L366">        StatisticsManager.mostWornClothingRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener&lt;JSONObject&gt;() {</span>
+            @Override
+            public void onResponse(JSONObject response) {
+<span class="nc" id="L369">                Log.d(&quot;most worn clothing&quot;, response.toString());</span>
+                try {
+<span class="nc" id="L371">                    String name = response.getString(&quot;itemName&quot;);</span>
+<span class="nc" id="L372">                    JSONObject object = response.getJSONObject(&quot;clothingStats&quot;);</span>
+<span class="nc" id="L373">                    String timesWorn = object.getString(&quot;timesWorn&quot;);</span>
+<span class="nc" id="L374">                    String s = &quot;Name: &quot; + name + &quot;\nTimes Worn: &quot; + timesWorn;</span>
+<span class="nc" id="L375">                    mostWornClothingItem.setText(s);</span>
+<span class="nc" id="L376">                } catch (JSONException e) {</span>
+<span class="nc" id="L377">                    Log.e(&quot;exception&quot;, e.toString());</span>
+<span class="nc" id="L378">                }</span>
+<span class="nc" id="L379">            }</span>
+<span class="nc" id="L380">        }, new Response.ErrorListener() {</span>
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+<span class="nc" id="L384">            }</span>
+        });
+<span class="nc" id="L386">    }</span>
+
+   private void weatherRequestNull(VolleyError error, TextView text){
+<span class="nc bnc" id="L389" title="All 2 branches missed.">       if (error.networkResponse == null){</span>
+<span class="nc" id="L390">           String s = &quot;none&quot;;</span>
+<span class="nc" id="L391">           text.setText(s);</span>
+       }
+<span class="nc" id="L393">       Log.e(&quot;error&quot;, error.toString());</span>
+<span class="nc" id="L394">   }</span>
+
+    private void setColdClothing() {
+<span class="nc" id="L397">        StatisticsManager.coldestAverageClothingRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener&lt;JSONObject&gt;() {</span>
+            @Override
+            public void onResponse(JSONObject response) {
+<span class="nc" id="L400">                Log.d(&quot;CC check&quot;, response.toString());</span>
+                String s;
+<span class="nc bnc" id="L402" title="All 2 branches missed.">                if (response.equals(&quot;&quot;)){</span>
+<span class="nc" id="L403">                    s = &quot;none&quot;;</span>
+<span class="nc" id="L404">                    coldClothing.setText(s);</span>
+                }
+                else{
+<span class="nc" id="L407">                    coldClothing.setText(response.toString());</span>
+                }
+
+<span class="nc" id="L410">            }</span>
+
+<span class="nc" id="L412">        }, new Response.ErrorListener() {</span>
+            @Override
+            public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L415">                weatherRequestNull(error, coldClothing);</span>
+
+<span class="nc" id="L417">            }</span>
+        });
+
+<span class="nc" id="L420">    }</span>
+
+    private void setWarmClothing(){
+<span class="nc" id="L423">        StatisticsManager.warmestAverageClothingRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener&lt;JSONObject&gt;() {</span>
+            @Override
+            public void onResponse(JSONObject response) {
+<span class="nc" id="L426">                Log.d(&quot;CW check&quot;, response.toString());</span>
+                String s;
+<span class="nc bnc" id="L428" title="All 2 branches missed.">                if (response.equals(&quot;&quot;)){</span>
+<span class="nc" id="L429">                    s = &quot;none&quot;;</span>
+<span class="nc" id="L430">                    warmClothing.setText(s);</span>
+                }
+                else{
+<span class="nc" id="L433">                    warmClothing.setText(response.toString());</span>
+                }
+
+<span class="nc" id="L436">            }</span>
+
+<span class="nc" id="L438">        }, new Response.ErrorListener() {</span>
+            @Override
+            public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L441">                weatherRequestNull(error, warmClothing);</span>
+
+<span class="nc" id="L443">            }</span>
+        });
+<span class="nc" id="L445">    }</span>
+
+    private void setWarmOutfit(){
+<span class="nc" id="L448">        StatisticsManager.warmestAverageOutfitRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener&lt;JSONObject&gt;() {</span>
+            @Override
+            public void onResponse(JSONObject response) {
+<span class="nc" id="L451">                Log.d(&quot;OW check&quot;, response.toString());</span>
+                try {
+<span class="nc" id="L453">                    JSONObject object = response.getJSONObject(&quot;outfitStats&quot;);</span>
+<span class="nc" id="L454">                    String high = object.getString(&quot;avgHighTemp&quot;);</span>
+<span class="nc" id="L455">                    warmOutfit.setText(high);</span>
+
+<span class="nc" id="L457">                } catch (JSONException e) {</span>
+<span class="nc" id="L458">                    throw new RuntimeException(e);</span>
+<span class="nc" id="L459">                }</span>
+
+
+<span class="nc" id="L462">            }</span>
+
+<span class="nc" id="L464">        }, new Response.ErrorListener() {</span>
+            @Override
+            public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L467">                weatherRequestNull(error, warmOutfit);</span>
+
+
+<span class="nc" id="L470">            }</span>
+        });
+<span class="nc" id="L472">    }</span>
+    private void setColdOutfit(){
+<span class="nc" id="L474">        StatisticsManager.coldestAverageOutfitRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener&lt;JSONObject&gt;() {</span>
+            @Override
+            public void onResponse(JSONObject response) {
+<span class="nc" id="L477">                Log.d(&quot;OC&quot;, response.toString());</span>
+                try {
+<span class="nc" id="L479">                    JSONObject object = response.getJSONObject(&quot;outfitStats&quot;);</span>
+<span class="nc" id="L480">                    String high = object.getString(&quot;avgLowTemp&quot;);</span>
+<span class="nc" id="L481">                    coldOutfit.setText(high);</span>
+
+<span class="nc" id="L483">                } catch (JSONException e) {</span>
+<span class="nc" id="L484">                    throw new RuntimeException(e);</span>
+<span class="nc" id="L485">                }</span>
+
+<span class="nc" id="L487">            }</span>
+
+<span class="nc" id="L489">        }, new Response.ErrorListener() {</span>
+            @Override
+            public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L492">                weatherRequestNull(error, coldOutfit);</span>
+
+<span class="nc" id="L494">            }</span>
+        });
+<span class="nc" id="L496">    }</span>
+    private void setNumberOfOutfitsIn(long clothingId, ClothingStatItem statItem){
+<span class="nc" id="L498">        StatisticsManager.calcNumberOfOutfitsInRequest(this, clothingId, MainActivity.SERVER_URL, new Response.Listener&lt;String&gt;() {</span>
+            @Override
+            public void onResponse(String response) {
+<span class="nc" id="L501">                Log.d(&quot;response&quot;, response);</span>
+<span class="nc" id="L502">                statItem.setNumberOfOutfitsIn(response);</span>
+<span class="nc" id="L503">                allClothingStatsObjects.add(statItem);</span>
+
+
+
+<span class="nc" id="L507">            }</span>
+
+<span class="nc" id="L509">        }, new Response.ErrorListener() {</span>
+            @Override
+            public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L512">                Log.e(&quot;outfitsIn&quot;, error.toString());</span>
+<span class="nc" id="L513">            }</span>
+        });
+<span class="nc" id="L515">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>

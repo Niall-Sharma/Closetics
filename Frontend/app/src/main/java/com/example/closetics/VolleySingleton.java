@@ -10,6 +10,10 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
 
+/**
+ * Helper class used to send HTTP requests.
+ * Uses Volley library.
+ */
 public class VolleySingleton {
 
     private static VolleySingleton instance;
@@ -17,6 +21,12 @@ public class VolleySingleton {
     private ImageLoader imageLoader;
     private static Context ctx;
 
+    /**
+     * Private Constructor.
+     * Should not be called directly (and therefore is private).
+     *
+     * @param context current application context
+     */
     private VolleySingleton(Context context) {
         ctx = context;
         requestQueue = getRequestQueue();
@@ -38,6 +48,14 @@ public class VolleySingleton {
                 });
     }
 
+    /**
+     * Returns the instance of the VolleySingleton class.
+     * Creates a new instance only if not initialized before
+     * (so only on the first call).
+     *
+     * @param context current application context
+     * @return The only instance of VolleySingleton class
+     */
     public static synchronized VolleySingleton getInstance(Context context) {
         if (instance == null) {
             instance = new VolleySingleton(context);
@@ -45,6 +63,13 @@ public class VolleySingleton {
         return instance;
     }
 
+    /**
+     * Returns the current instance of the HTTP request queue.
+     * Creates a new instance only if not initialized before
+     * (so only on the first call).
+     *
+     * @return The only instance of RequestQueue class
+     */
     public RequestQueue getRequestQueue() {
         if (requestQueue == null) {
             // getApplicationContext() is key, it keeps you from leaking the
@@ -54,10 +79,21 @@ public class VolleySingleton {
         return requestQueue;
     }
 
+    /**
+     * Adds given request to the current HTTP request queue.
+     *
+     * @param req request to add
+     * @param <T> generic type of the request
+     */
     public <T> void addToRequestQueue(Request<T> req) {
         getRequestQueue().add(req);
     }
 
+    /**
+     * Returns the current instance of the image loader.
+     *
+     * @return The only instance of ImageLoader
+     */
     public ImageLoader getImageLoader() {
         return imageLoader;
     }

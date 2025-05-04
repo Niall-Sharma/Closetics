@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OutfitManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics.outfits</a> &gt; <span class="el_source">OutfitManager.java</span></div><h1>OutfitManager.java</h1><pre class="source lang-java linenums">package com.example.closetics.outfits;
+
+import static com.example.closetics.UserManager.SHARED_PREFERENCES_FILE_NAME;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.example.closetics.MainActivity;
+import com.example.closetics.VolleySingleton;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+<span class="nc" id="L20">public class OutfitManager {</span>
+
+    private static final String URL_GET_ALL_USER_OUTFITS = MainActivity.SERVER_URL + &quot;/getAllUserOutfits/&quot;; // + {{userId}}
+    private static final String URL_GET_ALL_OUTFIT_CLOTHES = MainActivity.SERVER_URL + &quot;/getAllOutfitItems/&quot;; // + {{outfitId}}
+    private static final String URL_GET_OUTFIT = MainActivity.SERVER_URL + &quot;/getOutfit/&quot;; // + {{outfitId}}
+    private static final String URL_DELETE_OUTFIT = MainActivity.SERVER_URL + &quot;/deleteOutfit/&quot;; // + {{outfitId}}
+    private static final String URL_PUT_UPDATE_OUTFIT = MainActivity.SERVER_URL + &quot;/updateOutfit&quot;;
+    private static final String URL_POST_CREATE_OUTFIT = MainActivity.SERVER_URL + &quot;/createOutfit&quot;;
+    private static final String URL_GET_ALL_USER_CLOTHES = MainActivity.SERVER_URL + &quot;/getClothing/user/&quot;; // + {{userId}}
+    private static final String URL_PUT_REMOVE_ITEM = MainActivity.SERVER_URL + &quot;/removeItemFromOutfit/&quot;; // + {{outfitId}} + / + {{clothingId}}
+    private static final String URL_PUT_ADD_ITEM = MainActivity.SERVER_URL + &quot;/addItemToOutfit/&quot;; // + {{outfitId}} + / + {{clothingId}}
+
+    public static final String CURRENT_OUTFIT_PARAM = &quot;currentOutfitId&quot;;
+    public static final String TOMORROW_OUTFIT_PARAM = &quot;tomorrowOutfitId&quot;;
+
+
+    public static void saveCurrentDailyOutfit(Context context, long outfitId) {
+        //Access the shared preferences file make it private to this app
+<span class="nc" id="L38">        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);</span>
+<span class="nc" id="L39">        SharedPreferences.Editor editor = prefs.edit();</span>
+<span class="nc" id="L40">        editor.putLong(CURRENT_OUTFIT_PARAM, outfitId);</span>
+<span class="nc" id="L41">        editor.apply();</span>
+<span class="nc" id="L42">    }</span>
+
+    public static long getCurrentDailyOutfit(Context context) {
+        //Access the shared preferences file make it private to this app
+<span class="fc" id="L46">        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);</span>
+<span class="fc" id="L47">        return prefs.getLong(CURRENT_OUTFIT_PARAM, -1);</span>
+    }
+
+    public static void saveTomorrowDailyOutfit(Context context, long outfitId) {
+        //Access the shared preferences file make it private to this app
+<span class="nc" id="L52">        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);</span>
+<span class="nc" id="L53">        SharedPreferences.Editor editor = prefs.edit();</span>
+<span class="nc" id="L54">        editor.putLong(TOMORROW_OUTFIT_PARAM, outfitId);</span>
+<span class="nc" id="L55">        editor.apply();</span>
+<span class="nc" id="L56">    }</span>
+    public static long getTomorrowDailyOutfit(Context context) {
+        //Access the shared preferences file make it private to this app
+<span class="fc" id="L59">        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);</span>
+<span class="fc" id="L60">        return prefs.getLong(TOMORROW_OUTFIT_PARAM, -1);</span>
+    }
+    /*
+    Replace with &quot;null&quot; for string if there is no outfit being added!!
+     */
+
+
+    public static void getAllOutfitsRequest(Context context, long userId,
+                                            Response.Listener&lt;JSONArray&gt; responseListener,
+                                            Response.ErrorListener errorListener) {
+
+<span class="fc" id="L71">        JsonArrayRequest jsonArrReq = new JsonArrayRequest(</span>
+                Request.Method.GET,
+                URL_GET_ALL_USER_OUTFITS + userId,
+                null, // Pass null as the request body since it's a GET request
+                responseListener, errorListener);
+
+        // Adding request to request queue
+<span class="fc" id="L78">        VolleySingleton.getInstance(context).addToRequestQueue(jsonArrReq);</span>
+<span class="fc" id="L79">    }</span>
+
+    public static void getOutfitRequest(Context context, long outfitId,
+                                            Response.Listener&lt;JSONObject&gt; responseListener,
+                                            Response.ErrorListener errorListener) {
+
+<span class="fc" id="L85">        JsonObjectRequest jsonObjReq = new JsonObjectRequest(</span>
+                Request.Method.GET,
+                URL_GET_OUTFIT + outfitId,
+                null, // Pass null as the request body since it's a GET request
+                responseListener, errorListener);
+
+        // Adding request to request queue
+<span class="fc" id="L92">        VolleySingleton.getInstance(context).addToRequestQueue(jsonObjReq);</span>
+<span class="fc" id="L93">    }</span>
+
+    public static void createOutfitRequest(Context context, long userId, String name,
+                                           Response.Listener&lt;JSONObject&gt; responseListener,
+                                           Response.ErrorListener errorListener) {
+
+<span class="fc" id="L99">        JSONObject request = new JSONObject();</span>
+        try {
+<span class="fc" id="L101">            request.put(&quot;userId&quot;, userId);</span>
+<span class="fc" id="L102">            request.put(&quot;outfitName&quot;, name);</span>
+<span class="fc" id="L103">            request.put(&quot;favorite&quot;, false);</span>
+<span class="nc" id="L104">        } catch (Exception e) {</span>
+<span class="nc" id="L105">            Log.e(&quot;JSON Error&quot;, e.toString());</span>
+<span class="nc" id="L106">            return;</span>
+<span class="fc" id="L107">        }</span>
+
+<span class="fc" id="L109">        JsonObjectRequest jsonObjReq = new JsonObjectRequest(</span>
+                Request.Method.POST,
+                URL_POST_CREATE_OUTFIT,
+                request,
+                responseListener, errorListener);
+
+        // Adding request to request queue
+<span class="fc" id="L116">        VolleySingleton.getInstance(context).addToRequestQueue(jsonObjReq);</span>
+<span class="fc" id="L117">    }</span>
+
+//    public static void deleteOutfitRequest(Context context, long outfitId,
+//                                        Response.Listener&lt;JSONObject&gt; responseListener,
+//                                        Response.ErrorListener errorListener) {
+//
+//        JsonObjectRequest jsonObjReq = new JsonObjectRequest(
+//                Request.Method.DELETE,
+//                URL_DELETE_OUTFIT + outfitId,
+//                null, // Pass null as the request body since it's a GET request
+//                responseListener, errorListener);
+//
+//        // Adding request to request queue
+//        VolleySingleton.getInstance(context).addToRequestQueue(jsonObjReq);
+//    }
+
+    public static void deleteOutfitRequest(Context context, long outfitId,
+                                           Response.Listener&lt;String&gt; responseListener,
+                                           Response.ErrorListener errorListener) {
+
+<span class="fc" id="L137">        StringRequest StringReq = new StringRequest(</span>
+                Request.Method.DELETE,
+                URL_DELETE_OUTFIT + outfitId,
+                responseListener, errorListener);
+
+        // Adding request to request queue
+<span class="fc" id="L143">        VolleySingleton.getInstance(context).addToRequestQueue(StringReq);</span>
+<span class="fc" id="L144">    }</span>
+
+    public static void updateOutfitRequest(Context context, JSONObject outfit,
+                                           Response.Listener&lt;JSONObject&gt; responseListener,
+                                           Response.ErrorListener errorListener) {
+
+<span class="fc" id="L150">        JsonObjectRequest jsonObjReq = new JsonObjectRequest(</span>
+                Request.Method.PUT,
+                URL_PUT_UPDATE_OUTFIT,
+                outfit,
+                responseListener, errorListener);
+
+        // Adding request to request queue
+<span class="fc" id="L157">        VolleySingleton.getInstance(context).addToRequestQueue(jsonObjReq);</span>
+<span class="fc" id="L158">    }</span>
+
+    public static void getAllOutfitItemsRequest(Context context, long outfitId,
+                                          Response.Listener&lt;JSONArray&gt; responseListener,
+                                          Response.ErrorListener errorListener) {
+
+<span class="fc" id="L164">        JsonArrayRequest jsonObjReq = new JsonArrayRequest(</span>
+                Request.Method.GET,
+                URL_GET_ALL_OUTFIT_CLOTHES + outfitId,
+                null, // Pass null as the request body since it's a GET request
+                responseListener, errorListener);
+
+        // Adding request to request queue
+<span class="fc" id="L171">        VolleySingleton.getInstance(context).addToRequestQueue(jsonObjReq);</span>
+<span class="fc" id="L172">    }</span>
+
+    public static void getAllUserClothesRequest(Context context, long userId,
+                                            Response.Listener&lt;JSONArray&gt; responseListener,
+                                            Response.ErrorListener errorListener) {
+
+<span class="fc" id="L178">        JsonArrayRequest jsonArrReq = new JsonArrayRequest(</span>
+                Request.Method.GET,
+                URL_GET_ALL_USER_CLOTHES + userId,
+                null, // Pass null as the request body since it's a GET request
+                responseListener, errorListener);
+
+        // Adding request to request queue
+<span class="fc" id="L185">        VolleySingleton.getInstance(context).addToRequestQueue(jsonArrReq);</span>
+<span class="fc" id="L186">    }</span>
+
+    public static void addClothingRequest(Context context, long outfitId, long clothingId,
+                                          Response.Listener&lt;JSONObject&gt; responseListener,
+                                          Response.ErrorListener errorListener) {
+
+<span class="fc" id="L192">        JsonObjectRequest jsonObjReq = new JsonObjectRequest(</span>
+                Request.Method.PUT,
+                URL_PUT_ADD_ITEM + outfitId + &quot;/&quot; + clothingId,
+                null,
+                responseListener, errorListener);
+
+        // Adding request to request queue
+<span class="fc" id="L199">        VolleySingleton.getInstance(context).addToRequestQueue(jsonObjReq);</span>
+<span class="fc" id="L200">    }</span>
+
+    public static void removeClothingRequest(Context context, long outfitId, long clothingId,
+                                          Response.Listener&lt;JSONObject&gt; responseListener,
+                                          Response.ErrorListener errorListener) {
+
+<span class="fc" id="L206">        JsonObjectRequest jsonObjReq = new JsonObjectRequest(</span>
+                Request.Method.PUT,
+                URL_PUT_REMOVE_ITEM + outfitId + &quot;/&quot; + clothingId,
+                null,
+                responseListener, errorListener);
+
+        // Adding request to request queue
+<span class="fc" id="L213">        VolleySingleton.getInstance(context).addToRequestQueue(jsonObjReq);</span>
+<span class="fc" id="L214">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>

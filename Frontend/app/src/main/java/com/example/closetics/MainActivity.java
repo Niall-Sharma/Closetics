@@ -14,7 +14,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.example.closetics.databinding.ActivityMainBinding;
 import com.example.closetics.recommendations.RecWebSocketService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -23,10 +22,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Activity representing Closetics' main page.
+ * Contains bottom navigation view.
+ */
 public class MainActivity extends AppCompatActivity {
 
-    //private static final String SERVER_ADDRESS = "10.0.2.2:8080";
-    public static final String SERVER_ADDRESS = "coms-3090-008.class.las.iastate.edu:8080";
+    private static final String SERVER_ADDRESS = "10.0.2.2:8080";
+    //public static final String SERVER_ADDRESS = "coms-3090-008.class.las.iastate.edu:8080";
     public static final String SERVER_URL = "http://" + SERVER_ADDRESS;
     public static final String SERVER_WS_URL = "ws://" + SERVER_ADDRESS;
 
@@ -37,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
         put(81, "aprons");put(27, "a line dresses");put(13, "backpacks");put(10, "belts");put(51, "blazers");put(67, "blouses");put(28, "bodycon dresses");put(34, "boots");put(75, "boxers");put(73, "bras");put(76, "briefs");put(23, "capris");put(52, "cardigans");put(50, "coats");put(30, "cocktail dresses");put(6, "compression wear");put(72, "crop tops");put(45, "dress shirts");put(44, "evening gowns");put(38, "flats");put(36, "flip flops");put(48, "formal dresses");put(14, "glasses");put(11, "gloves");put(31, "gowns");put(5, "gym t shirts");put(12, "handbags");put(9, "hats");put(37, "heels");put(71, "hoodies");put(49, "jackets");put(17, "jeans");put(15, "jewelry");put(21, "leggings");put(39, "loafers");put(64, "loungewear");put(24, "maxi dresses");put(26, "midi dresses");put(25, "mini dresses");put(61, "nightgowns");put(7, "other");put(79, "overalls");put(40, "oxfords");put(60, "pajamas");put(77, "panties");put(56, "parkas");put(69, "polos");put(54, "ponchos");put(59, "rainwear");put(63, "robes");put(4, "running shorts");put(82, "safety gear");put(35, "sandals");put(8, "scarves");put(80, "scrubs");put(68, "shirts");put(19, "shorts");put(20, "skirts");put(62, "sleep shirts");put(41, "slippers");put(33, "sneakers");put(1, "sports bras");put(42, "suits");put(32, "sun dresses");put(22, "sweatpants");put(70, "sweatshirts");put(57, "swimwear");put(66, "tank tops");put(46, "ties");put(3, "tracksuits");put(18, "trousers");put(43, "tuxedos");put(65, "t shirts");put(74, "underwear");put(78, "uniforms");put(53, "vests");put(47, "waistcoats");put(16, "watches");put(55, "windbreakers");put(58, "winterwear");put(29, "wrap dresses");put(2, "yoga pants");
     }};
 
-    private ActivityMainBinding binding;
     private BottomNavigationView bottomNavView;
 
 
@@ -45,10 +47,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());             // link to Main activity XML
+        setContentView(R.layout.activity_main);             // link to Main activity XML
 
-        bottomNavView = binding.bottomNavView;
+        bottomNavView = findViewById(R.id.bottom_nav_view);
 
 
 
@@ -60,11 +61,11 @@ public class MainActivity extends AppCompatActivity {
 //                .build();
         NavController navController = Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment_activity_main);
 //        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(binding.bottomNavView, navController);
+        NavigationUI.setupWithNavController(bottomNavView, navController);
 
         // DEBUG CODE
-//        UserManager.saveUsername(getApplicationContext(), "user1");
-//        UserManager.saveUserID(getApplicationContext(), 1);
+        UserManager.saveUsername(getApplicationContext(), "user1");
+        UserManager.saveUserID(getApplicationContext(), 1);
 
         // start websocket if person is logged in
         if (UserManager.getUsername(getApplicationContext()) != null) {
@@ -106,6 +107,10 @@ public class MainActivity extends AppCompatActivity {
 //        });
     }
 
+    /**
+     * Starts the Recommendations WebSocket if the user is logged in.
+     * Should be called every time the app opens.
+     */
     private void startRecWebSocket() {
         Intent serviceIntent = new Intent(this, com.example.closetics.recommendations.RecWebSocketService.class);
         serviceIntent.setAction("RecWebSocketConnect");
@@ -120,3 +125,7 @@ public class MainActivity extends AppCompatActivity {
 //        fragmentTransaction.commit();
 //    }
 }
+
+// What did 60 do when it get hungry?
+// 68
+// .

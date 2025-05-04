@@ -51,10 +51,6 @@ public class LoginActivity extends AppCompatActivity {
     private long userId;
 
 
-    private static final String URL_GET_USER_BY_USERNAME = MainActivity.SERVER_URL + "/users/username/"; // +{{username}}
-    private static final String URL = MainActivity.SERVER_URL + "/login";
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
             String username = usernameEditText.getText().toString();
             String password = passwordEditText.getText().toString();
             //Login request to the backend API
-            UserManager.loginRequest(getApplicationContext(), username, password, URL,
+            UserManager.loginRequest(getApplicationContext(), username, password,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
@@ -179,13 +175,11 @@ public class LoginActivity extends AppCompatActivity {
                 String username = usernameEditText.getText().toString();
                 if (username.isEmpty()){
                     setErrorMessage("Please enter your username to change password");
-                }
-                else{
-                    Log.d("Volley Debug", "Making request to: " + URL_GET_USER_BY_USERNAME + username);
-                    getSecurityQuestionIDs(getApplicationContext(), URL_GET_USER_BY_USERNAME + username);
-                    //Do not allow any more button presses while waiting
+                } else {
+                    Log.d("Volley Debug", "Making request to get SQ IDs of user " + username);
+                    getSecurityQuestionIDs(getApplicationContext(), username);
+                    // Do not allow any more button presses while waiting
                     forgotPasswordButton.setEnabled(false);
-
                 }
             }
         });
@@ -208,11 +202,9 @@ public class LoginActivity extends AppCompatActivity {
 
 
     //Get request to grab which security questions that were answered also grabs the userID
-    private void getSecurityQuestionIDs(Context context, String url) {
+    private void getSecurityQuestionIDs(Context context, String username) {
         // Create a JsonObjectRequest for the GET request
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url,
-                null,  // Request body is null for GET requests
-
+        UserManager.getUserByUsernameRequest(context, username,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -239,12 +231,8 @@ public class LoginActivity extends AppCompatActivity {
                         Log.e("Volley Error", error.toString());
                         setErrorMessage("That username does not exist, please enter valid username");
                         forgotPasswordButton.setEnabled(true);
-
-
                     }
                 });
-        // Add the request to the Volley request queue
-        VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
     private void startRecWebSocket() {

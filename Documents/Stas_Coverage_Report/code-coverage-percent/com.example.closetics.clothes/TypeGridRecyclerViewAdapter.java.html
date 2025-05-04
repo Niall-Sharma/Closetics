@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TypeGridRecyclerViewAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics.clothes</a> &gt; <span class="el_source">TypeGridRecyclerViewAdapter.java</span></div><h1>TypeGridRecyclerViewAdapter.java</h1><pre class="source lang-java linenums">package com.example.closetics.clothes;
+
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.closetics.MainActivity;
+import com.example.closetics.R;
+
+import java.util.HashMap;
+
+public class TypeGridRecyclerViewAdapter extends RecyclerView.Adapter&lt;TypeGridRecyclerViewAdapter.MyViewHolder&gt; {
+
+    int [] imageResource;
+    HashMap&lt;Long,Long&gt; counts;
+    OnItemClickListener clickListener;
+
+
+<span class="nc" id="L25">    public TypeGridRecyclerViewAdapter(HashMap&lt;Long,Long&gt; counts, OnItemClickListener clickListener) {</span>
+        //this.imageResource = imageResource;
+<span class="nc" id="L27">        this.counts = counts;</span>
+<span class="nc" id="L28">        this.clickListener = clickListener;</span>
+<span class="nc" id="L29">    }</span>
+
+    @NonNull
+    @Override
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+<span class="nc" id="L34">        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_grid_type, parent, false);</span>
+<span class="nc" id="L35">        MyViewHolder myViewHolder = new MyViewHolder(view);</span>
+<span class="nc" id="L36">        return myViewHolder;</span>
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+<span class="nc" id="L41">        long longRealPosition = holder.getBindingAdapterPosition();</span>
+<span class="nc" id="L42">        int realPosition = holder.getBindingAdapterPosition();</span>
+        //Sets the changing views from the innerclass
+
+        //holder.imageView.setImageResource(imageResource[position]);
+        //Note: 1 based indexing for the hashmap keys
+<span class="nc" id="L47">        String type = MainActivity.CLOTHING_TYPES.get((realPosition+1));</span>
+<span class="nc" id="L48">        holder.typeText.setText(MainActivity.CLOTHING_TYPES.get(realPosition+1));</span>
+<span class="nc" id="L49">        String count = String.valueOf(counts.get(longRealPosition+1));</span>
+
+<span class="nc bnc" id="L51" title="All 2 branches missed.">        if (count.equals(&quot;null&quot;)){</span>
+<span class="nc" id="L52">            count = &quot;0&quot;;</span>
+        }
+<span class="nc" id="L54">        holder.countText.setText(count);</span>
+
+        //Only if not zero
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        if (!count.equals(&quot;0&quot;)) {</span>
+            //This sets the clicklistener on the entire item in the list
+<span class="nc" id="L59">            holder.itemView.setOnClickListener(new View.OnClickListener() {</span>
+                @Override
+                public void onClick(View v) {
+                    //Send over the position of the item in list + 1 for the hashmap
+<span class="nc" id="L63">                    clickListener.onItemClick(realPosition + 1);</span>
+<span class="nc" id="L64">                }</span>
+            });
+       }
+
+
+<span class="nc" id="L69">    }</span>
+
+    @Override
+    public int getItemCount() {
+<span class="nc" id="L73">        return MainActivity.CLOTHING_TYPES.size();</span>
+    }
+
+    /*
+    Inner class for view_grid_type
+     */
+
+    public class MyViewHolder extends RecyclerView.ViewHolder{
+
+        ImageView imageView;
+        TextView typeText;
+        TextView countText;
+
+<span class="nc" id="L86">        public MyViewHolder(@NonNull View itemView) {</span>
+<span class="nc" id="L87">            super(itemView);</span>
+<span class="nc" id="L88">            imageView = itemView.findViewById(R.id.imageView);</span>
+<span class="nc" id="L89">            typeText = itemView.findViewById(R.id.type_text);</span>
+<span class="nc" id="L90">            countText = itemView.findViewById(R.id.count_text);</span>
+<span class="nc" id="L91">        }</span>
+    }
+    /*
+    Must implement click listener to instantiate the class
+     */
+
+
+
+    //Inner interface
+    public interface OnItemClickListener{
+        void onItemClick(long position);
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>

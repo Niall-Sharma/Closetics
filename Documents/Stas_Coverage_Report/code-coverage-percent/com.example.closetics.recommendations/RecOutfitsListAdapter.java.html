@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RecOutfitsListAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics.recommendations</a> &gt; <span class="el_source">RecOutfitsListAdapter.java</span></div><h1>RecOutfitsListAdapter.java</h1><pre class="source lang-java linenums">package com.example.closetics.recommendations;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
+
+import com.example.closetics.R;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class RecOutfitsListAdapter extends RecyclerView.Adapter&lt;RecOutfitsListAdapter.ViewHolder&gt; {
+    private List&lt;RecOutfitsListItem&gt; items;
+
+<span class="nc" id="L22">    public RecOutfitsListAdapter(List&lt;RecOutfitsListItem&gt; items) {</span>
+<span class="nc" id="L23">        this.items = items;</span>
+<span class="nc" id="L24">    }</span>
+
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+<span class="nc" id="L29">        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_rec_outfits, parent, false);</span>
+<span class="nc" id="L30">        return new ViewHolder(itemView);</span>
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+<span class="nc" id="L35">        RecOutfitsListItem item = items.get(position);</span>
+
+<span class="nc" id="L37">        long id = item.getId();</span>
+<span class="nc" id="L38">        String name = item.getName();</span>
+<span class="nc" id="L39">        String username = item.getUsername();</span>
+<span class="nc" id="L40">        List&lt;Integer&gt; imageIds = item.getImageIds();</span>
+<span class="nc" id="L41">        String stats = item.getStats();</span>
+<span class="nc" id="L42">        String date = item.getDate();</span>
+
+<span class="nc" id="L44">        holder.nameText.setText(name);</span>
+<span class="nc" id="L45">        holder.usernameText.setText(username);</span>
+<span class="nc" id="L46">        holder.statsText.setText(stats);</span>
+<span class="nc" id="L47">        holder.dateText.setText(&quot;Posted on &quot; + date);</span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">        if (item.isLiked()) {</span>
+<span class="nc" id="L49">            holder.likeButton.setImageResource(R.drawable.heart);</span>
+        } else {
+<span class="nc" id="L51">            holder.likeButton.setImageResource(R.drawable.heart_outline);</span>
+        }
+
+        // set images
+        // TODO: set proper images format here
+        // holder.image.setImageResource(imageIds.get(0));
+<span class="nc" id="L57">        ArrayList&lt;RecImagesListItem&gt; imagesListItems = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">        for (int imageId : item.getImageIds()) {</span>
+<span class="nc" id="L59">            imagesListItems.add(new RecImagesListItem(imageId));</span>
+<span class="nc" id="L60">        }</span>
+<span class="nc" id="L61">        RecImagesListAdapter imagesListAdapter = new RecImagesListAdapter(imagesListItems);</span>
+<span class="nc" id="L62">        holder.viewPager2.setAdapter(imagesListAdapter);</span>
+
+<span class="nc" id="L64">        holder.usernameText.setOnClickListener(v -&gt; {</span>
+            // TODO: open public profile by username
+<span class="nc" id="L66">        });</span>
+
+<span class="nc" id="L68">        holder.likeButton.setOnClickListener(v -&gt; {</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">            item.setLiked(!item.isLiked());</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">            if (item.isLiked()) {</span>
+<span class="nc" id="L71">                holder.likeButton.setImageResource(R.drawable.heart);</span>
+            } else {
+<span class="nc" id="L73">                holder.likeButton.setImageResource(R.drawable.heart_outline);</span>
+            }
+            // TODO: make like http req
+<span class="nc" id="L76">        });</span>
+<span class="nc" id="L77">    }</span>
+
+    @Override
+    public int getItemCount() {
+<span class="nc" id="L81">        return items.size();</span>
+    }
+
+    public void addItem(RecOutfitsListItem item) {
+<span class="nc" id="L85">        items.add(item);</span>
+<span class="nc" id="L86">        notifyItemInserted(items.size() - 1);</span>
+<span class="nc" id="L87">    }</span>
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        private TextView nameText, usernameText, statsText, dateText;
+        private ViewPager2 viewPager2;
+        private ImageButton likeButton;
+
+<span class="nc" id="L94">        public ViewHolder(final View itemView) {</span>
+<span class="nc" id="L95">            super(itemView);</span>
+
+<span class="nc" id="L97">            nameText = itemView.findViewById(R.id.rec_outfit_list_item_outfit_name_text);</span>
+<span class="nc" id="L98">            usernameText = itemView.findViewById(R.id.rec_outfit_list_item_username_text);</span>
+<span class="nc" id="L99">            statsText = itemView.findViewById(R.id.rec_outfit_list_item_stats_text);</span>
+<span class="nc" id="L100">            dateText = itemView.findViewById(R.id.rec_outfit_list_item_date_text);</span>
+<span class="nc" id="L101">            viewPager2 = itemView.findViewById(R.id.rec_outfit_list_item_viewPager2);</span>
+<span class="nc" id="L102">            likeButton = itemView.findViewById(R.id.rec_outfit_list_item_like_button);</span>
+<span class="nc" id="L103">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>

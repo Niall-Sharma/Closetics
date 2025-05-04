@@ -36,8 +36,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
+/**
+ * One of the Fragments of the MainActivity.
+ * Contains the recommendations feed with outfits
+ * and user search.
+ */
 public class RecommendationsFragment extends Fragment {
 
     private final String[] INT_TO_MONTH = {
@@ -56,6 +62,7 @@ public class RecommendationsFragment extends Fragment {
     private boolean isStateOutfits;
     private boolean isReceiving;
     private boolean isAddingRecommendationsInProgress;
+    private HashSet<Long> likedOutfitIds;
 
     // For receiving new outfits from websocket
     private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
@@ -69,6 +76,9 @@ public class RecommendationsFragment extends Fragment {
         }
     };
 
+    /**
+     * Required empty public constructor
+     */
     public RecommendationsFragment() {
         // Required empty public constructor
     }
@@ -205,6 +215,11 @@ public class RecommendationsFragment extends Fragment {
         }
     }
 
+    /**
+     * Starts the Recommendations WebSocket if the user is logged in.
+     * Should be called every time RecommendationsFragment fragment is open in case it
+     * was accidentally closed / not properly opened before.
+     */
     private void startWebSocket() {
         Intent serviceIntent = new Intent(getActivity(), RecWebSocketService.class);
         serviceIntent.setAction("RecWebSocketConnect");
@@ -212,6 +227,10 @@ public class RecommendationsFragment extends Fragment {
         Log.d("RecommendationsFragment", "WebSocket started");
     }
 
+    /**
+     * Requests more recommended outfits through the WebSocket
+     * to display in the feed.
+     */
     private void requestMoreRecommendations() {
         Intent intent = new Intent("RecWebSocketSendMessage");
         intent.putExtra("message", "5"); // put a number of outfits here
@@ -220,6 +239,12 @@ public class RecommendationsFragment extends Fragment {
         Log.d("RecommendationsFragment", "Requested more outfits: 5");
     }
 
+    /**
+     * Takes a JSON array with Outfits received from the WebSocket and
+     * add them to the end of the current recommendations feed.
+     *
+     * @param message a JSON array of Outfits in the String format
+     */
     private void addMoreRecommendations(String message) {
         // Mock outfits
 //        RecOutfitsListItem mockOutfit = new RecOutfitsListItem(1, "My old shoes", "bob002", Arrays.asList(R.drawable.clothing_mock_img, R.drawable.clothing_mock_img, R.drawable.clothing_mock_img), "Very expensive", "February 3, 1976", false);
@@ -245,17 +270,24 @@ public class RecommendationsFragment extends Fragment {
                 long id = outfit.getLong("outfitId");
                 String name = outfit.getString("outfitName");
                 String username = outfit.getJSONObject("user").getString("username");
-                String stats = "No stats for now"; // TODO: add stats stats
-//                int year = outfit.getJSONArray("creationDate").getInt(0);
-//                int month = outfit.getJSONArray("creationDate").getInt(1);
-//                int day = outfit.getJSONArray("creationDate").getInt(2);
-                int year = 2025, month = 4, day = 6;
+                boolean isLiked = false; // actual like info requested in adapter
+
+                //String stats = "No stats for now";
+                JSONObject stats = outfit.getJSONObject("outfitStats");
+                String statsStr = "Wearing statistics:\n   Times worn: " + stats.getInt("timesWorn") +
+                        "\n   Average high temperature: " + (Math.round(stats.getDouble("avgHighTemp") * 10.0) / 10.0) + " °F" +
+                        "\n   Average low temperature: " + (Math.round(stats.getDouble("avgLowTemp") * 10.0) / 10.0) + " °F";
+
+                int year = outfit.getJSONArray("creationDate").getInt(0);
+                int month = outfit.getJSONArray("creationDate").getInt(1);
+                int day = outfit.getJSONArray("creationDate").getInt(2);
+                //int year = 2025, month = 4, day = 6;
                 String date = INT_TO_MONTH[month - 1] + " " + day + ", " + year;
-                boolean isLiked = false; // TODO: add likes support
+
                 // TODO: add actual images
                 List<Integer> imageIds = Arrays.asList(R.drawable.clothing_mock_img, R.drawable.clothing_mock_img, R.drawable.clothing_mock_img);
 
-                outfitsAdapter.addItem(new RecOutfitsListItem(id, name, username, imageIds, stats, date, isLiked));
+                outfitsAdapter.addItem(new RecOutfitsListItem(getActivity(), id, name, username, imageIds, statsStr, date, isLiked));
             } catch (JSONException e) {
                 Log.e("RecommendationsFragment Error", "JSON Exception. Could not add outfit " + i + ": " + e.toString());
             }
@@ -264,6 +296,12 @@ public class RecommendationsFragment extends Fragment {
         isAddingRecommendationsInProgress = false;
     }
 
+    /**
+     * Makes visible either Outfits feed or User search depending
+     * on the valuse of isStateOutfits boolean variable:
+     * - true  - Outfits feed;
+     * - false - User search.
+     */
     private void updateState() {
         if (isStateOutfits) {
             backButton.setVisibility(TextView.GONE);
@@ -276,6 +314,13 @@ public class RecommendationsFragment extends Fragment {
         }
     }
 
+    /**
+     * Sends an HTTP request to get an array of users whose usernames
+     * contain given String as a substring.
+     * Then displays new search results.
+     *
+     * @param username substring of the username to search for
+     */
     private void searchUsers(String username) {
         UserManager.searchUsersByUsernameRequest(getActivity().getApplicationContext(), username,
                 new Response.Listener<JSONArray>() {

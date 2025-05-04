@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SettingsFragment.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics.settings</a> &gt; <span class="el_source">SettingsFragment.java</span></div><h1>SettingsFragment.java</h1><pre class="source lang-java linenums">package com.example.closetics.settings;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
+
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.SwitchPreferenceCompat;
+
+import com.example.closetics.DeleteUserActivity;
+import com.example.closetics.R;
+
+<span class="nc" id="L16">public class SettingsFragment extends PreferenceFragmentCompat {</span>
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+<span class="nc" id="L19">        setPreferencesFromResource(R.xml.preferences, rootKey);</span>
+
+        // set preference listeners
+<span class="nc" id="L22">        SwitchPreferenceCompat notificationsPref = findPreference(&quot;notifications&quot;);</span>
+<span class="nc bnc" id="L23" title="All 2 branches missed.">        if (notificationsPref != null) {</span>
+<span class="nc" id="L24">            notificationsPref.setOnPreferenceChangeListener((preference, newValue) -&gt; {</span>
+<span class="nc" id="L25">                Log.d(&quot;Preferences&quot;, String.format(&quot;Notifications enabled: %s&quot;, newValue));</span>
+<span class="nc" id="L26">                return true; // Return true if the event is handled.</span>
+            });
+        }
+
+<span class="nc" id="L30">        ListPreference themePref = findPreference(&quot;theme&quot;);</span>
+<span class="nc bnc" id="L31" title="All 2 branches missed.">        if (themePref != null) {</span>
+<span class="nc" id="L32">            themePref.setOnPreferenceChangeListener((preference, newValue) -&gt; {</span>
+<span class="nc" id="L33">                Log.d(&quot;Preferences&quot;, String.format(&quot;Theme changed: %s&quot;, newValue));</span>
+<span class="nc" id="L34">                return true; // Return true if the event is handled.</span>
+            });
+        }
+
+<span class="nc" id="L38">        Preference changepasswordPref = findPreference(&quot;change_password&quot;);</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">        if (changepasswordPref != null) {</span>
+<span class="nc" id="L40">            changepasswordPref.setOnPreferenceClickListener((preference) -&gt; {</span>
+<span class="nc" id="L41">                Log.d(&quot;Preferences&quot;, &quot;Change password was clicked&quot;);</span>
+<span class="nc" id="L42">                return true; // Return true if the event is handled.</span>
+            });
+        }
+
+<span class="nc" id="L46">        Preference logoutPref = findPreference(&quot;log_out&quot;);</span>
+<span class="nc bnc" id="L47" title="All 2 branches missed.">        if (logoutPref != null) {</span>
+<span class="nc" id="L48">            logoutPref.setOnPreferenceClickListener((preference) -&gt; {</span>
+<span class="nc" id="L49">                Log.d(&quot;Preferences&quot;, &quot;Log out was clicked&quot;);</span>
+<span class="nc" id="L50">                return true; // Return true if the event is handled.</span>
+            });
+        }
+
+<span class="nc" id="L54">        Preference feedbackPref = findPreference(&quot;feedback&quot;);</span>
+<span class="nc bnc" id="L55" title="All 2 branches missed.">        if (feedbackPref != null) {</span>
+<span class="nc" id="L56">            feedbackPref.setOnPreferenceClickListener((preference) -&gt; {</span>
+<span class="nc" id="L57">                Log.d(&quot;Preferences&quot;, &quot;Feedback was clicked&quot;);</span>
+                // Address of a random Olive Garden
+<span class="nc" id="L59">                Toast.makeText(getActivity(), &quot;Please, mail your feedback to 3600 Westown Pkwy, West Des Moines, IA&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L60">                return true; // Return true if the event is handled.</span>
+            });
+        }
+
+<span class="nc" id="L64">        Preference deleteAccPref = findPreference(&quot;delete_account&quot;);</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        if (deleteAccPref != null) {</span>
+<span class="nc" id="L66">            deleteAccPref.setOnPreferenceClickListener((preference) -&gt; {</span>
+<span class="nc" id="L67">                Log.d(&quot;Preferences&quot;, &quot;Delete account was clicked&quot;);</span>
+                // open delete user activity
+<span class="nc" id="L69">                Intent intent = new Intent(getActivity(), DeleteUserActivity.class);</span>
+<span class="nc" id="L70">                startActivity(intent);</span>
+<span class="nc" id="L71">                return true; // Return true if the event is handled.</span>
+            });
+        }
+<span class="nc" id="L74">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>

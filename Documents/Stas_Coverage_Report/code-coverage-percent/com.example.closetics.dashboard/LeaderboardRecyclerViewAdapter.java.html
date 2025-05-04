@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LeaderboardRecyclerViewAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics.dashboard</a> &gt; <span class="el_source">LeaderboardRecyclerViewAdapter.java</span></div><h1>LeaderboardRecyclerViewAdapter.java</h1><pre class="source lang-java linenums">package com.example.closetics.dashboard;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.closetics.R;
+
+import java.util.ArrayList;
+
+public class LeaderboardRecyclerViewAdapter extends RecyclerView.Adapter&lt;LeaderboardRecyclerViewAdapter.MyViewHolder&gt; {
+
+
+    private ArrayList&lt;LeaderboardItem&gt; adapterItems;
+    OnItemClickListener clickListener;
+
+<span class="nc" id="L22">    public LeaderboardRecyclerViewAdapter (ArrayList&lt;LeaderboardItem&gt; adapterItems, OnItemClickListener clickListener){</span>
+<span class="nc" id="L23">        this.adapterItems = adapterItems;</span>
+<span class="nc" id="L24">        this.clickListener = clickListener;</span>
+
+<span class="nc" id="L26">    }</span>
+
+    @NonNull
+    @Override
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+<span class="nc" id="L31">        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.leaderboard_recyclerview_item, parent, false);</span>
+<span class="nc" id="L32">        LeaderboardRecyclerViewAdapter.MyViewHolder myViewHolder = new LeaderboardRecyclerViewAdapter.MyViewHolder(view);</span>
+<span class="nc" id="L33">        return myViewHolder;</span>
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+<span class="nc" id="L38">        int realPosition = holder.getBindingAdapterPosition();</span>
+        try {
+<span class="nc" id="L40">            LeaderboardItem item = adapterItems.get(realPosition);</span>
+            //Rank
+<span class="nc" id="L42">            String correctRank = item.getRank();//.substring(1);</span>
+<span class="nc" id="L43">            holder.rank.setText(correctRank);</span>
+            //Log.d(&quot;username&quot;, item.getUsername());
+<span class="nc" id="L45">            holder.username.setText(item.getUsername());</span>
+<span class="nc" id="L46">            holder.usernameButton.setText(item.getUsername());</span>
+<span class="nc" id="L47">            holder.categoryValue.setText(item.getCategoryValue());</span>
+
+
+<span class="nc" id="L50">            holder.usernameButton.setOnClickListener(new View.OnClickListener() {</span>
+                @Override
+                public void onClick(View v) {
+<span class="nc" id="L53">                    clickListener.onItemClick(realPosition, v, item);</span>
+<span class="nc" id="L54">                }</span>
+            });
+
+<span class="nc" id="L57">        } catch (NullPointerException e) {</span>
+<span class="nc" id="L58">           throw new NullPointerException();</span>
+<span class="nc" id="L59">        }</span>
+
+<span class="nc" id="L61">    }</span>
+
+    @Override
+    public int getItemCount() {
+        /*
+        Currently set to 10 in the backend
+         */
+<span class="nc" id="L68">        return adapterItems.size();</span>
+    }
+    public void updateAdapter(){
+
+<span class="nc" id="L72">    }</span>
+
+    public class MyViewHolder extends RecyclerView.ViewHolder{
+        private Button usernameButton;
+        private TextView username;
+        private TextView rank;
+        private TextView categoryValue;
+
+<span class="nc" id="L80">        public MyViewHolder(@NonNull View itemView) {</span>
+<span class="nc" id="L81">            super(itemView);</span>
+<span class="nc" id="L82">            usernameButton = itemView.findViewById(R.id.username_button);</span>
+<span class="nc" id="L83">            username = itemView.findViewById(R.id.username_value);</span>
+<span class="nc" id="L84">            rank = itemView.findViewById(R.id.rank_value);</span>
+<span class="nc" id="L85">            categoryValue = itemView.findViewById(R.id.category_value);</span>
+
+<span class="nc" id="L87">        }</span>
+    }
+    //Inner interface
+    public interface OnItemClickListener{
+        //Send the view to differentiate between which button view is being pressed
+        void onItemClick(int position, View view, LeaderboardItem item);
+    }
+
+
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>

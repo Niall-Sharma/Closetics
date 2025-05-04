@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PublicProfileActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics</a> &gt; <span class="el_source">PublicProfileActivity.java</span></div><h1>PublicProfileActivity.java</h1><pre class="source lang-java linenums">package com.example.closetics;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.TextView;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.example.closetics.follow.FollowActivity;
+import com.example.closetics.follow.FollowManager;
+import com.example.closetics.outfits.OutfitManager;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+<span class="fc" id="L29">public class PublicProfileActivity extends AppCompatActivity {</span>
+
+    private TextView usernameText, nameText;
+    private Button clothesButton, outfitsButton, followingButton, followersButton, followButton;
+    private RecyclerView outfitRecycler;
+
+    private long userId;
+    private boolean meIsFollowing;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="fc" id="L40">        super.onCreate(savedInstanceState);</span>
+<span class="fc" id="L41">        setContentView(R.layout.activity_public_profile);</span>
+
+        // get userId whose profile we are displaying
+<span class="fc" id="L44">        Bundle extras = getIntent().getExtras();</span>
+<span class="fc" id="L45">        userId = -1;</span>
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">        if (extras != null) {</span>
+<span class="fc" id="L47">            userId = extras.getLong(&quot;USER_ID&quot;, -1);</span>
+        }
+
+        // initialize ui
+<span class="fc" id="L51">        usernameText = findViewById(R.id.public_profile_username_text);</span>
+<span class="fc" id="L52">        nameText = findViewById(R.id.public_profile_name_text);</span>
+<span class="fc" id="L53">        clothesButton = findViewById(R.id.public_profile_clothes_button);</span>
+<span class="fc" id="L54">        outfitsButton = findViewById(R.id.public_profile_outfits_button);</span>
+<span class="fc" id="L55">        followingButton = findViewById(R.id.public_profile_following_button);</span>
+<span class="fc" id="L56">        followersButton = findViewById(R.id.public_profile_followers_button);</span>
+<span class="fc" id="L57">        followButton = findViewById(R.id.public_profile_follow_button);</span>
+<span class="fc" id="L58">        outfitRecycler = findViewById(R.id.public_profile_outfits_recycler);</span>
+
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">        if (userId == -1) {</span>
+<span class="nc" id="L61">            Log.e(&quot;PublicProfileActivity&quot;, &quot;User Id not passed&quot;);</span>
+        } else {
+<span class="fc" id="L63">            populateUserData(userId);</span>
+        }
+<span class="fc" id="L65">    }</span>
+
+    private void populateUserData(long userId) {
+        // set listeners only if user id was passed
+<span class="fc" id="L69">        followingButton.setOnClickListener(v -&gt; {</span>
+<span class="fc" id="L70">            Intent intent = new Intent(PublicProfileActivity.this, FollowActivity.class);</span>
+<span class="fc" id="L71">            intent.putExtra(&quot;IS_FOLLOWING&quot;, true);</span>
+<span class="fc" id="L72">            intent.putExtra(&quot;USER_ID&quot;, userId);</span>
+<span class="fc" id="L73">            startActivity(intent);</span>
+<span class="fc" id="L74">        });</span>
+
+<span class="fc" id="L76">        followersButton.setOnClickListener(v -&gt; {</span>
+<span class="nc" id="L77">            Intent intent = new Intent(PublicProfileActivity.this, FollowActivity.class);</span>
+<span class="nc" id="L78">            intent.putExtra(&quot;IS_FOLLOWING&quot;, false);</span>
+<span class="nc" id="L79">            intent.putExtra(&quot;USER_ID&quot;, userId);</span>
+<span class="nc" id="L80">            startActivity(intent);</span>
+<span class="nc" id="L81">        });</span>
+
+        // populate all needed data with requests
+<span class="fc" id="L84">        populateFollow(userId);</span>
+
+<span class="fc" id="L86">        populateClothes(userId);</span>
+
+<span class="fc" id="L88">        populateOutfits(userId);</span>
+<span class="fc" id="L89">    }</span>
+
+    private void populateClothes(long userId) {
+<span class="fc" id="L92">        FollowManager.getAllUserClothesRequest(getApplicationContext(), userId,</span>
+<span class="fc" id="L93">                new Response.Listener&lt;JSONArray&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONArray response) {
+<span class="fc" id="L96">                        Log.d(&quot;Volley Response&quot;, &quot;Successful get clothes of user &quot; + userId + &quot;: &quot; + response.toString());</span>
+
+                        // setup clothes button (no listeners!)
+<span class="fc" id="L99">                        clothesButton.setText(response.length() + &quot; clothes&quot;);</span>
+<span class="fc" id="L100">                    }</span>
+                },
+<span class="fc" id="L102">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L105">                        Log.e(&quot;Volley Error&quot;, &quot;Get clothes of &quot; + userId + &quot; user Error: &quot; + error.toString());</span>
+<span class="nc" id="L106">                    }</span>
+                });
+<span class="fc" id="L108">    }</span>
+
+    private void populateOutfits(long userId) {
+<span class="fc" id="L111">        OutfitManager.getAllOutfitsRequest(getApplicationContext(), userId,</span>
+<span class="fc" id="L112">                new Response.Listener&lt;JSONArray&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONArray response) {
+<span class="fc" id="L115">                        Log.d(&quot;Volley Response&quot;, &quot;Successful get outfits of user &quot; + userId + &quot;: &quot; + response.toString());</span>
+
+                        // setup outfits button (no listeners!)
+<span class="fc" id="L118">                        outfitsButton.setText(response.length() + &quot; outfits&quot;);</span>
+<span class="fc" id="L119">                    }</span>
+                },
+<span class="fc" id="L121">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L124">                        Log.e(&quot;Volley Error&quot;, &quot;Get outfits of &quot; + userId + &quot; user Error: &quot; + error.toString());</span>
+<span class="nc" id="L125">                    }</span>
+                });
+<span class="fc" id="L127">    }</span>
+
+    private void populateFollow(long userId) {
+<span class="fc" id="L130">        UserManager.getUserProfileRequest(getApplicationContext(), userId,</span>
+<span class="fc" id="L131">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+<span class="fc" id="L135">                            Log.d(&quot;Volley Response&quot;, &quot;Successful get profile of user &quot; + userId + &quot;: &quot; + response.toString());</span>
+
+<span class="fc" id="L137">                            long myUserId = UserManager.getUserID(getApplicationContext());</span>
+<span class="fc" id="L138">                            JSONArray followingArray = response.getJSONArray(&quot;following&quot;);</span>
+<span class="fc" id="L139">                            JSONArray followersArray = response.getJSONArray(&quot;followers&quot;);</span>
+                            // check if logged in user is following this user
+<span class="fc" id="L141">                            meIsFollowing = false;</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">                            for (int i = 0; i &lt; followersArray.length(); i++) {</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">                                if (followersArray.getJSONObject(i).getLong(&quot;id&quot;) == myUserId) {</span>
+<span class="fc" id="L144">                                    meIsFollowing = true;</span>
+<span class="fc" id="L145">                                    break;</span>
+                                }
+                            }
+
+<span class="pc bpc" id="L149" title="1 of 2 branches missed.">                            if (response.has(&quot;username&quot;)) {</span>
+<span class="fc" id="L150">                                usernameText.setText(response.getString(&quot;username&quot;));</span>
+                                // TODO: get actual name with another request
+<span class="fc" id="L152">                                nameText.setText(response.getString(&quot;username&quot;));</span>
+                            }
+
+                            // setup following/followers buttons (no listeners!)
+<span class="fc" id="L156">                            followingButton.setText(followingArray.length() + &quot; following&quot;);</span>
+<span class="fc" id="L157">                            followersButton.setText(followersArray.length() + &quot; followers&quot;);</span>
+
+                            // setup follow button
+<span class="fc bfc" id="L160" title="All 2 branches covered.">                            followButton.setText(meIsFollowing ? &quot;Following&quot; : &quot;Follow&quot;);</span>
+<span class="fc" id="L161">                            followButton.setOnClickListener(v -&gt; {</span>
+<span class="nc bnc" id="L162" title="All 2 branches missed.">                                if (meIsFollowing) {</span>
+<span class="nc" id="L163">                                    unfollow(userId);</span>
+<span class="nc" id="L164">                                    followButton.setText(&quot;Follow&quot;);</span>
+                                } else {
+<span class="nc" id="L166">                                    follow(userId);</span>
+<span class="nc" id="L167">                                    followButton.setText(&quot;Following&quot;);</span>
+                                }
+<span class="nc bnc" id="L169" title="All 2 branches missed.">                                meIsFollowing = !meIsFollowing;</span>
+<span class="nc" id="L170">                            });</span>
+                        }
+<span class="nc" id="L172">                        catch (JSONException e) {</span>
+<span class="nc" id="L173">                            Log.e(&quot;JSON Error&quot;, &quot;Get profile of user &quot; + userId + &quot; Error: &quot; + e.toString());</span>
+<span class="fc" id="L174">                        }</span>
+<span class="fc" id="L175">                    }</span>
+                },
+<span class="fc" id="L177">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L180">                        Log.e(&quot;Volley Error&quot;, &quot;Get profile of &quot; + userId + &quot; user Error: &quot; + error.toString());</span>
+<span class="nc" id="L181">                    }</span>
+                });
+<span class="fc" id="L183">    }</span>
+
+    private void follow(long followingId) {
+<span class="nc" id="L186">        UserManager.addFollowingRequest(getApplicationContext(), UserManager.getUserID(getApplicationContext()), followingId,</span>
+<span class="nc" id="L187">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+<span class="nc" id="L190">                        Log.d(&quot;Volley Response&quot;, &quot;Successful followed &quot; + followingId);</span>
+<span class="nc" id="L191">                    }</span>
+                },
+<span class="nc" id="L193">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L196">                        Log.e(&quot;Volley Error&quot;, &quot;Error following &quot; + followingId + &quot;, Error: &quot; + error.toString());</span>
+<span class="nc" id="L197">                    }</span>
+                });
+<span class="nc" id="L199">    }</span>
+
+    private void unfollow(long followingId) {
+<span class="nc" id="L202">        UserManager.removeFollowingRequest(getApplicationContext(), UserManager.getUserID(getApplicationContext()), followingId,</span>
+<span class="nc" id="L203">                new Response.Listener&lt;JSONObject&gt;() {</span>
+                    @Override
+                    public void onResponse(JSONObject response) {
+<span class="nc" id="L206">                        Log.d(&quot;Volley Response&quot;, &quot;Successful unfollowed &quot; + followingId);</span>
+<span class="nc" id="L207">                    }</span>
+                },
+<span class="nc" id="L209">                new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L212">                        Log.e(&quot;Volley Error&quot;, &quot;Error unfollowing &quot; + followingId + &quot;, Error: &quot; + error.toString());</span>
+<span class="nc" id="L213">                    }</span>
+                });
+<span class="nc" id="L215">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>

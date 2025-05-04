@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StatisticsRecyclerViewAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics.dashboard</a> &gt; <span class="el_source">StatisticsRecyclerViewAdapter.java</span></div><h1>StatisticsRecyclerViewAdapter.java</h1><pre class="source lang-java linenums">package com.example.closetics.dashboard;
+
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.closetics.R;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter&lt;StatisticsRecyclerViewAdapter.MyViewHolder&gt;{
+    /*
+    Baseline clothes stats adapter
+     */
+    ArrayList&lt;ClothingStatItem&gt; objects;
+    boolean which;
+
+<span class="nc" id="L29">    public StatisticsRecyclerViewAdapter(ArrayList&lt;ClothingStatItem&gt; objects, boolean b){</span>
+<span class="nc" id="L30">        this.objects = objects;</span>
+<span class="nc" id="L31">        which = b;</span>
+<span class="nc" id="L32">    }</span>
+
+    @NonNull
+    @Override
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+<span class="nc" id="L37">        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.statistics_recycler_view_item, parent, false);</span>
+<span class="nc" id="L38">        StatisticsRecyclerViewAdapter.MyViewHolder myViewHolder = new StatisticsRecyclerViewAdapter.MyViewHolder(view);</span>
+<span class="nc" id="L39">        return myViewHolder;</span>
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+<span class="nc" id="L44">        int realPosition = holder.getBindingAdapterPosition();</span>
+
+        //Set the text view in the recycler view
+<span class="nc" id="L47">        ClothingStatItem item = objects.get(realPosition);</span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">        if (which){</span>
+            try {
+<span class="nc" id="L50">                holder.timesWorn.setText(item.getTimesWorn());</span>
+<span class="nc" id="L51">                holder.highTemp.setText(item.getAvgHighTemp());</span>
+<span class="nc" id="L52">                holder.lowTemp.setText(item.getAvgLowTemp());</span>
+<span class="nc" id="L53">                holder.name.setText(item.getName());</span>
+<span class="nc" id="L54">            } catch (JSONException e) {</span>
+<span class="nc" id="L55">                Log.e(&quot;exception&quot;, e.toString());</span>
+<span class="nc" id="L56">            }</span>
+
+        }
+        else{
+            try {
+<span class="nc" id="L61">                String s = &quot;Number Of Outfits In: &quot;;</span>
+<span class="nc" id="L62">                holder.timesWorn.setText(item.getTimesWorn());</span>
+<span class="nc" id="L63">                holder.outfitsIn.setText(item.getNumberOfOutfitsIn());</span>
+<span class="nc" id="L64">                holder.highTemp.setText(item.getAvgHighTemp());</span>
+<span class="nc" id="L65">                holder.lowTemp.setText(item.getAvgLowTemp());</span>
+<span class="nc" id="L66">                holder.prompt.setText(s);</span>
+<span class="nc" id="L67">                holder.name.setText(item.getName());</span>
+<span class="nc" id="L68">            } catch (JSONException e) {</span>
+<span class="nc" id="L69">                Log.e(&quot;exception&quot;, e.toString());</span>
+<span class="nc" id="L70">            }</span>
+
+        }
+
+
+<span class="nc" id="L75">    }</span>
+
+    @Override
+    public int getItemCount() {
+<span class="nc" id="L79">        return objects.size();</span>
+    }
+
+    public class MyViewHolder extends RecyclerView.ViewHolder{
+        private TextView timesWorn;
+        private TextView lowTemp;
+        private TextView highTemp;
+        private TextView outfitsIn;
+        private TextView name;
+        private TextView prompt;
+        private ImageView image;
+
+
+<span class="nc" id="L92">        public MyViewHolder(@NonNull View itemView) {</span>
+<span class="nc" id="L93">            super(itemView);</span>
+<span class="nc" id="L94">            timesWorn = itemView.findViewById(R.id.timesWorn);</span>
+<span class="nc" id="L95">            lowTemp = itemView.findViewById(R.id.low_temp);</span>
+<span class="nc" id="L96">            highTemp = itemView.findViewById(R.id.high_temp);</span>
+<span class="nc" id="L97">            outfitsIn = itemView.findViewById(R.id.outfits_in);</span>
+<span class="nc" id="L98">            name = itemView.findViewById(R.id.name);</span>
+<span class="nc" id="L99">            prompt = itemView.findViewById(R.id.numberOutfitsPrompt);</span>
+
+<span class="nc" id="L101">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>

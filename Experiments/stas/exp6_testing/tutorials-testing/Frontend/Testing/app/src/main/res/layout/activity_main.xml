@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".View.MainActivity">
+
+
+    <Button
+        android:id="@+id/secondBtn"
+        android:text="To Second Activity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    </Button>
+
+    <TextView
+        android:id="@+id/myTextView"
+        android:layout_width="266dp"
+        android:layout_height="94dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.166" />
+
+    <EditText
+        android:id="@+id/stringEntry"
+        android:layout_width="310dp"
+        android:layout_height="39dp"
+        android:ems="10"
+        android:hint="Some string"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/myTextView"
+        app:layout_constraintVertical_bias="0.398" />
+
+    <Button
+        android:id="@+id/submit"
+        android:layout_width="102dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="40dp"
+        android:text="Reverse"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/stringEntry"
+        app:layout_constraintVertical_bias="0.009" />
+
+    <Button
+        android:id="@+id/submit2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Capitalize"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/submit"
+        app:layout_constraintVertical_bias="0.075" />
+
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Use Default String"
+        app:layout_constraintBottom_toTopOf="@+id/myTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,6 +7,10 @@ import closetics.Users.User;
 import closetics.Users.UserRepository;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +43,13 @@ public class PaymentController{
     Stripe.apiKey = apiKey;
   }
 
+  @Operation(summary = "Create a Payment Intent to be processed by the front-end application")
+  @ApiResponses(value = {
+          @ApiResponse(responseCode = "200", description = "Successfully created payment intent",
+                  content = @Content(mediaType = "application/json")),
+          @ApiResponse(responseCode = "400", description = "Invalid request parameters or Stripe error",
+                  content = @Content(mediaType = "application/json"))
+  })
   @PostMapping("/createPayment")
   public ResponseEntity<Map<String,Object>> createPayment(@RequestBody Map<String,Object> request){
     try{
@@ -70,6 +81,15 @@ public class PaymentController{
     }
   }
 
+  @Operation(summary = "Confirm the payment status for a given Payment Intent ID and update transaction history accordingly")
+  @ApiResponses(value = {
+          @ApiResponse(responseCode = "200", description = "Payment successfully confirmed and user updated",
+                  content = @Content(mediaType = "application/json")),
+          @ApiResponse(responseCode = "400", description = "Payment not accepted or invalid input",
+                  content = @Content(mediaType = "application/json")),
+          @ApiResponse(responseCode = "500", description = "Stripe service error or internal server error",
+                  content = @Content(mediaType = "application/json"))
+  })
   @PutMapping("/confirmPayment/{paymentIntentId}")
   public ResponseEntity<?> completePayment(@PathVariable("paymentIntentId") String paymentIntentId){
     try {

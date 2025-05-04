@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ViewClothesFragment.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics.clothes</a> &gt; <span class="el_source">ViewClothesFragment.java</span></div><h1>ViewClothesFragment.java</h1><pre class="source lang-java linenums">package com.example.closetics.clothes;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.android.volley.NoConnectionError;
+import com.android.volley.Response;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.example.closetics.R;
+
+import org.json.JSONObject;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+<span class="nc" id="L31">public class ViewClothesFragment extends Fragment {</span>
+    RecyclerView recyclerView;
+    RecyclerView.LayoutManager layoutManager;
+    ClothesByTypeAdapter adapter;
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+<span class="nc" id="L39">        View view = inflater.inflate(R.layout.fragment_view_clothes, container, false);</span>
+
+<span class="nc" id="L41">        recyclerView = view.findViewById(R.id.recycler_view);</span>
+<span class="nc" id="L42">        layoutManager = new LinearLayoutManager(getActivity());</span>
+<span class="nc" id="L43">        recyclerView.setLayoutManager(layoutManager);</span>
+<span class="nc" id="L44">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L45">        ArrayList&lt;String&gt; objects = getArguments().getStringArrayList(&quot;JSONObject&quot;);</span>
+<span class="nc" id="L46">        ArrayList&lt;ClothingItem&gt; clothingItems = (ArrayList&lt;ClothingItem&gt;)getArguments().getSerializable(&quot;ClothingItems&quot;);</span>
+<span class="nc" id="L47">        long [] clothingIds = getArguments().getLongArray(&quot;clothingIds&quot;);</span>
+
+<span class="nc" id="L49">        adapter = new ClothesByTypeAdapter(objects, new ClothesByTypeAdapter.OnItemClickListener() {</span>
+            @Override
+            public void onItemClick(int position, View view, String jsonObject) {
+                //Delete button on click logic very basic for roundtrip
+<span class="nc bnc" id="L53" title="All 2 branches missed.">                 if (view.getId() == R.id.delete_button){</span>
+<span class="nc" id="L54">                     long clothingId = clothingIds[position];</span>
+<span class="nc" id="L55">                     Log.d(&quot;clothingId&quot;, String.valueOf(clothingId));</span>
+<span class="nc" id="L56">                     deleteClothing(getActivity(), clothingId, ClothesActivity.URL);</span>
+<span class="nc" id="L57">                     deleteItem(objects, position);</span>
+
+
+<span class="nc" id="L60">                 }</span>
+                 //Edit button on click logic
+                 else{
+<span class="nc" id="L63">                     long clothingId = clothingIds[position];</span>
+<span class="nc" id="L64">                     ClothingItem clothingItem = clothingItems.get(position);</span>
+
+                     //Switch to editActivity
+<span class="nc" id="L67">                     Intent intent = new Intent(getActivity(), EditClothesActivity.class);</span>
+<span class="nc" id="L68">                     intent.putExtra(&quot;clothingId&quot;, clothingId);</span>
+                     //Serializable
+<span class="nc" id="L70">                     intent.putExtra(&quot;clothingItem&quot;, clothingItem);</span>
+
+<span class="nc" id="L72">                     startActivity(intent);</span>
+
+
+                 }
+<span class="nc" id="L76">            }</span>
+        });
+<span class="nc" id="L78">        recyclerView.setAdapter(adapter);</span>
+<span class="nc" id="L79">        recyclerView.setHasFixedSize(true);</span>
+
+<span class="nc" id="L81">        return view;</span>
+    }
+
+
+    public static Fragment newInstance(ArrayList&lt;String&gt; object, long[] clothingIds, ArrayList&lt;ClothingItem&gt; clothingItem) {
+        //Create a new forgot password fragment
+<span class="nc" id="L87">        Fragment fragment = new ViewClothesFragment();</span>
+<span class="nc" id="L88">        Bundle args = new Bundle();</span>
+<span class="nc" id="L89">        args.putStringArrayList(&quot;JSONObject&quot;, object);</span>
+<span class="nc" id="L90">        args.putLongArray(&quot;clothingIds&quot;, clothingIds);</span>
+<span class="nc" id="L91">        args.putSerializable(&quot;ClothingItems&quot;, clothingItem);</span>
+<span class="nc" id="L92">        fragment.setArguments(args);</span>
+<span class="nc" id="L93">        return fragment;</span>
+    }
+
+
+    private void deleteClothing(Context context,long clothingId, String URL){
+<span class="nc" id="L98">        ClothesManager.deleteClothingRequest(context, clothingId, URL, new Response.Listener&lt;String&gt;() {</span>
+            @Override
+            public void onResponse(String response) {
+                //Response is null
+<span class="nc" id="L102">                Log.d(&quot;Delete Volley Response&quot;, &quot;Success&quot;);</span>
+
+
+
+
+
+<span class="nc" id="L108">            }}, new Response.ErrorListener() {</span>
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+<span class="nc" id="L111">                        Log.e(&quot;Volley Error&quot;, &quot;Deletion Error: &quot; + error.toString());</span>
+<span class="nc" id="L112">                    }</span>
+                }
+
+        );
+<span class="nc" id="L116">    }</span>
+    private void deleteItem(ArrayList&lt;String&gt; objects, int position){
+<span class="nc" id="L118">        objects.remove(position);</span>
+<span class="nc" id="L119">        adapter.notifyItemRemoved(position);</span>
+<span class="nc" id="L120">    }</span>
+
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>

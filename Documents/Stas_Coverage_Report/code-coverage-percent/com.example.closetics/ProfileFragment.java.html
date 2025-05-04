@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProfileFragment.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.closetics</a> &gt; <span class="el_source">ProfileFragment.java</span></div><h1>ProfileFragment.java</h1><pre class="source lang-java linenums">package com.example.closetics;
+
+
+import android.content.Intent;
+import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
+
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
+
+import com.example.closetics.follow.FollowActivity;
+import com.example.closetics.payment.PaymentActivity;
+import com.example.closetics.settings.SettingsActivity;
+
+public class ProfileFragment extends Fragment {
+
+    private TextView usernameText;  // define username textview variable
+    private Button loginButton;     // define login button variable
+    private Button signupButton;    // define signup button variable
+    private Button logoutButton;
+    private Button editButton;
+    private Button deleteUserButton;
+    private Button followingButton, followersButton;
+    private ImageButton settingsButton;
+    private Button tierButton;
+
+<span class="fc" id="L33">    public ProfileFragment() {</span>
+        // Required empty public constructor
+<span class="fc" id="L35">    }</span>
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+<span class="fc" id="L41">        View view = inflater.inflate(R.layout.fragment_profile, container, false);</span>
+
+        // initialize UI elements
+<span class="fc" id="L44">        usernameText = view.findViewById(R.id.profile_username_text);</span>
+<span class="fc" id="L45">        loginButton = view.findViewById(R.id.profile_login_button);</span>
+<span class="fc" id="L46">        signupButton = view.findViewById(R.id.profile_signup_button);</span>
+<span class="fc" id="L47">        editButton = view.findViewById(R.id.profile_edit_user_button);</span>
+<span class="fc" id="L48">        deleteUserButton = view.findViewById(R.id.profile_delete_user_button);</span>
+<span class="fc" id="L49">        logoutButton = view.findViewById(R.id.profile_logout_button);</span>
+<span class="fc" id="L50">        followingButton = view.findViewById(R.id.profile_following_button);</span>
+<span class="fc" id="L51">        followersButton = view.findViewById(R.id.profile_followers_button);</span>
+<span class="fc" id="L52">        settingsButton = view.findViewById(R.id.profile_settings_button);</span>
+<span class="fc" id="L53">        tierButton = view.findViewById(R.id.profile_tier_button);</span>
+
+<span class="fc" id="L55">        String username = UserManager.getUsername(getActivity().getApplicationContext());</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        if(username == null) {</span>
+<span class="fc" id="L57">            usernameText.setText(&quot;Guest (not logged in)&quot;);</span>
+<span class="fc" id="L58">            loginButton.setVisibility(TextView.VISIBLE);</span>
+<span class="fc" id="L59">            signupButton.setVisibility(TextView.VISIBLE);</span>
+<span class="fc" id="L60">            logoutButton.setVisibility(TextView.GONE);</span>
+<span class="fc" id="L61">            editButton.setVisibility(TextView.GONE);</span>
+<span class="fc" id="L62">            deleteUserButton.setVisibility(TextView.GONE);</span>
+<span class="fc" id="L63">            followingButton.setVisibility(TextView.GONE);</span>
+<span class="fc" id="L64">            followersButton.setVisibility(TextView.GONE);</span>
+<span class="fc" id="L65">            settingsButton.setVisibility(TextView.GONE);</span>
+<span class="fc" id="L66">            tierButton.setVisibility(TextView.GONE);</span>
+        } else {
+<span class="fc" id="L68">            usernameText.setText(username);</span>
+<span class="fc" id="L69">            loginButton.setVisibility(TextView.GONE);</span>
+<span class="fc" id="L70">            signupButton.setVisibility(TextView.GONE);</span>
+<span class="fc" id="L71">            logoutButton.setVisibility(TextView.VISIBLE);</span>
+<span class="fc" id="L72">            editButton.setVisibility(TextView.VISIBLE);</span>
+<span class="fc" id="L73">            deleteUserButton.setVisibility(TextView.VISIBLE);</span>
+<span class="fc" id="L74">            followingButton.setVisibility(TextView.VISIBLE);</span>
+<span class="fc" id="L75">            followersButton.setVisibility(TextView.VISIBLE);</span>
+<span class="fc" id="L76">            settingsButton.setVisibility(TextView.VISIBLE);</span>
+<span class="fc" id="L77">            tierButton.setVisibility(TextView.VISIBLE);</span>
+        }
+
+<span class="fc" id="L80">        loginButton.setOnClickListener(v -&gt; {</span>
+<span class="nc" id="L81">            Intent intent = new Intent(getActivity(), LoginActivity.class);</span>
+<span class="nc" id="L82">            startActivity(intent);</span>
+<span class="nc" id="L83">        });</span>
+
+<span class="fc" id="L85">        signupButton.setOnClickListener(v -&gt; {</span>
+<span class="fc" id="L86">            Intent intent = new Intent(getActivity(), SignupActivity.class);</span>
+<span class="fc" id="L87">            startActivity(intent);</span>
+<span class="fc" id="L88">        });</span>
+
+<span class="fc" id="L90">        logoutButton.setOnClickListener(v -&gt; {</span>
+<span class="fc" id="L91">            UserManager.clearSavedData(view.getContext());</span>
+
+<span class="fc" id="L93">            usernameText.setText(&quot;Guest (not logged in)&quot;);</span>
+<span class="fc" id="L94">            loginButton.setVisibility(TextView.VISIBLE);</span>
+<span class="fc" id="L95">            signupButton.setVisibility(TextView.VISIBLE);</span>
+<span class="fc" id="L96">            logoutButton.setVisibility(TextView.GONE);</span>
+<span class="fc" id="L97">            editButton.setVisibility(TextView.GONE);</span>
+<span class="fc" id="L98">            deleteUserButton.setVisibility(TextView.GONE);</span>
+<span class="fc" id="L99">            followingButton.setVisibility(TextView.GONE);</span>
+<span class="fc" id="L100">            followersButton.setVisibility(TextView.GONE);</span>
+<span class="fc" id="L101">            settingsButton.setVisibility(TextView.GONE);</span>
+<span class="fc" id="L102">            tierButton.setVisibility(TextView.GONE);</span>
+
+<span class="fc" id="L104">            stopRecWebSocket();</span>
+<span class="fc" id="L105">        });</span>
+
+        // Edit user name
+<span class="fc" id="L108">        editButton.setOnClickListener(new View.OnClickListener(){</span>
+
+            @Override
+            public void onClick(View view) {
+                //This button only has functionality when the user is logged in!
+                //Safe way for fragments to get context!! (requireContext)
+<span class="nc" id="L114">                String token = UserManager.getLoginToken(requireContext());</span>
+                //No functionality if token does equal null normally
+<span class="nc bnc" id="L116" title="All 2 branches missed.">                if (token != null){</span>
+
+
+                }
+<span class="nc" id="L120">                Intent intent = new Intent(getActivity(), EditUserActivity.class);</span>
+<span class="nc" id="L121">                startActivity(intent);</span>
+
+<span class="nc" id="L123">            }</span>
+        });
+
+<span class="fc" id="L126">        deleteUserButton.setOnClickListener(v -&gt; {</span>
+<span class="fc" id="L127">            Intent intent = new Intent(getActivity(), DeleteUserActivity.class);</span>
+<span class="fc" id="L128">            startActivity(intent);</span>
+<span class="fc" id="L129">        });</span>
+
+<span class="fc" id="L131">        followingButton.setOnClickListener(v -&gt; {</span>
+//            Navigation.findNavController(v).navigate(R.id.action_navigation_profile_to_followFragment);
+<span class="fc" id="L133">            Intent intent = new Intent(getActivity(), FollowActivity.class);</span>
+<span class="fc" id="L134">            intent.putExtra(&quot;IS_FOLLOWING&quot;, true);</span>
+<span class="fc" id="L135">            intent.putExtra(&quot;USER_ID&quot;, UserManager.getUserID(getActivity()));</span>
+<span class="fc" id="L136">            startActivity(intent);</span>
+<span class="fc" id="L137">        });</span>
+
+<span class="fc" id="L139">        followersButton.setOnClickListener(v -&gt; {</span>
+//            Navigation.findNavController(v).navigate(R.id.action_navigation_profile_to_followFragment);
+<span class="fc" id="L141">            Intent intent = new Intent(getActivity(), FollowActivity.class);</span>
+<span class="fc" id="L142">            intent.putExtra(&quot;IS_FOLLOWING&quot;, false);</span>
+<span class="fc" id="L143">            intent.putExtra(&quot;USER_ID&quot;, UserManager.getUserID(getActivity()));</span>
+<span class="fc" id="L144">            startActivity(intent);</span>
+<span class="fc" id="L145">        });</span>
+
+<span class="fc" id="L147">        settingsButton.setOnClickListener(v -&gt; {</span>
+<span class="nc" id="L148">            Intent intent = new Intent(getActivity(), SettingsActivity.class);</span>
+<span class="nc" id="L149">            startActivity(intent);</span>
+<span class="nc" id="L150">        });</span>
+
+<span class="fc" id="L152">        tierButton.setOnClickListener(v -&gt; {</span>
+<span class="nc" id="L153">            Intent intent = new Intent(getActivity(), PaymentActivity.class);</span>
+<span class="nc" id="L154">            startActivity(intent);</span>
+<span class="nc" id="L155">        });</span>
+
+<span class="fc" id="L157">        return view;</span>
+    }
+
+    private void stopRecWebSocket() {
+<span class="fc" id="L161">        Intent serviceIntent = new Intent(getActivity(), com.example.closetics.recommendations.RecWebSocketService.class);</span>
+<span class="fc" id="L162">        serviceIntent.setAction(&quot;RecWebSocketDisconnect&quot;);</span>
+<span class="fc" id="L163">        getActivity().startService(serviceIntent);</span>
+<span class="fc" id="L164">        Log.d(&quot;ProfileFragment&quot;, &quot;RecWebSocket stopped&quot;);</span>
+<span class="fc" id="L165">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span>Generated by the Android Gradle plugin 8.8.1</div></body></html>
