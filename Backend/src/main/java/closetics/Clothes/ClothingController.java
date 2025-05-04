@@ -1,6 +1,7 @@
 package closetics.Clothes;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.List;
@@ -182,16 +183,22 @@ public class ClothingController {
 
             }
     )
-    @PutMapping("/addImage/{clothing_id}")
+    @PutMapping("/addImage/{clothing_Id}")
     public ResponseEntity<Clothing> addImage(
             @Parameter(description = "ID of the clothing item to modify") @PathVariable long clothing_Id,
             @org.springframework.web.bind.annotation.RequestBody MultipartFile imageFile){
         try {
             Clothing clothing = clothingRepository.findById(clothing_Id).orElseThrow(() -> new RuntimeException("Clothing not found"));
 
-            File destinationFile = new File("/home/"+File.separator + imageFile.getOriginalFilename());
-            imageFile.transferTo(destinationFile);
+            File destinationFile = new File("/images/"+File.separator + imageFile.getOriginalFilename());
+            if(!Files.exists(destinationFile.toPath().getParent())){
+                Files.createDirectories(destinationFile.toPath().getParent());
+            }
 
+            try (InputStream is = imageFile.getInputStream()){
+                Files.copy(is, destinationFile.toPath());
+            }
+            
             Image image = new Image();
             image.setFilePath(destinationFile.getAbsolutePath());
             image.setId(clothing.getClothesId());
