@@ -17,7 +17,8 @@ import org.springframework.data.repository.cdi.Eager;
 )
 @Entity(name = "user_profiles_table")
 public class UserProfile{
-  
+
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
@@ -61,6 +62,8 @@ public class UserProfile{
 
 
   public UserProfile(){}
+
+
 
   public List<Outfit> getOutfits(){
     return outfits;
@@ -112,4 +115,9 @@ public class UserProfile{
   public void setLikedOutfits(List<Outfit> likedOutfits) {
     this.likedOutfits = likedOutfits;
   }
+  public void setId(long id) {
+    this.id = id;
+  }
+
+
 }
