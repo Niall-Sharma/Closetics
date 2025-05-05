@@ -40,6 +40,15 @@ public class ClothingAndStatsSystemTest {
     }
 
     @Test
+    public void test00_CreateImage() throws JSONException{
+        //Tests the add clothing endpoint
+        Response response = RestAssured.given().header("Content-Type", "application/json").body(
+                "{\n" +
+                        ""
+        ).post();
+    }
+
+    @Test
     public void test01_CreateClothing() throws JSONException {
         // Test createClothing endpoint
         Response response = RestAssured.given().
