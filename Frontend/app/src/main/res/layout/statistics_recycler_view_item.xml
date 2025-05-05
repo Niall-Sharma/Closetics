@@ -105,7 +105,7 @@
                         android:text="Times Worn: " />
 
                     <TextView
-                        android:id="@+id/timesWorn"
+                        android:id="@+id/specialType"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"

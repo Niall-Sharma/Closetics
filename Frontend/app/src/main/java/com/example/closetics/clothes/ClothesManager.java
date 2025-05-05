@@ -12,6 +12,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.closetics.VolleyByteArrayRequest;
 import com.example.closetics.VolleyMultipartRequest;
 import com.example.closetics.VolleySingleton;
 
@@ -296,12 +297,13 @@ public class ClothesManager {
     //VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-    public static void getImageByClothing(Context context, long clothingId, String URL, Response.Listener<JSONArray> responseListener,
+    public static void getImageByClothing(Context context, long clothingId, String URL, Response.Listener<byte[]> responseListener,
                                           Response.ErrorListener errorListener){
 
         //clothingImages/{clothingId}
         String getUrl = URL + "/clothingImages/" + clothingId;
-        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, getUrl, null, responseListener, errorListener);
+         //request = new JsonArrayRequest(Request.Method.GET, getUrl, null, responseListener, errorListener);
+        VolleyByteArrayRequest request= new VolleyByteArrayRequest(Request.Method.GET, getUrl, responseListener, errorListener);
 
         VolleySingleton.getInstance(context).addToRequestQueue(request);
 

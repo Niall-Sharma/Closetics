@@ -48,25 +48,25 @@ public class EditClothesFragment extends ClothesCreationBaseFragment{
     }
     private String getClothingItemField(int position){
         String field;
-        if (position ==0){
+        if (position ==1){
             field = clothingItem.getFavorite();
         }
-        else if(position ==1){
+        else if(position ==2){
             field = clothingItem.getSize();
         }
-        else if (position ==2){
+        else if (position ==3){
             field = clothingItem.getColor();
         }
-        else if (position ==3){
+        else if (position ==4){
             field = clothingItem.getDateBought();
         }
-        else if (position ==4){
+        else if (position ==5){
             field = clothingItem.getPrice();
         }
-        else if (position ==5){
+        else if (position ==6){
             field = clothingItem.getItemName();
         }
-        else if (position == 6){
+        else if (position == 7){
             field = clothingItem.getBrand();
         }
         else {

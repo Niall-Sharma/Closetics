@@ -4,6 +4,7 @@ import static android.app.Activity.RESULT_OK;
 
 import android.Manifest;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -48,6 +49,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class ClothesCreationBaseFragment extends Fragment{
     private Button submit;
@@ -109,9 +111,10 @@ public class ClothesCreationBaseFragment extends Fragment{
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_add_clothes, container, false);
         super.onCreate(savedInstanceState);
+
+        Context context = requireContext();
 
         position = getArguments().getInt("count");
         int index = position;
@@ -152,7 +155,7 @@ public class ClothesCreationBaseFragment extends Fragment{
                 @Override
                 public void onClick(View v) {
                     //Request permissions
-                    if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
                             != PackageManager.PERMISSION_GRANTED) {
                         ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, 100);
                     }
@@ -172,7 +175,7 @@ public class ClothesCreationBaseFragment extends Fragment{
             if (index == 1){
                 String [] need = {"Yes", "No"};
                 spinnerItems = need;
-                spinnerAdapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, spinnerItems);
+                spinnerAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, spinnerItems);
                 spinner.setAdapter(spinnerAdapter);
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
@@ -193,7 +196,7 @@ public class ClothesCreationBaseFragment extends Fragment{
             else if (index == 9){
                 String [] need = {"Accessories", "Activewear", "Bottoms", "Dresses", "Footwear", "Formalwear", "Outerwear", "Seasonal", "Sleepwear", "Tops", "Undergarments", "Workwear"};
                 spinnerItems = need;
-                spinnerAdapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, spinnerItems);
+                spinnerAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, spinnerItems);
                 spinner.setAdapter(spinnerAdapter);
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
@@ -201,7 +204,7 @@ public class ClothesCreationBaseFragment extends Fragment{
                         specialTypes = ClothingItem.typeConnections[position];
                         ClothesCreationBaseFragment fragment = (ClothesCreationBaseFragment) pagerAdapter.getFragment(10);
                         if (fragment != null) {
-                            fragment.updateSpinner(10);
+                            fragment.updateSpinner( 10, context);
                         }
                         clothesDataViewModel.setFragment(index, MainActivity.CLOTHING_TYPES.get(position +1));
                     }
@@ -215,7 +218,7 @@ public class ClothesCreationBaseFragment extends Fragment{
 
             //special types
             else{
-               updateSpinner(index);
+               updateSpinner(index, context);
 
             }
         }
@@ -259,7 +262,7 @@ public class ClothesCreationBaseFragment extends Fragment{
 
         return view;
     }
-    public void updateSpinner(int index){
+    public void updateSpinner(int index, Context context){
 
         List<String> spinnerItems = new ArrayList<>();
         for (int i =0; i < specialTypes.length; i ++){
@@ -267,7 +270,7 @@ public class ClothesCreationBaseFragment extends Fragment{
         }
 
         if (spinnerAdapter == null){
-            spinnerAdapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, spinnerItems);
+            spinnerAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, spinnerItems);
             spinner.setAdapter(spinnerAdapter);
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override

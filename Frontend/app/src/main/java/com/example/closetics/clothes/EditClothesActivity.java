@@ -48,6 +48,7 @@ public class EditClothesActivity extends AppCompatActivity {
     private ScreenSlidePagerAdapter pagerAdapter;
     private long clothingId;
     private ClothingItem clothingItem;
+    private Button backButton;
 
     /**
      * Called when the activity is created. Initializes the layout, fragments, and setup necessary
@@ -63,6 +64,7 @@ public class EditClothesActivity extends AppCompatActivity {
         finalSubmission = findViewById(R.id.submit_button);
         tabLayout = findViewById(R.id.tabLayout);
         viewPager = findViewById(R.id.edit_pager);
+        backButton = findViewById(R.id.button);
 
         // Initialize the pager adapter and set it for the ViewPager
         pagerAdapter = new EditClothesActivity.ScreenSlidePagerAdapter(this);
@@ -74,7 +76,7 @@ public class EditClothesActivity extends AppCompatActivity {
         // Set the ViewPager adapter and TabLayout mediator
         viewPager.setAdapter(pagerAdapter);
         new TabLayoutMediator(tabLayout, viewPager, ((tab, position) -> {
-            tab.setText(String.valueOf(position + 1));
+            tab.setText("•");
         })).attach();
 
         // Set the clothingId and clothingItem instance variables from the Intent
@@ -86,6 +88,12 @@ public class EditClothesActivity extends AppCompatActivity {
         finalSubmission.setOnClickListener(v -> {
             ArrayList<MutableLiveData<String>> fragments = clothesDataViewModel.getFragments();
             getAndUpdateClothing(getApplicationContext(), ClothesActivity.URL, fragments);
+        });
+
+        backButton.setOnClickListener(v -> {
+            Intent newIntent = new Intent(this, ClothesActivity.class);
+            startActivity(newIntent);
+
         });
     }
 
@@ -158,6 +166,7 @@ public class EditClothesActivity extends AppCompatActivity {
         String material = fragments.get(7).getValue();
         String price = fragments.get(4).getValue();
 
+
         // Update fields with non-null values
         if (favorite != null) {
             if (favorite.toLowerCase().trim().equals("true")) {
@@ -174,6 +183,7 @@ public class EditClothesActivity extends AppCompatActivity {
         ClothesManager.nullCheck("itemName", itemName, response);
         ClothesManager.nullCheck("material", material, response);
         ClothesManager.nullCheck("price", price, response);
+        //ClothesManager.nullCheck("specialType", );
 
         return response;
     }

@@ -13,6 +13,8 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,11 +26,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.example.closetics.clothes.ClothesActivity;
+import com.example.closetics.clothes.ClothesCreationBaseFragment;
 import com.example.closetics.clothes.ClothesManager;
+import com.example.closetics.clothes.CustomSlideAdapter;
 import com.example.closetics.dashboard.LeaderboardActivity;
 import com.example.closetics.dashboard.SetTodaysOutfitFragment;
 import com.example.closetics.dashboard.StatisticsActivity;
@@ -59,6 +66,10 @@ public class DashboardFragment extends Fragment {
     private TextView wornCount;
     private TextView outfitTotalCount;
     private TextView averageLowTemperature;
+
+    private ViewPager2 viewPager;
+    private FragmentStateAdapter pagerAdapter;
+
 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -207,11 +218,7 @@ public class DashboardFragment extends Fragment {
         });
     }
 
-    private void showFragment(){
-        //NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment_activity_main);
-        //navController.navigate(R.id.set_todays_outfit_action);
 
-    }
 
     /*
     Will need to add error
@@ -249,7 +256,6 @@ public class DashboardFragment extends Fragment {
             }
         }
     }
-
 
 
 

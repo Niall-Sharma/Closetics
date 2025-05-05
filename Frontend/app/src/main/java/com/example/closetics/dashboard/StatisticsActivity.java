@@ -584,7 +584,6 @@ public class StatisticsActivity extends AppCompatActivity {
                 allClothingStatsObjects.add(statItem);
 
 
-
             }
 
         }, new Response.ErrorListener() {

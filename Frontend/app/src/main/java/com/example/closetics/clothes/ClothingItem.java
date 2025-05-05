@@ -32,12 +32,14 @@ public class ClothingItem implements Serializable {
     private String itemName;
     private String material;
     private String price;
+    private long id;
     //private long userId;
     private long type;
     private long specialType;
+    private byte[] image;
 
 
-    public ClothingItem (String favorite, String size, String color, String dateBought, String brand,
+    public ClothingItem (long id, long type, long specialType, byte[] image, String favorite, String size, String color, String dateBought, String brand,
                          String itemName, String material, String price){
         this.favorite = favorite;
         this.size = size;
@@ -47,10 +49,26 @@ public class ClothingItem implements Serializable {
         this.itemName = itemName;
         this.material = material;
         this.price = price;
+        this.id = id;
+        this.type = type;
+        this.specialType = specialType;
+        this.image = image;
     }
 
+    public long getId(){
+        return id;
+    }
+    public byte[] getImage(){
+        return image;
+    }
     public String getPrice() {
         return price;
+    }
+    public Long getType(){
+        return type;
+    }
+    public Long getSpecialType(){
+        return specialType;
     }
 
     public String getMaterial() {
@@ -80,4 +98,5 @@ public class ClothingItem implements Serializable {
     public String getBrand() {
         return brand;
     }
+
 }

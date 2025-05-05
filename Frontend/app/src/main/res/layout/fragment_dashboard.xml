@@ -26,6 +26,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+                <androidx.viewpager2.widget.ViewPager2
+                    android:layout_width="185dp"
+                    android:layout_height="250dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="6dp"
+                    android:layout_marginBottom="16dp"
+                    app:layout_constraintBottom_toTopOf="@+id/todaysDate"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/outfitName" />
+
                 <TextView
                     android:id="@+id/outfitName"
                     android:layout_width="wrap_content"
@@ -53,10 +65,10 @@
                     android:layout_width="185dp"
                     android:layout_height="250dp"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="26dp"
+                    android:layout_marginTop="24dp"
                     android:layout_marginEnd="7dp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintHorizontal_bias="0.666"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/outfitName"
                     app:srcCompat="@drawable/hanger" />

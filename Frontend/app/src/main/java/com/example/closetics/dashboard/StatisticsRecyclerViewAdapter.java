@@ -4,7 +4,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,9 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.closetics.R;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -91,7 +88,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            timesWorn = itemView.findViewById(R.id.timesWorn);
+            timesWorn = itemView.findViewById(R.id.specialType);
             lowTemp = itemView.findViewById(R.id.low_temp);
             highTemp = itemView.findViewById(R.id.high_temp);
             outfitsIn = itemView.findViewById(R.id.outfits_in);

@@ -40,7 +40,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -132,7 +134,7 @@ public class ClothesActivity extends AppCompatActivity {
                 viewPager.setAdapter((ScreenSlidePagerAdapter) pagerAdapter);
 
                 new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
-                    tab.setText(String.valueOf(position + 1));
+                    tab.setText("•");
                 }).attach();
             }
         });
@@ -200,12 +202,20 @@ public class ClothesActivity extends AppCompatActivity {
                     for (int i = 0; i < response.length(); i++) {
                         JSONObject jsonObject = response.getJSONObject(i);
                         responseStringArray.add(jsonObject.toString());
-                        responseClothingItems.add(createClothingItem(jsonObject));
-                        long clothingId = jsonObject.getLong("clothesId");
-                        clothingIds[i] = clothingId;
-                        Log.d("JSON Object", jsonObject.toString());
+                        getImageByClothing(jsonObject.getLong("clothesId"), jsonObject, i, new ImageCallback() {
+                            @Override
+                            public void onImageLoaded(ClothingItem clothingItem, int i) throws JSONException {
+                                long clothingId = jsonObject.getLong("clothesId");
+                                clothingIds[i] = clothingId;
+                                responseClothingItems.add(clothingItem);
+
+                                if (responseClothingItems.size() == response.length()){
+                                    showFragment(responseStringArray, clothingIds, responseClothingItems);
+                                }
+                            }
+                        });
+
                     }
-                    showFragment(responseStringArray, clothingIds, responseClothingItems);
                 } catch (JSONException e) {
                     Log.d("JSON exception", e.toString());
                 }
@@ -225,7 +235,10 @@ public class ClothesActivity extends AppCompatActivity {
      * @return a ClothingItem instance
      * @throws JSONException if parsing fails
      */
-    private ClothingItem createClothingItem(JSONObject response) throws JSONException {
+    private ClothingItem createClothingItem(JSONObject response, byte[] image) throws JSONException {
+        Long type = response.getLong("clothingType");
+        Long specialType = response.getLong("specialType");
+        Long id = response.getLong("clothesId");
         String favorite = String.valueOf(response.getBoolean("favorite"));
         String brand = response.getString("brand");
         String color = response.getString("color");
@@ -234,7 +247,7 @@ public class ClothesActivity extends AppCompatActivity {
         String material = response.getString("material");
         String size = response.getString("size");
         String price = response.getString("price");
-        return new ClothingItem(favorite, size, color, dateBought, brand, itemName, material, price);
+        return new ClothingItem(id, type, specialType, image,favorite, size, color, dateBought, brand, itemName, material, price);
     }
 
     /**
@@ -297,7 +310,6 @@ public class ClothesActivity extends AppCompatActivity {
                 }
 
 
-
             }
         }, new Response.ErrorListener() {
             @Override
@@ -311,6 +323,7 @@ public class ClothesActivity extends AppCompatActivity {
             @Override
             public void onResponse(NetworkResponse response) {
                 Log.d("Add image good", response.toString());
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -321,17 +334,29 @@ public class ClothesActivity extends AppCompatActivity {
         });
 
     }
-    private void getImageByClothing(long clothingId){
-        ClothesManager.getImageByClothing(this, clothingId, MainActivity.SERVER_URL, new Response.Listener<JSONArray>() {
+    private void getImageByClothing(long clothingId, JSONObject object, int i, ImageCallback callback){
+        ClothesManager.getImageByClothing(this, clothingId, MainActivity.SERVER_URL, new Response.Listener<byte[]>() {
             @Override
-            public void onResponse(JSONArray response) {
-                Log.d("Get Image Success", )
+            public void onResponse(byte[] response) {
+                Log.d("Get Image Success", Arrays.toString(response));
+                byte[] image = response;
+                try {
+                    callback.onImageLoaded(createClothingItem(object, image), i);
+                } catch (JSONException e) {
+                    Log.e("Error", e.toString());
+                }
 
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("Get Image error", error.toString());
+                //On an error, assume that there is no image for this clothing item
+                try {
+                    callback.onImageLoaded(createClothingItem(object, null), i);
+                } catch (JSONException e) {
+                    Log.e("Error", e.toString());
+                }
             }
         });
 
@@ -367,6 +392,10 @@ public class ClothesActivity extends AppCompatActivity {
         Fragment fragment = ViewClothesFragment.newInstance(JSONObject, clothingIds, clothingItems);
         transaction.replace(R.id.view_clothes_container, fragment, "view_clothes_fragment");
         transaction.commit();
+    }
+
+    public interface ImageCallback {
+        void onImageLoaded(ClothingItem clothingItem, int i) throws JSONException;
     }
 
     /**

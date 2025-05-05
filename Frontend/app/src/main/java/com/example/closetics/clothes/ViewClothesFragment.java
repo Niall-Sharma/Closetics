@@ -46,9 +46,9 @@ public class ViewClothesFragment extends Fragment {
         ArrayList<ClothingItem> clothingItems = (ArrayList<ClothingItem>)getArguments().getSerializable("ClothingItems");
         long [] clothingIds = getArguments().getLongArray("clothingIds");
 
-        adapter = new ClothesByTypeAdapter(objects, new ClothesByTypeAdapter.OnItemClickListener() {
+        adapter = new ClothesByTypeAdapter(clothingItems, new ClothesByTypeAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(int position, View view, String jsonObject) {
+            public void onItemClick(int position, View view, ClothingItem jsonObject) {
                 //Delete button on click logic very basic for roundtrip
                  if (view.getId() == R.id.delete_button){
                      long clothingId = clothingIds[position];
@@ -100,9 +100,6 @@ public class ViewClothesFragment extends Fragment {
             public void onResponse(String response) {
                 //Response is null
                 Log.d("Delete Volley Response", "Success");
-
-
-
 
 
             }}, new Response.ErrorListener() {
