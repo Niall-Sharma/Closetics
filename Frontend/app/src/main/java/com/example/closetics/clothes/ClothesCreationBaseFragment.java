@@ -72,7 +72,7 @@ public class ClothesCreationBaseFragment extends Fragment{
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK) {
                     byteArray = getImageByteArrayFromUri(imageUri);
-                    clothesDataViewModel.setFragment(position, "s");
+                    clothesDataViewModel.setFragment(position, imageUri.toString());
                     try {
                         imageView.setImageBitmap(resizeImage(imageUri, 150, 150));
                     } catch (IOException e) {

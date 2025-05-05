@@ -3,6 +3,7 @@ package com.example.closetics.clothes;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -141,9 +142,14 @@ public class ClothesActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ArrayList<MutableLiveData<String>> fragments = clothesDataViewModel.getFragments();
+                //If an image was set/taken
                 //saveClothing(getApplicationContext(), fragments, URL, UserManager.getUserID(getApplicationContext()));
                 //Need to add the image to the new clothing item
-                addImage(38);
+                if (fragments.get(0).getValue() != null){
+                    Uri uri = Uri.parse(fragments.get(0).getValue());
+                    addImage(5);
+                }
+
 
                 ClothesActivity.getUserClothing(context, UserManager.getUserID(getApplicationContext()), URL);
             }
@@ -282,7 +288,9 @@ public class ClothesActivity extends AppCompatActivity {
                 Log.d("Save Clothing response", response.toString());
                 try {
                     Long id = response.getLong("clothesId");
-                    addImage(id);
+                    if (fragments.get(0).getValue() != null) {
+                        addImage(id);
+                    }
 
                 } catch (JSONException e) {
                     Log.e("ID error", e.toString());
@@ -309,6 +317,21 @@ public class ClothesActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 Log.e("Add image bad", error.toString());
 
+            }
+        });
+
+    }
+    private void getImageByClothing(long clothingId){
+        ClothesManager.getImageByClothing(this, clothingId, MainActivity.SERVER_URL, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                Log.d("Get Image Success", )
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Get Image error", error.toString());
             }
         });
 

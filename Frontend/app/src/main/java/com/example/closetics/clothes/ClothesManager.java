@@ -10,21 +10,16 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.closetics.MainActivity;
 import com.example.closetics.VolleyMultipartRequest;
 import com.example.closetics.VolleySingleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONStringer;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -76,6 +71,8 @@ public class ClothesManager {
         String itemName = fragments.get(6).getValue();
         String material = fragments.get(8).getValue();
         String price = fragments.get(5).getValue();
+        String clothingType = fragments.get(9).getValue();
+        String specialType = fragments.get(10).getValue();
 
 
         //Create the json object of the saveClothing data
@@ -85,12 +82,12 @@ public class ClothesManager {
 
         //Use try catch blocks when creating JSON objects
 
-        //Basic check will need to fix
+        //Making sure a boolean is sent to the backend
         try {
             if (favorite == null){
                 nullCheck("favorite", false, saveClothing);
             }
-            else if (favorite.toLowerCase().trim() == "yes") {
+            else if (favorite.toLowerCase().trim() == "Yes") {
                 nullCheck("favorite", true, saveClothing);
             } else {
                 nullCheck("favorite", false, saveClothing);
@@ -104,13 +101,12 @@ public class ClothesManager {
             nullCheck("itemName", itemName, saveClothing);
             nullCheck("material", material, saveClothing);
             nullCheck("price", price, saveClothing);
+            nullCheck("clothingType", clothingType,saveClothing);
+            nullCheck("specialType", specialType, saveClothing);
 
 
             saveClothing.put("userId", userId);
-            /*
-            This is for testing only! Remember to remove!
-             */
-            saveClothing.put("clothingType", 1);
+
 
         } catch (JSONException e) {
             Log.e("JSON Error", e.toString());
@@ -272,7 +268,7 @@ public class ClothesManager {
 
 
     }
-    public static void addImage(Context context, Long clothingId, byte[] imageBytes,  String URL,
+    public static void addImage(Context context, Long clothingId, byte[] imageBytes, String URL,
                                 Response.Listener<NetworkResponse> responseListener,
                                 Response.ErrorListener errorListener) {
         String addImageUrl = URL + "/addImage/" + clothingId;
@@ -282,11 +278,10 @@ public class ClothesManager {
         VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(
             Request.Method.PUT, addImageUrl, responseListener, errorListener);
 
-        multipartRequest.addFile("imageFile", new VolleyMultipartRequest.DataPart("upload.jpg", imageBytes,  "image/jpeg"));
+        multipartRequest.addFile("imageFile", new VolleyMultipartRequest.DataPart("image.jpg", imageBytes,  "image/jpeg"));
 
         Volley.newRequestQueue(context).add(multipartRequest);
         
-
 
         /*
         JsonObjectRequest request = new JsonObjectRequest(
@@ -299,6 +294,17 @@ public class ClothesManager {
         */
 
     //VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+    public static void getImageByClothing(Context context, long clothingId, String URL, Response.Listener<JSONArray> responseListener,
+                                          Response.ErrorListener errorListener){
+
+        //clothingImages/{clothingId}
+        String getUrl = URL + "/clothingImages/" + clothingId;
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, getUrl, null, responseListener, errorListener);
+
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+
     }
 
 
