@@ -48,8 +48,8 @@ public class ClothingController {
             @ApiResponse(responseCode = "404", description = "Clothing item not found", content = @Content)
     })
     @GetMapping(path = "/getClothing/{id}")
-    public Optional<Clothing> getClothing(@Parameter(description = "ID of the clothing item to retrieve") @PathVariable long id) {
-        return clothingRepository.findById(id);
+    public Clothing getClothing(@Parameter(description = "ID of the clothing item to retrieve") @PathVariable long id) {
+        return clothingRepository.findById(id).get();
     }
 
     @Operation(summary = "Get clothing items by special type for a user", description = "Retrieves clothing items of a specific 'special type' (e.g., seasonal) for a given user.")
