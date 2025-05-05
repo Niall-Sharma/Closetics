@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -31,13 +32,20 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         if (themePref != null) {
             themePref.setOnPreferenceChangeListener((preference, newValue) -> {
                 Log.d("Preferences", String.format("Theme changed: %s", newValue));
+                if ((newValue + "").equals("light")) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                } else if (((newValue + "").equals("dark"))) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                } else { // system
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+                }
                 return true; // Return true if the event is handled.
             });
         }
 
-        Preference changepasswordPref = findPreference("change_password");
-        if (changepasswordPref != null) {
-            changepasswordPref.setOnPreferenceClickListener((preference) -> {
+        Preference changePasswordPref = findPreference("change_password");
+        if (changePasswordPref != null) {
+            changePasswordPref.setOnPreferenceClickListener((preference) -> {
                 Log.d("Preferences", "Change password was clicked");
                 return true; // Return true if the event is handled.
             });

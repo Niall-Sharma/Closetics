@@ -1,6 +1,7 @@
 package com.example.closetics;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -8,8 +9,10 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.preference.PreferenceManager;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -47,6 +50,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
+        // set saved theme
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String themeValue = preferences.getString("theme", "system");
+        if (themeValue.equals("light")) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        } else if ((themeValue.equals("dark"))) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else { // system
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+        }
+
         setContentView(R.layout.activity_main);             // link to Main activity XML
 
         bottomNavView = findViewById(R.id.bottom_nav_view);
@@ -64,8 +79,8 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(bottomNavView, navController);
 
         // DEBUG CODE
-        UserManager.saveUsername(getApplicationContext(), "user1");
-        UserManager.saveUserID(getApplicationContext(), 1);
+//        UserManager.saveUsername(getApplicationContext(), "user1");
+//        UserManager.saveUserID(getApplicationContext(), 1);
 
         // start websocket if person is logged in
         if (UserManager.getUsername(getApplicationContext()) != null) {

@@ -274,9 +274,12 @@ public class RecommendationsFragment extends Fragment {
 
                 //String stats = "No stats for now";
                 JSONObject stats = outfit.getJSONObject("outfitStats");
-                String statsStr = "Wearing statistics:\n   Times worn: " + stats.getInt("timesWorn") +
-                        "\n   Average high temperature: " + (Math.round(stats.getDouble("avgHighTemp") * 10.0) / 10.0) + " °F" +
-                        "\n   Average low temperature: " + (Math.round(stats.getDouble("avgLowTemp") * 10.0) / 10.0) + " °F";
+                String statsStr = "Wearing statistics:\n   Times worn: " + stats.getInt("timesWorn");
+                if (stats.getInt("timesWorn") > 0) {
+                    statsStr = statsStr +
+                            "\n   Average high temperature: " + (Math.round(stats.getDouble("avgHighTemp") * 10.0) / 10.0) + " °F" +
+                            "\n   Average low temperature: " + (Math.round(stats.getDouble("avgLowTemp") * 10.0) / 10.0) + " °F";
+                }
 
                 int year = outfit.getJSONArray("creationDate").getInt(0);
                 int month = outfit.getJSONArray("creationDate").getInt(1);
