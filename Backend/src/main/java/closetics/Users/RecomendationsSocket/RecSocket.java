@@ -67,8 +67,12 @@ public class RecSocket {
     System.out.println(uProfile.toString());
     List<UserProfile> following = uProfile.getFollowing();
     List<Outfit> followingOutfits = new ArrayList<>();
-    for(int i = 0; i < following.size();i++){
-      followingOutfits.addAll(following.get(i).getOutfits());
+    for (UserProfile userProfile : following) {
+        for (Outfit outfit : userProfile.getOutfits()) {
+            if (!outfit.getOutfitItems().isEmpty()) {
+                followingOutfits.add(outfit);
+            }
+        }
     }
     followingOutfitMap.put(UID, followingOutfits);
 
@@ -92,7 +96,7 @@ public class RecSocket {
 		long UID = sessionUsernameMap.get(session);
 		sessionUsernameMap.remove(session);
 		uidSessionMap.remove(UID);
-    followingOutfitMap.remove(UID);
+        followingOutfitMap.remove(UID);
 
 	}
 
@@ -102,7 +106,7 @@ public class RecSocket {
 	}
 
 	private void sendRec(long UID) {
-        int recSize = 5;
+        int recSize = 10;
         List<Outfit> recList = new ArrayList<>();
         Session userSession = uidSessionMap.get(UID);
         try {
@@ -126,7 +130,7 @@ public class RecSocket {
                         while (!found && attempt < maxRetries) {
                             long randomId = (long) (Math.random() * outfitCount) + 1;
                             var optionalOutfit = OutfitRepository.findById(randomId);
-                            if (optionalOutfit.isPresent()) {
+                            if (optionalOutfit.isPresent() && !optionalOutfit.get().getOutfitItems().isEmpty()) {
                                 randomOutfit = optionalOutfit.get();
                                 found = true;
                             }
