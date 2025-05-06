@@ -48,6 +48,9 @@ public class RecSocketTest {
     private User user;
     private UserProfile userProfile;
 
+    private User user2;
+    private UserProfile userProfile2;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -83,6 +86,27 @@ public class RecSocketTest {
         user.SetUserProfile(userProfile);
         userProfileRepository.save(userProfile);
         userRepository.save(user);
+
+        user2 = new User();
+        user2.setUserId(2);
+
+        userRepository.save(user2);
+
+        Clothing clothing2 = new Clothing();
+        clothing2.setUser(user2);
+        clothingRepository.save(clothing2);
+
+        Outfit outfit2 = new Outfit();
+        outfit2.setOutfitItems(List.of(clothing2));
+        outfit2.setUser(user2);
+
+        outfitRepository.save(outfit2);
+
+        userProfile2 = new UserProfile();
+        userProfile.addOutfit(outfit2);
+        user.SetUserProfile(userProfile2);
+        userProfileRepository.save(userProfile2);
+        userRepository.save(user2);
     }
 
     @ClientEndpoint
