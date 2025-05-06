@@ -27,11 +27,15 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class ViewClothesFragment extends Fragment {
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
     ClothesByTypeAdapter adapter;
+
+
+
 
     @Nullable
     @Override
@@ -44,14 +48,13 @@ public class ViewClothesFragment extends Fragment {
         super.onCreate(savedInstanceState);
         ArrayList<String> objects = getArguments().getStringArrayList("JSONObject");
         ArrayList<ClothingItem> clothingItems = (ArrayList<ClothingItem>)getArguments().getSerializable("ClothingItems");
-        long [] clothingIds = getArguments().getLongArray("clothingIds");
 
         adapter = new ClothesByTypeAdapter(clothingItems, new ClothesByTypeAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position, View view, ClothingItem jsonObject) {
                 //Delete button on click logic very basic for roundtrip
                  if (view.getId() == R.id.delete_button){
-                     long clothingId = clothingIds[position];
+                     long clothingId = jsonObject.getId();
                      Log.d("clothingId", String.valueOf(clothingId));
                      deleteClothing(getActivity(), clothingId, ClothesActivity.URL);
                      deleteItem(objects, position);
@@ -60,9 +63,8 @@ public class ViewClothesFragment extends Fragment {
                  }
                  //Edit button on click logic
                  else{
-                     long clothingId = clothingIds[position];
+                     long clothingId = jsonObject.getId();
                      ClothingItem clothingItem = clothingItems.get(position);
-
                      //Switch to editActivity
                      Intent intent = new Intent(getActivity(), EditClothesActivity.class);
                      intent.putExtra("clothingId", clothingId);
@@ -82,12 +84,11 @@ public class ViewClothesFragment extends Fragment {
     }
 
 
-    public static Fragment newInstance(ArrayList<String> object, long[] clothingIds, ArrayList<ClothingItem> clothingItem) {
+    public static Fragment newInstance(ArrayList<String> object, ArrayList<ClothingItem> clothingItem) {
         //Create a new forgot password fragment
         Fragment fragment = new ViewClothesFragment();
         Bundle args = new Bundle();
         args.putStringArrayList("JSONObject", object);
-        args.putLongArray("clothingIds", clothingIds);
         args.putSerializable("ClothingItems", clothingItem);
         fragment.setArguments(args);
         return fragment;

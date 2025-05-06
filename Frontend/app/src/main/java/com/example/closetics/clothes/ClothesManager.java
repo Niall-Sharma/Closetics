@@ -169,7 +169,7 @@ public class ClothesManager {
     public static void updateClothingRequest(Context context, JSONObject updateObject, String URL,
                                              Response.Listener<JSONObject> responseListener,
                                              Response.ErrorListener errorListener) {
-        String updateUrl = URL + "/";
+        String updateUrl = URL + "/updateClothing";
 
 
         JsonObjectRequest request = new JsonObjectRequest(

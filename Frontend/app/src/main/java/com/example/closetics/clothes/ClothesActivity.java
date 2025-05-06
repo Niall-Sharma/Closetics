@@ -44,7 +44,9 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * ClothesActivity is responsible for managing the clothing-related
@@ -196,7 +198,7 @@ public class ClothesActivity extends AppCompatActivity {
                 Log.d("Volley Response", response.toString());
                 ArrayList<String> responseStringArray = new ArrayList<>();
                 ArrayList<ClothingItem> responseClothingItems = new ArrayList<>();
-                long[] clothingIds = new long[response.length()];
+                Set<Long> clothingIds =  new HashSet<>();
 
                 try {
                     for (int i = 0; i < response.length(); i++) {
@@ -206,7 +208,7 @@ public class ClothesActivity extends AppCompatActivity {
                             @Override
                             public void onImageLoaded(ClothingItem clothingItem, int i) throws JSONException {
                                 long clothingId = jsonObject.getLong("clothesId");
-                                clothingIds[i] = clothingId;
+                                clothingIds.add(clothingId);
                                 responseClothingItems.add(clothingItem);
 
                                 if (responseClothingItems.size() == response.length()){
@@ -387,9 +389,9 @@ public class ClothesActivity extends AppCompatActivity {
      * @param clothingIds    the array of clothing item IDs
      * @param clothingItems  the list of ClothingItem objects
      */
-    private void showFragment(ArrayList<String> JSONObject, long[] clothingIds, ArrayList<ClothingItem> clothingItems) {
+    private void showFragment(ArrayList<String> JSONObject, Set<Long> clothingIds, ArrayList<ClothingItem> clothingItems) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        Fragment fragment = ViewClothesFragment.newInstance(JSONObject, clothingIds, clothingItems);
+        Fragment fragment = ViewClothesFragment.newInstance(JSONObject, clothingItems);
         transaction.replace(R.id.view_clothes_container, fragment, "view_clothes_fragment");
         transaction.commit();
     }

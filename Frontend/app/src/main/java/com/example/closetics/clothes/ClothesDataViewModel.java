@@ -27,6 +27,7 @@ public class ClothesDataViewModel extends ViewModel {
     }
 
 
+
     //Add a fragment data at specific index
     public void setFragment(int index, String data){
         MutableLiveData<String> temp = new MutableLiveData<>();

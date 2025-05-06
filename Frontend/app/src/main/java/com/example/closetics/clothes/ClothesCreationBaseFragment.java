@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -206,7 +207,7 @@ public class ClothesCreationBaseFragment extends Fragment{
                         if (fragment != null) {
                             fragment.updateSpinner( 10, context);
                         }
-                        clothesDataViewModel.setFragment(index, MainActivity.CLOTHING_TYPES.get(position +1));
+                        clothesDataViewModel.setFragment(index, String.valueOf(position +1));
                     }
 
                     @Override
@@ -268,27 +269,29 @@ public class ClothesCreationBaseFragment extends Fragment{
         for (int i =0; i < specialTypes.length; i ++){
             spinnerItems.add(MainActivity.CLOTHING_SPECIAL_TYPES.get(specialTypes[i]));
         }
+        if (spinner != null) {
 
-        if (spinnerAdapter == null){
-            spinnerAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, spinnerItems);
-            spinner.setAdapter(spinnerAdapter);
-            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    clothesDataViewModel.setFragment(index, spinnerItems.get(position));
-                    specialTypes = ClothingItem.typeConnections[position];
-                }
+            if (spinnerAdapter == null) {
+                spinnerAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, spinnerItems);
 
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
+                spinner.setAdapter(spinnerAdapter);
+                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        clothesDataViewModel.setFragment(index, String.valueOf(specialTypes[position]));
+                        specialTypes = ClothingItem.typeConnections[position];
+                    }
 
-                }
-            });
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
 
-        }else {
-            spinnerAdapter.clear();
-            spinnerAdapter.addAll(spinnerItems);
-            spinnerAdapter.notifyDataSetChanged();
+                    }
+                });
+            } else {
+                spinnerAdapter.clear();
+                spinnerAdapter.addAll(spinnerItems);
+                spinnerAdapter.notifyDataSetChanged();
+            }
         }
 
     }
@@ -296,9 +299,29 @@ public class ClothesCreationBaseFragment extends Fragment{
     public EditText getInputField() {
         return inputField;
     }
+
+    public ImageView getImageView(){
+        return imageView;
+    }
+    public ArrayAdapter<String> getSpinnerAdapter(){
+        return spinnerAdapter;
+    }
+    public Spinner getSpinner(){
+        return spinner;
+    }
+
+    public ClothesDataViewModel getClothesDataViewModel() {
+        return clothesDataViewModel;
+    }
+
     public int getPosition(){
         return position;
     }
+
+    public Uri getImageUri() {
+        return imageUri;
+    }
+
     private void setImageVisibility(){
         inputField.setVisibility(View.GONE);
         spinner.setVisibility(View.GONE);

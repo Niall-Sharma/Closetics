@@ -80,6 +80,7 @@ public class ClothesByTypeAdapter extends RecyclerView.Adapter<ClothesByTypeAdap
         holder.color.setText(item.getColor());
         holder.dateBought.setText(item.getDateBought());
 
+
         // Set click listener for the edit button
         holder.editButton.setOnClickListener(new View.OnClickListener() {
             @Override
