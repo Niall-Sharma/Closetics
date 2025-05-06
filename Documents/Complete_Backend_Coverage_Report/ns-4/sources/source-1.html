@@ -57,10 +57,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 </tr>
   <tr>
-    <td class="name">Outfit$HibernateInstantiator$KeIwGkmR</td>
+    <td class="name">Outfit$HibernateInstantiator$WGG6462W</td>
   </tr>
   <tr>
-    <td class="name">Outfit$HibernateProxy$lA0wFXcr</td>
+    <td class="name">Outfit$HibernateProxy$iD71jtV1</td>
   </tr>
 <tr>
   <td class="name"><strong>Total</strong></td>
@@ -131,13 +131,13 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;            &quot;dateBought&quot;, &quot;brand&quot;, &quot;imagePath&quot;, &quot;itemName&quot;, &quot;material&quot;, &quot;price&quot;, &quot;type&quot;, &quot;specialType&quot;, &quot;creationDate&quot;, &quot;clothingType&quot;})
 &nbsp;    private List&lt;Clothing&gt; outfitItems;
 &nbsp;
-<b class="fc">&nbsp;    @ManyToMany(fetch = FetchType.EAGER)</b>
+&nbsp;    @ManyToMany(fetch = FetchType.EAGER)
 &nbsp;    @JoinTable(
 &nbsp;            name = &quot;user_likes&quot;,
 &nbsp;            joinColumns = @JoinColumn(name = &quot;outfit_id&quot;),
 &nbsp;            inverseJoinColumns = @JoinColumn(name = &quot;user_profile_id&quot;)
 &nbsp;    )
-&nbsp;    private List&lt;UserProfile&gt; userProfileLikes = new ArrayList&lt;&gt;();
+<b class="fc">&nbsp;    private List&lt;UserProfile&gt; userProfileLikes = new ArrayList&lt;&gt;();</b>
 &nbsp;
 &nbsp;    private String outfitName;
 &nbsp;    private LocalDate creationDate;
@@ -223,7 +223,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-05-05 16:57</div>
+    <div style="float:right;">generated on 2025-05-06 18:41</div>
 </div>
 </body>
 </html>

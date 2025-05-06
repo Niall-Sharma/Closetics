@@ -53,18 +53,18 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    54.2%
+    54.3%
   </span>
   <span class="absValue">
-    (26/48)
+    (25/46)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    73.1%
+    72.8%
   </span>
   <span class="absValue">
-    (68/93)
+    (67/92)
   </span>
 </td>
 </tr>
@@ -89,18 +89,18 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    54.2%
+    54.3%
   </span>
   <span class="absValue">
-    (26/48)
+    (25/46)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    73.1%
+    72.8%
   </span>
   <span class="absValue">
-    (68/93)
+    (67/92)
   </span>
 </td>
 </tr>
@@ -198,7 +198,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    @GetMapping(path = &quot;/users/username/{id}&quot;) // Path parameter name is &#39;id&#39; but refers to username
 &nbsp;    public User getUserByUsername(@Parameter(description = &quot;Username of the user to retrieve&quot;) @PathVariable String id) {
 <b class="fc">&nbsp;        User user = userRepository.findByUsername(id);</b>
-<b class="pc">&nbsp;        if (user == null) {</b>
+&nbsp;        if (user == null) {
 &nbsp;            // Throw an exception or return ResponseEntity.notFound()
 &nbsp;        }
 <b class="fc">&nbsp;        return user;</b>
@@ -367,7 +367,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;        }
 &nbsp;
 <b class="pc">&nbsp;        if (securityQuestion != null &amp;&amp; existingUser.compareHashedSQ(passwordRequest.getSecurityQuestionAnswer()</b>
-<b class="fc">&nbsp;                , passwordRequest.getSecurityQuestionId())) {</b>
+<b class="pc">&nbsp;                , passwordRequest.getSecurityQuestionId())) {</b>
 <b class="fc">&nbsp;            existingUser.setPassword(User.encryptString(passwordRequest.getNewPassword()));</b>
 <b class="fc">&nbsp;            userRepository.save(existingUser);</b>
 <b class="fc">&nbsp;            response.put(&quot;message&quot;, &quot;Password change successful&quot;);</b>
@@ -493,7 +493,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-05-05 16:57</div>
+    <div style="float:right;">generated on 2025-05-06 18:41</div>
 </div>
 </body>
 </html>

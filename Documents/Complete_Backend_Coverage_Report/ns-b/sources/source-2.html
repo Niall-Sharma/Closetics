@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > RecService</title>
+  <title>Coverage Report > RecSocket</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -22,12 +22,15 @@ Current scope:     <a href="../../index.html">all classes</a>
     <a href="../index.html">closetics.Users.RecomendationsSocket</a>
 </div>
 
-<h1>Coverage Summary for Class: RecService (closetics.Users.RecomendationsSocket)</h1>
+<h1>Coverage Summary for Class: RecSocket (closetics.Users.RecomendationsSocket)</h1>
 
 <table class="coverageStats">
-
 <tr>
   <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
 <th class="coverageStat 
 ">
   Method, %
@@ -42,62 +45,41 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 </tr>
 <tr>
-  <td class="name">RecService</td>
+  <td class="name">RecSocket</td>
 <td class="coverageStat">
   <span class="percent">
-    25%
+    100%
   </span>
   <span class="absValue">
-    (1/4)
+    (1/1)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    90%
   </span>
   <span class="absValue">
-    (0/10)
+    (9/10)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    10%
+    61.5%
   </span>
   <span class="absValue">
-    (2/20)
-  </span>
-</td>
-</tr>
-  <tr>
-    <td class="name">RecService$$SpringCGLIB$$0</td>
-  </tr>
-<tr>
-  <td class="name"><strong>Total</strong></td>
-<td class="coverageStat">
-  <span class="percent">
-    25%
-  </span>
-  <span class="absValue">
-    (1/4)
+    (16/26)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    80%
   </span>
   <span class="absValue">
-    (0/10)
-  </span>
-</td>
-<td class="coverageStat">
-  <span class="percent">
-    10%
-  </span>
-  <span class="absValue">
-    (2/20)
+    (44/55)
   </span>
 </td>
 </tr>
+
 </table>
 
 <br/>
@@ -105,57 +87,165 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package closetics.Users.RecomendationsSocket;
+<code class="sourceCode" id="sourceCode">&nbsp;
+&nbsp;package closetics.Users.RecomendationsSocket;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Hashtable;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;import closetics.Users.UserRepository;
+&nbsp;import com.fasterxml.jackson.databind.ObjectMapper;
+&nbsp;import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+&nbsp;import jakarta.websocket.OnClose;
+&nbsp;import jakarta.websocket.OnError;
+&nbsp;import jakarta.websocket.OnMessage;
+&nbsp;import jakarta.websocket.OnOpen;
+&nbsp;import jakarta.websocket.Session;
+&nbsp;import jakarta.websocket.server.PathParam;
+&nbsp;import jakarta.websocket.server.ServerEndpoint;
+&nbsp;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Controller;
 &nbsp;
 &nbsp;import closetics.Outfits.Outfit;
 &nbsp;import closetics.Outfits.OutfitRepository;
-&nbsp;import jakarta.transaction.Transactional;
-&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import closetics.Users.UserProfile.UserProfile;
+&nbsp;import closetics.Users.UserProfile.UserProfileRepository;
 &nbsp;
-&nbsp;import java.util.ArrayList;
-&nbsp;import java.util.List;
+&nbsp;@Controller
+&nbsp;@ServerEndpoint(value = &quot;/recommendation/{uid}&quot;)
+<b class="fc">&nbsp;public class RecSocket {</b>
 &nbsp;
-&nbsp;@Service
-&nbsp;public class RecService {
+&nbsp;	private static UserProfileRepository UserProfileRepository;
+&nbsp;  private static OutfitRepository OutfitRepository;
+&nbsp;  private static UserRepository UserRepository;
 &nbsp;
-&nbsp;    private final OutfitRepository outfitRepository;
+&nbsp;	@Autowired
+&nbsp;	public void setUserProfileRepository(UserProfileRepository repo) {
+<b class="fc">&nbsp;		UserProfileRepository = repo;</b>
+&nbsp;	}
 &nbsp;
-<b class="fc">&nbsp;    public RecService(OutfitRepository outfitRepository) {</b>
-<b class="fc">&nbsp;        this.outfitRepository = outfitRepository;</b>
+&nbsp;  @Autowired
+&nbsp;  public void setOutfitRepository(OutfitRepository repo){
+<b class="fc">&nbsp;    OutfitRepository = repo;</b>
+&nbsp;  }
+&nbsp;
+&nbsp;  @Autowired
+&nbsp;  public void setUserRepository(UserRepository repo){
+<b class="fc">&nbsp;        UserRepository = repo;</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    @Transactional
-&nbsp;    public void initializeOutfits(List&lt;Outfit&gt; outfits) {
-&nbsp;        // Force Hibernate to load the lazy collection
-<b class="nc">&nbsp;        for (Outfit outfit : outfits) {</b>
-<b class="nc">&nbsp;            outfit.getOutfitItems().size();  // triggers loading</b>
-&nbsp;        }
-&nbsp;    }
-&nbsp;    @Transactional
-&nbsp;    public List&lt;Outfit&gt; getRecommendations(long uid, List&lt;Outfit&gt; followedOutfits) {
-<b class="nc">&nbsp;        List&lt;Outfit&gt; recs = new ArrayList&lt;&gt;();</b>
-<b class="nc">&nbsp;        for (int i = 0; i &lt; 1; i++) {</b>
-<b class="nc">&nbsp;            int randomChoice = (int)((Math.random() * 10) + 1);</b>
-<b class="nc">&nbsp;            if (randomChoice &gt; 5 &amp;&amp; !followedOutfits.isEmpty()) {</b>
-<b class="nc">&nbsp;                int randIndex = (int)(Math.random() * followedOutfits.size());</b>
-<b class="nc">&nbsp;                Outfit o = followedOutfits.remove(randIndex);</b>
-<b class="nc">&nbsp;                o.getOutfitItems().size();</b>
-<b class="nc">&nbsp;                recs.add(o);</b>
-&nbsp;            } else {
-<b class="nc">&nbsp;                long count = outfitRepository.count();</b>
-<b class="nc">&nbsp;                long randId = Math.max(1, Math.round(Math.random() * count));</b>
-<b class="nc">&nbsp;                outfitRepository.findById(randId).ifPresent(o -&gt; {</b>
-<b class="nc">&nbsp;                    if (o.getOutfitItems() == null) {</b>
-<b class="nc">&nbsp;                        o.setOutfitItems(new ArrayList&lt;&gt;());</b>
-&nbsp;                    }
-<b class="nc">&nbsp;                    o.getOutfitItems().size();</b>
-<b class="nc">&nbsp;                    recs.add(o);</b>
-&nbsp;                });
+&nbsp;	// Store all socket session and their corresponding username.
+<b class="fc">&nbsp;	private static Map&lt;Session, Long&gt; sessionUsernameMap = new Hashtable&lt;&gt;();</b>
+<b class="fc">&nbsp;	private static Map&lt;Long, Session&gt; uidSessionMap = new Hashtable&lt;&gt;();</b>
+<b class="fc">&nbsp;  private static Map&lt;Long, List&lt;Outfit&gt;&gt; followingOutfitMap = new Hashtable&lt;&gt;();</b>
+&nbsp;
+&nbsp;
+&nbsp;	@OnOpen
+&nbsp;	public void onOpen(Session session, @PathParam(&quot;uid&quot;) long UID)
+&nbsp;      throws IOException {
+&nbsp;
+&nbsp;
+&nbsp;    // store connecting user information
+<b class="fc">&nbsp;        sessionUsernameMap.put(session, UID);</b>
+<b class="fc">&nbsp;		uidSessionMap.put(UID, session);</b>
+<b class="fc">&nbsp;    UserProfile uProfile = UserRepository.findById(UID).orElseThrow(() -&gt; new RuntimeException(&quot;User Not Found&quot;)).GetUserProfile();</b>
+<b class="fc">&nbsp;    System.out.println(uProfile.toString());</b>
+<b class="fc">&nbsp;    List&lt;UserProfile&gt; following = uProfile.getFollowing();</b>
+<b class="fc">&nbsp;    List&lt;Outfit&gt; followingOutfits = new ArrayList&lt;&gt;();</b>
+<b class="pc">&nbsp;    for (UserProfile userProfile : following) {</b>
+<b class="nc">&nbsp;        for (Outfit outfit : userProfile.getOutfits()) {</b>
+<b class="nc">&nbsp;            if (!outfit.getOutfitItems().isEmpty()) {</b>
+<b class="nc">&nbsp;                followingOutfits.add(outfit);</b>
 &nbsp;            }
 &nbsp;        }
-&nbsp;
-<b class="nc">&nbsp;        return recs;</b>
 &nbsp;    }
+<b class="fc">&nbsp;    followingOutfitMap.put(UID, followingOutfits);</b>
+&nbsp;
+&nbsp;
+&nbsp;	}
+&nbsp;
+&nbsp;	@OnMessage
+&nbsp;	public void onMessage(Session session, String message) throws IOException {
+&nbsp;
+<b class="fc">&nbsp;		long UID = sessionUsernameMap.get(session);</b>
+&nbsp;
+<b class="fc">&nbsp;    sendRec(UID);</b>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;	}
+&nbsp;
+&nbsp;	@OnClose
+&nbsp;	public void onClose(Session session) throws IOException {
+&nbsp;
+<b class="fc">&nbsp;		long UID = sessionUsernameMap.get(session);</b>
+<b class="fc">&nbsp;		sessionUsernameMap.remove(session);</b>
+<b class="fc">&nbsp;		uidSessionMap.remove(UID);</b>
+<b class="fc">&nbsp;        followingOutfitMap.remove(UID);</b>
+&nbsp;
+&nbsp;	}
+&nbsp;
+&nbsp;	@OnError
+&nbsp;	public void onError(Session session, Throwable throwable) {
+<b class="nc">&nbsp;		throwable.printStackTrace();</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	private void sendRec(long UID) {
+<b class="fc">&nbsp;        int recSize = 10;</b>
+<b class="fc">&nbsp;        List&lt;Outfit&gt; recList = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        Session userSession = uidSessionMap.get(UID);</b>
+&nbsp;        try {
+<b class="pc">&nbsp;            for (int i = 0; i &lt; recSize; i++) {</b>
+<b class="fc">&nbsp;                int randomChoice = (int) ((Math.random() * 10) + 1);</b>
+&nbsp;
+<b class="fc">&nbsp;                List&lt;Outfit&gt; followingOutfits = followingOutfitMap.get(UID);</b>
+&nbsp;
+<b class="pc">&nbsp;                if (randomChoice &gt; 5 &amp;&amp; followingOutfits != null &amp;&amp; !followingOutfits.isEmpty()) {</b>
+<b class="nc">&nbsp;                    int randomIndex = (int) (Math.random() * followingOutfits.size());</b>
+<b class="nc">&nbsp;                    recList.add(followingOutfits.remove(randomIndex));</b>
+&nbsp;                } else {
+<b class="fc">&nbsp;                    long outfitCount = OutfitRepository.count();</b>
+&nbsp;
+<b class="pc">&nbsp;                    if (outfitCount &gt; 0) {</b>
+<b class="fc">&nbsp;                        boolean found = false;</b>
+<b class="fc">&nbsp;                        Outfit randomOutfit = null;</b>
+<b class="fc">&nbsp;                        int maxRetries = 5;</b>
+<b class="fc">&nbsp;                        int attempt = 0;</b>
+&nbsp;
+<b class="fc">&nbsp;                        while (!found &amp;&amp; attempt &lt; maxRetries) {</b>
+<b class="fc">&nbsp;                            long randomId = (long) (Math.random() * outfitCount) + 1;</b>
+<b class="fc">&nbsp;                            var optionalOutfit = OutfitRepository.findById(randomId);</b>
+<b class="fc">&nbsp;                            if (optionalOutfit.isPresent() &amp;&amp; !optionalOutfit.get().getOutfitItems().isEmpty()) {</b>
+<b class="fc">&nbsp;                                randomOutfit = optionalOutfit.get();</b>
+<b class="fc">&nbsp;                                found = true;</b>
+&nbsp;                            }
+<b class="fc">&nbsp;                            attempt++;</b>
+&nbsp;                        }
+<b class="fc">&nbsp;                        if (randomOutfit != null) {</b>
+<b class="fc">&nbsp;                            recList.add(randomOutfit);</b>
+&nbsp;                        }else{
+<b class="fc">&nbsp;                            userSession.getBasicRemote().sendText(&quot;Out of retries&quot;);</b>
+&nbsp;                        }
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            ObjectMapper objectMapper = new ObjectMapper();</b>
+<b class="nc">&nbsp;            objectMapper.registerModule(new JavaTimeModule());</b>
+&nbsp;
+<b class="nc">&nbsp;            String json = objectMapper.writeValueAsString(recList);</b>
+<b class="nc">&nbsp;            userSession.getBasicRemote().sendText(json);</b>
+&nbsp;
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
 &nbsp;}
 </code>
 </pre>
@@ -180,7 +270,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-05-05 16:57</div>
+    <div style="float:right;">generated on 2025-05-06 18:41</div>
 </div>
 </body>
 </html>

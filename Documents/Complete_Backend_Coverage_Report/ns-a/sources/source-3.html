@@ -72,10 +72,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    14.3%
+    11.1%
   </span>
   <span class="absValue">
-    (1/7)
+    (1/9)
   </span>
 </td>
 </tr>
@@ -110,14 +110,14 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;    @Around(&quot;@annotation(closetics.Users.Auth.RequiresAuth)&quot;)
 &nbsp;    public Object authorizeRequest(ProceedingJoinPoint joinPoint) throws Throwable {
-&nbsp;        HttpServletRequest request =
+<b class="nc">&nbsp;        HttpServletRequest request =</b>
 <b class="nc">&nbsp;                ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())</b>
 <b class="nc">&nbsp;                        .getRequest();</b>
 &nbsp;
 <b class="nc">&nbsp;        String token = request.getHeader(&quot;Authorization&quot;);</b>
 <b class="nc">&nbsp;        if (token == null || !tokenService.validateToken(token)) {</b>
 <b class="nc">&nbsp;            throw new ResponseStatusException(</b>
-&nbsp;                    HttpStatus.UNAUTHORIZED, &quot;Invalid or missing token&quot;
+<b class="nc">&nbsp;                    HttpStatus.UNAUTHORIZED, &quot;Invalid or missing token&quot;</b>
 &nbsp;            );
 &nbsp;        }
 &nbsp;
@@ -147,7 +147,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-05-05 16:57</div>
+    <div style="float:right;">generated on 2025-05-06 18:41</div>
 </div>
 </body>
 </html>

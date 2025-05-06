@@ -57,10 +57,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 </tr>
   <tr>
-    <td class="name">UserProfile$HibernateInstantiator$uzjNTtOS</td>
+    <td class="name">UserProfile$HibernateInstantiator$jOmBCCd1</td>
   </tr>
   <tr>
-    <td class="name">UserProfile$HibernateProxy$Ouj8vR0M</td>
+    <td class="name">UserProfile$HibernateProxy$zH1oz8oo</td>
   </tr>
 <tr>
   <td class="name"><strong>Total</strong></td>
@@ -116,32 +116,32 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;  private boolean isPublic;
 &nbsp;  private String username;
 &nbsp;
-<b class="fc">&nbsp;  @OneToMany(fetch = FetchType.EAGER)</b>
+&nbsp;  @OneToMany(fetch = FetchType.EAGER)
 &nbsp;  @JoinTable(
 &nbsp;          name = &quot;users_outfits&quot;,
 &nbsp;          joinColumns = @JoinColumn(name = &quot;UID&quot;),
 &nbsp;          inverseJoinColumns = @JoinColumn(name = &quot;outfit_id&quot;)
 &nbsp;  )
-&nbsp;  private List&lt;Outfit&gt; outfits = new ArrayList&lt;&gt;();
+<b class="fc">&nbsp;  private List&lt;Outfit&gt; outfits = new ArrayList&lt;&gt;();</b>
 &nbsp;
-<b class="fc">&nbsp;  @ManyToMany(mappedBy = &quot;userProfileLikes&quot;)</b>
-&nbsp;  private List&lt;Outfit&gt; likedOutfits = new ArrayList&lt;&gt;();
+&nbsp;  @ManyToMany(mappedBy = &quot;userProfileLikes&quot;)
+<b class="fc">&nbsp;  private List&lt;Outfit&gt; likedOutfits = new ArrayList&lt;&gt;();</b>
 &nbsp;
-<b class="fc">&nbsp;  @ManyToMany(fetch = FetchType.EAGER)</b>
+&nbsp;  @ManyToMany(fetch = FetchType.EAGER)
 &nbsp;  @JoinTable(
 &nbsp;          name = &quot;user_following&quot;,
 &nbsp;          joinColumns = @JoinColumn(name = &quot;UID&quot;, referencedColumnName = &quot;id&quot;),
 &nbsp;          inverseJoinColumns = @JoinColumn(name = &quot;following_id&quot;)
 &nbsp;  )
-&nbsp;  private List&lt;UserProfile&gt; following_id = new ArrayList&lt;&gt;();;
+<b class="fc">&nbsp;  private List&lt;UserProfile&gt; following_id = new ArrayList&lt;&gt;();;</b>
 &nbsp;
-<b class="fc">&nbsp;  @ManyToMany(fetch = FetchType.EAGER)</b>
+&nbsp;  @ManyToMany(fetch = FetchType.EAGER)
 &nbsp;  @JoinTable(
 &nbsp;          name = &quot;user_followers&quot;,
 &nbsp;          joinColumns = @JoinColumn(name = &quot;UID&quot;, referencedColumnName = &quot;id&quot;),
 &nbsp;          inverseJoinColumns = @JoinColumn(name = &quot;follower_id&quot;)
 &nbsp;  )
-&nbsp;  private List&lt;UserProfile&gt; followers_id = new ArrayList&lt;&gt;();;
+<b class="fc">&nbsp;  private List&lt;UserProfile&gt; followers_id = new ArrayList&lt;&gt;();;</b>
 &nbsp;
 &nbsp;
 <b class="fc">&nbsp;  public UserProfile(boolean isPublic, String username){</b>
@@ -234,7 +234,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-05-05 16:57</div>
+    <div style="float:right;">generated on 2025-05-06 18:41</div>
 </div>
 </body>
 </html>
