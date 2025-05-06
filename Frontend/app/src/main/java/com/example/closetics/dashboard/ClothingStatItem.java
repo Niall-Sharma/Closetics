@@ -8,7 +8,7 @@ import org.json.JSONObject;
 public class ClothingStatItem {
 
     private JSONObject object;
-    private Image image;
+    private byte[] image;
     private String name;
     private long clothesId;
     private boolean wornToday;
@@ -35,6 +35,14 @@ public class ClothingStatItem {
     public void setNumberOfOutfitsIn(String numberOfOutfitsIn) {
         this.numberOfOutfitsIn = numberOfOutfitsIn;
     }
+    public void setImage(byte[] image){
+        this.image = image;
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
     public String getName(){
         return name;
     }

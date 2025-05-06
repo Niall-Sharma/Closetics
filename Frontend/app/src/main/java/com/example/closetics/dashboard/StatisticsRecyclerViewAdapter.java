@@ -1,5 +1,6 @@
 package com.example.closetics.dashboard;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.closetics.R;
+import com.example.closetics.clothes.ClothesByTypeAdapter;
+import com.example.closetics.clothes.ClothesCreationBaseFragment;
+import com.example.closetics.clothes.TypeGridRecyclerViewAdapter;
 
 import org.json.JSONException;
 
@@ -42,6 +46,10 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
 
         //Set the text view in the recycler view
         ClothingStatItem item = objects.get(realPosition);
+        if (item.getImage() != null){
+            Bitmap bitmap = ClothesByTypeAdapter.resizeWithAspectRatio(item.getImage(), 100, 100);
+            holder.image.setImageBitmap(bitmap);
+        }
         if (which){
             try {
                 holder.timesWorn.setText(item.getTimesWorn());
@@ -94,6 +102,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
             outfitsIn = itemView.findViewById(R.id.outfits_in);
             name = itemView.findViewById(R.id.name);
             prompt = itemView.findViewById(R.id.numberOutfitsPrompt);
+            image = itemView.findViewById(R.id.imageView);
 
         }
     }
