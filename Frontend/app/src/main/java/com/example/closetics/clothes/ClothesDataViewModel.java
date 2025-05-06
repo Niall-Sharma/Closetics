@@ -34,6 +34,11 @@ public class ClothesDataViewModel extends ViewModel {
         temp.setValue(data);
         fragments.set(index, temp);
     }
+    public void setFragment(int index, String data, String d2){
+        MutableLiveData<String> temp = new MutableLiveData<>();
+        temp.setValue(data + "," +d2);
+        fragments.set(index, temp);
+    }
 
     //Get a fragments data at a specific index
     public String getFragment(int index){

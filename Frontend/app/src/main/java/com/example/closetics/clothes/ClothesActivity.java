@@ -75,7 +75,7 @@ public class ClothesActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
     private TypeGridRecyclerViewAdapter gridRecyclerViewAdapter;
 
-    public static final int NUM_FRAGMENTS = 11;
+    public static final int NUM_FRAGMENTS = 10;
     private ClothesDataViewModel clothesDataViewModel;
 
     private TabLayout tabLayout;

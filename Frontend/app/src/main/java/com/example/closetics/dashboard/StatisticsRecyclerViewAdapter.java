@@ -63,8 +63,8 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
 
 
         if (which){
-            //holder.image.setVisibility(View.GONE);
-            //getClothingItems(context, item.getOutfitId(), holder);
+            holder.image.setVisibility(View.GONE);
+            getClothingItems(context, item.getOutfitId(), holder);
 
             try {
                 holder.timesWorn.setText(item.getTimesWorn());

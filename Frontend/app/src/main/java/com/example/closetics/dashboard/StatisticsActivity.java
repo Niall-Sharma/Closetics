@@ -294,8 +294,12 @@ public class StatisticsActivity extends AppCompatActivity {
                 if (allClothingStatsObjects.size() < i + 1) {
                     boolean b = true;
                     while (b) {
-                        allClothingStatsObjects.get(i).setImage(response);
-                        b= false;
+                        try{
+                            allClothingStatsObjects.get(i).setImage(response);
+                            b= false;
+                        } catch (IndexOutOfBoundsException e) {
+
+                        }
                     }
                 }else{
                     allClothingStatsObjects.get(i).setImage(response);

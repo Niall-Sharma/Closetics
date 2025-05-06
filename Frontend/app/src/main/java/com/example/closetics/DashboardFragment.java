@@ -298,6 +298,7 @@ public class DashboardFragment extends Fragment {
     }
 
 
+
     /*
     This is called by the android manifest!
      */

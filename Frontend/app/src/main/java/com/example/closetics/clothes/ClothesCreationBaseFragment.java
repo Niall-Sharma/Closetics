@@ -60,17 +60,20 @@ public class ClothesCreationBaseFragment extends Fragment{
     private EditText inputField;
     private ClothesDataViewModel clothesDataViewModel;
     private Spinner spinner;
+    private Spinner spinner1;
     private Button takeImage;
     private ViewPager2 viewPager;
     private CustomSlideAdapter pagerAdapter = new ClothesActivity.ScreenSlidePagerAdapter(new ClothesActivity());;
     private int position;
     private ImageView imageView;
     private ArrayAdapter<String> spinnerAdapter;
+    private ArrayAdapter<String> secondSpinnerAdapter;
     //Camera
     private int correctFacingCamera = CameraCharacteristics.AUTOMOTIVE_LENS_FACING_EXTERIOR_FRONT;
     private Uri imageUri;
     public static byte[] byteArray;
     private static int [] specialTypes = ClothingItem.typeConnections[0];
+    private ArrayList<String> stringSpecialTypes = new ArrayList<>();
 
     //Launches the default camera app
     private final ActivityResultLauncher<Intent> cameraLauncher =
@@ -130,6 +133,8 @@ public class ClothesCreationBaseFragment extends Fragment{
         takeImage = view.findViewById(R.id.imageCapture);
         clothesTextView.setText(ClothingItem.createClothesQuestions[index]);
         imageView = view.findViewById(R.id.imageView3);
+        spinner1 = view.findViewById(R.id.spinner3);
+
 
 
         //Makes sure to set the image view if an image has already been captured!
@@ -197,6 +202,7 @@ public class ClothesCreationBaseFragment extends Fragment{
             } );
             }
             else if (index == 9){
+
                 String [] need = {"Accessories", "Activewear", "Bottoms", "Dresses", "Footwear", "Formalwear", "Outerwear", "Seasonal", "Sleepwear", "Tops", "Undergarments", "Workwear"};
                 spinnerItems = need;
                 spinnerAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, spinnerItems);
@@ -205,12 +211,13 @@ public class ClothesCreationBaseFragment extends Fragment{
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         specialTypes = ClothingItem.typeConnections[position];
-                        pagerAdapter.getFragment(10);
+
                         //ahead.set
-                        //if (ahead != null) {
-                         //   ahead.updateSpinner(10, context);
-                        //}
-                        clothesDataViewModel.setFragment(index, String.valueOf(position +1));
+                        if (secondSpinnerAdapter != null) {
+                            updateDataSet();
+                            secondSpinnerAdapter.notifyDataSetChanged();
+                        }
+                        clothesDataViewModel.setFragment(index, String.valueOf(position +1), String.valueOf(spinner1.getSelectedItemPosition()));
                     }
 
                     @Override
@@ -218,6 +225,26 @@ public class ClothesCreationBaseFragment extends Fragment{
 
                     }
                 });
+
+                updateDataSet();
+                secondSpinnerAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, stringSpecialTypes);
+                spinner1.setAdapter(secondSpinnerAdapter);
+                spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                        clothesDataViewModel.setFragment(index, String.valueOf(spinner.getSelectedItemPosition()), String.valueOf(specialTypes[position]));
+
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+
+
+
             }
 
             //special types
@@ -265,6 +292,12 @@ public class ClothesCreationBaseFragment extends Fragment{
 
 
         return view;
+    }
+    private void updateDataSet(){
+        stringSpecialTypes.clear();
+        for (int i =0; i < specialTypes.length; i ++){
+            stringSpecialTypes.add(MainActivity.CLOTHING_SPECIAL_TYPES.get(specialTypes[i]));
+        }
     }
     public void updateSpinner(int index, Context context){
 
@@ -330,18 +363,21 @@ public class ClothesCreationBaseFragment extends Fragment{
     private void setImageVisibility(){
         inputField.setVisibility(View.GONE);
         spinner.setVisibility(View.GONE);
+        spinner1.setVisibility(View.GONE);
         takeImage.setVisibility(View.VISIBLE);
         imageView.setVisibility(View.VISIBLE);
     }
     private void setEditTextVisibility(){
         inputField.setVisibility(View.VISIBLE);
         spinner.setVisibility(View.GONE);
+        spinner1.setVisibility(View.GONE);
         takeImage.setVisibility(View.GONE);
         imageView.setVisibility(View.GONE);
 
     }
     private void setSpinnerVisibility(){
         inputField.setVisibility(View.GONE);
+        spinner1.setVisibility(View.VISIBLE);
         spinner.setVisibility(View.VISIBLE);
         takeImage.setVisibility(View.GONE);
         imageView.setVisibility(View.GONE);
