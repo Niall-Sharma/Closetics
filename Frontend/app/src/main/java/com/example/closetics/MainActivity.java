@@ -11,6 +11,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -78,9 +79,16 @@ public class MainActivity extends AppCompatActivity {
 //        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(bottomNavView, navController);
 
-        // DEBUG CODE
+        // DEBUG Delete shared prefs
+//        SharedPreferences prefs = getSharedPreferences("CloseticsPreferences", Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = prefs.edit();
+//        editor.clear();
+//        editor.commit();
+        
+        // DEBUG Set user
 //        UserManager.saveUsername(getApplicationContext(), "user1");
 //        UserManager.saveUserID(getApplicationContext(), 1);
+//        UserManager.saveUserTier(getApplicationContext(), 1);
 
         // start websocket if person is logged in
         if (UserManager.getUsername(getApplicationContext()) != null) {

@@ -42,6 +42,7 @@ public class UserManager {
     private static final String TOKEN_PARAM = "logInToken";
     private static final String USERNAME_PARAM = "username";
     private static final String USER_ID_PARAM = "userID";
+    private static final String USER_TIER_PARAM = "userTier";
     private static final ArrayList<String> SECURITY_QUESTIONS= new ArrayList<>(Arrays.asList(
     "What is your mother's maiden name?", "What was the name of your first pet?",
             "What is the name of the street you grew up on?" ,"What is your favorite color?", "What was the name of your first school?", "What was your childhood nickname?"
@@ -73,6 +74,7 @@ public class UserManager {
         editor.putString(USERNAME_PARAM, username);
         editor.apply();
     }
+
     public static String getUsername(Context context) {
         //Access the shared preferences file make it private to this app
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
@@ -82,14 +84,30 @@ public class UserManager {
     //**** Might need to store these as ints for the backend ****
     public static long getUserID(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
-        return prefs.getLong(USER_ID_PARAM, -1);
+        return prefs.getLong(USER_ID_PARAM, -1L);
     }
 
-    public static void saveUserID(Context context, long userID){
+    public static void saveUserID(Context context, long userID) {
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putLong(USER_ID_PARAM, userID);
         editor.apply();
+    }
+
+    // 0 - Free, 1 - Basic, 2 - Premium
+    public static void saveUserTier(Context context, int userTier) {
+        //Access the shared preferences file make it private to this app
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(USER_TIER_PARAM, userTier);
+        editor.apply();
+    }
+
+    // 0 - Free, 1 - Basic, 2 - Premium
+    public static int getUserTier(Context context) {
+        //Access the shared preferences file make it private to this app
+        SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
+        return prefs.getInt(USER_TIER_PARAM, 0); // default - 0
     }
 
     public static void clearSavedData(Context context){
@@ -98,6 +116,7 @@ public class UserManager {
         editor.putString(TOKEN_PARAM, null);
         editor.putString(USERNAME_PARAM, null);
         editor.putLong(USER_ID_PARAM, -1);
+        editor.putInt(USER_TIER_PARAM, 0);
         editor.putLong(OutfitManager.CURRENT_OUTFIT_PARAM, -1);
         editor.putLong(OutfitManager.TOMORROW_OUTFIT_PARAM, -1);
         editor.apply();

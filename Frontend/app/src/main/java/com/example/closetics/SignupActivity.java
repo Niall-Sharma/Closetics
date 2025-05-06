@@ -186,7 +186,7 @@ public class SignupActivity extends AppCompatActivity {
                             UserManager.saveLoginToken(getApplicationContext(), token);
                             UserManager.saveUsername(getApplicationContext(), username);
 
-                            saveUserId(username);
+                            saveUserIdAndTier(username);
 
                             // return to MainActivity after successful signup and login
                             Intent intent = new Intent(SignupActivity.this, MainActivity.class);
@@ -269,7 +269,7 @@ public class SignupActivity extends AppCompatActivity {
      *
      * @param username user's username
      */
-    private void saveUserId(String username) {
+    private void saveUserIdAndTier(String username) {
         UserManager.getUserByUsernameRequest(getApplicationContext(), username,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -279,6 +279,16 @@ public class SignupActivity extends AppCompatActivity {
 
                             long id = response.getLong("userId");
                             UserManager.saveUserID(getApplicationContext(), id);
+
+                            String userTier = response.getString("userTier");
+                            if (userTier == null) userTier = "Free";
+                            if ("premium".equalsIgnoreCase(userTier)) {
+                                UserManager.saveUserTier(getApplicationContext(), 2);
+                            } else if ("basic".equalsIgnoreCase(userTier)) {
+                                UserManager.saveUserTier(getApplicationContext(), 1);
+                            } else { // free
+                                UserManager.saveUserTier(getApplicationContext(), 0);
+                            }
 
                             // start websocket for recommendations
                             startRecWebSocket();
