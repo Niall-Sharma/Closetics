@@ -1,6 +1,10 @@
 package cloestics.ReccomendationTest;
 
+import closetics.Clothes.Clothing;
 import closetics.MainApplication;
+import closetics.Outfits.Outfit;
+import closetics.Users.User;
+import closetics.Users.UserProfile.UserProfile;
 import jakarta.websocket.ClientEndpoint;
 import jakarta.websocket.ContainerProvider;
 import jakarta.websocket.DeploymentException;
@@ -17,6 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -35,9 +40,21 @@ public class RecSocketTest {
 
     private BlockingQueue<String> messages;
 
+    private User user;
+    private UserProfile userProfile;
+
     @BeforeEach
     public void setup() {
         messages = new LinkedBlockingQueue<>();
+        user = new User();
+        user.setUserId(1);
+        Clothing clothing = new Clothing();
+        Outfit outfit = new Outfit();
+        outfit.setOutfitItems(List.of(clothing));
+        outfit.setUser(user);
+        userProfile = new UserProfile();
+        userProfile.addOutfit(outfit);
+
     }
 
     @ClientEndpoint
