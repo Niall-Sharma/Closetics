@@ -1,14 +1,19 @@
 package com.example.closetics.dashboard;
 
+import android.graphics.Bitmap;
 import android.media.Image;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class ClothingStatItem {
 
     private JSONObject object;
     private byte[] image;
+    //private ArrayList<Bitmap> bitmap;
+    //private ArrayList<byte[]>
     private String name;
     private long clothesId;
     private boolean wornToday;
@@ -41,6 +46,9 @@ public class ClothingStatItem {
 
     public byte[] getImage() {
         return image;
+    }
+    public Long getOutfitId(){
+        return clothesId;
     }
 
     public String getName(){

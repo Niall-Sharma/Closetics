@@ -13,7 +13,7 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="10dp"
         app:cardBackgroundColor="@color/material_dynamic_neutral70"
-        app:cardCornerRadius="40dp"
+        app:cardCornerRadius="20dp"
         app:cardElevation="50dp"
 
         app:layout_constraintBottom_toBottomOf="parent"
@@ -24,7 +24,7 @@
         <!--Blue Constraint Box for the Widget, to keep things inside of the card-->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp">
+            android:layout_height="210dp">
 
             <TextView
                 android:id="@+id/textViewTint"
@@ -51,12 +51,12 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <LinearLayout
+                android:id="@+id/linearLayout12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="1dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="32dp"
                 android:orientation="horizontal"
-                app:layout_constraintBottom_toTopOf="@+id/imageView"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -77,19 +77,36 @@
 
             <ImageView
                 android:id="@+id/imageView"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="157dp"
+                android:layout_height="147dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="2dp"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/linearLayout10"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/linearLayout12"
                 app:srcCompat="@drawable/tshirt_crew" />
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager"
+                android:layout_width="157dp"
+                android:layout_height="147dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="2dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/linearLayout10"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout12" />
 
             <LinearLayout
                 android:id="@+id/linearLayout10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
                 android:layout_marginTop="60dp"
+                android:layout_marginBottom="62dp"
                 android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/imageView"
                 app:layout_constraintTop_toTopOf="parent">
 

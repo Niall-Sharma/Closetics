@@ -144,7 +144,6 @@ public class StatisticsActivity extends AppCompatActivity {
 
 
 
-
             }
         });
         outfitStats.setOnClickListener(new View.OnClickListener() {
@@ -292,12 +291,22 @@ public class StatisticsActivity extends AppCompatActivity {
         ClothesManager.getImageByClothing(context, clothesId, MainActivity.SERVER_URL, new Response.Listener<byte[]>() {
             @Override
             public void onResponse(byte[] response) {
-                allClothingStatsObjects.get(i).setImage(response);
+                if (allClothingStatsObjects.size() < i + 1) {
+                    boolean b = true;
+                    while (b) {
+                        allClothingStatsObjects.get(i).setImage(response);
+                        b= false;
+                    }
+                }else{
+                    allClothingStatsObjects.get(i).setImage(response);
+                }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                allClothingStatsObjects.get(i).setImage(null);
                 Log.d("Error", error.toString());
+
             }
         });
     }
