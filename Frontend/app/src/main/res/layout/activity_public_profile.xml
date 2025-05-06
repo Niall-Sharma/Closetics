@@ -11,11 +11,10 @@
         android:id="@+id/public_profile_username_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="64dp"
         android:text="{{username}}"
-        android:textSize="20sp"
-        android:textStyle="bold"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -23,11 +22,10 @@
         android:id="@+id/public_profile_name_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="64dp"
         android:text="{{name}}"
         android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/public_profile_username_text"
+        app:layout_constraintStart_toStartOf="@+id/public_profile_username_text"
         app:layout_constraintTop_toBottomOf="@+id/public_profile_username_text" />
 
     <Button
@@ -35,15 +33,15 @@
         style="@style/Widget.Material3.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="16dp"
         android:minWidth="150dp"
         android:minHeight="0dp"
         android:text="{{n}} clothes"
         android:textAlignment="viewStart"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/public_profile_name_text" />
+        app:layout_constraintTop_toBottomOf="@+id/public_profile_follow_button" />
 
     <Button
         android:id="@+id/public_profile_outfits_button"
@@ -64,13 +62,12 @@
         style="@style/Widget.Material3.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
         android:minWidth="150dp"
         android:minHeight="0dp"
         android:text="{{n}} following"
         android:textAlignment="viewStart"
         android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/public_profile_clothes_button"
         app:layout_constraintTop_toBottomOf="@+id/public_profile_clothes_button" />
 
     <Button
@@ -92,7 +89,7 @@
         style="@style/Widget.Material3.Button.OutlinedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
+        android:layout_marginTop="8dp"
         android:minWidth="110dp"
         android:minHeight="0dp"
         android:paddingTop="4dp"
@@ -100,18 +97,41 @@
         android:text="Follow"
         android:textSize="16sp"
         app:cornerRadius="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/public_profile_username_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/public_profile_username_text" />
+        app:layout_constraintEnd_toEndOf="@+id/public_profile_name_text"
+        app:layout_constraintStart_toStartOf="@+id/public_profile_name_text"
+        app:layout_constraintTop_toBottomOf="@+id/public_profile_name_text" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/public_profile_outfits_recycler"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/public_profile_no_outfits_text" />
+
+    <TextView
+        android:id="@+id/public_profile_outfits_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:text="{{username}}'s Outfits:"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/public_profile_following_button" />
+
+    <TextView
+        android:id="@+id/public_profile_no_outfits_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="None"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/public_profile_outfits_label" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

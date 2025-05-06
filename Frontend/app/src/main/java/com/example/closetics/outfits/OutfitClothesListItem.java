@@ -1,12 +1,12 @@
-package com.example.closetics.recommendations;
+package com.example.closetics.outfits;
 
 import android.content.Context;
 
-public class RecImagesListItem {
+public class OutfitClothesListItem {
     private long clothingId;
     private Context context;
 
-    public RecImagesListItem(Context context, long clothingId) {
+    public OutfitClothesListItem(Context context, long clothingId) {
         this.context = context;
         this.clothingId = clothingId;
     }

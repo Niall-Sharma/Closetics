@@ -48,7 +48,7 @@ public class RecOutfitsListAdapter extends RecyclerView.Adapter<RecOutfitsListAd
         long id = item.getId();
         String name = item.getName();
         String username = item.getUsername();
-        List<Integer> imageIds = item.getImageIds();
+        List<Long> clothingIds = item.getClothingIds();
         String stats = item.getStats();
         String date = item.getDate();
 
@@ -61,14 +61,17 @@ public class RecOutfitsListAdapter extends RecyclerView.Adapter<RecOutfitsListAd
         initLike(holder, item);
 
         // set images
-        // TODO: set proper images format here
         // holder.image.setImageResource(imageIds.get(0));
         ArrayList<RecImagesListItem> imagesListItems = new ArrayList<>();
-        for (int imageId : item.getImageIds()) {
-            imagesListItems.add(new RecImagesListItem(imageId));
+        for (long clothingId : item.getClothingIds()) {
+            imagesListItems.add(new RecImagesListItem(item.getActivity().getApplicationContext(), clothingId));
         }
         RecImagesListAdapter imagesListAdapter = new RecImagesListAdapter(imagesListItems);
         holder.viewPager2.setAdapter(imagesListAdapter);
+        // hide viewpager if there are no images
+        if (item.getClothingIds().isEmpty()) {
+            holder.viewPager2.setVisibility(TextView.GONE);
+        }
 
         holder.usernameText.setOnClickListener(v -> {
             if (UserManager.getUsername(item.getContext()).equals(item.getUsername())) {
