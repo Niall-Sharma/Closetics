@@ -59,6 +59,8 @@ public class DashboardFragment extends Fragment {
     private TextView wornCount;
     private TextView outfitTotalCount;
     private TextView averageLowTemperature;
+    private TextView todaysTemperature;
+    private ImageView todaysTemperatureImage;
 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -90,6 +92,8 @@ public class DashboardFragment extends Fragment {
         wornCount = view.findViewById(R.id.wornCount);
         outfitTotalCount = view.findViewById(R.id.outfitTotalCount);
         averageLowTemperature = view.findViewById(R.id.averageLowTemperature);
+        todaysTemperature = view.findViewById(R.id.dashboard_temperature_text);
+        todaysTemperatureImage = view.findViewById(R.id.dashboard_temperature_image);
 
 
 
@@ -166,6 +170,8 @@ public class DashboardFragment extends Fragment {
 
             }
         });
+
+        setTodaysTemperature();
 
 
         return view;
@@ -250,7 +256,41 @@ public class DashboardFragment extends Fragment {
         }
     }
 
+    private void setTodaysTemperature() {
+        StatisticsManager.getTodaysWeatherRequest(getActivity().getApplicationContext(),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("Get today's weather response: ", response.toString());
 
+                        try {
+                            double lowTemp = response.getDouble("lowTemp");
+                            double highTemp = response.getDouble("highTemp");
+                            double weightedAvgTemp = (lowTemp + 2.0 * highTemp) / 3.0;
+
+                            todaysTemperature.setText((Math.round(lowTemp * 10.0) / 10.0) + " - " + (Math.round(highTemp * 10.0) / 10.0) + " °F");
+
+                            if (weightedAvgTemp < 60.0) { // cold
+                                todaysTemperatureImage.setImageResource(R.drawable.thermometer_low);
+                            } else if (weightedAvgTemp <= 80.0) { // mid
+                                todaysTemperatureImage.setImageResource(R.drawable.thermometer);
+                            } else { // hot
+                                todaysTemperatureImage.setImageResource(R.drawable.thermometer_high);
+                            }
+
+                        } catch (JSONException e) {
+                            Log.e("JSON Parse Error", e.toString());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("Error getting today's weather: ", error.toString());
+
+                    }
+                });
+    }
 
 
 
