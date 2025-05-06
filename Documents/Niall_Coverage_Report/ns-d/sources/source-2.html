@@ -67,7 +67,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     50%
   </span>
   <span class="absValue">
-    (5/10)
+    (4/8)
   </span>
 </td>
 <td class="coverageStat">
@@ -173,7 +173,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;  public UserProfileDTO swapFavorite(@PathVariable long id) {
 <b class="fc">&nbsp;    UserProfile userProfile = uRepository.findById(id).orElseThrow(() -&gt; new RuntimeException(&quot;User Profile Not Found&quot;));</b>
 <b class="pc">&nbsp;    if (userProfile != null) {</b>
-<b class="pc">&nbsp;      userProfile.setIsPublic(!userProfile.getIsPublic());</b>
+<b class="fc">&nbsp;      userProfile.setIsPublic(!userProfile.getIsPublic());</b>
 <b class="fc">&nbsp;      uRepository.save(userProfile);</b>
 <b class="fc">&nbsp;      return new UserProfileDTO(userProfile, 2);</b>
 &nbsp;    }else{
@@ -217,7 +217,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-04-25 13:34</div>
+    <div style="float:right;">generated on 2025-05-01 16:32</div>
 </div>
 </body>
 </html>

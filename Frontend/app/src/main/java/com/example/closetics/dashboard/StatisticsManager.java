@@ -7,14 +7,17 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.example.closetics.MainActivity;
 import com.example.closetics.VolleySingleton;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.net.URL;
+
 public class StatisticsManager {
 
-
+    private static final String URL_GET_TODAYS_WEATHER = MainActivity.SERVER_URL + "/todaysWeather";
 
 
     /*
@@ -187,7 +190,18 @@ public class StatisticsManager {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
 
+    public static void getTodaysWeatherRequest(Context context,
+                                               Response.Listener<JSONObject> responseListener,
+                                               Response.ErrorListener errorListener) {
 
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.GET,
+                URL_GET_TODAYS_WEATHER,
+                null,
+                responseListener, errorListener);
+
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
 
 
 

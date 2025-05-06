@@ -4,6 +4,7 @@ import closetics.Clothes.Clothing;
 import closetics.Clothes.ClothingRepository;
 import closetics.Statistics.*;
 import closetics.Users.User;
+import closetics.Users.UserProfile.UserProfileDTO;
 import closetics.Users.UserRepository;
 import closetics.Users.UserProfile.UserProfile;
 import closetics.Users.UserProfile.UserProfileRepository;
@@ -257,6 +258,39 @@ public class OutfitController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PutMapping("/addLike/{outfitId}/{userId}")
+    public ResponseEntity<Outfit> addLike(@PathVariable long outfitId, @PathVariable long userId){
+        Outfit outfit = outfitRepository.findById(outfitId).orElseThrow(() -> new RuntimeException("Outfit Not Found"));
+        UserProfile userProfile = uProfileRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Profile Not Found"));
+
+        outfit.addUserProfileLike(userProfile);
+
+        outfitRepository.save(outfit);
+        return ResponseEntity.ok(outfit);
+    }
+
+    @PutMapping("/removeLike/{outfitId}/{userId}")
+    public ResponseEntity<Outfit> removeLike(@PathVariable long outfitId, @PathVariable long userId){
+        Outfit outfit = outfitRepository.findById(outfitId).orElseThrow(() -> new RuntimeException("Outfit Not Found"));
+        UserProfile userProfile = uProfileRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Profile Not Found"));
+
+        outfit.removeUserProfileLike(userProfile);
+
+        outfitRepository.save(outfit);
+        return ResponseEntity.ok(outfit);
+    }
+
+    @GetMapping("/likedOutfit/{outfitId}/{userId}")
+    public ResponseEntity<Boolean> checkLike(@PathVariable("outfitId") long outfitId, @PathVariable("userId") long userId){
+        Outfit outfit = outfitRepository.findById(outfitId).orElseThrow(() -> new RuntimeException("Outfit Not Found"));
+        for(UserProfileDTO user : outfit.getUserProfileLikes()){
+            if(user.getId() == userId){
+                return ResponseEntity.ok().body(true);
+            }
+        }
+        return ResponseEntity.ok().body(false);
     }
 
 }

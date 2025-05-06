@@ -36,6 +36,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -61,6 +62,7 @@ public class RecommendationsFragment extends Fragment {
     private boolean isStateOutfits;
     private boolean isReceiving;
     private boolean isAddingRecommendationsInProgress;
+    private HashSet<Long> likedOutfitIds;
 
     // For receiving new outfits from websocket
     private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
@@ -268,17 +270,34 @@ public class RecommendationsFragment extends Fragment {
                 long id = outfit.getLong("outfitId");
                 String name = outfit.getString("outfitName");
                 String username = outfit.getJSONObject("user").getString("username");
-                String stats = "No stats for now"; // TODO: add stats stats
-//                int year = outfit.getJSONArray("creationDate").getInt(0);
-//                int month = outfit.getJSONArray("creationDate").getInt(1);
-//                int day = outfit.getJSONArray("creationDate").getInt(2);
-                int year = 2025, month = 4, day = 6;
-                String date = INT_TO_MONTH[month - 1] + " " + day + ", " + year;
-                boolean isLiked = false; // TODO: add likes support
-                // TODO: add actual images
-                List<Integer> imageIds = Arrays.asList(R.drawable.clothing_mock_img, R.drawable.clothing_mock_img, R.drawable.clothing_mock_img);
+                boolean isLiked = false; // actual like info requested in adapter
 
-                outfitsAdapter.addItem(new RecOutfitsListItem(id, name, username, imageIds, stats, date, isLiked));
+                //String stats = "No stats for now";
+                JSONObject stats = outfit.getJSONObject("outfitStats");
+                String statsStr = "Wearing statistics:\n   Times worn: " + stats.getInt("timesWorn");
+                if (stats.getInt("timesWorn") > 0) {
+                    statsStr = statsStr +
+                            "\n   Average high temperature: " + (Math.round(stats.getDouble("avgHighTemp") * 10.0) / 10.0) + " °F" +
+                            "\n   Average low temperature: " + (Math.round(stats.getDouble("avgLowTemp") * 10.0) / 10.0) + " °F";
+                }
+
+                // date posted
+                int year = outfit.getJSONArray("creationDate").getInt(0);
+                int month = outfit.getJSONArray("creationDate").getInt(1);
+                int day = outfit.getJSONArray("creationDate").getInt(2);
+                //int year = 2025, month = 4, day = 6;
+                String date = INT_TO_MONTH[month - 1] + " " + day + ", " + year;
+
+                // clothes ids for images
+                //List<Integer> imageIds = Arrays.asList(R.drawable.clothing_mock_img, R.drawable.clothing_mock_img, R.drawable.clothing_mock_img);
+                List<Long> clothingIds = new ArrayList<>();
+                JSONArray clothingObjects = outfit.getJSONArray("outfitItems");
+                for (int j = 0; j < clothingObjects.length(); j++) {
+                    clothingIds.add(clothingObjects.getJSONObject(j).getLong("clothesId"));
+                }
+                // TODO: put default image if empty(?)
+
+                outfitsAdapter.addItem(new RecOutfitsListItem(getActivity(), id, name, username, clothingIds, statsStr, date, isLiked));
             } catch (JSONException e) {
                 Log.e("RecommendationsFragment Error", "JSON Exception. Could not add outfit " + i + ": " + e.toString());
             }

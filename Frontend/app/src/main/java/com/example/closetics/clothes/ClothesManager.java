@@ -1,13 +1,16 @@
 package com.example.closetics.clothes;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
+import android.widget.ImageView;
 
 import androidx.lifecycle.MutableLiveData;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
@@ -30,7 +33,7 @@ import java.util.ArrayList;
  */
 public class ClothesManager {
 
-
+    private static final String URL_GET_CLOTHING_IMAGE = MainActivity.SERVER_URL + "/clothingImages/"; // + {{clothingId}}
 
 
     /*
@@ -309,6 +312,23 @@ public class ClothesManager {
         VolleySingleton.getInstance(context).addToRequestQueue(request);
 
     }
+
+    public static void getClothingImage(Context context, long clothingId, Response.Listener<Bitmap> responseListener,
+                                          Response.ErrorListener errorListener){
+
+        ImageRequest request = new ImageRequest(
+                URL_GET_CLOTHING_IMAGE + clothingId,
+                responseListener,
+                0, // Width, set to 0 to get the original width
+                0, // Height, set to 0 to get the original height
+                ImageView.ScaleType.FIT_XY, // ScaleType
+                Bitmap.Config.RGB_565, // Bitmap config
+                errorListener);
+
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+
+    }
+
 
 
 

@@ -1,0 +1,499 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">closetics.Users</a>
+</div>
+
+<h1>Coverage Summary for Class: UserController (closetics.Users)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserController</td>
+<td class="coverageStat">
+  <span class="percent">
+    81.8%
+  </span>
+  <span class="absValue">
+    (9/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    54.2%
+  </span>
+  <span class="absValue">
+    (26/48)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    73.1%
+  </span>
+  <span class="absValue">
+    (68/93)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">UserController$AuthResponseBaseSchema</td>
+  </tr>
+  <tr>
+    <td class="name">UserController$LoginResponseSchema</td>
+  </tr>
+  <tr>
+    <td class="name">UserController$SignUpResponseSchema</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    81.8%
+  </span>
+  <span class="absValue">
+    (9/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    54.2%
+  </span>
+  <span class="absValue">
+    (26/48)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    73.1%
+  </span>
+  <span class="absValue">
+    (68/93)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package closetics.Users;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import closetics.Users.Auth.AuthService;
+&nbsp;import closetics.Users.Tokens.Token;
+&nbsp;import closetics.Users.Tokens.TokenRepository;
+&nbsp;import closetics.Users.Tokens.TokenService;
+&nbsp;import closetics.Users.UserProfile.UserProfile;
+&nbsp;import closetics.Users.UserProfile.UserProfileRepository;
+&nbsp;import io.swagger.v3.oas.annotations.Operation;
+&nbsp;import io.swagger.v3.oas.annotations.Parameter;
+&nbsp;import io.swagger.v3.oas.annotations.media.ArraySchema;
+&nbsp;import io.swagger.v3.oas.annotations.media.Content;
+&nbsp;import io.swagger.v3.oas.annotations.media.ExampleObject;
+&nbsp;import io.swagger.v3.oas.annotations.media.Schema;
+&nbsp;import io.swagger.v3.oas.annotations.parameters.RequestBody;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponse;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponses;
+&nbsp;import io.swagger.v3.oas.annotations.tags.Tag;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.dao.DataIntegrityViolationException;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.HashMap;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@Tag(name = &quot;Users&quot;, description = &quot;Endpoints for user management, authentication, and account operations&quot;)
+<b class="fc">&nbsp;public class UserController {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private UserRepository userRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private TokenRepository tokenRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private TokenService tokenService;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private AuthService authService;
+&nbsp;    
+&nbsp;
+&nbsp;    //Maybe move this in the future so that User doesn&#39;t have to deal with it and only makes a call towards UserProfile
+&nbsp;    @Autowired
+&nbsp;    private UserProfileRepository userProfileRepository;
+&nbsp;
+&nbsp;    //This error is meant to trigger whenever a duplicate entry is added into the MySql database
+&nbsp;    @ResponseStatus(value = HttpStatus.CONFLICT,
+&nbsp;            reason = &quot;Data integrity violation&quot;)  // 409
+&nbsp;    @ExceptionHandler(DataIntegrityViolationException.class)
+&nbsp;    public String conflict() {
+<b class="nc">&nbsp;        return &quot;ACCESS VIOLATION&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Get all users&quot;, description = &quot;Retrieves a list of all registered users. Sensitive data (like password hash) should ideally be excluded.&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved list of all users&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;application/json&quot;, array = @ArraySchema(schema = @Schema(implementation = User.class))))
+&nbsp;            // Note: Exposing all user data like this might be a security risk.
+&nbsp;    })
+&nbsp;    @GetMapping(path = &quot;/users&quot;)
+&nbsp;    public List&lt;User&gt; getAllUsers() {
+<b class="nc">&nbsp;        return userRepository.findAll();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Get user by ID&quot;, description = &quot;Retrieves a specific user by their unique ID.&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved user&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = User.class))),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User not found&quot;, content = @Content)
+&nbsp;    })
+&nbsp;    @GetMapping(path = &quot;/users/{id}&quot;)
+&nbsp;    public User getUser(@Parameter(description = &quot;ID of the user to retrieve&quot;) @PathVariable long id) {
+<b class="fc">&nbsp;        return userRepository.findById(id).get();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Get user by username&quot;, description = &quot;Retrieves a specific user by their unique username.&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved user&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = User.class))),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User not found for the given username&quot;, content = @Content)
+&nbsp;    })
+&nbsp;    @GetMapping(path = &quot;/users/username/{id}&quot;) // Path parameter name is &#39;id&#39; but refers to username
+&nbsp;    public User getUserByUsername(@Parameter(description = &quot;Username of the user to retrieve&quot;) @PathVariable String id) {
+<b class="fc">&nbsp;        User user = userRepository.findByUsername(id);</b>
+<b class="pc">&nbsp;        if (user == null) {</b>
+&nbsp;            // Throw an exception or return ResponseEntity.notFound()
+&nbsp;        }
+<b class="fc">&nbsp;        return user;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /*
+&nbsp;     * Provide a JSON request containing user info collected during signup you have to at a minimum provide a
+&nbsp;     * username, email and password or the request will be invalid
+&nbsp;     * Example:
+&nbsp;     * {
+&nbsp;     *&quot;emailId&quot;:&quot;test@hotmail.com&quot;,
+&nbsp;     *&quot;name&quot;:&quot;John Doe&quot;,
+&nbsp;     *&quot;password&quot;:&quot;Password!23&quot;,
+&nbsp;     *&quot;userTier&quot;:&quot;Free&quot;,
+&nbsp;     *&quot;username&quot;:&quot;user1&quot;,
+&nbsp;     *&quot;sQA1&quot;:&quot;test&quot;,
+&nbsp;     *&quot;sQID1&quot;:&quot;1&quot;,
+&nbsp;     *&quot;sQA2&quot;:&quot;test&quot;,
+&nbsp;     *&quot;sQID2&quot;:&quot;3&quot;,
+&nbsp;     *&quot;sQA3&quot;:&quot;test&quot;,
+&nbsp;     *&quot;sQID3&quot;:&quot;5&quot;
+&nbsp;     * }
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;User signup&quot;, description = &quot;Registers a new user account, creates a profile, encrypts sensitive data, and returns an auth token.&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Signup successful&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = SignUpResponseSchema.class))),
+&nbsp;            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Invalid input (missing fields, invalid format)&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = Map.class))), // For the explicit check
+&nbsp;            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Validation failed (username/password/email criteria not met)&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;text/plain&quot;)),
+&nbsp;            @ApiResponse(responseCode = &quot;409&quot;, description = &quot;Conflict (e.g., username or email already exists)&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;text/plain&quot;)) // From the @ExceptionHandler
+&nbsp;    })
+&nbsp;    @PostMapping(path = &quot;/signup&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; signUp(
+&nbsp;            @RequestBody(description = &quot;User details for signup. Requires username, email, password, and security questions/answers.&quot;, required = true,
+&nbsp;                    content = @Content(schema = @Schema(implementation = User.class)))
+&nbsp;            @org.springframework.web.bind.annotation.RequestBody User user) {
+<b class="fc">&nbsp;        Map&lt;String, String&gt; response = new HashMap&lt;&gt;();</b>
+<b class="pc">&nbsp;        if(user.getUsername()== null || user.getEmail() == null || user.getPassword() == null) {</b>
+<b class="nc">&nbsp;            response.put(&quot;Error&quot;, &quot;Please fill out all fields&quot;);</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(response);</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if(!User.validateUsername(user.getUsername())){</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(&quot;Username does not meet criteria&quot;);</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if(!User.validatePassword(user.getPassword())){</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(&quot;Password does not meet criteria&quot;);</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if(!User.validateEmail(user.getEmail().toLowerCase())){</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(&quot;Please enter a valid email address&quot;);</b>
+&nbsp;        }
+&nbsp;        // Encrypt sensitive data before storing
+<b class="fc">&nbsp;        user.setPassword(User.encryptString(user.getPassword()));</b>
+<b class="fc">&nbsp;        user.setsQA1(User.encryptString(user.getsQA1()));</b>
+<b class="fc">&nbsp;        user.setsQA2(User.encryptString(user.getsQA2()));</b>
+<b class="fc">&nbsp;        user.setsQA3(User.encryptString(user.getsQA3()));</b>
+<b class="fc">&nbsp;        UserProfile userProfile = new UserProfile(false, user.getUsername());</b>
+<b class="fc">&nbsp;        userProfileRepository.save(userProfile);</b>
+<b class="fc">&nbsp;        user.SetUserProfile(userProfile);</b>
+<b class="fc">&nbsp;        userRepository.save(user);</b>
+<b class="fc">&nbsp;        userProfileRepository.save(userProfile);</b>
+<b class="fc">&nbsp;        Token token = tokenService.createToken(user);</b>
+<b class="fc">&nbsp;        response.put(&quot;token&quot;, token.getTokenValue());</b>
+<b class="fc">&nbsp;        response.put(&quot;message&quot;, &quot;Login successful&quot;);</b>
+<b class="fc">&nbsp;        response.put(&quot;user_id&quot;, String.valueOf(user.getUserId()));</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(response);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Delete user by ID&quot;, description = &quot;Deletes a user account and their associated auth tokens.&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;User deleted successfully&quot;, content = @Content),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User not found&quot;, content = @Content)
+&nbsp;            // Consider response codes for deletion failure
+&nbsp;    })
+&nbsp;    @DeleteMapping(path = &quot;/users/{id}&quot;)
+&nbsp;    public void deleteUser(@Parameter(description = &quot;ID of the user to delete&quot;) @PathVariable int id) {
+<b class="fc">&nbsp;        tokenRepository.deleteByUserId(id);</b>
+<b class="fc">&nbsp;        userRepository.deleteById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /*
+&nbsp;    * Provide a JSON request containing the id of the user your updating and fields name, username and email only
+&nbsp;    * include the fields that need updated realistically only one would be updated at a time but all 3 can if need be
+&nbsp;    * Example:
+&nbsp;    * {
+&nbsp;    * &quot;userId&quot;: &quot;24&quot;,
+&nbsp;    * &quot;name&quot;: &quot;new name&quot;
+&nbsp;    * }
+&nbsp;    */
+&nbsp;    @Operation(summary = &quot;Update user details&quot;, description = &quot;Updates non-sensitive user details like name, username, email, or user tier.&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;User updated successfully&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = User.class))),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User not found&quot;, content = @Content)
+&nbsp;    })
+&nbsp;    @PutMapping(path = &quot;/updateUser&quot;)
+&nbsp;    public User updateUser(
+&nbsp;            @RequestBody(description = &quot;User details to update. Requires userId. Include name, username, email, or userTier to modify them.&quot;, required = true,
+&nbsp;                    content = @Content(schema = @Schema(implementation = User.class))) // Schema shows all User fields, but only some are used.
+&nbsp;            @org.springframework.web.bind.annotation.RequestBody User updatedUser) {
+<b class="fc">&nbsp;        long user_id = updatedUser.getUserId();</b>
+<b class="fc">&nbsp;        User existingUser = userRepository.findById(user_id).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</b>
+&nbsp;        // Update only if the field is provided (not null)
+<b class="pc">&nbsp;        if (updatedUser.getUsername() != null) {</b>
+<b class="nc">&nbsp;            existingUser.setUsername(updatedUser.getUsername());</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (updatedUser.getName() != null) {</b>
+<b class="fc">&nbsp;            existingUser.setName(updatedUser.getName());</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (updatedUser.getEmail() != null) {</b>
+<b class="fc">&nbsp;            existingUser.setEmail(updatedUser.getEmail());</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (updatedUser.getUserTier() != null) {</b>
+<b class="nc">&nbsp;            existingUser.setUserTier(updatedUser.getUserTier());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return userRepository.save(existingUser);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /*
+&nbsp;     * Provide a JSON request containing the id of the user your updating if the user remembers there old password
+&nbsp;     * you provide that if not you provide an answer to a security question
+&nbsp;     * Example:
+&nbsp;     * {
+&nbsp;     * &quot;userId&quot;: &quot;1&quot;,
+&nbsp;     * &quot;securityQuestionId&quot;:&quot;1&quot; if resetting via SQ otherwise it&#39;s not needed
+&nbsp;     * &quot;oldPassword&quot;:&quot;Password!23&quot; or &quot;securityQuestionAnswer&quot;:&quot;value&quot;
+&nbsp;     * &quot;newPassword&quot;:&quot;Password!234&quot;
+&nbsp;     * }
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;Update user password&quot;, description = &quot;Updates a user&#39;s password, either by verifying the old password or a security question answer.&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Password change successful&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = Map.class))),
+&nbsp;            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Unauthorized (Incorrect old password or security answer, or new password format invalid)&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;text/plain&quot;)),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User not found&quot;, content = @Content)
+&nbsp;    })
+&nbsp;    @PutMapping(path = &quot;/updatePassword&quot;)
+&nbsp;    public  ResponseEntity&lt;?&gt; updatePassword(
+&nbsp;            @RequestBody(description = &quot;Request to reset password. Requires userId and newPassword. Requires EITHER oldPassword OR (securityQuestionId and securityQuestionAnswer).&quot;, required = true,
+&nbsp;                    content = @Content(schema = @Schema(implementation = ResetPasswordRequest.class)))
+&nbsp;            @org.springframework.web.bind.annotation.RequestBody ResetPasswordRequest passwordRequest) {
+<b class="fc">&nbsp;        long user_id = passwordRequest.getUserId();</b>
+<b class="fc">&nbsp;        User existingUser = userRepository.findById(user_id).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</b>
+<b class="fc">&nbsp;        String oldpass = passwordRequest.getOldPassword();</b>
+<b class="fc">&nbsp;        String securityQuestion = passwordRequest.getSecurityQuestionAnswer();</b>
+<b class="fc">&nbsp;        Map&lt;String, String&gt; response = new HashMap&lt;&gt;();</b>
+<b class="pc">&nbsp;        if (!User.validatePassword(passwordRequest.getNewPassword())){</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(&quot;Password does not meet criteria&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if (oldpass != null &amp;&amp; !existingUser.compareHashedPassword(passwordRequest.getOldPassword())){</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(&quot;Incorrect old password provided&quot;);</b>
+&nbsp;
+<b class="pc">&nbsp;        } else if (oldpass != null &amp;&amp; existingUser.compareHashedPassword(passwordRequest.getOldPassword())) {</b>
+<b class="fc">&nbsp;            existingUser.setPassword(User.encryptString(passwordRequest.getNewPassword()));</b>
+<b class="fc">&nbsp;            userRepository.save(existingUser);</b>
+<b class="fc">&nbsp;            response.put(&quot;message&quot;, &quot;Password change successful&quot;);</b>
+<b class="fc">&nbsp;            return ResponseEntity.ok(response);</b>
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if (securityQuestion != null &amp;&amp; existingUser.compareHashedSQ(passwordRequest.getSecurityQuestionAnswer()</b>
+<b class="fc">&nbsp;                , passwordRequest.getSecurityQuestionId())) {</b>
+<b class="fc">&nbsp;            existingUser.setPassword(User.encryptString(passwordRequest.getNewPassword()));</b>
+<b class="fc">&nbsp;            userRepository.save(existingUser);</b>
+<b class="fc">&nbsp;            response.put(&quot;message&quot;, &quot;Password change successful&quot;);</b>
+<b class="fc">&nbsp;            return ResponseEntity.ok(response);</b>
+<b class="nc">&nbsp;        } else if (securityQuestion != null) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(&quot;Incorrect security question answer provided&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        response.put(&quot;message&quot;, &quot;Invalid request&quot;);</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(response);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /*
+&nbsp;     * Provide a JSON request containing the users email or username and there password
+&nbsp;     * Example:
+&nbsp;     * {
+&nbsp;     * &quot;email&quot;:&quot;testemail@gmail.com&quot; or &quot;username&quot;:&quot;user1&quot;
+&nbsp;     * &quot;password&quot;:&quot;Password!23&quot;
+&nbsp;     * }
+&nbsp;     */
+&nbsp;    @Operation(summary = &quot;User login&quot;, description = &quot;Authenticates a user using username/email and password, returns an auth token upon success.&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Login successful&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;application/json&quot;,
+&nbsp;                            schema = @Schema(implementation = LoginResponseSchema.class))),
+&nbsp;            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Invalid request (missing username/email)&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = Map.class))), // For the explicit check
+&nbsp;            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Unauthorized (Invalid username, email, or password)&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;text/plain&quot;)),
+&nbsp;            @ApiResponse(responseCode = &quot;500&quot;, description = &quot;Internal server error during login&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;text/plain&quot;))
+&nbsp;    })
+&nbsp;    @PostMapping(path = &quot;/login&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; login(
+&nbsp;            @RequestBody(description = &quot;Login credentials. Requires password and EITHER username OR email.&quot;, required = true,
+&nbsp;                    content = @Content(schema = @Schema(implementation = LoginRequest.class)))
+&nbsp;            @org.springframework.web.bind.annotation.RequestBody LoginRequest loginRequest) {
+<b class="fc">&nbsp;        Map&lt;String, String&gt; response = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        User user = null;</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            if (loginRequest.getUsername() != null) {</b>
+<b class="fc">&nbsp;                user = userRepository.findByUsername(loginRequest.getUsername());</b>
+<b class="pc">&nbsp;                if(user == null){</b>
+<b class="nc">&nbsp;                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)</b>
+<b class="nc">&nbsp;                            .body(&quot;Invalid Username, Email or Password&quot;); // Username doesn&#39;t exist</b>
+&nbsp;                }
+<b class="pc">&nbsp;            } else if (loginRequest.getEmail() != null) {</b>
+<b class="fc">&nbsp;                user = userRepository.findByEmail(loginRequest.getEmail());</b>
+<b class="pc">&nbsp;                if(user == null){</b>
+<b class="nc">&nbsp;                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)</b>
+<b class="nc">&nbsp;                            .body(&quot;Invalid Username, Email or Password&quot;); // Email doesn&#39;t exist</b>
+&nbsp;                }
+&nbsp;            } else {
+<b class="nc">&nbsp;                response.put(&quot;message&quot;, &quot;Invalid Request&quot;);</b>
+<b class="nc">&nbsp;                return ResponseEntity.ok(response); // Isn&#39;t provided a username or email in request</b>
+&nbsp;            }
+&nbsp;
+<b class="pc">&nbsp;            if (user.compareHashedPassword(loginRequest.getPassword())) {</b>
+<b class="fc">&nbsp;                Token token = tokenService.createToken(user);</b>
+<b class="fc">&nbsp;                response.put(&quot;token&quot;, token.getTokenValue());</b>
+<b class="fc">&nbsp;                response.put(&quot;message&quot;, &quot;Login successful&quot;);</b>
+<b class="fc">&nbsp;                response.put(&quot;user_id&quot;, String.valueOf(user.getUserId()));</b>
+<b class="fc">&nbsp;                return ResponseEntity.ok(response);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)</b>
+<b class="nc">&nbsp;                    .body(&quot;Invalid Username, Email or Password&quot;); // Password is Wrong</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)</b>
+<b class="nc">&nbsp;                    .body(&quot;An error occurred during login&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;    @Operation(summary = &quot;Search users by username (partial match)&quot;, description = &quot;Finds users whose usernames contain the provided string (case-insensitive).&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved list of matching users&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;application/json&quot;, array = @ArraySchema(schema = @Schema(implementation = User.class))))
+&nbsp;            // Consider adding 404 if no users match?
+&nbsp;    })
+&nbsp;    @GetMapping(path = &quot;/searchUsersByUsername/{username}&quot;)
+&nbsp;    public List&lt;User&gt; searchUsersByUsername(@Parameter(description = &quot;Partial username to search for&quot;) @PathVariable String username) {
+<b class="fc">&nbsp;        return userRepository.findByUsernameIgnoreCaseContaining(username);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // --- Helper Schemas for Responses ---
+&nbsp;
+&nbsp;    @Schema(description = &quot;Response body for successful signup or login&quot;)
+&nbsp;    private static class AuthResponseBaseSchema {
+&nbsp;        @Schema(description = &quot;Authentication token&quot;, example = &quot;some-jwt-token-value&quot;)
+&nbsp;        public String token;
+&nbsp;        @Schema(description = &quot;Success message&quot;, example = &quot;Login successful&quot;)
+&nbsp;        public String message;
+&nbsp;        @Schema(description = &quot;ID of the authenticated user&quot;, example = &quot;123&quot;)
+&nbsp;        public String user_id;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Schema(description = &quot;Response body for successful signup&quot;)
+&nbsp;    private static class SignUpResponseSchema extends AuthResponseBaseSchema {}
+&nbsp;
+&nbsp;    @Schema(description = &quot;Response body for successful login&quot;)
+&nbsp;    private static class LoginResponseSchema extends AuthResponseBaseSchema {}
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-05 16:57</div>
+</div>
+</body>
+</html>

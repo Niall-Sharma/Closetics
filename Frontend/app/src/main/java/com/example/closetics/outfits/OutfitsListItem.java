@@ -15,12 +15,18 @@ public class OutfitsListItem {
     private String name;
 //    private JSONArray clothesIds;
     private List<JSONObject> clothes;
+    private boolean isFavorite;
 
-    public OutfitsListItem(JSONObject jsonObject, long id, String name) {
+    public OutfitsListItem(JSONObject jsonObject, long id, String name, boolean isFavorite) {
         this.jsonObject = jsonObject;
         this.id = id;
         this.name = name;
         this.clothes = null;
+        this.isFavorite = isFavorite;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public String getName() {
@@ -52,5 +58,24 @@ public class OutfitsListItem {
         } catch (JSONException e) {
             return "(no name)";
         }
+    }
+
+    public long getClothingId(int ind) {
+        if (clothes == null || clothes.get(ind) == null) {
+            return -1;
+        }
+        try {
+            return clothes.get(ind).getLong("clothesId");
+        } catch (JSONException e) {
+            return -1;
+        }
+    }
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
     }
 }

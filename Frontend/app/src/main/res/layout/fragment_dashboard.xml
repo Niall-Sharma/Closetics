@@ -46,7 +46,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="16dp"
                     android:text="-Outift Name-"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -63,7 +63,7 @@
 
                 <ImageView
                     android:id="@+id/imageView2"
-                    android:layout_width="185dp"
+                    android:layout_width="0dp"
                     android:layout_height="250dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="24dp"
@@ -84,6 +84,7 @@
                     android:layout_marginEnd="33dp"
                     android:layout_marginBottom="16dp"
                     android:text="-tomorrow-"
+                    android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -226,28 +227,60 @@
             android:id="@+id/cardView3"
             android:layout_width="0dp"
             android:layout_height="100dp"
-            android:layout_marginStart="6dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintWidth_percent="0.46">
+            app:layout_constraintEnd_toStartOf="@+id/leaderboardButton"
+            app:layout_constraintStart_toStartOf="parent">
 
-            <TextView
-                android:id="@+id/textView23"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Weather Widget??" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView23"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Today's Temperature:"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/dashboard_temperature_image"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="4dp"
+                    android:src="@drawable/thermometer"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView23" />
+
+                <TextView
+                    android:id="@+id/dashboard_temperature_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="46.9 - 72.8 °F"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/dashboard_temperature_image"
+                    app:layout_constraintStart_toEndOf="@+id/dashboard_temperature_image"
+                    app:layout_constraintTop_toTopOf="@+id/dashboard_temperature_image" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
         </androidx.cardview.widget.CardView>
 
         <Button
             android:id="@+id/leaderboardButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:layout_marginBottom="16dp"
             android:text="Closetics Leaderboard"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/cardView3" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <Button
             android:id="@+id/userStatsButton"
@@ -255,6 +288,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="User Statistics"
+            android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@+id/leaderboardButton"
             app:layout_constraintEnd_toEndOf="@+id/leaderboardButton"
             app:layout_constraintHorizontal_bias="0.5"
