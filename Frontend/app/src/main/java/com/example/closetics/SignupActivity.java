@@ -177,7 +177,6 @@ public class SignupActivity extends AppCompatActivity {
                                 // currently the oly error possible here is: username, email, or password is empty
                                 setErrorMessage("Please enter username, email, and password");
 
-                                return;
                             }
 
                             Log.d("Volley Response", "Successful Signup: " + response.toString());
