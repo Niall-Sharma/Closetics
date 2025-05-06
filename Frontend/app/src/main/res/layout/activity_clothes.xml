@@ -18,7 +18,6 @@
         android:id="@+id/tabLayout"
         android:layout_width="400dp"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/card_widget_gray"
         android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

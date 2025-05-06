@@ -37,7 +37,6 @@
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/card_widget_gray"
             android:gravity="center" />
 
     </LinearLayout>
