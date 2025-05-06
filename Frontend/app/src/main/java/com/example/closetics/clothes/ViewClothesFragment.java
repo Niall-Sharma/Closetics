@@ -20,6 +20,7 @@ import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.example.closetics.R;
+import com.example.closetics.outfits.OutfitManager;
 
 import org.json.JSONObject;
 
@@ -52,11 +53,11 @@ public class ViewClothesFragment extends Fragment {
             @Override
             public void onItemClick(int position, View view, ClothingItem jsonObject) {
                 //Delete button on click logic very basic for roundtrip
+                int positionNeed = position;
                  if (view.getId() == R.id.delete_button){
                      long clothingId = jsonObject.getId();
                      Log.d("clothingId", String.valueOf(clothingId));
                      deleteClothing(getActivity(), clothingId, clothingItems, position, ClothesActivity.URL);
-
 
                  }
                  //Edit button on click logic
@@ -68,7 +69,6 @@ public class ViewClothesFragment extends Fragment {
                      intent.putExtra("clothingId", clothingId);
                      //Serializable
                      intent.putExtra("clothingItem", clothingItem);
-
                      startActivity(intent);
 
 
@@ -92,6 +92,19 @@ public class ViewClothesFragment extends Fragment {
         return fragment;
     }
 
+    private void deleteClothingFromOutfit(Context context, Long clothingId, Long outfitId){
+        OutfitManager.removeClothingRequest(context, clothingId, outfitId, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                //Log.d("", );
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+    }
 
     private void deleteClothing(Context context,long clothingId, ArrayList<ClothingItem> objects, int position, String URL){
         ClothesManager.deleteClothingRequest(context, clothingId, URL, new Response.Listener<String>() {
@@ -113,6 +126,7 @@ public class ViewClothesFragment extends Fragment {
         );
     }
     private void deleteItem(ArrayList<ClothingItem> objects, int position){
+        //Add a check for index out of bounds etc.
         objects.remove(position);
         adapter.notifyItemRemoved(position);
     }
