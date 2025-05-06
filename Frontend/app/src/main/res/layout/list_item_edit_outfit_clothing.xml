@@ -19,15 +19,28 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/baseline_delete_outline_24" />
 
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/edit_outfit_clothing_list_item_image"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:adjustViewBounds="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:riv_corner_radius="8dp">
+
+    </com.makeramen.roundedimageview.RoundedImageView>
+
     <TextView
         android:id="@+id/edit_outfit_clothing_list_item_name_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:text="{{Name}}"
         android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/edit_outfit_clothing_list_item_image"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView

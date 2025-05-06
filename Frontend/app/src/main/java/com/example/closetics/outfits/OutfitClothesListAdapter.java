@@ -1,13 +1,11 @@
-package com.example.closetics.recommendations;
+package com.example.closetics.outfits;
 
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,28 +14,29 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.example.closetics.R;
 import com.example.closetics.clothes.ClothesManager;
+import com.example.closetics.recommendations.RecImagesListAdapter;
+import com.example.closetics.recommendations.RecImagesListItem;
 
 import java.util.List;
 
-public class RecImagesListAdapter extends RecyclerView.Adapter<RecImagesListAdapter.ViewHolder> {
-    private List<RecImagesListItem> items;
+public class OutfitClothesListAdapter extends RecyclerView.Adapter<OutfitClothesListAdapter.ViewHolder> {
+    private List<OutfitClothesListItem> items;
 
-    public RecImagesListAdapter(List<RecImagesListItem> items) {
+    public OutfitClothesListAdapter(List<OutfitClothesListItem> items) {
         this.items = items;
     }
 
     @NonNull
     @Override
-    public RecImagesListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_rec_images, parent, false);
-        return new RecImagesListAdapter.ViewHolder(itemView);
+    public OutfitClothesListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_outfit_clothes_images, parent, false);
+        return new OutfitClothesListAdapter.ViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecImagesListAdapter.ViewHolder holder, int position) {
-        RecImagesListItem item = items.get(position);
+    public void onBindViewHolder(@NonNull OutfitClothesListAdapter.ViewHolder holder, int position) {
+        OutfitClothesListItem item = items.get(position);
 
-        //holder.image.setImageResource(item.getImageId());
         setClothingImage(holder, item);
     }
 
@@ -46,7 +45,7 @@ public class RecImagesListAdapter extends RecyclerView.Adapter<RecImagesListAdap
         return items.size();
     }
 
-    private void setClothingImage(@NonNull RecImagesListAdapter.ViewHolder holder, RecImagesListItem item) {
+    private void setClothingImage(@NonNull OutfitClothesListAdapter.ViewHolder holder, OutfitClothesListItem item) {
         ClothesManager.getClothingImage(item.getContext(), item.getClothingId(),
                 new Response.Listener<Bitmap>() {
                     @Override
@@ -79,7 +78,7 @@ public class RecImagesListAdapter extends RecyclerView.Adapter<RecImagesListAdap
         public ViewHolder(final View itemView) {
             super(itemView);
 
-            image = itemView.findViewById(R.id.rec_outfit_image_container);
+            image = itemView.findViewById(R.id.outfit_clothes_image_container);
         }
     }
 }

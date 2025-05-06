@@ -34,6 +34,7 @@ public class OutfitManager {
     private static final String URL_PUT_REMOVE_LIKE = MainActivity.SERVER_URL + "/removeLike/"; // + {{outfitId}} + / + {{userId}}
     private static final String URL_PUT_ADD_LIKE = MainActivity.SERVER_URL + "/addLike/"; // + {{outfitId}} + / + {{userId}}
     private static final String URL_GET_IS_LIKED_OUTFIT = MainActivity.SERVER_URL + "/likedOutfit/"; // + {{outfitId}} + / + {{userId}}
+    private static final String URL_PUT_SWAP_FAVORITE_ON_OUTFIT = MainActivity.SERVER_URL + "/swapFavoriteOnOutfit/"; // + {{outfitId}}
 
     public static final String CURRENT_OUTFIT_PARAM = "currentOutfitId";
     public static final String TOMORROW_OUTFIT_PARAM = "tomorrowOutfitId";
@@ -261,4 +262,18 @@ public class OutfitManager {
         VolleySingleton.getInstance(context).addToRequestQueue(StringReq);
     }
 
+
+    public static void swapFavoriteOnOutfitRequest(Context context, long outfitId,
+                                            Response.Listener<JSONObject> responseListener,
+                                            Response.ErrorListener errorListener) {
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.PUT,
+                URL_PUT_SWAP_FAVORITE_ON_OUTFIT + outfitId,
+                null,
+                responseListener, errorListener);
+
+        // Adding request to request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+    }
 }

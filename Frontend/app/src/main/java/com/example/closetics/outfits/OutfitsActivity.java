@@ -50,7 +50,7 @@ public class OutfitsActivity extends AppCompatActivity {
 
 
         // Initialize the adapter with an empty list (data will be added later)
-        adapter = new OutfitsListAdapter(this, new ArrayList<>());
+        adapter = new OutfitsListAdapter(this, new ArrayList<>(), this);
         outfitsList.setAdapter(adapter);
 
         addOutfitButton.setOnClickListener(v -> {
@@ -129,6 +129,8 @@ public class OutfitsActivity extends AppCompatActivity {
                         // hide no outfits text if there are outfits
                         if (response.length() > 0 && !setDashboard) {
                             noOutfitsText.setVisibility(TextView.GONE);
+                        } else {
+                            noOutfitsText.setVisibility(TextView.VISIBLE);
                         }
 
                         outfitIds = new ArrayList<>();
@@ -140,9 +142,10 @@ public class OutfitsActivity extends AppCompatActivity {
 
                                 long id = outfit.getLong("outfitId");
                                 String name = outfit.getString("outfitName");
+                                boolean isFavorite = outfit.getBoolean("favorite");
 
                                 // create list item, but not add it bc clothes aren't ready
-                                OutfitsListItem item = new OutfitsListItem(outfit, id, name);
+                                OutfitsListItem item = new OutfitsListItem(outfit, id, name, isFavorite);
 
                                 getAllClothesAndSave(id, item);
                             } catch (JSONException e) {

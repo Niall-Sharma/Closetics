@@ -12,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Response;
@@ -19,12 +21,17 @@ import com.android.volley.VolleyError;
 import com.example.closetics.follow.FollowActivity;
 import com.example.closetics.follow.FollowManager;
 import com.example.closetics.outfits.OutfitManager;
+import com.example.closetics.outfits.ProfileOutfitsListAdapter;
+import com.example.closetics.outfits.ProfileOutfitsListItem;
+import com.example.closetics.recommendations.RecOutfitsListAdapter;
+import com.example.closetics.recommendations.RecOutfitsListItem;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Activity that displays a public profile of a user
@@ -34,7 +41,7 @@ import java.util.ArrayList;
  */
 public class PublicProfileActivity extends AppCompatActivity {
 
-    private TextView usernameText, nameText;
+    private TextView usernameText, nameText, outfitsLabel, noOutfitsText;
     private Button clothesButton, outfitsButton, followingButton, followersButton, followButton;
     private RecyclerView outfitRecycler;
 
@@ -56,6 +63,8 @@ public class PublicProfileActivity extends AppCompatActivity {
         // initialize ui
         usernameText = findViewById(R.id.public_profile_username_text);
         nameText = findViewById(R.id.public_profile_name_text);
+        outfitsLabel = findViewById(R.id.public_profile_outfits_label);
+        noOutfitsText = findViewById(R.id.public_profile_no_outfits_text);
         clothesButton = findViewById(R.id.public_profile_clothes_button);
         outfitsButton = findViewById(R.id.public_profile_outfits_button);
         followingButton = findViewById(R.id.public_profile_following_button);
@@ -140,6 +149,39 @@ public class PublicProfileActivity extends AppCompatActivity {
 
                         // setup outfits button (no listeners!)
                         outfitsButton.setText(response.length() + " outfits");
+                        if (response.length() == 0) {
+                            noOutfitsText.setVisibility(TextView.VISIBLE);
+                            return;
+                        }
+                        noOutfitsText.setVisibility(TextView.GONE);
+
+                        // TODO: outfits
+                        try {
+                            // init outfits recycler
+                            ProfileOutfitsListAdapter outfitsAdapter = new ProfileOutfitsListAdapter(new ArrayList<ProfileOutfitsListItem>());
+                            RecyclerView.LayoutManager outfitsLayoutManager = new LinearLayoutManager(getApplicationContext());
+                            outfitRecycler.setLayoutManager(outfitsLayoutManager);
+                            outfitRecycler.setItemAnimator(new DefaultItemAnimator());
+                            outfitRecycler.setAdapter(outfitsAdapter);
+
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject outfitObject = response.getJSONObject(i);
+
+                                long outfitId = outfitObject.getLong("outfitId");
+                                String outfitName = outfitObject.getString("outfitName");
+                                boolean isFavorite = outfitObject.getBoolean("favorite");
+
+                                List<Long> clothingIds = new ArrayList<>();
+                                JSONArray clothingArray = outfitObject.getJSONArray("outfitItems");
+                                for (int j = 0; j < clothingArray.length(); j++) {
+                                    clothingIds.add(clothingArray.getJSONObject(j).getLong("clothesId"));
+                                }
+
+                                outfitsAdapter.addItem(new ProfileOutfitsListItem(PublicProfileActivity.this, outfitId, outfitName, clothingIds, isFavorite));
+                            }
+                        } catch (JSONException e) {
+                            Log.e("JSON Parse Error", "Error parsing outfits in PublicProfileActivity");
+                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -181,6 +223,7 @@ public class PublicProfileActivity extends AppCompatActivity {
                                 usernameText.setText(response.getString("username"));
                                 // TODO: get actual name with another request
                                 nameText.setText(response.getString("username"));
+                                outfitsLabel.setText(response.getString("username") + "'s Outfits:");
                             }
 
                             // setup following/followers buttons (no listeners!)
