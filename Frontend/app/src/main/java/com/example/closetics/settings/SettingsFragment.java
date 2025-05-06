@@ -8,16 +8,23 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
+import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
 
 import com.example.closetics.DeleteUserActivity;
 import com.example.closetics.R;
+import com.example.closetics.UserManager;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);
+
+        // disable Account when not logged in
+        PreferenceCategory accountCategory = findPreference("account_category");
+        accountCategory.setVisible(
+                UserManager.getUsername(getActivity().getApplicationContext()) != null);
 
         // set preference listeners
         SwitchPreferenceCompat notificationsPref = findPreference("notifications");
