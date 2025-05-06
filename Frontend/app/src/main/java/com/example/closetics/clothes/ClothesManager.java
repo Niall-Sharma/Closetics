@@ -15,6 +15,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.closetics.MainActivity;
 import com.example.closetics.VolleyByteArrayRequest;
 import com.example.closetics.VolleyMultipartRequest;
 import com.example.closetics.VolleySingleton;
