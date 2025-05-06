@@ -104,6 +104,8 @@ public class LoginActivity extends AppCompatActivity {
                                     UserManager.saveLoginToken(getApplicationContext(), token);
                                     //Save username in shared preferences
                                     UserManager.saveUsername(getApplicationContext(), username);
+                                    //Save userTier in shared preferences
+                                    saveUserTier(userID);
 
                                     // start websocket for recommendations
                                     startRecWebSocket();
@@ -231,6 +233,37 @@ public class LoginActivity extends AppCompatActivity {
                         Log.e("Volley Error", error.toString());
                         setErrorMessage("That username does not exist, please enter valid username");
                         forgotPasswordButton.setEnabled(true);
+                    }
+                });
+    }
+
+    private void saveUserTier(long userId) {
+        UserManager.getUserByIdRequest(getApplicationContext(), userId,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            Log.d("Volley Response", "Successful User Tier Save: " + response.toString());
+
+                            String userTier = response.getString("userTier");
+                            if (userTier == null) userTier = "Free";
+                            if ("premium".equalsIgnoreCase(userTier)) {
+                                UserManager.saveUserTier(getApplicationContext(), 2);
+                            } else if ("basic".equalsIgnoreCase(userTier)) {
+                                UserManager.saveUserTier(getApplicationContext(), 1);
+                            } else { // free
+                                UserManager.saveUserTier(getApplicationContext(), 0);
+                            }
+                        }
+                        catch (JSONException e) {
+                            Log.e("JSON Error", "Get user by ID Error: " + e.toString());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("Volley Error", "Get user by ID Error: " + error.toString());
                     }
                 });
     }

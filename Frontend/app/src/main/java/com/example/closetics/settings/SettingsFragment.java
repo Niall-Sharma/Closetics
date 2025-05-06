@@ -13,6 +13,7 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
 
 import com.example.closetics.DeleteUserActivity;
+import com.example.closetics.MainActivity;
 import com.example.closetics.R;
 import com.example.closetics.UserManager;
 
@@ -62,6 +63,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         if (logoutPref != null) {
             logoutPref.setOnPreferenceClickListener((preference) -> {
                 Log.d("Preferences", "Log out was clicked");
+
+                UserManager.clearSavedData(getActivity().getApplicationContext());
+
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                intent.putExtra("OPEN_FRAGMENT", 3); // open fragment Profile
+                startActivity(intent);
+
                 return true; // Return true if the event is handled.
             });
         }

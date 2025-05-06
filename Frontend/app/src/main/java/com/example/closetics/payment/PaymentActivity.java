@@ -160,6 +160,9 @@ public class PaymentActivity extends AppCompatActivity {
             confirmPayment();
             //updateUserTier();
 
+            // save userTier
+            UserManager.saveUserTier(getApplicationContext(), isBuyingBasic ? 1 : 2);
+
             // return to Main
             Intent intent = new Intent(PaymentActivity.this, MainActivity.class);
             intent.putExtra("OPEN_FRAGMENT", 3); // open fragment Profile
