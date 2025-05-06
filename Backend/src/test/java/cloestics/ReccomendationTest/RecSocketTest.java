@@ -129,6 +129,7 @@ public class RecSocketTest {
         session.getBasicRemote().sendText(" ");
 
         String json = messages.poll(5, TimeUnit.SECONDS);
+        System.out.println("Received message: " + json);
         assertNotNull(json, "Expected a JSON array from server");
 
         JSONArray arr = new JSONArray(json);
