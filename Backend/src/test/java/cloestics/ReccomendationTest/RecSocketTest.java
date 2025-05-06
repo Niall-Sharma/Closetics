@@ -80,7 +80,7 @@ public class RecSocketTest {
 
         userProfile = new UserProfile();
         userProfile.addOutfit(outfit);
-
+        user.SetUserProfile(userProfile);
         userProfileRepository.save(userProfile);
         userRepository.save(user);
     }
