@@ -224,7 +224,7 @@ public class UserManager {
 
         //Use try catch blocks when creating JSON objects
         try {
-            updatePasswordData.put("id", userId);
+            updatePasswordData.put("userId", userId);
             updatePasswordData.put("securityQuestionId", securityQuestionId );
             updatePasswordData.put("securityQuestionAnswer", securityQuestionAnswer);
             updatePasswordData.put("newPassword", newPassword);
