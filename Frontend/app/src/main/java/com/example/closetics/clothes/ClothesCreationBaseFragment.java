@@ -181,6 +181,7 @@ public class ClothesCreationBaseFragment extends Fragment{
 
             String [] spinnerItems = null;
             if (index == 1){
+                spinner1.setVisibility(View.GONE);
                 String [] need = {"Yes", "No"};
                 spinnerItems = need;
                 spinnerAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, spinnerItems);
@@ -217,7 +218,7 @@ public class ClothesCreationBaseFragment extends Fragment{
                             updateDataSet();
                             secondSpinnerAdapter.notifyDataSetChanged();
                         }
-                        clothesDataViewModel.setFragment(index, String.valueOf(position +1), String.valueOf(spinner1.getSelectedItemPosition()));
+                        clothesDataViewModel.setFragment(index, String.valueOf(position + 1), String.valueOf(spinner1.getSelectedItemPosition()));
                     }
 
                     @Override
@@ -233,7 +234,7 @@ public class ClothesCreationBaseFragment extends Fragment{
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                        clothesDataViewModel.setFragment(index, String.valueOf(spinner.getSelectedItemPosition()), String.valueOf(specialTypes[position]));
+                        clothesDataViewModel.setFragment(index, String.valueOf(spinner.getSelectedItemPosition() + 1), String.valueOf(specialTypes[position]));
 
                     }
 

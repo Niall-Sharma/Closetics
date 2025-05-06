@@ -111,7 +111,7 @@ public class ClothesActivity extends AppCompatActivity {
             }
         });
         gridRecyclerView.setAdapter(gridRecyclerViewAdapter);
-        gridRecyclerView.setHasFixedSize(true);
+        gridRecyclerView.setHasFixedSize(false);
 
         viewPager = findViewById(R.id.edit_pager);
         pagerAdapter = new ScreenSlidePagerAdapter(this);
@@ -124,6 +124,7 @@ public class ClothesActivity extends AppCompatActivity {
 
                 clothesDataViewModel = new ViewModelProvider(clothesActivity).get(ClothesDataViewModel.class);
                 clothesDataViewModel.setFragmentsSize(NUM_FRAGMENTS);
+                viewPager.setOffscreenPageLimit(10); // load all fragments
                 viewPager.setAdapter((ScreenSlidePagerAdapter) pagerAdapter);
 
                 new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
@@ -259,6 +260,7 @@ public class ClothesActivity extends AppCompatActivity {
                         Log.d("JSON Object", jsonObject.toString());
                     }
                     Intent intent = new Intent(context, ClothesActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
                 } catch (JSONException e) {
                     Log.d("JSON exception", e.toString());

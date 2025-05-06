@@ -72,8 +72,11 @@ public class ClothesManager {
         String itemName = fragments.get(6).getValue();
         String material = fragments.get(8).getValue();
         String price = fragments.get(5).getValue();
-        String clothingType = fragments.get(9).getValue();
-        String specialType = fragments.get(10).getValue();
+        String nonParsed = fragments.get(9).getValue();
+        String [] parsed = nonParsed.split(",");
+        String clothingType = parsed[0];
+        String specialType = parsed[1];
+
 
 
         //Create the json object of the saveClothing data
@@ -101,7 +104,7 @@ public class ClothesManager {
             nullCheck("material", material, saveClothing);
             nullCheck("price", price, saveClothing);
             nullCheck("clothingType", clothingType,saveClothing);
-            nullCheck("specialType", specialType, saveClothing);
+            nullCheck("specialType", ClothingItem.typeConnections[Integer.valueOf(clothingType) - 1][Integer.valueOf(specialType)], saveClothing);
 
 
             saveClothing.put("userId", userId);

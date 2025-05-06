@@ -28,12 +28,12 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view"
         android:layout_width="match_parent"
-        android:layout_height="440dp"
+        android:layout_height="450dp"
         app:cardElevation="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/view_clothes"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tabLayout">
+        app:layout_constraintTop_toBottomOf="@id/linearLayout5">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/type_grid"
@@ -53,7 +53,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/card_view"
         tools:layout_constraintBottom_toBottomOf="parent"
         tools:layout_constraintTop_toBottomOf="@id/card_view" />
 
@@ -65,7 +64,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/card_view"
         tools:layout_constraintBottom_toBottomOf="parent"
         tools:layout_constraintTop_toBottomOf="@id/card_view" />
 

@@ -79,7 +79,7 @@ public class EditClothesActivity extends AppCompatActivity {
         // Initialize the fragments size
         clothesDataViewModel.setFragmentsSize(NUM_FRAGMENTS);
 
-        viewPager.setOffscreenPageLimit(11); // load all fragments
+        viewPager.setOffscreenPageLimit(10); // load all fragments
         // Set the ViewPager adapter and TabLayout mediator
         viewPager.setAdapter(pagerAdapter);
         new TabLayoutMediator(tabLayout, viewPager, ((tab, position) -> {
@@ -177,8 +177,12 @@ public class EditClothesActivity extends AppCompatActivity {
         String itemName = fragments.get(6).getValue();
         String material = fragments.get(8).getValue();
         String price = fragments.get(5).getValue();
-        String clothingType = fragments.get(9).getValue();
-        String specialType = fragments.get(10).getValue();
+        String nonParsed = fragments.get(9).getValue();
+        String [] parsed = nonParsed.split(",");
+        String clothingType = parsed[0];
+        String specialType = parsed[1];
+
+
         if (fragments.get(0).getValue() != null){
             addImage(clothingId);
         }
@@ -204,8 +208,9 @@ public class EditClothesActivity extends AppCompatActivity {
         ClothesManager.nullCheck("itemName", itemName, response);
         ClothesManager.nullCheck("material", material, response);
         ClothesManager.nullCheck("price", price, response);
-        ClothesManager.nullCheck("clothingType", Long.valueOf(clothingType),response);
-        ClothesManager.nullCheck("specialType", Long.valueOf(specialType), response);
+        ClothesManager.nullCheck("clothingType", clothingType,response);
+        ClothesManager.nullCheck("specialType", ClothingItem.typeConnections[Integer.valueOf(clothingType) - 1][Integer.valueOf(specialType)], response);
+
         response.put("clothingId", clothingId);
 
 
