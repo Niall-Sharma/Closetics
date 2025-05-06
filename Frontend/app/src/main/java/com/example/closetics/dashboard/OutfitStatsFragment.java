@@ -49,7 +49,7 @@ public class OutfitStatsFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_view);
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new StatisticsRecyclerViewAdapter(objects ,true);
+        adapter = new StatisticsRecyclerViewAdapter(objects ,true, getActivity());
         recyclerView.setAdapter(adapter);
 
 

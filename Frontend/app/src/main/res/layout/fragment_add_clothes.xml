@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/white"
+    app:layout_constraintBottom_toTopOf="parent">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -63,6 +64,52 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/question_text" />
+
+            <Button
+                android:id="@+id/imageCapture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Capture Image"
+                app:layout_constraintBottom_toTopOf="@id/add_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:layout_constraintEnd_toEndOf="parent"
+                tools:layout_constraintStart_toStartOf="parent" />
+
+            <Spinner
+                android:id="@+id/spinner2"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="86dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="87dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.506"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/question_text"
+                tools:layout_height="57dp" />
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="22dp"
+                app:layout_constraintBottom_toTopOf="@+id/imageCapture"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/question_text" />
+
+            <Spinner
+                android:id="@+id/spinner3"
+                android:layout_width="300dp"
+                android:layout_height="57dp"
+                android:layout_marginStart="45dp"
+                android:layout_marginEnd="46dp"
+                app:layout_constraintBottom_toTopOf="@id/add_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/spinner2" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>

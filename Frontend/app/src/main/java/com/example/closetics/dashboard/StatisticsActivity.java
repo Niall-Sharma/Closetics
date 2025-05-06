@@ -117,7 +117,7 @@ public class StatisticsActivity extends AppCompatActivity {
         setMostExpensiveClothing();
         setMostWornClothingItem();
         setTotalOutfitsCount();
-        setTotalClosetValueAndTotalClothing();
+        setTotalClosetValueAndTotalClothing(this);
 
         setColdClothing();
         setWarmClothing();
@@ -141,7 +141,6 @@ public class StatisticsActivity extends AppCompatActivity {
                 Fragment fragment = new ClothesStatsFragment(allClothingStatsObjects);
                 setCardsInvisible();
                 showFragment(CLOTHES_STATS_TAG, fragment);
-
 
 
 
@@ -231,8 +230,8 @@ public class StatisticsActivity extends AppCompatActivity {
     /**
      * Fetches and sets the total closet value and total number of clothing items from the server.
      */
-    private void setTotalClosetValueAndTotalClothing(){
-        ClothesManager.getClothingByUserRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONArray>() {
+    private void setTotalClosetValueAndTotalClothing(Context context){
+        ClothesManager.getClothingByUserRequest(context, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
 
@@ -253,7 +252,12 @@ public class StatisticsActivity extends AppCompatActivity {
                         JSONObject statObject = object.getJSONObject("clothingStats");
                         String name = object.getString("itemName");
                         long clothesId = object.getLong("clothesId");
+
+
+
                         ClothingStatItem statItem = new ClothingStatItem(statObject, name, clothesId);
+                        getImage(context,clothesId, i);
+
                         setNumberOfOutfitsIn(clothesId, statItem);
                         //Add the json object to the arrayList
                         Log.d("statObject", statObject.toString());
@@ -283,6 +287,33 @@ public class StatisticsActivity extends AppCompatActivity {
         });
     }
 
+    private void getImage(Context context, long clothesId, int i){
+        ClothesManager.getImageByClothing(context, clothesId, MainActivity.SERVER_URL, new Response.Listener<byte[]>() {
+            @Override
+            public void onResponse(byte[] response) {
+                if (allClothingStatsObjects.size() < i + 1) {
+                    boolean b = true;
+                    while (b) {
+                        try{
+                            allClothingStatsObjects.get(i).setImage(response);
+                            b= false;
+                        } catch (IndexOutOfBoundsException e) {
+
+                        }
+                    }
+                }else{
+                    allClothingStatsObjects.get(i).setImage(response);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                allClothingStatsObjects.get(i).setImage(null);
+                Log.d("Error", error.toString());
+
+            }
+        });
+    }
 
     /**
      * Changes the object in which the allOutfitStatsObjects is referring to
@@ -582,7 +613,6 @@ public class StatisticsActivity extends AppCompatActivity {
                 Log.d("response", response);
                 statItem.setNumberOfOutfitsIn(response);
                 allClothingStatsObjects.add(statItem);
-
 
 
             }
