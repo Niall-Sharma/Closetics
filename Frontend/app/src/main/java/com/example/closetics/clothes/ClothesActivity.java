@@ -2,19 +2,11 @@ package com.example.closetics.clothes;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -40,7 +32,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -147,15 +138,10 @@ public class ClothesActivity extends AppCompatActivity {
             public void onClick(View v) {
                 ArrayList<MutableLiveData<String>> fragments = clothesDataViewModel.getFragments();
                 //If an image was set/taken
-                //saveClothing(getApplicationContext(), fragments, URL, UserManager.getUserID(getApplicationContext()));
+                saveClothing(getApplicationContext(), fragments, URL, UserManager.getUserID(getApplicationContext()));
                 //Need to add the image to the new clothing item
-                if (fragments.get(0).getValue() != null){
-                    Uri uri = Uri.parse(fragments.get(0).getValue());
-                    addImage(5);
-                }
 
 
-                ClothesActivity.getUserClothing(context, UserManager.getUserID(getApplicationContext()), URL);
             }
         });
 
@@ -306,6 +292,7 @@ public class ClothesActivity extends AppCompatActivity {
                     if (fragments.get(0).getValue() != null) {
                         addImage(id);
                     }
+                    getUserClothing(getApplicationContext(), UserManager.getUserID(getApplicationContext()), URL);
 
                 } catch (JSONException e) {
                     Log.e("ID error", e.toString());
@@ -403,9 +390,10 @@ public class ClothesActivity extends AppCompatActivity {
     /**
      * Inner class for managing fragment creation inside the ViewPager2 widget.
      */
-    public class ScreenSlidePagerAdapter extends FragmentStateAdapter implements CustomSlideAdapter{
+    public static class ScreenSlidePagerAdapter extends FragmentStateAdapter implements CustomSlideAdapter{
 
-        private final Map<Integer, Fragment> fragmentMap = new HashMap<>();
+        public final Map<Integer, Fragment> fragmentMap = new HashMap<>();
+
 
         /**
          * Constructs a new ScreenSlidePagerAdapter.
@@ -419,7 +407,7 @@ public class ClothesActivity extends AppCompatActivity {
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-            Fragment fragment = ClothesCreationBaseFragment.newInstance(position, clothesDataViewModel, pagerAdapter);
+            Fragment fragment = ClothesCreationBaseFragment.newInstance(position);
             fragmentMap.put(position, fragment);
             return fragment;
         }
@@ -429,11 +417,13 @@ public class ClothesActivity extends AppCompatActivity {
             return NUM_FRAGMENTS;
         }
 
-
-
         @Override
         public Fragment getFragment(int position) {
             return fragmentMap.get(position);
+        }
+        @Override
+        public void update(int position){
+            notifyItemChanged(10);
         }
     }
 }

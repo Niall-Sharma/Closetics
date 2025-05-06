@@ -85,10 +85,8 @@ public class ClothesManager {
 
         //Making sure a boolean is sent to the backend
         try {
-            if (favorite == null){
-                nullCheck("favorite", false, saveClothing);
-            }
-            else if (favorite.toLowerCase().trim() == "Yes") {
+
+            if (favorite.toLowerCase().trim().equals("yes")) {
                 nullCheck("favorite", true, saveClothing);
             } else {
                 nullCheck("favorite", false, saveClothing);
@@ -140,7 +138,7 @@ public class ClothesManager {
     public static void deleteClothingRequest(Context context, Long clothingId, String URL,
                                              Response.Listener<String> responseListener,
                                              Response.ErrorListener errorListener) {
-        String deleteUrl = URL + "/" + clothingId;
+        String deleteUrl = URL + "/deleteClothing/" + clothingId;
 
         StringRequest request = new StringRequest(
                 Request.Method.DELETE,

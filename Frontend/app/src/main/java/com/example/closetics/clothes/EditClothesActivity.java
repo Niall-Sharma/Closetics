@@ -53,6 +53,8 @@ public class EditClothesActivity extends AppCompatActivity {
     private ClothingItem clothingItem;
     private Button backButton;
 
+
+
     /**
      * Called when the activity is created. Initializes the layout, fragments, and setup necessary
      * for the activity. Sets up a ViewPager2 with fragments, a TabLayout for tab navigation,
@@ -92,7 +94,7 @@ public class EditClothesActivity extends AppCompatActivity {
         // Set onClickListener for the final submission button
         finalSubmission.setOnClickListener(v -> {
             ArrayList<MutableLiveData<String>> fragments = clothesDataViewModel.getFragments();
-            getAndUpdateClothing(getApplicationContext(), ClothesActivity.URL , fragments);
+            getAndUpdateClothing(this, ClothesActivity.URL , fragments);
         });
 
         backButton.setOnClickListener(v -> {
@@ -143,6 +145,7 @@ public class EditClothesActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 Log.d("Volley Response", response.toString());
+                ClothesActivity.getUserClothing(context, UserManager.getUserID(context), URL);
                 Intent newIntent = new Intent(getApplicationContext(), ClothesActivity.class);
                 startActivity(newIntent);
             }
@@ -251,8 +254,9 @@ public class EditClothesActivity extends AppCompatActivity {
         @NonNull
         @Override
         public Fragment createFragment(int position) {
-            Fragment fragment = EditClothesFragment.newInstance(position, clothesDataViewModel, clothingItem, pagerAdapter);
+            Fragment fragment = EditClothesFragment.newInstance(position);
             fragmentMap.put(position, fragment);
+            EditClothesFragment.setClothingItem(clothingItem);
             return fragment;
         }
 
@@ -268,6 +272,10 @@ public class EditClothesActivity extends AppCompatActivity {
         @Override
         public Fragment getFragment(int position) {
             return fragmentMap.get(position);
+        }
+        @Override
+        public void update(int position){
+            notifyItemChanged(10);
         }
     }
 }

@@ -46,7 +46,6 @@ public class ViewClothesFragment extends Fragment {
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         super.onCreate(savedInstanceState);
-        ArrayList<String> objects = getArguments().getStringArrayList("JSONObject");
         ArrayList<ClothingItem> clothingItems = (ArrayList<ClothingItem>)getArguments().getSerializable("ClothingItems");
 
         adapter = new ClothesByTypeAdapter(clothingItems, new ClothesByTypeAdapter.OnItemClickListener() {
@@ -56,8 +55,7 @@ public class ViewClothesFragment extends Fragment {
                  if (view.getId() == R.id.delete_button){
                      long clothingId = jsonObject.getId();
                      Log.d("clothingId", String.valueOf(clothingId));
-                     deleteClothing(getActivity(), clothingId, ClothesActivity.URL);
-                     deleteItem(objects, position);
+                     deleteClothing(getActivity(), clothingId, clothingItems, position, ClothesActivity.URL);
 
 
                  }
@@ -95,12 +93,14 @@ public class ViewClothesFragment extends Fragment {
     }
 
 
-    private void deleteClothing(Context context,long clothingId, String URL){
+    private void deleteClothing(Context context,long clothingId, ArrayList<ClothingItem> objects, int position, String URL){
         ClothesManager.deleteClothingRequest(context, clothingId, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 //Response is null
                 Log.d("Delete Volley Response", "Success");
+                deleteItem(objects, position);
+
 
 
             }}, new Response.ErrorListener() {
@@ -112,7 +112,7 @@ public class ViewClothesFragment extends Fragment {
 
         );
     }
-    private void deleteItem(ArrayList<String> objects, int position){
+    private void deleteItem(ArrayList<ClothingItem> objects, int position){
         objects.remove(position);
         adapter.notifyItemRemoved(position);
     }
