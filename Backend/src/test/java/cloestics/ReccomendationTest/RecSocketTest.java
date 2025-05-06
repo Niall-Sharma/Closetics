@@ -69,7 +69,7 @@ public class RecSocketTest {
         userRepository.save(user);
 
         Clothing clothing = new Clothing();
-
+        clothing.setUser(user);
         clothingRepository.save(clothing);
 
         Outfit outfit = new Outfit();
