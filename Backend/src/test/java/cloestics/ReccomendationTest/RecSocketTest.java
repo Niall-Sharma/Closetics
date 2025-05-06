@@ -1,10 +1,14 @@
 package cloestics.ReccomendationTest;
 
 import closetics.Clothes.Clothing;
+import closetics.Clothes.ClothingRepository;
 import closetics.MainApplication;
 import closetics.Outfits.Outfit;
+import closetics.Outfits.OutfitRepository;
 import closetics.Users.User;
 import closetics.Users.UserProfile.UserProfile;
+import closetics.Users.UserProfile.UserProfileRepository;
+import closetics.Users.UserRepository;
 import jakarta.websocket.ClientEndpoint;
 import jakarta.websocket.ContainerProvider;
 import jakarta.websocket.DeploymentException;
@@ -15,6 +19,7 @@ import org.json.JSONArray;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -43,18 +48,41 @@ public class RecSocketTest {
     private User user;
     private UserProfile userProfile;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ClothingRepository clothingRepository;
+
+    @Autowired
+    private OutfitRepository outfitRepository;
+
+    @Autowired
+    private UserProfileRepository userProfileRepository;
+
     @BeforeEach
     public void setup() {
         messages = new LinkedBlockingQueue<>();
         user = new User();
         user.setUserId(1);
+
+        userRepository.save(user);
+
         Clothing clothing = new Clothing();
+
+        clothingRepository.save(clothing);
+
         Outfit outfit = new Outfit();
         outfit.setOutfitItems(List.of(clothing));
         outfit.setUser(user);
+
+        outfitRepository.save(outfit);
+
         userProfile = new UserProfile();
         userProfile.addOutfit(outfit);
 
+        userProfileRepository.save(userProfile);
+        userRepository.save(user);
     }
 
     @ClientEndpoint
