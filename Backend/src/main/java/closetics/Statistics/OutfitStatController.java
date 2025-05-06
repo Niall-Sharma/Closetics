@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.Pageable;
+import closetics.Users.User;
+import closetics.Users.UserRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +38,9 @@ public class OutfitStatController {
 
     @Autowired
     ClothingStatRepository clothingStatRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
 
     @Operation(summary = "Get outfit statistics by ID", description = "Retrieves the statistics record for a specific outfit.")
@@ -88,49 +93,77 @@ public class OutfitStatController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the most expensive outfit details (Map might contain outfit ID and total price)",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden for Free tier users", content = @Content),
             @ApiResponse(responseCode = "404", description = "User not found or no outfits found for the user", content = @Content)
     })
     @GetMapping(path = "/getUsersMostExpensiveOutfit/{userId}")
-    public Map mostExpOutfit(@Parameter(description = "ID of the user") @PathVariable long userId) {
-        return outfitRepository.findMostExpensiveOutfitByUserId(userId);
+    public ResponseEntity<?> mostExpOutfit(@Parameter(description = "ID of the user") @PathVariable long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+        if ("Free".equalsIgnoreCase(user.getUserTier())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        Map<String, Object> outfitDetails = outfitRepository.findMostExpensiveOutfitByUserId(userId);
+        return ResponseEntity.ok(outfitDetails);
     }
 
     @Operation(summary = "Get the most worn outfit for a user", description = "Finds the outfit with the highest 'times worn' count for the specified user.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the most worn outfit (or null if none found)",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = Outfit.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden for Free tier users", content = @Content),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     })
     @GetMapping(path = "/getUsersMostWornOutfit/{userId}")
-    public Outfit mostWornOutfit(@Parameter(description = "ID of the user") @PathVariable long userId) {
-        return outfitRepository.findTopByUser_userIdOrderByOutfitStats_timesWornDesc(userId)
+    public ResponseEntity<?> mostWornOutfit(@Parameter(description = "ID of the user") @PathVariable long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+        if ("Free".equalsIgnoreCase(user.getUserTier())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        Outfit outfit = outfitRepository.findTopByUser_userIdOrderByOutfitStats_timesWornDesc(userId)
                 .orElse(null);
+        return ResponseEntity.ok(outfit);
     }
 
     @Operation(summary = "Get the outfit worn in the coldest average temperatures for a user", description = "Finds the outfit with the lowest average low temperature based on worn records.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the 'coldest' outfit (or null if none found)",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = Outfit.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden for Free tier users", content = @Content),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     })
     @GetMapping(path = "/getUsersColdestAvgOutfit/{userId}")
-    public Outfit coldestAvgOutfit(@Parameter(description = "ID of the user") @PathVariable long userId) {
+    public ResponseEntity<?> coldestAvgOutfit(@Parameter(description = "ID of the user") @PathVariable long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+        if ("Free".equalsIgnoreCase(user.getUserTier())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         Pageable pageable = PageRequest.of(0, 1);
         List<Outfit> outfits = outfitRepository.findTopByUserIdOrderByAvgLowTempAsc(userId, pageable);
-        return outfits.isEmpty() ? null : outfits.get(0);
+        Outfit outfit = outfits.isEmpty() ? null : outfits.get(0);
+        return ResponseEntity.ok(outfit);
     }
 
     @Operation(summary = "Get the outfit worn in the warmest average temperatures for a user", description = "Finds the outfit with the highest average high temperature based on worn records.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the 'warmest' outfit (or null if none found)",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = Outfit.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden for Free tier users", content = @Content),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     })
     @GetMapping(path = "/getUsersWarmestAvgOutfit/{userId}")
-    public Outfit warmestAvgOutfit(@Parameter(description = "ID of the user") @PathVariable long userId) {
+    public ResponseEntity<?> warmestAvgOutfit(@Parameter(description = "ID of the user") @PathVariable long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+        if ("Free".equalsIgnoreCase(user.getUserTier())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         Pageable pageable = PageRequest.of(0, 1);
         List<Outfit> outfits = outfitRepository.findTopByUserIdOrderByAvgHighTempDesc(userId, pageable);
-        return outfits.isEmpty() ? null : outfits.get(0);
+        Outfit outfit = outfits.isEmpty() ? null : outfits.get(0);
+        return ResponseEntity.ok(outfit);
     }
 
     private void calculateAvgTemps(OutfitStats outfitStats) {
