@@ -18,6 +18,7 @@ public class ClothingStatItem {
     private long clothesId;
     private boolean wornToday;
     private String numberOfOutfitsIn;
+    private String wornCount;
 
     // Constructor without image and wornToday
     public ClothingStatItem(JSONObject object, String name, long clothesId) {
@@ -49,6 +50,14 @@ public class ClothingStatItem {
     }
     public Long getOutfitId(){
         return clothesId;
+    }
+
+    public String getWornCount(){
+        return wornCount;
+    }
+
+    public void setWornCount(String wornCount) {
+        this.wornCount = wornCount;
     }
 
     public String getName(){
