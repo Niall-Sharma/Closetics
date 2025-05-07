@@ -120,28 +120,12 @@ public class RecSocket {
                     int randomIndex = (int) (Math.random() * followingOutfits.size());
                     recList.add(followingOutfits.remove(randomIndex));
                 } else {
-                    long outfitCount = OutfitRepository.count();
 
-                    if (outfitCount > 0) {
-//                        boolean found = false;
-//                        Outfit randomOutfit = null;
-//                        int maxRetries = 5;
-//                        int attempt = 0;
-
-//                        while (!found && attempt < maxRetries) {
-////                            long randomId = (long) (Math.random() * outfitCount) + 1;
-////                            var optionalOutfit = OutfitRepository.findById(randomId);
-//                            if (optionalOutfit.isPresent() && !optionalOutfit.get().getOutfitItems().isEmpty()) {
-//                                randomOutfit = optionalOutfit.get();
-//                                found = true;
-//                            }
-                            if (!validOutfits.isEmpty()) {
-                                int randomIndex = (int) (Math.random() * validOutfits.size());
-                                recList.add(validOutfits.remove(randomIndex));
-                            }
-//                            attempt++;
-                        //}
-//                        userSession.getBasicRemote().sendText("Out of retries");
+                    if (!validOutfits.isEmpty()) {
+                        int randomIndex = (int) (Math.random() * validOutfits.size());
+                        recList.add(validOutfits.remove(randomIndex));
+                    }else {
+                        userSession.getBasicRemote().sendText("Out of possible outfits");
                     }
                 }
             }
