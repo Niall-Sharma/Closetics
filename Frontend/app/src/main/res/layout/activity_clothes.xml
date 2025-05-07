@@ -16,23 +16,26 @@
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
-        android:layout_width="400dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/linearLayout5"
+        app:layout_constraintTop_toBottomOf="@+id/add_clothes"
         app:tabTextAppearance="@style/TextAppearance.AppCompat.Small" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view"
-        android:layout_width="match_parent"
-        android:layout_height="450dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         app:cardElevation="0dp"
-        app:layout_constraintBottom_toTopOf="@id/view_clothes"
+        app:layout_constraintBottom_toTopOf="@+id/view_clothes"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/linearLayout5">
+        app:layout_constraintTop_toBottomOf="@+id/tabLayout">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/type_grid"
@@ -48,48 +51,45 @@
         android:id="@+id/activity_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Back"
+        android:layout_marginBottom="16dp"
+        android:text="Cancel"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_constraintTop_toBottomOf="@id/card_view" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/view_clothes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:text="Back"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_constraintTop_toBottomOf="@id/card_view" />
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/linearLayout5"
+    <Button
+        android:id="@+id/final_submission"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical"
+        android:layout_marginBottom="8dp"
+        android:text="Save Clothing"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/activity_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/add_clothes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="+ Add Clothes"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_constraintTop_toTopOf="parent">
-
-        <Button
-            android:id="@+id/add_clothes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Clothes" />
-
-        <Button
-            android:id="@+id/final_submission"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Final Submission" />
-
-    </LinearLayout>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
         android:id="@+id/view_clothes_container"

@@ -12,7 +12,6 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="10dp"
-        app:cardBackgroundColor="@color/material_dynamic_neutral70"
         app:cardCornerRadius="20dp"
         app:cardElevation="50dp"
 
@@ -45,7 +44,7 @@
                 android:layout_marginBottom="37dp"
                 android:text="Item Statistics"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/linearLayout10"
+                app:layout_constraintBottom_toTopOf="@+id/clothing_list_item_description_linearLayout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -82,7 +81,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="2dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/linearLayout10"
+                app:layout_constraintEnd_toStartOf="@+id/clothing_list_item_description_linearLayout"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/linearLayout12"
                 app:srcCompat="@drawable/tshirt_crew" />
@@ -94,12 +93,12 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="2dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/linearLayout10"
+                app:layout_constraintEnd_toStartOf="@+id/clothing_list_item_description_linearLayout"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/linearLayout12" />
 
             <LinearLayout
-                android:id="@+id/linearLayout10"
+                android:id="@+id/statistics_recycler_item_linearLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"

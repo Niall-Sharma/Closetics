@@ -12,8 +12,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="10dp"
-        app:cardBackgroundColor="@color/material_dynamic_neutral70"
-        app:cardCornerRadius="5dp"
+        app:cardCornerRadius="16dp"
         app:cardElevation="50dp"
 
         app:layout_constraintBottom_toBottomOf="parent"
@@ -24,12 +23,15 @@
         <!--Blue Constraint Box for the Widget, to keep things inside of the card-->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp">
 
             <LinearLayout
                 android:id="@+id/linearLayout11"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:orientation="horizontal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -37,7 +39,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Clothing Name: " />
+                    android:text="Clothing Name: "
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/name"
@@ -45,103 +48,116 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:layout_weight="1"
-                    android:text="-name-" />
+                    android:text="-name-"
+                    android:textSize="16sp" />
 
             </LinearLayout>
 
             <ImageView
                 android:id="@+id/imageView"
-                android:layout_width="154dp"
+                android:layout_width="160dp"
                 android:layout_height="160dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginBottom="4dp"
-                app:layout_constraintBottom_toTopOf="@+id/view_profile"
+                app:layout_constraintBottom_toBottomOf="@+id/clothing_list_item_description_linearLayout"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout11"
+                app:layout_constraintTop_toTopOf="@+id/clothing_list_item_description_linearLayout"
                 app:srcCompat="@drawable/tshirt_crew" />
 
             <LinearLayout
-                android:id="@+id/linearLayout10"
-                android:layout_width="wrap_content"
+                android:id="@+id/clothing_list_item_description_linearLayout"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
                 android:orientation="vertical"
-                app:layout_constraintBottom_toTopOf="@+id/view_profile"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/imageView"
                 app:layout_constraintTop_toBottomOf="@+id/linearLayout11">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Type:" />
+                        android:text="Type:"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="TextView" />
+                        android:layout_weight="1"
+                        android:text="TextView"
+                        android:textSize="16sp" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Special Type: " />
+                        android:text="Special Type: "
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/specialType"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="TextView" />
+                        android:layout_weight="1"
+                        android:text="TextView"
+                        android:textSize="16sp" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Price: " />
+                        android:layout_weight="1"
+                        android:text="Price: "
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/price"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="TextView" />
+                        android:text="TextView"
+                        android:textSize="16sp" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Material: " />
+                        android:text="Material: "
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/material"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="TextView" />
+                        android:text="TextView"
+                        android:textSize="16sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -153,18 +169,20 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Brand: " />
+                        android:text="Brand: "
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/brand"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="TextView" />
+                        android:text="TextView"
+                        android:textSize="16sp" />
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
@@ -172,38 +190,42 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Favorite: " />
+                        android:text="Favorite: "
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/favorite"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="TextView" />
+                        android:text="TextView"
+                        android:textSize="16sp" />
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/textView36"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Size:" />
+                        android:text="Size:"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/size"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="TextView" />
+                        android:text="TextView"
+                        android:textSize="16sp" />
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
@@ -212,18 +234,20 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Color: " />
+                        android:text="Color: "
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/color"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="TextView" />
+                        android:text="TextView"
+                        android:textSize="16sp" />
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
@@ -231,15 +255,15 @@
                         android:id="@+id/numberOutfitsPrompt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Date Bought: " />
+                        android:text="Date Bought: "
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/dateBought"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="TextView" />
+                        android:text="TextView"
+                        android:textSize="16sp" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -248,25 +272,22 @@
                 android:id="@+id/delete_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="215dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="8dp"
                 android:text="Delete"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="1.0" />
+                app:layout_constraintTop_toTopOf="@+id/view_profile" />
 
             <Button
                 android:id="@+id/view_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="152dp"
-                android:layout_marginTop="9dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
                 android:text="Edit"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout10"
-                app:layout_constraintVertical_bias="0.0" />
+                android:textSize="16sp"
+                app:layout_constraintEnd_toStartOf="@+id/delete_button"
+                app:layout_constraintTop_toBottomOf="@+id/clothing_list_item_description_linearLayout" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
