@@ -76,8 +76,13 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
             try {
 
                 holder.timesWorn.setText(item.getTimesWorn());
-                holder.highTemp.setText(item.getAvgHighTemp());
-                holder.lowTemp.setText(item.getAvgLowTemp());
+                if (item.getTimesWorn().equals("0")) {
+                    holder.highTemp.setText("-");
+                    holder.lowTemp.setText("-");
+                } else {
+                    holder.highTemp.setText(item.getAvgHighTemp() + " °F");
+                    holder.lowTemp.setText(item.getAvgLowTemp() + " °F");
+                }
                 holder.name.setText(item.getName());
             } catch (JSONException e) {
                 Log.e("exception", e.toString());
@@ -99,8 +104,13 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 String s = "Number Of Outfits In: ";
                 holder.timesWorn.setText(item.getTimesWorn());
                 holder.outfitsIn.setText(item.getNumberOfOutfitsIn());
-                holder.highTemp.setText(item.getAvgHighTemp());
-                holder.lowTemp.setText(item.getAvgLowTemp());
+                if (item.getTimesWorn().equals("0")) {
+                    holder.highTemp.setText("-");
+                    holder.lowTemp.setText("-");
+                } else {
+                    holder.highTemp.setText(item.getAvgHighTemp() + " °F");
+                    holder.lowTemp.setText(item.getAvgLowTemp() + " °F");
+                }
                 holder.prompt.setText(s);
                 holder.name.setText(item.getName());
             } catch (JSONException e) {
@@ -114,8 +124,8 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 String s = "Number Of Outfits In: ";
                 holder.timesWorn.setText(item.getTimesWorn());
                 holder.outfitsIn.setText(item.getNumberOfOutfitsIn());
-                holder.highTemp.setText(item.getAvgHighTemp());
-                holder.lowTemp.setText(item.getAvgLowTemp());
+                holder.highTemp.setText(item.getAvgHighTemp() + " °F");
+                holder.lowTemp.setText(item.getAvgLowTemp() + " °F");
                 holder.prompt.setText(s);
                 holder.name.setText(item.getName());
             } catch (Exception e) {
