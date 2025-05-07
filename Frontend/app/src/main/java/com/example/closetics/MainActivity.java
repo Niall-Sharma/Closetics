@@ -68,8 +68,6 @@ public class MainActivity extends AppCompatActivity {
         bottomNavView = findViewById(R.id.bottom_nav_view);
 
 
-
-
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
 //        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
@@ -95,39 +93,29 @@ public class MainActivity extends AppCompatActivity {
             startRecWebSocket();
         }
 
-        // commented bc doesn't work properly
-//        Bundle extras = getIntent().getExtras();
-//        if (extras != null) {
-//            switch (extras.getInt("OPEN_FRAGMENT", 0)) {
-//                case 1:
-//                    navController.navigate(R.id.action_navigation_dashboard_to_navigation_recommendations);
-//                    break;
-//                case 2:
-//                    navController.navigate(R.id.action_navigation_dashboard_to_navigation_clothes);
-//                    break;
-//                case 3:
-//                    navController.navigate(R.id.action_navigation_dashboard_to_navigation_profile);
-//                    break;
-//            }
-//        }
+        // navigate to a given fragment one time
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            redirectToFragment(extras.getInt("OPEN_FRAGMENT", 0));
+        }
+    }
 
-//        replaceFragment(new HomeFragment());
-
-//        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
-//
-//            int itemId = item.getItemId();
-//            if (itemId == R.id.home) {
-//                replaceFragment(new HomeFragment());
-//            }
-//            else if (itemId == R.id.discover) {
-//                replaceFragment(new DiscoverFragment());
-//            }
-//            else if (itemId == R.id.profile) {
-//                replaceFragment(new ProfileFragment());
-//            }
-//
-//            return true;
-//        });
+    public void redirectToFragment(int ind) {
+        NavController navController = Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment_activity_main);
+        switch (ind) {
+            case 1:
+                navController.popBackStack();
+                navController.navigate(R.id.navigation_recommendations);
+                break;
+            case 2:
+                navController.popBackStack();
+                navController.navigate(R.id.navigation_clothes);
+                break;
+            case 3:
+                navController.popBackStack();
+                navController.navigate(R.id.navigation_profile);
+                break;
+        }
     }
 
     /**
