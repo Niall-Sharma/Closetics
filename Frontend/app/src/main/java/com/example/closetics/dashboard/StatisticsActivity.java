@@ -204,7 +204,7 @@ public class StatisticsActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONArray response) {
                totalOutfitCount.setText(String.valueOf(response.length()));
-                ArrayList<ClothingStatItem> statsObjects = new ArrayList<>();
+                allOutfitStatsObjects = new ArrayList<>();
 
                 for (int i =0; i < response.length(); i++){
                    try {
@@ -214,7 +214,12 @@ public class StatisticsActivity extends AppCompatActivity {
                        String name = object.getString("outfitName");
                        long outfitId = object.getLong("outfitId");
                        ClothingStatItem c = new ClothingStatItem(stats, name, outfitId);
-                       setOutfitCostPerWear(outfitId, c);
+                       if (UserManager.getUserTier(getApplicationContext()) == 2){
+                           setOutfitCostPerWear(outfitId, c);
+                       }
+                       else{
+                           allOutfitStatsObjects.add(c);
+                       }
                        //statsObjects.add(c);
                    } catch (JSONException e) {
                        Log.e("exception", e.toString());
@@ -617,7 +622,7 @@ public class StatisticsActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                allClothingStatsObjects.add(clothingStatItem);
             }
         });
     }
@@ -633,6 +638,7 @@ public class StatisticsActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                allOutfitStatsObjects.add(clothingStatItem);
 
             }
         });
