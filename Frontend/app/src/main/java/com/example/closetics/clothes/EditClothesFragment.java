@@ -1,77 +1,111 @@
 package com.example.closetics.clothes;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.viewpager2.widget.ViewPager2;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
-public class EditClothesFragment extends ClothesCreationBaseFragment{
+import com.example.closetics.MainActivity;
 
-    private ClothingItem clothingItem;
+import java.io.Serializable;
+
+public class EditClothesFragment extends ClothesCreationBaseFragment {
+
+    private static ClothingItem clothingItem;
 
 
-    public EditClothesFragment(ClothesDataViewModel clothesDataViewModel, ClothingItem clothingItem) {
-        super(clothesDataViewModel);
-        this.clothingItem =clothingItem;
+
+    public EditClothesFragment() {
+        // Required empty public constructor
+    }
+
+    public static ClothesCreationBaseFragment newInstance(int position) {
+        EditClothesFragment fragment = new EditClothesFragment();
+        Bundle args = new Bundle();
+        args.putInt("count", position);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //Calls the base fragment onCreateView
-        View view = super.onCreateView(inflater, container, savedInstanceState);
-        String field = getClothingItemField(getPosition());
-        if (!field.equals("null")) {
-            getInputField().setText(field);
-        }
-
-        return view;
-
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
-    public static ClothesCreationBaseFragment newInstance(int position, ClothesDataViewModel clothesDataViewModel, ClothingItem clothingItem) {
-        Bundle args = new Bundle();
-        args.putInt("count", position);
-        EditClothesFragment fragment = new EditClothesFragment(clothesDataViewModel, clothingItem);
-        fragment.setArguments(args);
-        return fragment;
+        super.onViewCreated(view, savedInstanceState);
+
+        int pos = getPosition();
+        String field = getClothingItemField(pos);
+
+        if (pos > 1 && pos < 9) {
+            if (!field.equals("null")) {
+                getInputField().setText(field);
+            }
+        } else if (pos == 0) {
+            if (clothingItem.getImage() != null) {
+                setImageView();
+            }
+        } else if (pos == 1) {
+            Spinner spinner = getSpinner();
+            String bool = clothingItem.getFavorite();
+            spinner.setSelection("false".equals(bool) ? 1 : 0);
+        } else if (pos == 9) {
+            Integer typeI = Math.toIntExact(clothingItem.getType());
+            ArrayAdapter<String> spinnerAdapter = getSpinnerAdapter();
+            Spinner spinner = getSpinner();
+            String type = MainActivity.CLOTHING_TYPES.get(typeI);
+            type = type.substring(0, 1).toUpperCase() + type.substring(1);
+            int spinnerPosition = spinnerAdapter.getPosition(type);
+            spinner.setSelection(spinnerPosition);
+        } else {
+            Integer specialTypeI = Math.toIntExact(clothingItem.getSpecialType());
+            ArrayAdapter<String> spinnerAdapter = getSpinnerAdapter();
+            Spinner spinner = getSpinner();
+            String specialType = MainActivity.CLOTHING_SPECIAL_TYPES.get(specialTypeI);
+            int spinnerPosition = spinnerAdapter.getPosition(specialType);
+
+            spinner.setSelection(spinnerPosition);
+        }
     }
-    private String getClothingItemField(int position){
-        String field;
-        if (position ==0){
-            field = clothingItem.getFavorite();
-        }
-        else if(position ==1){
-            field = clothingItem.getSize();
-        }
-        else if (position ==2){
-            field = clothingItem.getColor();
-        }
-        else if (position ==3){
-            field = clothingItem.getDateBought();
-        }
-        else if (position ==4){
-            field = clothingItem.getPrice();
-        }
-        else if (position ==5){
-            field = clothingItem.getItemName();
-        }
-        else if (position == 6){
-            field = clothingItem.getBrand();
-        }
-        else {
-           field =  clothingItem.getMaterial();
-        }
-        return field;
+
+    private void setImageView() {
+        Bitmap bitmap = ClothesByTypeAdapter.resizeWithAspectRatio(clothingItem.getImage(), 150, 150);
+        getImageView().setImageBitmap(bitmap);
     }
 
+    public static void setClothingItem(ClothingItem clothingItem) {
+        EditClothesFragment.clothingItem = clothingItem;
+    }
 
+    private String getClothingItemField(int position) {
+        switch (position) {
+            case 2: return clothingItem.getSize();
+            case 3: return clothingItem.getColor();
+            case 4: return clothingItem.getDateBought();
+            case 5: return clothingItem.getPrice();
+            case 6: return clothingItem.getItemName();
+            case 7: return clothingItem.getBrand();
+            case 8: return clothingItem.getMaterial();
+            default: return null;
+        }
+    }
 }

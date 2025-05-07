@@ -13,6 +13,8 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,11 +26,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.example.closetics.clothes.ClothesActivity;
+import com.example.closetics.clothes.ClothesCreationBaseFragment;
 import com.example.closetics.clothes.ClothesManager;
+import com.example.closetics.clothes.ClothingItem;
+import com.example.closetics.clothes.CustomSlideAdapter;
+import com.example.closetics.dashboard.ImagePagerAdapter;
 import com.example.closetics.dashboard.LeaderboardActivity;
 import com.example.closetics.dashboard.SetTodaysOutfitFragment;
 import com.example.closetics.dashboard.StatisticsActivity;
@@ -38,6 +48,7 @@ import com.example.closetics.dashboard.StatisticsRecyclerViewAdapter;
 import com.example.closetics.outfits.OutfitManager;
 import com.example.closetics.outfits.OutfitsActivity;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -59,6 +70,13 @@ public class DashboardFragment extends Fragment {
     private TextView wornCount;
     private TextView outfitTotalCount;
     private TextView averageLowTemperature;
+    private ArrayList<byte[]> images;
+
+    private ViewPager2 viewPager;
+    private FragmentStateAdapter pagerAdapter;
+
+    private TextView todaysTemperature;
+    private ImageView todaysTemperatureImage;
 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -90,6 +108,9 @@ public class DashboardFragment extends Fragment {
         wornCount = view.findViewById(R.id.wornCount);
         outfitTotalCount = view.findViewById(R.id.outfitTotalCount);
         averageLowTemperature = view.findViewById(R.id.averageLowTemperature);
+        viewPager = view.findViewById(R.id.viewPager);
+        todaysTemperature = view.findViewById(R.id.dashboard_temperature_text);
+        todaysTemperatureImage = view.findViewById(R.id.dashboard_temperature_image);
 
 
 
@@ -119,12 +140,12 @@ public class DashboardFragment extends Fragment {
         if (current != -1){
             String s = "Set Tomorrow's Outfit";
             setTomorrow.setText(s);
+            outfitImage.setVisibility(View.GONE);
             getOutfit();
             String s1 = String.valueOf(current);
             outfitName.setText(s1);
+            //Set the viewpager with images
         }
-
-
 
 
 
@@ -167,8 +188,60 @@ public class DashboardFragment extends Fragment {
             }
         });
 
+        setTodaysTemperature();
+
 
         return view;
+    }
+    private void getClothingItems(Context context, Long outfitId){
+        OutfitManager.getAllOutfitItemsRequest(context, outfitId, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for (int i =0; i < response.length(); i++){
+                    try {
+                        JSONObject clothingItem = response.getJSONObject(i);
+                        Long clothesId = clothingItem.getLong("clothesId");
+                        images = new ArrayList<>();
+                        getImage(context, clothesId, response.length());
+
+
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+
+
+                }
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Image Error", error.toString());
+            }
+        });
+    }
+    private void getImage(Context context, Long clothesId, int size){
+        ClothesManager.getImageByClothing(context, clothesId, MainActivity.SERVER_URL, new Response.Listener<byte[]>() {
+            @Override
+            public void onResponse(byte[] response) {
+                images.add(response);
+                if (images.size() == size){
+                    ImagePagerAdapter adapter = new ImagePagerAdapter(context, images);
+                    viewPager.setAdapter(adapter);
+
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //Assume there is no image, add null
+                images.add(null);
+
+
+            }
+        });
     }
 
     private void getOutfit(){
@@ -190,6 +263,8 @@ public class DashboardFragment extends Fragment {
                     String highTemp = outfitStats.getString("avgHighTemp");
                     outfitTotalCount.setText(highTemp);
                     averageLowTemperature.setText(lowTemp);
+                    Long outfitId = response.getLong("outfitId");
+                    getClothingItems(getActivity(), outfitId);
 
 
                     //Grab the image
@@ -207,11 +282,7 @@ public class DashboardFragment extends Fragment {
         });
     }
 
-    private void showFragment(){
-        //NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment_activity_main);
-        //navController.navigate(R.id.set_todays_outfit_action);
 
-    }
 
     /*
     Will need to add error
@@ -232,6 +303,8 @@ public class DashboardFragment extends Fragment {
         });
     }
 
+
+
     /*
     This is called by the android manifest!
      */
@@ -250,8 +323,41 @@ public class DashboardFragment extends Fragment {
         }
     }
 
+    private void setTodaysTemperature() {
+        StatisticsManager.getTodaysWeatherRequest(getActivity().getApplicationContext(),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("Get today's weather response: ", response.toString());
 
+                        try {
+                            double lowTemp = response.getDouble("lowTemp");
+                            double highTemp = response.getDouble("highTemp");
+                            double weightedAvgTemp = (lowTemp + 2.0 * highTemp) / 3.0;
 
+                            todaysTemperature.setText((Math.round(lowTemp * 10.0) / 10.0) + " - " + (Math.round(highTemp * 10.0) / 10.0) + " °F");
+
+                            if (weightedAvgTemp < 60.0) { // cold
+                                todaysTemperatureImage.setImageResource(R.drawable.thermometer_low);
+                            } else if (weightedAvgTemp <= 80.0) { // mid
+                                todaysTemperatureImage.setImageResource(R.drawable.thermometer);
+                            } else { // hot
+                                todaysTemperatureImage.setImageResource(R.drawable.thermometer_high);
+                            }
+
+                        } catch (JSONException e) {
+                            Log.e("JSON Parse Error", e.toString());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("Error getting today's weather: ", error.toString());
+
+                    }
+                });
+    }
 
 
 

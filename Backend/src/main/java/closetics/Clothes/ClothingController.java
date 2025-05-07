@@ -13,6 +13,8 @@ import closetics.Clothes.ClothingImages.ImageRepository;
 import closetics.Statistics.ClothingStats;
 import closetics.Users.User;
 import closetics.Users.UserRepository;
+import closetics.Outfits.Outfit;
+import closetics.Outfits.OutfitRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -61,8 +63,8 @@ public class ClothingController {
             @ApiResponse(responseCode = "404", description = "Clothing item not found", content = @Content)
     })
     @GetMapping(path = "/getClothing/{id}")
-    public Optional<Clothing> getClothing(@Parameter(description = "ID of the clothing item to retrieve") @PathVariable long id) {
-        return clothingRepository.findById(id);
+    public Clothing getClothing(@Parameter(description = "ID of the clothing item to retrieve") @PathVariable long id) {
+        return clothingRepository.findById(id).get();
     }
 
     @Operation(summary = "Get clothing items by special type for a user", description = "Retrieves clothing items of a specific 'special type' (e.g., seasonal) for a given user.")
@@ -133,15 +135,39 @@ public class ClothingController {
         return ResponseEntity.ok(clothingWithStats);
     }
 
-    @Operation(summary = "Delete a clothing item", description = "Deletes a clothing item and its associated statistics by its ID.")
+    @Operation(summary = "Delete a clothing item", description = "Deletes a clothing item and its associated statistics by its ID. Also removes the item from any outfits it is part of.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Clothing item deleted successfully", content = @Content),
             @ApiResponse(responseCode = "404", description = "Clothing item or statistics not found (deletion might partially succeed)", content = @Content)
     })
     @DeleteMapping(path = "/deleteClothing/{itemId}")
-    public void deleteClothing(@Parameter(description = "ID of the clothing item to delete") @PathVariable long itemId) {
+    public ResponseEntity<Void> deleteClothing(@Parameter(description = "ID of the clothing item to delete") @PathVariable long itemId) {
+        Optional<Clothing> clothingOptional = clothingRepository.findById(itemId);
+        if (clothingOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        Clothing clothingToDelete = clothingOptional.get();
+
+        // Find all outfits containing this clothing item
+        List<Long> outfitIds = outfitRepository.findOutfitIdsByClothingId(itemId);
+
+        for (Long outfitId : outfitIds) {
+            Optional<Outfit> outfitOptional = outfitRepository.findById(outfitId);
+            if (outfitOptional.isPresent()) {
+                Outfit outfit = outfitOptional.get();
+                // Remove the specific clothing item from the outfit's list
+                boolean removed = outfit.getOutfitItems().removeIf(item -> item.getClothesId() == itemId);
+                if (removed) {
+                    outfitRepository.save(outfit);
+                }
+            }
+        }
+
+        // Now delete the clothing item and its stats
         clothingRepository.deleteById(itemId);
-        clothingStatRepository.deleteById((itemId));
+        clothingStatRepository.deleteById(itemId); // Assuming clothingStatId is same as clothingId
+        
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Update an existing clothing item", description = "Updates the properties of an existing clothing item.")

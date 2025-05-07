@@ -19,9 +19,6 @@ import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Controller;
 
 import closetics.Outfits.Outfit;
@@ -29,14 +26,13 @@ import closetics.Outfits.OutfitRepository;
 import closetics.Users.UserProfile.UserProfile;
 import closetics.Users.UserProfile.UserProfileRepository;
 
-@Controller    
+@Controller
 @ServerEndpoint(value = "/recommendation/{uid}")
 public class RecSocket {
 
-	private static UserProfileRepository UserProfileRepository; 
+	private static UserProfileRepository UserProfileRepository;
   private static OutfitRepository OutfitRepository;
   private static UserRepository UserRepository;
-    private static RecService recommendationService;
 
 	@Autowired
 	public void setUserProfileRepository(UserProfileRepository repo) {
@@ -51,11 +47,6 @@ public class RecSocket {
   @Autowired
   public void setUserRepository(UserRepository repo){
         UserRepository = repo;
-    }
-
-    @Autowired
-    public void setRecommendationService(RecService service) {
-        recommendationService = service;
     }
 
 	// Store all socket session and their corresponding username.
@@ -76,32 +67,36 @@ public class RecSocket {
     System.out.println(uProfile.toString());
     List<UserProfile> following = uProfile.getFollowing();
     List<Outfit> followingOutfits = new ArrayList<>();
-    for(int i = 0; i < following.size();i++){
-      followingOutfits.addAll(following.get(i).getOutfits());
+    for (UserProfile userProfile : following) {
+        for (Outfit outfit : userProfile.getOutfits()) {
+            if (!outfit.getOutfitItems().isEmpty()) {
+                followingOutfits.add(outfit);
+            }
+        }
     }
     followingOutfitMap.put(UID, followingOutfits);
 
-		
+
 	}
 
 	@OnMessage
-	public void onMessage(String message, Session session) throws IOException {
+	public void onMessage(Session session, String message) throws IOException {
 
 		long UID = sessionUsernameMap.get(session);
-    
+
     sendRec(UID);
 
 
 
 	}
-    
+
 	@OnClose
 	public void onClose(Session session) throws IOException {
 
 		long UID = sessionUsernameMap.get(session);
 		sessionUsernameMap.remove(session);
 		uidSessionMap.remove(UID);
-    followingOutfitMap.remove(UID);
+        followingOutfitMap.remove(UID);
 
 	}
 
@@ -110,9 +105,8 @@ public class RecSocket {
 		throwable.printStackTrace();
 	}
 
-  //Maybe take stats into consideration when deciding on what recomendations to pick
 	private void sendRec(long UID) {
-        int recSize = 5;
+        int recSize = 10;
         List<Outfit> recList = new ArrayList<>();
         Session userSession = uidSessionMap.get(UID);
         try {
@@ -136,7 +130,7 @@ public class RecSocket {
                         while (!found && attempt < maxRetries) {
                             long randomId = (long) (Math.random() * outfitCount) + 1;
                             var optionalOutfit = OutfitRepository.findById(randomId);
-                            if (optionalOutfit.isPresent()) {
+                            if (optionalOutfit.isPresent() && !optionalOutfit.get().getOutfitItems().isEmpty()) {
                                 randomOutfit = optionalOutfit.get();
                                 found = true;
                             }

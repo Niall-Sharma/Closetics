@@ -20,6 +20,7 @@ import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.example.closetics.R;
+import com.example.closetics.outfits.OutfitManager;
 
 import org.json.JSONObject;
 
@@ -27,11 +28,15 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class ViewClothesFragment extends Fragment {
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
     ClothesByTypeAdapter adapter;
+
+
+
 
     @Nullable
     @Override
@@ -42,33 +47,28 @@ public class ViewClothesFragment extends Fragment {
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         super.onCreate(savedInstanceState);
-        ArrayList<String> objects = getArguments().getStringArrayList("JSONObject");
         ArrayList<ClothingItem> clothingItems = (ArrayList<ClothingItem>)getArguments().getSerializable("ClothingItems");
-        long [] clothingIds = getArguments().getLongArray("clothingIds");
 
-        adapter = new ClothesByTypeAdapter(objects, new ClothesByTypeAdapter.OnItemClickListener() {
+        adapter = new ClothesByTypeAdapter(clothingItems, new ClothesByTypeAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(int position, View view, String jsonObject) {
+            public void onItemClick(int position, View view, ClothingItem jsonObject) {
                 //Delete button on click logic very basic for roundtrip
+                int positionNeed = position;
                  if (view.getId() == R.id.delete_button){
-                     long clothingId = clothingIds[position];
+                     long clothingId = jsonObject.getId();
                      Log.d("clothingId", String.valueOf(clothingId));
-                     deleteClothing(getActivity(), clothingId, ClothesActivity.URL);
-                     deleteItem(objects, position);
-
+                     deleteClothing(getActivity(), clothingId, clothingItems, position, ClothesActivity.URL);
 
                  }
                  //Edit button on click logic
                  else{
-                     long clothingId = clothingIds[position];
+                     long clothingId = jsonObject.getId();
                      ClothingItem clothingItem = clothingItems.get(position);
-
                      //Switch to editActivity
                      Intent intent = new Intent(getActivity(), EditClothesActivity.class);
                      intent.putExtra("clothingId", clothingId);
                      //Serializable
                      intent.putExtra("clothingItem", clothingItem);
-
                      startActivity(intent);
 
 
@@ -82,26 +82,37 @@ public class ViewClothesFragment extends Fragment {
     }
 
 
-    public static Fragment newInstance(ArrayList<String> object, long[] clothingIds, ArrayList<ClothingItem> clothingItem) {
+    public static Fragment newInstance(ArrayList<String> object, ArrayList<ClothingItem> clothingItem) {
         //Create a new forgot password fragment
         Fragment fragment = new ViewClothesFragment();
         Bundle args = new Bundle();
         args.putStringArrayList("JSONObject", object);
-        args.putLongArray("clothingIds", clothingIds);
         args.putSerializable("ClothingItems", clothingItem);
         fragment.setArguments(args);
         return fragment;
     }
 
+    private void deleteClothingFromOutfit(Context context, Long clothingId, Long outfitId){
+        OutfitManager.removeClothingRequest(context, clothingId, outfitId, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                //Log.d("", );
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
 
-    private void deleteClothing(Context context,long clothingId, String URL){
+            }
+        });
+    }
+
+    private void deleteClothing(Context context,long clothingId, ArrayList<ClothingItem> objects, int position, String URL){
         ClothesManager.deleteClothingRequest(context, clothingId, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 //Response is null
                 Log.d("Delete Volley Response", "Success");
-
-
+                deleteItem(objects, position);
 
 
 
@@ -114,7 +125,8 @@ public class ViewClothesFragment extends Fragment {
 
         );
     }
-    private void deleteItem(ArrayList<String> objects, int position){
+    private void deleteItem(ArrayList<ClothingItem> objects, int position){
+        //Add a check for index out of bounds etc.
         objects.remove(position);
         adapter.notifyItemRemoved(position);
     }

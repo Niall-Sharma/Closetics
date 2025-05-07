@@ -46,14 +46,14 @@ public interface ClothingRepository extends JpaRepository<Clothing, Long> {
             "WHERE c.user.userId = :userId " +
             "AND cs.avgLowTemp > -1000 " +
             "ORDER BY cs.avgLowTemp ASC")
-    Optional<Clothing> findTopByUserIdOrderByAvgLowTempAsc(@Param("userId") Long userId);
+    List<Clothing> findTopByUserIdOrderByAvgLowTempAsc(@Param("userId") Long userId, Pageable pageable);
 
     @Query("SELECT c FROM clothing_table c " +
             "JOIN c.clothingStats cs " +
             "WHERE c.user.userId = :userId " +
             "AND cs.avgHighTemp > -1000 " +
             "ORDER BY cs.avgHighTemp DESC")
-    Optional<Clothing> findTopByUserIdOrderByAvgHighTempDesc(@Param("userId") Long userId);
+    List<Clothing> findTopByUserIdOrderByAvgHighTempDesc(@Param("userId") Long userId, Pageable pageable);
 
 
 

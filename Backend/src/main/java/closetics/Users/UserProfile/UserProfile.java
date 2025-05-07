@@ -9,6 +9,7 @@ import closetics.Outfits.Outfit;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
+import org.springframework.data.repository.cdi.Eager;
 
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
@@ -16,7 +17,8 @@ import jakarta.persistence.*;
 )
 @Entity(name = "user_profiles_table")
 public class UserProfile{
-  
+
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
@@ -31,6 +33,9 @@ public class UserProfile{
           inverseJoinColumns = @JoinColumn(name = "outfit_id")
   )
   private List<Outfit> outfits = new ArrayList<>();
+
+  @ManyToMany(mappedBy = "userProfileLikes")
+  private List<Outfit> likedOutfits = new ArrayList<>();
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
@@ -54,7 +59,11 @@ public class UserProfile{
     this.isPublic = isPublic;
   }
 
+
+
   public UserProfile(){}
+
+
 
   public List<Outfit> getOutfits(){
     return outfits;
@@ -99,5 +108,16 @@ public class UserProfile{
   public void removeOutfit(Outfit outfit){
     outfits.remove(outfit);
   }
-  public void setId(long id){this.id = id;}
+  public List<Outfit> getLikedOutfits() {
+    return likedOutfits;
+  }
+
+  public void setLikedOutfits(List<Outfit> likedOutfits) {
+    this.likedOutfits = likedOutfits;
+  }
+  public void setId(long id) {
+    this.id = id;
+  }
+
+
 }

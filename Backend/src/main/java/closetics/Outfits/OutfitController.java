@@ -4,6 +4,7 @@ import closetics.Clothes.Clothing;
 import closetics.Clothes.ClothingRepository;
 import closetics.Statistics.*;
 import closetics.Users.User;
+import closetics.Users.UserProfile.UserProfileDTO;
 import closetics.Users.UserRepository;
 import closetics.Users.UserProfile.UserProfile;
 import closetics.Users.UserProfile.UserProfileRepository;
@@ -257,6 +258,60 @@ public class OutfitController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PutMapping("/addLike/{outfitId}/{userId}")
+    public ResponseEntity<Outfit> addLike(@PathVariable long outfitId, @PathVariable long userId){
+        Outfit outfit = outfitRepository.findById(outfitId).orElseThrow(() -> new RuntimeException("Outfit Not Found"));
+        UserProfile userProfile = uProfileRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Profile Not Found"));
+
+        outfit.addUserProfileLike(userProfile);
+
+        outfitRepository.save(outfit);
+        return ResponseEntity.ok(outfit);
+    }
+
+    @PutMapping("/removeLike/{outfitId}/{userId}")
+    public ResponseEntity<Outfit> removeLike(@PathVariable long outfitId, @PathVariable long userId){
+        Outfit outfit = outfitRepository.findById(outfitId).orElseThrow(() -> new RuntimeException("Outfit Not Found"));
+        UserProfile userProfile = uProfileRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Profile Not Found"));
+
+        outfit.removeUserProfileLike(userProfile);
+
+        outfitRepository.save(outfit);
+        return ResponseEntity.ok(outfit);
+    }
+
+    @GetMapping("/likedOutfit/{outfitId}/{userId}")
+    public ResponseEntity<Boolean> checkLike(@PathVariable("outfitId") long outfitId, @PathVariable("userId") long userId){
+        Outfit outfit = outfitRepository.findById(outfitId).orElseThrow(() -> new RuntimeException("Outfit Not Found"));
+        for(UserProfileDTO user : outfit.getUserProfileLikes()){
+            if(user.getId() == userId){
+                return ResponseEntity.ok().body(true);
+            }
+        }
+        return ResponseEntity.ok().body(false);
+    }
+
+    @Operation(summary = "Get all outfits containing a specific clothing item", description = "Retrieves a list of all outfits that include the specified clothing item ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of outfit IDs",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class))),
+            @ApiResponse(responseCode = "404", description = "Clothing item not found", content = @Content)
+    })
+    @GetMapping(path = "/getOutfitsByClothingItem/{clothingId}")
+    public ResponseEntity<List<Long>> getOutfitsByClothingItem(
+            @Parameter(description = "ID of the clothing item to search for in outfits") @PathVariable long clothingId) {
+        
+        // First, check if the clothing item itself exists to provide a more specific error if not.
+        if (!clothingRepository.existsById(clothingId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); 
+        }
+
+        List<Long> outfitIds = outfitRepository.findOutfitIdsByClothingId(clothingId);
+        // No need to check if empty, an empty list is a valid response (200 OK with empty array).
+        
+        return ResponseEntity.ok(outfitIds);
     }
 
 }

@@ -27,16 +27,23 @@ public class ClothesDataViewModel extends ViewModel {
     }
 
 
+
     //Add a fragment data at specific index
     public void setFragment(int index, String data){
         MutableLiveData<String> temp = new MutableLiveData<>();
         temp.setValue(data);
         fragments.set(index, temp);
     }
+    public void setFragment(int index, String data, String d2){
+        MutableLiveData<String> temp = new MutableLiveData<>();
+        temp.setValue(data + "," +d2);
+        fragments.set(index, temp);
+    }
 
     //Get a fragments data at a specific index
-    public MutableLiveData<String> getFragment(int index){
-        return fragments.get(index);
+    public String getFragment(int index){
+        MutableLiveData<String> g = fragments.get(index);
+        return g.getValue();
     }
 
     public ArrayList<MutableLiveData<String>> getFragments(){

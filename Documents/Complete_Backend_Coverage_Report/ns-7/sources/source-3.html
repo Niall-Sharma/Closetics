@@ -1,0 +1,326 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > OutfitStatController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">closetics.Statistics</a>
+</div>
+
+<h1>Coverage Summary for Class: OutfitStatController (closetics.Statistics)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OutfitStatController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    55.6%
+  </span>
+  <span class="absValue">
+    (5/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    27.3%
+  </span>
+  <span class="absValue">
+    (6/22)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50.7%
+  </span>
+  <span class="absValue">
+    (35/69)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package closetics.Statistics;
+&nbsp;
+&nbsp;import closetics.Clothes.Clothing;
+&nbsp;import closetics.Outfits.Outfit;
+&nbsp;import closetics.Outfits.OutfitRepository;
+&nbsp;import io.swagger.v3.oas.annotations.Operation;
+&nbsp;import io.swagger.v3.oas.annotations.Parameter;
+&nbsp;import io.swagger.v3.oas.annotations.media.Content;
+&nbsp;import io.swagger.v3.oas.annotations.media.Schema;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponse;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponses;
+&nbsp;import io.swagger.v3.oas.annotations.tags.Tag;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.data.domain.PageRequest;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.PathVariable;
+&nbsp;import org.springframework.web.bind.annotation.PutMapping;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import closetics.Users.User;
+&nbsp;import closetics.Users.UserRepository;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.Optional;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@Tag(name = &quot;Outfit Statistics&quot;, description = &quot;Endpoints for managing and retrieving outfit statistics&quot;)
+<b class="fc">&nbsp;public class OutfitStatController {</b>
+&nbsp;    @Autowired
+&nbsp;    OutfitStatRepository outfitStatRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    OutfitRepository outfitRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    ClothingStatRepository clothingStatRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    UserRepository userRepository;
+&nbsp;
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Get outfit statistics by ID&quot;, description = &quot;Retrieves the statistics record for a specific outfit.&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved outfit statistics&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = OutfitStats.class))),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Outfit statistics not found for the given ID&quot;, content = @Content)
+&nbsp;    })
+&nbsp;    @GetMapping(path = &quot;/getOutfitStats/{id}&quot;)
+&nbsp;    public OutfitStats getClothingStats(@Parameter(description = &quot;ID of the outfit statistics to retrieve&quot;) @PathVariable long id) {
+<b class="fc">&nbsp;        return outfitStatRepository.findById(id).orElseThrow(() -&gt; new RuntimeException(&quot;OutfitStats Item not found&quot;));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Mark outfit as worn today&quot;, description = &quot;Increments the times worn count for the outfit and all its clothing items, adds a worn record with today&#39;s weather to each, and recalculates average temperatures.&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully updated outfit and associated clothing statistics&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = OutfitStats.class))),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Outfit statistics, Outfit, or associated Clothing statistics not found&quot;, content = @Content),
+&nbsp;            @ApiResponse(responseCode = &quot;500&quot;, description = &quot;Error fetching weather data&quot;, content = @Content)
+&nbsp;    })
+&nbsp;    @PutMapping(path = &quot;/wornOutfitToday/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;OutfitStats&gt; addWornOutfitToday(@Parameter(description = &quot;ID of the outfit worn&quot;) @PathVariable long id) {
+&nbsp;        try {
+<b class="fc">&nbsp;            OutfitStats outfitStats = outfitStatRepository.findById(id)</b>
+<b class="fc">&nbsp;                    .orElseThrow(() -&gt; new RuntimeException(&quot;OutfitStats Item not found&quot;));</b>
+<b class="fc">&nbsp;            outfitStats.incrementTimesWorn();</b>
+<b class="fc">&nbsp;            WornRecord record = WeatherFetcher.fetchWeatherData(LocalDate.now());</b>
+<b class="fc">&nbsp;            outfitStats.addWornRecord(record);</b>
+<b class="fc">&nbsp;            calculateAvgTemps(outfitStats);</b>
+<b class="fc">&nbsp;            outfitStatRepository.save(outfitStats);</b>
+&nbsp;
+&nbsp;            // Add worn record to clothing items in outfit as well
+<b class="fc">&nbsp;            Outfit outfit = outfitRepository.findById(id).orElseThrow(() -&gt; new RuntimeException(&quot;Outfit not found&quot;));</b>
+<b class="fc">&nbsp;            List&lt;Clothing&gt; clothes = outfit.getOutfitItems();</b>
+<b class="fc">&nbsp;            for (Clothing clothingItem : clothes) {</b>
+<b class="fc">&nbsp;                ClothingStats clothingItemStats = clothingStatRepository.findById(clothingItem.getClothesId())</b>
+<b class="fc">&nbsp;                        .orElseThrow(() -&gt; new RuntimeException(&quot;Clothing item not found&quot;));</b>
+<b class="fc">&nbsp;                clothingItemStats.incrementTimesWorn();</b>
+<b class="fc">&nbsp;                clothingItemStats.addWornRecord(record);</b>
+<b class="fc">&nbsp;                calculateAvgTemps(clothingItemStats);</b>
+<b class="fc">&nbsp;                clothingStatRepository.save(clothingItemStats);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            return ResponseEntity.ok(outfitStats);</b>
+&nbsp;        } catch(RuntimeException e) {
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Get the most expensive outfit for a user&quot;, description = &quot;Finds the outfit with the highest total price of its items for the specified user.&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved the most expensive outfit details (Map might contain outfit ID and total price)&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = Map.class))),
+&nbsp;            @ApiResponse(responseCode = &quot;403&quot;, description = &quot;Forbidden for Free tier users&quot;, content = @Content),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User not found or no outfits found for the user&quot;, content = @Content)
+&nbsp;    })
+&nbsp;    @GetMapping(path = &quot;/getUsersMostExpensiveOutfit/{userId}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; mostExpOutfit(@Parameter(description = &quot;ID of the user&quot;) @PathVariable long userId) {
+<b class="nc">&nbsp;        User user = userRepository.findById(userId)</b>
+<b class="nc">&nbsp;                .orElseThrow(() -&gt; new RuntimeException(&quot;User not found with id: &quot; + userId));</b>
+<b class="nc">&nbsp;        if (&quot;Free&quot;.equalsIgnoreCase(user.getUserTier())) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        Map&lt;String, Object&gt; outfitDetails = outfitRepository.findMostExpensiveOutfitByUserId(userId);</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(outfitDetails);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Get the most worn outfit for a user&quot;, description = &quot;Finds the outfit with the highest &#39;times worn&#39; count for the specified user.&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved the most worn outfit (or null if none found)&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = Outfit.class))),
+&nbsp;            @ApiResponse(responseCode = &quot;403&quot;, description = &quot;Forbidden for Free tier users&quot;, content = @Content),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User not found&quot;, content = @Content)
+&nbsp;    })
+&nbsp;    @GetMapping(path = &quot;/getUsersMostWornOutfit/{userId}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; mostWornOutfit(@Parameter(description = &quot;ID of the user&quot;) @PathVariable long userId) {
+<b class="nc">&nbsp;        User user = userRepository.findById(userId)</b>
+<b class="nc">&nbsp;                .orElseThrow(() -&gt; new RuntimeException(&quot;User not found with id: &quot; + userId));</b>
+<b class="nc">&nbsp;        if (&quot;Free&quot;.equalsIgnoreCase(user.getUserTier())) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        Outfit outfit = outfitRepository.findTopByUser_userIdOrderByOutfitStats_timesWornDesc(userId)</b>
+<b class="nc">&nbsp;                .orElse(null);</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(outfit);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Get the outfit worn in the coldest average temperatures for a user&quot;, description = &quot;Finds the outfit with the lowest average low temperature based on worn records.&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved the &#39;coldest&#39; outfit (or null if none found)&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = Outfit.class))),
+&nbsp;            @ApiResponse(responseCode = &quot;403&quot;, description = &quot;Forbidden for Free tier users&quot;, content = @Content),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User not found&quot;, content = @Content)
+&nbsp;    })
+&nbsp;    @GetMapping(path = &quot;/getUsersColdestAvgOutfit/{userId}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; coldestAvgOutfit(@Parameter(description = &quot;ID of the user&quot;) @PathVariable long userId) {
+<b class="nc">&nbsp;        User user = userRepository.findById(userId)</b>
+<b class="nc">&nbsp;                .orElseThrow(() -&gt; new RuntimeException(&quot;User not found with id: &quot; + userId));</b>
+<b class="nc">&nbsp;        if (&quot;Free&quot;.equalsIgnoreCase(user.getUserTier())) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        Pageable pageable = PageRequest.of(0, 1);</b>
+<b class="nc">&nbsp;        List&lt;Outfit&gt; outfits = outfitRepository.findTopByUserIdOrderByAvgLowTempAsc(userId, pageable);</b>
+<b class="nc">&nbsp;        Outfit outfit = outfits.isEmpty() ? null : outfits.get(0);</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(outfit);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Get the outfit worn in the warmest average temperatures for a user&quot;, description = &quot;Finds the outfit with the highest average high temperature based on worn records.&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved the &#39;warmest&#39; outfit (or null if none found)&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = Outfit.class))),
+&nbsp;            @ApiResponse(responseCode = &quot;403&quot;, description = &quot;Forbidden for Free tier users&quot;, content = @Content),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User not found&quot;, content = @Content)
+&nbsp;    })
+&nbsp;    @GetMapping(path = &quot;/getUsersWarmestAvgOutfit/{userId}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; warmestAvgOutfit(@Parameter(description = &quot;ID of the user&quot;) @PathVariable long userId) {
+<b class="nc">&nbsp;        User user = userRepository.findById(userId)</b>
+<b class="nc">&nbsp;                .orElseThrow(() -&gt; new RuntimeException(&quot;User not found with id: &quot; + userId));</b>
+<b class="nc">&nbsp;        if (&quot;Free&quot;.equalsIgnoreCase(user.getUserTier())) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        Pageable pageable = PageRequest.of(0, 1);</b>
+<b class="nc">&nbsp;        List&lt;Outfit&gt; outfits = outfitRepository.findTopByUserIdOrderByAvgHighTempDesc(userId, pageable);</b>
+<b class="nc">&nbsp;        Outfit outfit = outfits.isEmpty() ? null : outfits.get(0);</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(outfit);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void calculateAvgTemps(OutfitStats outfitStats) {
+<b class="fc">&nbsp;        List&lt;WornRecord&gt; validRecords = outfitStats.getDatesWorn().stream()</b>
+<b class="pc">&nbsp;                .filter(record -&gt; record.getHighTemp() != -1000 &amp;&amp; record.getLowTemp() != -1000)</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;
+&nbsp;        // Prevent division by zero
+<b class="pc">&nbsp;        if (validRecords.isEmpty()) {</b>
+<b class="nc">&nbsp;            outfitStats.setAvgHighTemp(-1000f);</b>
+<b class="nc">&nbsp;            outfitStats.setAvgLowTemp(-1000f);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+&nbsp;        // Calculate new averages
+<b class="fc">&nbsp;        double avgHighTemp = validRecords.stream().mapToDouble(WornRecord::getHighTemp).average().orElse(0);</b>
+<b class="fc">&nbsp;        double avgLowTemp = validRecords.stream().mapToDouble(WornRecord::getLowTemp).average().orElse(0);</b>
+&nbsp;
+&nbsp;        // Set updated values
+<b class="fc">&nbsp;        outfitStats.setAvgHighTemp((float) avgHighTemp);</b>
+<b class="fc">&nbsp;        outfitStats.setAvgLowTemp((float) avgLowTemp);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void calculateAvgTemps(ClothingStats clothingStats) {
+<b class="fc">&nbsp;        List&lt;WornRecord&gt; validRecords = clothingStats.getDatesWorn().stream()</b>
+<b class="pc">&nbsp;                .filter(record -&gt; record.getHighTemp() != -1000 &amp;&amp; record.getLowTemp() != -1000)</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;
+&nbsp;        // Prevent division by zero
+<b class="pc">&nbsp;        if (validRecords.isEmpty()) {</b>
+<b class="nc">&nbsp;            clothingStats.setAvgHighTemp(-1000f);</b>
+<b class="nc">&nbsp;            clothingStats.setAvgLowTemp(-1000f);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+&nbsp;        // Calculate new averages
+<b class="fc">&nbsp;        double avgHighTemp = validRecords.stream().mapToDouble(WornRecord::getHighTemp).average().orElse(0);</b>
+<b class="fc">&nbsp;        double avgLowTemp = validRecords.stream().mapToDouble(WornRecord::getLowTemp).average().orElse(0);</b>
+&nbsp;
+&nbsp;        // Set updated values
+<b class="fc">&nbsp;        clothingStats.setAvgHighTemp((float) avgHighTemp);</b>
+<b class="fc">&nbsp;        clothingStats.setAvgLowTemp((float) avgLowTemp);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-06 18:41</div>
+</div>
+</body>
+</html>

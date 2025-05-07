@@ -65,23 +65,23 @@ public class ProfileFragment extends Fragment {
             usernameText.setText("Guest (not logged in)");
             loginButton.setVisibility(TextView.VISIBLE);
             signupButton.setVisibility(TextView.VISIBLE);
-            logoutButton.setVisibility(TextView.GONE);
+            //logoutButton.setVisibility(TextView.GONE);
             editButton.setVisibility(TextView.GONE);
-            deleteUserButton.setVisibility(TextView.GONE);
+            //deleteUserButton.setVisibility(TextView.GONE);
             followingButton.setVisibility(TextView.GONE);
             followersButton.setVisibility(TextView.GONE);
-            settingsButton.setVisibility(TextView.GONE);
+            //settingsButton.setVisibility(TextView.GONE);
             tierButton.setVisibility(TextView.GONE);
         } else {
             usernameText.setText(username);
             loginButton.setVisibility(TextView.GONE);
             signupButton.setVisibility(TextView.GONE);
-            logoutButton.setVisibility(TextView.VISIBLE);
+            //logoutButton.setVisibility(TextView.VISIBLE);
             editButton.setVisibility(TextView.VISIBLE);
-            deleteUserButton.setVisibility(TextView.VISIBLE);
+            //deleteUserButton.setVisibility(TextView.VISIBLE);
             followingButton.setVisibility(TextView.VISIBLE);
             followersButton.setVisibility(TextView.VISIBLE);
-            settingsButton.setVisibility(TextView.VISIBLE);
+            //settingsButton.setVisibility(TextView.VISIBLE);
             tierButton.setVisibility(TextView.VISIBLE);
         }
 
@@ -101,12 +101,12 @@ public class ProfileFragment extends Fragment {
             usernameText.setText("Guest (not logged in)");
             loginButton.setVisibility(TextView.VISIBLE);
             signupButton.setVisibility(TextView.VISIBLE);
-            logoutButton.setVisibility(TextView.GONE);
+            //logoutButton.setVisibility(TextView.GONE);
             editButton.setVisibility(TextView.GONE);
-            deleteUserButton.setVisibility(TextView.GONE);
+            //deleteUserButton.setVisibility(TextView.GONE);
             followingButton.setVisibility(TextView.GONE);
             followersButton.setVisibility(TextView.GONE);
-            settingsButton.setVisibility(TextView.GONE);
+            //settingsButton.setVisibility(TextView.GONE);
             tierButton.setVisibility(TextView.GONE);
 
             stopRecWebSocket();

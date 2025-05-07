@@ -1,0 +1,130 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > OutfitRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">closetics.Outfits</a>
+</div>
+
+<h1>Coverage Summary for Class: OutfitRepository (closetics.Outfits)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">OutfitRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package closetics.Outfits;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface OutfitRepository extends JpaRepository&lt;Outfit, Long&gt; {
+&nbsp;    @Query(value = &quot;SELECT * FROM outfit_table WHERE user_id = :userId &quot;,nativeQuery = true)
+&nbsp;    List&lt;Outfit&gt; findAllByUserId(@Param(&quot;userId&quot;) long userId);
+&nbsp;
+&nbsp;    @Query(value = &quot;SELECT COUNT(DISTINCT outfit_id) FROM outfit_items WHERE clothing_id = :clothingId&quot;, nativeQuery = true)
+&nbsp;    long countDistinctOutfitsContainingClothing(@Param(&quot;clothingId&quot;) Long clothingId);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;    SELECT o.outfit_id AS outfitId, SUM(CAST(c.price AS DOUBLE)) AS totalPrice
+&nbsp;    FROM outfit_table o
+&nbsp;    JOIN outfit_items oi ON o.outfit_id = oi.outfit_id
+&nbsp;    JOIN clothing_table c ON c.clothes_id = oi.clothing_id
+&nbsp;    GROUP BY o.outfit_id
+&nbsp;    ORDER BY totalPrice DESC
+&nbsp;    LIMIT 10
+&nbsp;    &quot;&quot;&quot;, nativeQuery = true)
+&nbsp;    List&lt;Map&lt;String, Object&gt;&gt; findTop10MostExpensiveOutfits();
+&nbsp;
+&nbsp;    Optional&lt;Outfit&gt; findById(Long id);
+&nbsp;
+&nbsp;    @Query(value = &quot;&quot;&quot;
+&nbsp;    SELECT o.outfit_id AS outfitId, SUM(CAST(c.price AS DOUBLE)) AS totalPrice
+&nbsp;    FROM outfit_table o
+&nbsp;    JOIN outfit_items oi ON o.outfit_id = oi.outfit_id
+&nbsp;    JOIN clothing_table c ON c.clothes_id = oi.clothing_id
+&nbsp;    WHERE o.user_id = :userId
+&nbsp;    GROUP BY o.outfit_id
+&nbsp;    ORDER BY totalPrice DESC
+&nbsp;    LIMIT 1
+&nbsp;    &quot;&quot;&quot;, nativeQuery = true)
+&nbsp;    Map&lt;String, Object&gt; findMostExpensiveOutfitByUserId(@Param(&quot;userId&quot;) long userId);
+&nbsp;
+&nbsp;    Optional&lt;Outfit&gt; findTopByUser_userIdOrderByOutfitStats_timesWornDesc(long userId);
+&nbsp;
+&nbsp;    @Query(&quot;SELECT c FROM outfit_table c &quot; +
+&nbsp;            &quot;JOIN c.outfitStats cs &quot; +
+&nbsp;            &quot;WHERE c.user.userId = :userId &quot; +
+&nbsp;            &quot;AND cs.avgLowTemp &gt; -1000 &quot; +
+&nbsp;            &quot;ORDER BY cs.avgLowTemp ASC&quot;)
+&nbsp;    List&lt;Outfit&gt; findTopByUserIdOrderByAvgLowTempAsc(@Param(&quot;userId&quot;) long userId, Pageable pageable);
+&nbsp;
+&nbsp;    @Query(&quot;SELECT c FROM outfit_table c &quot; +
+&nbsp;            &quot;JOIN c.outfitStats cs &quot; +
+&nbsp;            &quot;WHERE c.user.userId = :userId &quot; +
+&nbsp;            &quot;AND cs.avgHighTemp &gt; -1000 &quot; +
+&nbsp;            &quot;ORDER BY cs.avgHighTemp DESC&quot;)
+&nbsp;    List&lt;Outfit&gt; findTopByUserIdOrderByAvgHighTempDesc(@Param(&quot;userId&quot;) long userId, Pageable pageable);
+&nbsp;
+&nbsp;    long countByUserUserId(long userId);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-06 18:41</div>
+</div>
+</body>
+</html>

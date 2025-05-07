@@ -1,0 +1,311 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ClothingController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">closetics.Clothes</a>
+</div>
+
+<h1>Coverage Summary for Class: ClothingController (closetics.Clothes)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ClothingController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90%
+  </span>
+  <span class="absValue">
+    (9/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (3/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94.5%
+  </span>
+  <span class="absValue">
+    (52/55)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package closetics.Clothes;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;import closetics.Statistics.ClothingStats;
+&nbsp;import closetics.Users.User;
+&nbsp;import closetics.Users.UserRepository;
+&nbsp;import io.swagger.v3.oas.annotations.Operation;
+&nbsp;import io.swagger.v3.oas.annotations.Parameter;
+&nbsp;import io.swagger.v3.oas.annotations.media.Content;
+&nbsp;import io.swagger.v3.oas.annotations.media.Schema;
+&nbsp;import io.swagger.v3.oas.annotations.parameters.RequestBody;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponse;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponses;
+&nbsp;import io.swagger.v3.oas.annotations.tags.Tag;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import closetics.Statistics.ClothingStatRepository;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@Tag(name = &quot;Clothing Items&quot;, description = &quot;Endpoints for managing individual clothing items&quot;)
+<b class="fc">&nbsp;public class ClothingController {</b>
+&nbsp;    @Autowired
+&nbsp;    ClothingRepository clothingRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    ClothingStatRepository clothingStatRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    UserRepository userRepository;
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Get all clothing items (globally)&quot;, description = &quot;Retrieves a list of all clothing items across all users. Use with caution, potentially large response.&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved list of all clothing&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = List.class))) // Specify Clothing in List
+&nbsp;    })
+&nbsp;    @GetMapping(path = &quot;/getAllClothing&quot;)
+&nbsp;    public List&lt;Clothing&gt; getAllClothing() {
+<b class="nc">&nbsp;        return clothingRepository.findAll();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Get a clothing item by ID&quot;, description = &quot;Retrieves a specific clothing item by its unique ID.&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved clothing item&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = Clothing.class))),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Clothing item not found&quot;, content = @Content)
+&nbsp;    })
+&nbsp;    @GetMapping(path = &quot;/getClothing/{id}&quot;)
+&nbsp;    public Clothing getClothing(@Parameter(description = &quot;ID of the clothing item to retrieve&quot;) @PathVariable long id) {
+<b class="fc">&nbsp;        return clothingRepository.findById(id).get();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Get clothing items by special type for a user&quot;, description = &quot;Retrieves clothing items of a specific &#39;special type&#39; (e.g., seasonal) for a given user.&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved list of clothing items&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = List.class))) // Specify Clothing in List
+&nbsp;    })
+&nbsp;    @GetMapping(path = &quot;/getClothing/special_type/{userId}/{type}&quot;)
+&nbsp;    public List&lt;Clothing&gt; getClothingBySpecialType(
+&nbsp;            @Parameter(description = &quot;ID of the user&quot;) @PathVariable(&quot;userId&quot;) long userId,
+&nbsp;            @Parameter(description = &quot;Special type identifier (numeric)&quot;) @PathVariable(&quot;type&quot;) long type){
+<b class="fc">&nbsp;        return clothingRepository.findBySpecialType(userId, type);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Get clothing items by clothing type for a user&quot;, description = &quot;Retrieves clothing items of a specific clothing type (e.g., shirt, pants) for a given user.&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved list of clothing items&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = List.class))) // Specify Clothing in List
+&nbsp;    })
+&nbsp;    @GetMapping(path = &quot;/getClothing/type/{userId}/{type}&quot;)
+&nbsp;    public List&lt;Clothing&gt; getClothingByType(
+&nbsp;            @Parameter(description = &quot;ID of the user&quot;) @PathVariable(&quot;userId&quot;) long userId,
+&nbsp;            @Parameter(description = &quot;Clothing type identifier (numeric)&quot;) @PathVariable(&quot;type&quot;) long type){
+<b class="fc">&nbsp;        return clothingRepository.findByType(userId, type);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Get all clothing items for a specific user&quot;, description = &quot;Retrieves all clothing items belonging to a specific user.&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully retrieved list of user&#39;s clothing items&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = List.class))) // Specify Clothing in List
+&nbsp;    })
+&nbsp;    @GetMapping(path = &quot;/getClothing/user/{userId}&quot;)
+&nbsp;    public List&lt;Clothing&gt; getClothingByUser(@Parameter(description = &quot;ID of the user&quot;) @PathVariable long userId){
+<b class="fc">&nbsp;      return clothingRepository.findByUserId(userId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Create a new clothing item&quot;, description = &quot;Adds a new clothing item for the specified user and initializes its statistics.&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Clothing item created successfully&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = Clothing.class))),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User not found&quot;, content = @Content)
+&nbsp;    })
+&nbsp;    @PostMapping(path = &quot;/createClothing&quot;)
+&nbsp;    public ResponseEntity&lt;Clothing&gt; createClothing(
+&nbsp;            @RequestBody(description = &quot;Details of the clothing item to create. Requires userId and other clothing properties.&quot;, required = true,
+&nbsp;                    content = @Content(schema = @Schema(implementation = ClothingMinimal.class)))
+&nbsp;            @org.springframework.web.bind.annotation.RequestBody ClothingMinimal request) {
+<b class="fc">&nbsp;        long user_id = request.getUserId();</b>
+<b class="fc">&nbsp;        User user = userRepository.findById(user_id).orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</b>
+<b class="fc">&nbsp;        Clothing clothing = new Clothing();</b>
+<b class="fc">&nbsp;        clothing.setBrand(request.getBrand());</b>
+<b class="fc">&nbsp;        clothing.setColor(request.getColor());</b>
+<b class="fc">&nbsp;        clothing.setDateBought(request.getDateBought());</b>
+<b class="fc">&nbsp;        clothing.setFavorite(request.getFavorite());</b>
+<b class="fc">&nbsp;        clothing.setImagePath(request.getImagePath());</b>
+<b class="fc">&nbsp;        clothing.setItemName(request.getItemName());</b>
+<b class="fc">&nbsp;        clothing.setMaterial(request.getMaterial());</b>
+<b class="fc">&nbsp;        clothing.setPrice(request.getPrice());</b>
+<b class="fc">&nbsp;        clothing.setSize(request.getSize());</b>
+<b class="fc">&nbsp;        clothing.setSpecialType(request.getSpecialType());</b>
+<b class="fc">&nbsp;        clothing.setClothingType(request.getClothingType());</b>
+<b class="fc">&nbsp;        clothing.setCreationDate(LocalDate.now());</b>
+<b class="fc">&nbsp;        clothing.setUser(user);</b>
+&nbsp;
+<b class="fc">&nbsp;        Clothing savedClothing = clothingRepository.save(clothing);</b>
+<b class="fc">&nbsp;        ClothingStats clothingStats = clothingStatRepository.save(new ClothingStats(savedClothing.getClothesId()));</b>
+<b class="fc">&nbsp;        Clothing statClothing = savedClothing.setClothingStats(clothingStats);</b>
+<b class="fc">&nbsp;        Clothing clothingWithStats = clothingRepository.save(statClothing);</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(clothingWithStats);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Delete a clothing item&quot;, description = &quot;Deletes a clothing item and its associated statistics by its ID.&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Clothing item deleted successfully&quot;, content = @Content),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Clothing item or statistics not found (deletion might partially succeed)&quot;, content = @Content)
+&nbsp;    })
+&nbsp;    @DeleteMapping(path = &quot;/deleteClothing/{itemId}&quot;)
+&nbsp;    public void deleteClothing(@Parameter(description = &quot;ID of the clothing item to delete&quot;) @PathVariable long itemId) {
+<b class="fc">&nbsp;        clothingRepository.deleteById(itemId);</b>
+<b class="fc">&nbsp;        clothingStatRepository.deleteById((itemId));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Update an existing clothing item&quot;, description = &quot;Updates the properties of an existing clothing item.&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Clothing item updated successfully&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = Clothing.class))),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Clothing item not found&quot;, content = @Content)
+&nbsp;    })
+&nbsp;    @PutMapping (path = &quot;/updateClothing&quot;)
+&nbsp;    public ResponseEntity&lt;Clothing&gt; updateClothing(
+&nbsp;            @RequestBody(description = &quot;Details of the clothing item to update. Requires clothingId. Include other properties to modify them.&quot;, required = true,
+&nbsp;                    content = @Content(schema = @Schema(implementation = ClothingMinimal.class)))
+&nbsp;            @org.springframework.web.bind.annotation.RequestBody ClothingMinimal request){
+&nbsp;        try {
+<b class="fc">&nbsp;            Clothing clothing = clothingRepository.findById(request.getClothingId())</b>
+<b class="fc">&nbsp;                    .orElseThrow(() -&gt; new RuntimeException(&quot;Clothing Item not found&quot;));</b>
+<b class="fc">&nbsp;            clothing.setBrand(request.getBrand());</b>
+<b class="fc">&nbsp;            clothing.setColor(request.getColor());</b>
+<b class="fc">&nbsp;            clothing.setDateBought(request.getDateBought());</b>
+<b class="fc">&nbsp;            clothing.setFavorite(request.getFavorite());</b>
+<b class="fc">&nbsp;            clothing.setImagePath(request.getImagePath());</b>
+<b class="fc">&nbsp;            clothing.setItemName(request.getItemName());</b>
+<b class="fc">&nbsp;            clothing.setMaterial(request.getMaterial());</b>
+<b class="fc">&nbsp;            clothing.setPrice(request.getPrice());</b>
+<b class="fc">&nbsp;            clothing.setSize(request.getSize());</b>
+<b class="fc">&nbsp;            clothing.setSpecialType(request.getSpecialType());</b>
+<b class="fc">&nbsp;            clothing.setClothingType(request.getClothingType());</b>
+<b class="fc">&nbsp;            clothingRepository.save(clothing);</b>
+<b class="fc">&nbsp;            return ResponseEntity.ok(clothing);</b>
+&nbsp;        } catch (RuntimeException e) {
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Toggle the favorite status of a clothing item&quot;, description = &quot;Sets a clothing item&#39;s favorite status to true if false, and vice versa.&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Favorite status toggled successfully&quot;,
+&nbsp;                    content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = Clothing.class))),
+&nbsp;            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Clothing item not found&quot;, content = @Content)
+&nbsp;    })
+&nbsp;    @PutMapping(&quot;/swapFavoriteOnClothing/{clothing_Id}&quot;)
+&nbsp;    public ResponseEntity&lt;Clothing&gt; swapFavorite(@Parameter(description = &quot;ID of the clothing item to modify&quot;) @PathVariable long clothing_Id) {
+<b class="fc">&nbsp;        Optional&lt;Clothing&gt; clothingOptional = clothingRepository.findById(clothing_Id);</b>
+&nbsp;
+<b class="pc">&nbsp;        if (clothingOptional.isPresent()) {</b>
+<b class="fc">&nbsp;            Clothing clothing = clothingOptional.get();</b>
+<b class="fc">&nbsp;            if (clothing.getFavorite()) {</b>
+<b class="fc">&nbsp;                clothing.setFavorite(false);</b>
+<b class="fc">&nbsp;                clothingRepository.save(clothing);</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                clothing.setFavorite(true);</b>
+<b class="fc">&nbsp;                clothingRepository.save(clothing);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            return ResponseEntity.ok(clothing);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-06 18:41</div>
+</div>
+</body>
+</html>

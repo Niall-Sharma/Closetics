@@ -59,4 +59,7 @@ public interface OutfitRepository extends JpaRepository<Outfit, Long> {
     List<Outfit> findTopByUserIdOrderByAvgHighTempDesc(@Param("userId") long userId, Pageable pageable);
 
     long countByUserUserId(long userId);
+
+    @Query(value = "SELECT DISTINCT oi.outfit_id FROM outfit_items oi WHERE oi.clothing_id = :clothingId", nativeQuery = true)
+    List<Long> findOutfitIdsByClothingId(@Param("clothingId") Long clothingId);
 }

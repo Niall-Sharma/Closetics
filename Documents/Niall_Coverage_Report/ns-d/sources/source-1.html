@@ -25,12 +25,9 @@ Current scope:     <a href="../../index.html">all classes</a>
 <h1>Coverage Summary for Class: UserProfile (closetics.Users.UserProfile)</h1>
 
 <table class="coverageStats">
+
 <tr>
   <th class="name">Class</th>
-<th class="coverageStat 
-">
-  Class, %
-</th>
 <th class="coverageStat 
 ">
   Method, %
@@ -42,14 +39,6 @@ Current scope:     <a href="../../index.html">all classes</a>
 </tr>
 <tr>
   <td class="name">UserProfile</td>
-<td class="coverageStat">
-  <span class="percent">
-    100%
-  </span>
-  <span class="absValue">
-    (1/1)
-  </span>
-</td>
 <td class="coverageStat">
   <span class="percent">
     82.4%
@@ -67,7 +56,31 @@ Current scope:     <a href="../../index.html">all classes</a>
   </span>
 </td>
 </tr>
-
+  <tr>
+    <td class="name">UserProfile$HibernateInstantiator$yCT28w2N</td>
+  </tr>
+  <tr>
+    <td class="name">UserProfile$HibernateProxy$0VGeJeZM</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    82.4%
+  </span>
+  <span class="absValue">
+    (14/17)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    72.7%
+  </span>
+  <span class="absValue">
+    (16/22)
+  </span>
+</td>
+</tr>
 </table>
 
 <br/>
@@ -101,29 +114,29 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;  private boolean isPublic;
 &nbsp;  private String username;
 &nbsp;
-&nbsp;  @OneToMany(fetch = FetchType.EAGER)
+<b class="fc">&nbsp;  @OneToMany(fetch = FetchType.EAGER)</b>
 &nbsp;  @JoinTable(
 &nbsp;          name = &quot;users_outfits&quot;,
 &nbsp;          joinColumns = @JoinColumn(name = &quot;UID&quot;),
 &nbsp;          inverseJoinColumns = @JoinColumn(name = &quot;outfit_id&quot;)
 &nbsp;  )
-<b class="fc">&nbsp;  private List&lt;Outfit&gt; outfits = new ArrayList&lt;&gt;();</b>
+&nbsp;  private List&lt;Outfit&gt; outfits = new ArrayList&lt;&gt;();
 &nbsp;
-&nbsp;  @ManyToMany(fetch = FetchType.EAGER)
+<b class="fc">&nbsp;  @ManyToMany(fetch = FetchType.EAGER)</b>
 &nbsp;  @JoinTable(
 &nbsp;          name = &quot;user_following&quot;,
 &nbsp;          joinColumns = @JoinColumn(name = &quot;UID&quot;, referencedColumnName = &quot;id&quot;),
 &nbsp;          inverseJoinColumns = @JoinColumn(name = &quot;following_id&quot;)
 &nbsp;  )
-<b class="fc">&nbsp;  private List&lt;UserProfile&gt; following_id = new ArrayList&lt;&gt;();;</b>
+&nbsp;  private List&lt;UserProfile&gt; following_id = new ArrayList&lt;&gt;();;
 &nbsp;
-&nbsp;  @ManyToMany(fetch = FetchType.EAGER)
+<b class="fc">&nbsp;  @ManyToMany(fetch = FetchType.EAGER)</b>
 &nbsp;  @JoinTable(
 &nbsp;          name = &quot;user_followers&quot;,
 &nbsp;          joinColumns = @JoinColumn(name = &quot;UID&quot;, referencedColumnName = &quot;id&quot;),
 &nbsp;          inverseJoinColumns = @JoinColumn(name = &quot;follower_id&quot;)
 &nbsp;  )
-<b class="fc">&nbsp;  private List&lt;UserProfile&gt; followers_id = new ArrayList&lt;&gt;();;</b>
+&nbsp;  private List&lt;UserProfile&gt; followers_id = new ArrayList&lt;&gt;();;
 &nbsp;
 &nbsp;
 <b class="nc">&nbsp;  public UserProfile(boolean isPublic, String username){</b>
@@ -201,7 +214,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-04-25 13:34</div>
+    <div style="float:right;">generated on 2025-05-01 16:32</div>
 </div>
 </body>
 </html>
