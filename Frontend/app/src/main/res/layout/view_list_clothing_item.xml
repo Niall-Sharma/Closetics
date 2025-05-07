@@ -55,8 +55,8 @@
 
             <ImageView
                 android:id="@+id/imageView"
-                android:layout_width="160dp"
-                android:layout_height="160dp"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginBottom="4dp"
                 app:layout_constraintBottom_toBottomOf="@+id/clothing_list_item_description_linearLayout"
@@ -84,15 +84,13 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Type:"
+                        android:text="Type:  "
                         android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:text="TextView"
                         android:textSize="16sp" />
                 </LinearLayout>
@@ -105,15 +103,13 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Special Type: "
+                        android:text="Special Type:  "
                         android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/specialType"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:text="TextView"
                         android:textSize="16sp" />
                 </LinearLayout>
@@ -126,15 +122,13 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Price: "
+                        android:text="Price:  "
                         android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/price"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:text="TextView"
                         android:textSize="16sp" />
                 </LinearLayout>
@@ -147,15 +141,13 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Material: "
+                        android:text="Material:  "
                         android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/material"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:text="TextView"
                         android:textSize="16sp" />
                 </LinearLayout>
@@ -168,15 +160,13 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Brand: "
+                        android:text="Brand:  "
                         android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/brand"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:text="TextView"
                         android:textSize="16sp" />
                 </LinearLayout>
@@ -189,15 +179,13 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Favorite: "
+                        android:text="Favorite:  "
                         android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/favorite"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:text="TextView"
                         android:textSize="16sp" />
                 </LinearLayout>
@@ -211,15 +199,13 @@
                         android:id="@+id/textView36"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Size:"
+                        android:text="Size:  "
                         android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/size"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:text="TextView"
                         android:textSize="16sp" />
                 </LinearLayout>
@@ -233,15 +219,13 @@
                         android:id="@+id/textView38"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Color: "
+                        android:text="Color:  "
                         android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/color"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:text="TextView"
                         android:textSize="16sp" />
                 </LinearLayout>
@@ -255,7 +239,7 @@
                         android:id="@+id/numberOutfitsPrompt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Date Bought: "
+                        android:text="Date Bought:  "
                         android:textSize="16sp" />
 
                     <TextView

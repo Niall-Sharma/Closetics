@@ -24,6 +24,7 @@
         android:layout_height="wrap_content"
         android:text="{{name}}"
         android:textSize="18sp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@+id/public_profile_username_text"
         app:layout_constraintStart_toStartOf="@+id/public_profile_username_text"
         app:layout_constraintTop_toBottomOf="@+id/public_profile_username_text" />
@@ -33,13 +34,14 @@
         style="@style/Widget.Material3.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="44dp"
         android:layout_marginTop="16dp"
-        android:minWidth="150dp"
+        android:minWidth="0dp"
         android:minHeight="0dp"
         android:text="{{n}} clothes"
         android:textAlignment="viewStart"
         android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/public_profile_outfits_button"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/public_profile_follow_button" />
 
@@ -48,25 +50,27 @@
         style="@style/Widget.Material3.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:minWidth="150dp"
+        android:minWidth="0dp"
         android:minHeight="0dp"
         android:text="{{n}} outfits"
         android:textAlignment="viewStart"
         android:textSize="18sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/public_profile_clothes_button"
-        app:layout_constraintStart_toEndOf="@+id/public_profile_clothes_button" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/public_profile_clothes_button"
+        app:layout_constraintTop_toTopOf="@+id/public_profile_clothes_button" />
 
     <Button
         android:id="@+id/public_profile_following_button"
         style="@style/Widget.Material3.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minWidth="150dp"
+        android:minWidth="0dp"
         android:minHeight="0dp"
         android:text="{{n}} following"
         android:textAlignment="viewStart"
         android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/public_profile_clothes_button"
         app:layout_constraintStart_toStartOf="@+id/public_profile_clothes_button"
         app:layout_constraintTop_toBottomOf="@+id/public_profile_clothes_button" />
 
@@ -75,21 +79,21 @@
         style="@style/Widget.Material3.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:minWidth="150dp"
+        android:minWidth="0dp"
         android:minHeight="0dp"
         android:text="{{n}} followers"
         android:textAlignment="viewStart"
         android:textSize="18sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/public_profile_following_button"
-        app:layout_constraintStart_toEndOf="@+id/public_profile_following_button" />
+        app:layout_constraintEnd_toEndOf="@+id/public_profile_outfits_button"
+        app:layout_constraintStart_toStartOf="@+id/public_profile_outfits_button"
+        tools:layout_editor_absoluteY="226dp" />
 
     <Button
         android:id="@+id/public_profile_follow_button"
         style="@style/Widget.Material3.Button.OutlinedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="32dp"
         android:minWidth="110dp"
         android:minHeight="0dp"
         android:paddingTop="4dp"
@@ -116,7 +120,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="24dp"
         android:text="{{username}}'s Outfits:"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
