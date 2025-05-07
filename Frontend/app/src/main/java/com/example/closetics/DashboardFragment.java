@@ -134,7 +134,7 @@ public class DashboardFragment extends Fragment {
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/dd/yyyy");
             LocalDate today = LocalDate.now();
             String formattedDate = today.format(formatter);
             todaysDate.setText(formattedDate);
@@ -192,12 +192,9 @@ public class DashboardFragment extends Fragment {
                 //If current is false, set current
                 if (current == -1){
                     intent.putExtra("setTomorrow", false);
-
-
                 }
                 else{
                     intent.putExtra("setTomorrow", true);
-
                 }
                 startActivity(intent);
             }
@@ -323,8 +320,8 @@ public class DashboardFragment extends Fragment {
                     outfitStats = response.getJSONObject("outfitStats");
                     String worn = outfitStats.getString("timesWorn");
                     wornCount.setText(worn);
-                    String lowTemp = outfitStats.getString("avgLowTemp");
-                    String highTemp = outfitStats.getString("avgHighTemp");
+                    String lowTemp = outfitStats.getString("avgLowTemp") + " °F";
+                    String highTemp = outfitStats.getString("avgHighTemp") + " °F";
                     outfitTotalCount.setText(highTemp);
                     averageLowTemperature.setText(lowTemp);
                     Long outfitId = response.getLong("outfitId");

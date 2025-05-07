@@ -564,7 +564,7 @@ public class StatisticsActivity extends AppCompatActivity {
                 Log.d("OW check", response.toString());
                 try {
                     JSONObject object = response.getJSONObject("outfitStats");
-                    String high = object.getString("avgHighTemp");
+                    String high = object.getString("avgHighTemp") + " °F";
                     warmOutfit.setText(high);
 
                 } catch (JSONException e) {
@@ -594,7 +594,7 @@ public class StatisticsActivity extends AppCompatActivity {
                 Log.d("OC", response.toString());
                 try {
                     JSONObject object = response.getJSONObject("outfitStats");
-                    String high = object.getString("avgLowTemp");
+                    String high = object.getString("avgLowTemp") + " °F";
                     coldOutfit.setText(high);
 
                 } catch (JSONException e) {
