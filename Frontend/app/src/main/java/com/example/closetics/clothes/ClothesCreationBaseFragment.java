@@ -9,8 +9,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ImageDecoder;
 import android.hardware.camera2.CameraCharacteristics;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -439,13 +441,23 @@ public class ClothesCreationBaseFragment extends Fragment{
     private byte[] getImageByteArrayFromUri(Uri sourceUri) {
         try {
             // Decode bitmap from the URI
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), sourceUri);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                ImageDecoder.Source source = ImageDecoder.createSource(requireContext().getContentResolver(), sourceUri);
+                Bitmap bitmap = ImageDecoder.decodeBitmap(source);
+                ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteStream); // or Bitmap.CompressFormat.PNG
+                return byteStream.toByteArray();
 
-            // Compress the bitmap to a PNG or JPEG byte array
-            ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteStream); // or Bitmap.CompressFormat.PNG
+            } else {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), sourceUri);
+                ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteStream); // or Bitmap.CompressFormat.PNG
+                return byteStream.toByteArray();
 
-            return byteStream.toByteArray();
+            }
+
+
+
 
         } catch (IOException e) {
             Log.e("ImageConversionError", e.toString());
