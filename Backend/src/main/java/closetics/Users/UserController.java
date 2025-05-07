@@ -1,6 +1,8 @@
 package closetics.Users;
 
 import java.util.List;
+
+import closetics.Outfits.OutfitRepository;
 import closetics.Users.Auth.AuthService;
 import closetics.Users.Tokens.Token;
 import closetics.Users.Tokens.TokenRepository;
@@ -42,9 +44,12 @@ public class UserController {
     private AuthService authService;
     
 
-    //Maybe move this in the future so that User doesn't have to deal with it and only makes a call towards UserProfile
     @Autowired
     private UserProfileRepository userProfileRepository;
+
+    @Autowired
+    private OutfitRepository outfitRepository;
+
 
     //This error is meant to trigger whenever a duplicate entry is added into the MySql database
     @ResponseStatus(value = HttpStatus.CONFLICT,

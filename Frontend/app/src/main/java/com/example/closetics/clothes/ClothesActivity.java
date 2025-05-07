@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -84,6 +85,8 @@ public class ClothesActivity extends AppCompatActivity {
     private ViewPager2 viewPager;
     private CustomSlideAdapter pagerAdapter;
 
+    private static int clothesNumber = -1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +123,23 @@ public class ClothesActivity extends AppCompatActivity {
         addClothes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // user tier limit
+                if (clothesNumber == -1) return; // not loaded yet
+                switch (UserManager.getUserTier(getApplicationContext())) {
+                    case 0:
+                        if (clothesNumber >= 15) {
+                            Toast.makeText(getApplicationContext(), "Limit of 15 Clothes reached. Higher User Tier required to Add more.", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        break;
+                    case 1:
+                        if (clothesNumber >= 30) {
+                            Toast.makeText(getApplicationContext(), "Limit of 30 Clothes reached. Higher User Tier required to Add more.", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        break;
+                }
+
                 activityItemsVisibility();
 
                 clothesDataViewModel = new ViewModelProvider(clothesActivity).get(ClothesDataViewModel.class);
@@ -251,6 +271,9 @@ public class ClothesActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONArray response) {
                 Log.d("Volley Response", response.toString());
+
+                clothesNumber = response.length();
+
                 clothingTypeCounts.clear();
                 try {
                     for (int i = 0; i < response.length(); i++) {

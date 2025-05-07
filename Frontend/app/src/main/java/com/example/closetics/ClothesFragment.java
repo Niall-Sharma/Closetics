@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +32,9 @@ public class ClothesFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_clothes, container, false);
+
+        // redirect to profile if not logged in
+        //((MainActivity)getActivity()).redirectToFragment(3);
 
         clothesButton = view.findViewById(R.id.discover_clothes_button);
         outfitsButton = view.findViewById(R.id.discover_outfits_button);
@@ -60,6 +65,16 @@ public class ClothesFragment extends Fragment {
 
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // redirect to profile if not logged in
+        if (UserManager.getUsername(getActivity().getApplicationContext()) == null) {
+            ((MainActivity)getActivity()).redirectToFragment(3);
+        }
     }
 
 }
