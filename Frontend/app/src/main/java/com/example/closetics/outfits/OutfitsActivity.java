@@ -8,6 +8,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -34,6 +35,8 @@ public class OutfitsActivity extends AppCompatActivity {
     private OutfitsListAdapter adapter;
     private Boolean setDashboard = false;
 
+    private int outfitsNumber;
+
 
     private List<Long> outfitIds;
 
@@ -47,13 +50,30 @@ public class OutfitsActivity extends AppCompatActivity {
         noOutfitsText = findViewById(R.id.outfits_no_outfits_text);
         backButton = findViewById(R.id.outfits_back_button);
 
-
+        outfitsNumber = -1;
 
         // Initialize the adapter with an empty list (data will be added later)
         adapter = new OutfitsListAdapter(this, new ArrayList<>(), this);
         outfitsList.setAdapter(adapter);
 
         addOutfitButton.setOnClickListener(v -> {
+            // user tier limit
+            if (outfitsNumber == -1) return; // not loaded yet
+            switch (UserManager.getUserTier(getApplicationContext())) {
+                case 0:
+                    if (outfitsNumber >= 15) {
+                        Toast.makeText(getApplicationContext(), "Limit of 15 Outfits reached. Higher User Tier required to Add more.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    break;
+                case 1:
+                    if (outfitsNumber >= 30) {
+                        Toast.makeText(getApplicationContext(), "Limit of 30 Outfits reached. Higher User Tier required to Add more.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    break;
+            }
+
             Intent intent = new Intent(OutfitsActivity.this, EditOutfitActivity.class);
             startActivity(intent);
         });
@@ -125,6 +145,8 @@ public class OutfitsActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONArray response) {
                         Log.d("Volley Response", response.toString());
+
+                        outfitsNumber = response.length();
 
                         // hide no outfits text if there are outfits
                         if (response.length() > 0 && !setDashboard) {

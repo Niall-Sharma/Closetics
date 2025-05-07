@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
@@ -94,9 +95,12 @@ public class DashboardFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
+
+        // redirect to profile if not logged in
+        //((MainActivity)getActivity()).redirectToFragment(3);
+
         leaderboard = view.findViewById(R.id.leaderboardButton);
         userStatistics = view.findViewById(R.id.userStatsButton);
         setTomorrow = view.findViewById(R.id.setTomorrowButton);
@@ -193,6 +197,17 @@ public class DashboardFragment extends Fragment {
 
         return view;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // redirect to profile if not logged in
+        if (UserManager.getUsername(getActivity().getApplicationContext()) == null) {
+            ((MainActivity)getActivity()).redirectToFragment(3);
+        }
+    }
+
     private void getClothingItems(Context context, Long outfitId){
         OutfitManager.getAllOutfitItemsRequest(context, outfitId, new Response.Listener<JSONArray>() {
             @Override

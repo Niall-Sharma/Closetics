@@ -12,8 +12,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="10dp"
-        app:cardBackgroundColor="@color/material_dynamic_neutral70"
-        app:cardCornerRadius="20dp"
+        app:cardCornerRadius="16dp"
         app:cardElevation="50dp"
 
         app:layout_constraintBottom_toBottomOf="parent"
@@ -24,28 +23,27 @@
         <!--Blue Constraint Box for the Widget, to keep things inside of the card-->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="210dp">
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp">
 
             <TextView
                 android:id="@+id/textViewTint"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="37dp"
-                android:layout_marginBottom="40dp"
+                android:layout_marginStart="32dp"
+                android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/imageView" />
+                app:layout_constraintStart_toEndOf="@+id/imageView"
+                app:layout_constraintTop_toBottomOf="@+id/statistics_recycler_item_linearLayout" />
 
             <TextView
+                android:id="@+id/textView14"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="140dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="138dp"
-                android:layout_marginBottom="37dp"
+                android:layout_marginTop="8dp"
                 android:text="Item Statistics"
+                android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/linearLayout10"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -55,15 +53,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="8dp"
                 android:orientation="horizontal"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toBottomOf="@+id/textView14">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Name: " />
+                    android:text="Name: "
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/name"
@@ -71,44 +70,46 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:layout_weight="1"
-                    android:text="-name-" />
+                    android:text="-name-"
+                    android:textSize="16sp" />
 
             </LinearLayout>
 
             <ImageView
                 android:id="@+id/imageView"
-                android:layout_width="157dp"
-                android:layout_height="147dp"
+                android:layout_width="160dp"
+                android:layout_height="160dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginEnd="2dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/linearLayout10"
+                app:layout_constraintEnd_toStartOf="@+id/clothing_list_item_description_linearLayout"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/linearLayout12"
                 app:srcCompat="@drawable/tshirt_crew" />
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/viewPager"
-                android:layout_width="157dp"
-                android:layout_height="147dp"
+                android:layout_width="160dp"
+                android:layout_height="160dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginEnd="2dp"
+                android:layout_marginTop="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/linearLayout10"
+                app:layout_constraintEnd_toStartOf="@+id/clothing_list_item_description_linearLayout"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/linearLayout12" />
 
             <LinearLayout
-                android:id="@+id/linearLayout10"
-                android:layout_width="wrap_content"
+                android:id="@+id/statistics_recycler_item_linearLayout"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="60dp"
-                android:layout_marginBottom="62dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/imageView"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintBottom_toBottomOf="@+id/viewPager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/viewPager"
+                app:layout_constraintTop_toTopOf="@+id/viewPager">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -119,14 +120,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Times Worn: " />
+                        android:text="Times Worn: "
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/specialType"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="TextView" />
+                        android:text="TextView"
+                        android:textSize="16sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -139,14 +142,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Average Low Temp: " />
+                        android:text="Average Low\nTemperature: "
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/low_temp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
                         android:layout_weight="1"
-                        android:text="TextView" />
+                        android:text="TextView"
+                        android:textSize="16sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -159,14 +165,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Average High Temp: " />
+                        android:text="Average High\nTemperature: "
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/high_temp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
                         android:layout_weight="1"
-                        android:text="TextView" />
+                        android:text="TextView"
+                        android:textSize="16sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -178,13 +187,15 @@
                         android:id="@+id/numberOutfitsPrompt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/outfits_in"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_weight="1"
+                        android:textSize="16sp" />
                 </LinearLayout>
 
             </LinearLayout>

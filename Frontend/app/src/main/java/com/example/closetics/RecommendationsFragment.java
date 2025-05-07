@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -89,7 +91,8 @@ public class RecommendationsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_recommendations, container, false);
 
-        // TODO: redirect to login when not logged in
+        // redirect to profile if not logged in
+        //((MainActivity)getActivity()).redirectToFragment(3);
 
         // attempt to start websocket
         startWebSocket();
@@ -212,6 +215,16 @@ public class RecommendationsFragment extends Fragment {
             LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(messageReceiver);
             Log.d("RecommendationsFragment", "Stopped, Receiver unregistered");
             isReceiving = false;
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // redirect to profile if not logged in
+        if (UserManager.getUsername(getActivity().getApplicationContext()) == null) {
+            ((MainActivity)getActivity()).redirectToFragment(3);
         }
     }
 
