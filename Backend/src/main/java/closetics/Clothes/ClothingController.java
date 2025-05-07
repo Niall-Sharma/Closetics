@@ -210,6 +210,7 @@ public class ClothingController {
             value = {
                     @ApiResponse(responseCode = "200", description = "Image succesfully saved"),
                     @ApiResponse(responseCode = "404", description = "Clothing not found"),
+                    @ApiResponse(responseCode = "400", description = "Bad Request")
 
             }
     )
