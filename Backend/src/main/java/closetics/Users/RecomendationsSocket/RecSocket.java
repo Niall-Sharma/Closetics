@@ -109,6 +109,7 @@ public class RecSocket {
         int recSize = 10;
         List<Outfit> recList = new ArrayList<>();
         Session userSession = uidSessionMap.get(UID);
+        List<Outfit> validOutfits = OutfitRepository.findAllWithItems();
         try {
             for (int i = 0; i < recSize; i++) {
                 int randomChoice = (int) ((Math.random() * 10) + 1);
@@ -122,25 +123,25 @@ public class RecSocket {
                     long outfitCount = OutfitRepository.count();
 
                     if (outfitCount > 0) {
-                        boolean found = false;
-                        Outfit randomOutfit = null;
-                        int maxRetries = 5;
-                        int attempt = 0;
+//                        boolean found = false;
+//                        Outfit randomOutfit = null;
+//                        int maxRetries = 5;
+//                        int attempt = 0;
 
-                        while (!found && attempt < maxRetries) {
-                            long randomId = (long) (Math.random() * outfitCount) + 1;
-                            var optionalOutfit = OutfitRepository.findById(randomId);
-                            if (optionalOutfit.isPresent() && !optionalOutfit.get().getOutfitItems().isEmpty()) {
-                                randomOutfit = optionalOutfit.get();
-                                found = true;
+//                        while (!found && attempt < maxRetries) {
+////                            long randomId = (long) (Math.random() * outfitCount) + 1;
+////                            var optionalOutfit = OutfitRepository.findById(randomId);
+//                            if (optionalOutfit.isPresent() && !optionalOutfit.get().getOutfitItems().isEmpty()) {
+//                                randomOutfit = optionalOutfit.get();
+//                                found = true;
+//                            }
+                            if (!validOutfits.isEmpty()) {
+                                int randomIndex = (int) (Math.random() * validOutfits.size());
+                                recList.add(validOutfits.remove(randomIndex));
                             }
-                            attempt++;
-                        }
-                        if (randomOutfit != null) {
-                            recList.add(randomOutfit);
-                        }else{
-                            userSession.getBasicRemote().sendText("Out of retries");
-                        }
+//                            attempt++;
+                        //}
+//                        userSession.getBasicRemote().sendText("Out of retries");
                     }
                 }
             }
