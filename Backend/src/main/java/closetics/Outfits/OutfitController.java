@@ -293,4 +293,25 @@ public class OutfitController {
         return ResponseEntity.ok().body(false);
     }
 
+    @Operation(summary = "Get all outfits containing a specific clothing item", description = "Retrieves a list of all outfits that include the specified clothing item ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of outfit IDs",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = List.class))),
+            @ApiResponse(responseCode = "404", description = "Clothing item not found", content = @Content)
+    })
+    @GetMapping(path = "/getOutfitsByClothingItem/{clothingId}")
+    public ResponseEntity<List<Long>> getOutfitsByClothingItem(
+            @Parameter(description = "ID of the clothing item to search for in outfits") @PathVariable long clothingId) {
+        
+        // First, check if the clothing item itself exists to provide a more specific error if not.
+        if (!clothingRepository.existsById(clothingId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); 
+        }
+
+        List<Long> outfitIds = outfitRepository.findOutfitIdsByClothingId(clothingId);
+        // No need to check if empty, an empty list is a valid response (200 OK with empty array).
+        
+        return ResponseEntity.ok(outfitIds);
+    }
+
 }
