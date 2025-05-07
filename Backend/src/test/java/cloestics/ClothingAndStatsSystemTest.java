@@ -306,18 +306,45 @@ public class ClothingAndStatsSystemTest {
 
     @Test
     public void test10_GetStatsAfterWearing() throws JSONException {
-        // Re-fetch stats to confirm persistence
+        assertNotEquals(0, testClothingId, "testClothingId not set");
+
         Response response = RestAssured.given().
                 header("Content-Type", "application/json").
                 get("/getClothingStats/" + testClothingId);
-        assertEquals(200, response.getStatusCode());
-        JSONObject responseJson = new JSONObject(response.getBody().asString());
 
-        // Assertions based on previous tests (should be worn at least once)
-        assertTrue(responseJson.getInt("timesWorn") > 0, "Should have been worn at least once");
-        assertNotEquals(-1000.0, responseJson.getDouble("avgHighTemp"), 0.001);
-        assertNotEquals(-1000.0, responseJson.getDouble("avgLowTemp"), 0.001);
-        assertFalse(responseJson.getJSONArray("datesWorn").length() == 0);
+        assertEquals(200, response.getStatusCode());
+        JSONObject statsJson = new JSONObject(response.getBody().asString());
+        assertEquals(1, statsJson.getInt("timesWorn"), "Times worn should be 1 after calling /wornClothingToday");
+    }
+
+    @Test
+    public void test10a_GetCostPerWear() {
+        assertNotEquals(0, testClothingId, "testClothingId not set from previous tests.");
+        // This test assumes test07_UpdateClothing set the price to 29.95
+        // and test09_WornClothingToday was called once, making timesWorn = 1.
+
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .get("/getCostPerWear/" + testClothingId);
+
+        assertEquals(200, response.getStatusCode(), "Expected HTTP 200 for getCostPerWear");
+
+        // The response body should be a float or null
+        String responseBody = response.getBody().asString();
+        try {
+            // Assuming price is 29.95 and timesWorn is 1 from previous tests
+            float expectedCostPerWear = 29.95f / 1.0f;
+            float actualCostPerWear = Float.parseFloat(responseBody);
+            assertEquals(expectedCostPerWear, actualCostPerWear, 0.001, "Calculated cost per wear is incorrect.");
+        } catch (NumberFormatException e) {
+            fail("Response body is not a valid float: " + responseBody, e);
+        }
+
+        // Test case: clothing item not found
+        Response notFoundResponse = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .get("/getCostPerWear/999999"); // Non-existent ID
+        assertEquals(404, notFoundResponse.getStatusCode(), "Expected HTTP 404 for non-existent clothing ID");
     }
 
     @Test

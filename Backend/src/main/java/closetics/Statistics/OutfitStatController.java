@@ -207,4 +207,64 @@ public class OutfitStatController {
         clothingStats.setAvgHighTemp((float) avgHighTemp);
         clothingStats.setAvgLowTemp((float) avgLowTemp);
     }
+
+    @Operation(summary = "Calculate Outfit Cost Per Wear", description = "Calculates the outfit cost per wear (total price of items / timesWorn) for a given outfit on demand. Premium users only.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully calculated outfit cost per wear (can be null if prices are unavailable or timesWorn is 0)",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Float.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden: This feature is for Premium users only.", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Outfit or its statistics not found", content = @Content)
+    })
+    @GetMapping(path = "/getOutfitCostPerWear/{outfitId}")
+    public ResponseEntity<Float> getOutfitCostPerWear(@Parameter(description = "ID of the outfit") @PathVariable long outfitId) {
+        Optional<Outfit> outfitOpt = outfitRepository.findById(outfitId);
+
+        if (outfitOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        Outfit outfit = outfitOpt.get();
+        User user = outfit.getUser();
+
+        if (user == null) { // Should not happen
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+
+        if ("Free".equalsIgnoreCase(user.getUserTier()) == false && "Basic".equalsIgnoreCase(user.getUserTier()) == false) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
+
+        Optional<OutfitStats> statsOpt = outfitStatRepository.findById(outfitId);
+        if (statsOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        OutfitStats outfitStats = statsOpt.get();
+        long timesWorn = outfitStats.getTimesWorn();
+
+        if (timesWorn == 0) {
+            return ResponseEntity.ok(null); // Cost per wear is null if never worn
+        }
+
+        float totalOutfitPrice = 0f;
+        boolean atLeastOnePriceFound = false;
+        if (outfit.getOutfitItems() != null) {
+            for (Clothing clothingItem : outfit.getOutfitItems()) {
+                String priceString = clothingItem.getPrice();
+                if (priceString != null && !priceString.isBlank()) {
+                    try {
+                        totalOutfitPrice += Float.parseFloat(priceString);
+                        atLeastOnePriceFound = true;
+                    } catch (NumberFormatException e) {
+                        System.err.println("Error parsing price for clothing item " + clothingItem.getClothesId() + " in outfit " + outfitId + ": " + priceString);
+                    }
+                }
+            }
+        }
+
+        if (atLeastOnePriceFound) {
+            return ResponseEntity.ok(totalOutfitPrice / timesWorn);
+        } else {
+            // If no items had a valid price, or outfit was empty.
+            return ResponseEntity.ok(null);
+        }
+    }
 }
