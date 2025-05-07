@@ -264,7 +264,7 @@ public class StatisticsActivity extends AppCompatActivity {
 
 
                         ClothingStatItem statItem = new ClothingStatItem(statObject, name, clothesId);
-                        getImage(context,clothesId, i);
+                        getImage(context,clothesId, statItem);
 
                         setNumberOfOutfitsIn(clothesId, statItem);
                         //Add the json object to the arrayList
@@ -295,29 +295,20 @@ public class StatisticsActivity extends AppCompatActivity {
         });
     }
 
-    private void getImage(Context context, long clothesId, int i){
+    private void getImage(Context context, long clothesId, ClothingStatItem statItem){
         ClothesManager.getImageByClothing(context, clothesId, MainActivity.SERVER_URL, new Response.Listener<byte[]>() {
             @Override
             public void onResponse(byte[] response) {
-                if (allClothingStatsObjects.size() < i + 1) {
-                    boolean b = true;
-                    while (b) {
-                        try{
-                            allClothingStatsObjects.get(i).setImage(response);
-                            b= false;
-                        } catch (IndexOutOfBoundsException e) {
+                statItem.setImage(response);
+                allClothingStatsObjects.add(statItem);
 
-                        }
-                    }
-                }else{
-                    allClothingStatsObjects.get(i).setImage(response);
-                }
+
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
-                allClothingStatsObjects.get(i).setImage(null);
+                statItem.setImage(null);
+                allClothingStatsObjects.add(statItem);
                 Log.d("Error", error.toString());
 
             }
@@ -501,17 +492,22 @@ public class StatisticsActivity extends AppCompatActivity {
         StatisticsManager.coldestAverageClothingRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.d("CC check", response.toString());
-                String s;
-                if (response.equals("")){
-                    s = "none";
+                try {
+                    JSONObject statItem = response.getJSONObject("clothingStats");
+                    String itemName = response.getString("itemName");
+                    if (itemName.equals("null")){
+                        itemName = "None";
+                    }
+                    Long highTemp = statItem.getLong("avgLowTemp");
+                    String s = itemName + "\n" + String.valueOf(highTemp);
                     coldClothing.setText(s);
-                }
-                else{
-                    coldClothing.setText(response.toString());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
                 }
 
             }
+
+
 
         }, new Response.ErrorListener() {
             @Override
@@ -531,13 +527,17 @@ public class StatisticsActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 Log.d("CW check", response.toString());
-                String s;
-                if (response.equals("")){
-                    s = "none";
+                try {
+                    JSONObject statItem = response.getJSONObject("clothingStats");
+                    String itemName = response.getString("itemName");
+                    if (itemName.equals("null")){
+                        itemName = "None";
+                    }
+                    Long highTemp = statItem.getLong("avgHighTemp");
+                    String s = itemName + "\n" + String.valueOf(highTemp);
                     warmClothing.setText(s);
-                }
-                else{
-                    warmClothing.setText(response.toString());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
                 }
 
             }

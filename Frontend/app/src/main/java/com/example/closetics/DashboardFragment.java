@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
@@ -71,6 +72,7 @@ public class DashboardFragment extends Fragment {
     private TextView outfitTotalCount;
     private TextView averageLowTemperature;
     private ArrayList<byte[]> images;
+    private CardView cardView;
 
     private ViewPager2 viewPager;
     private FragmentStateAdapter pagerAdapter;
@@ -106,6 +108,7 @@ public class DashboardFragment extends Fragment {
         outfitName = view.findViewById(R.id.outfitName);
         outfitInsights = view.findViewById(R.id.outfitStats);
         wornCount = view.findViewById(R.id.wornCount);
+        cardView = view.findViewById(R.id.cardView);
         outfitTotalCount = view.findViewById(R.id.outfitTotalCount);
         averageLowTemperature = view.findViewById(R.id.averageLowTemperature);
         viewPager = view.findViewById(R.id.viewPager);
@@ -130,20 +133,24 @@ public class DashboardFragment extends Fragment {
         }
         //Check user tier for permissions
         if (UserManager.getUserTier(getActivity()) == 0){
-            //No access to stats
+            //No access to stats or leaderboard
             //15 outfits
             //15 clothes
+            setFreeVisibility();
+
 
 
         }
         else if (UserManager.getUserTier(getActivity()) ==1){
             //Statistics and 30, 30
+            setBasicVisibility();
             
 
         }
         else{
             //Premium
             //All features, leaderboard, no limits on outfits or clothes
+            setPremiumVisibility();
         }
 
         //No set outfit for today
@@ -225,8 +232,6 @@ public class DashboardFragment extends Fragment {
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
-
-
                 }
 
 
@@ -298,6 +303,22 @@ public class DashboardFragment extends Fragment {
             }
         });
     }
+    private void setBasicVisibility(){
+        cardView.setVisibility(View.INVISIBLE);
+        userStatistics.setVisibility(View.GONE);
+        leaderboard.setVisibility(View.GONE);
+    }
+    private void setFreeVisibility(){
+        cardView.setVisibility(View.VISIBLE);
+        userStatistics.setVisibility(View.VISIBLE);
+        leaderboard.setVisibility(View.GONE);
+
+    }
+    private void setPremiumVisibility(){
+        cardView.setVisibility(View.VISIBLE);
+        userStatistics.setVisibility(View.VISIBLE);
+        leaderboard.setVisibility(View.VISIBLE);
+    }
 
 
 
@@ -319,6 +340,7 @@ public class DashboardFragment extends Fragment {
             }
         });
     }
+
 
 
 
