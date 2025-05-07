@@ -27,7 +27,7 @@
         android:maxLines="3"
         android:text="Clothes: {{clothes list}}"
         android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@+id/outfit_list_item_edit_button"
+        app:layout_constraintEnd_toStartOf="@+id/outfit_list_item_choose_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/outfit_list_item_name_text" />
 
@@ -65,5 +65,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/star_outline" />
+
+    <ImageButton
+        android:id="@+id/outfit_list_item_choose_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:padding="8dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/outfit_list_item_edit_button"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/check" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

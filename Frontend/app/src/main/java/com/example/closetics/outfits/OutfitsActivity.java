@@ -36,7 +36,7 @@ public class OutfitsActivity extends AppCompatActivity {
     private Boolean setDashboard = false;
 
     private int outfitsNumber;
-
+    private boolean isSetDayOutfit, isTomorrow;
 
     private List<Long> outfitIds;
 
@@ -52,8 +52,21 @@ public class OutfitsActivity extends AppCompatActivity {
 
         outfitsNumber = -1;
 
+        // More Ashten's code
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            isSetDayOutfit = true;
+            isTomorrow = bundle.getBoolean("setTomorrow");
+        } else {
+            isSetDayOutfit = false;
+        }
+
         // Initialize the adapter with an empty list (data will be added later)
-        adapter = new OutfitsListAdapter(this, new ArrayList<>(), this);
+        if (isSetDayOutfit) {
+            adapter = new OutfitsListAdapter(this, new ArrayList<>(), this, isTomorrow);
+        } else {
+            adapter = new OutfitsListAdapter(this, new ArrayList<>(), this);
+        }
         outfitsList.setAdapter(adapter);
 
         addOutfitButton.setOnClickListener(v -> {
@@ -97,12 +110,11 @@ public class OutfitsActivity extends AppCompatActivity {
 
 
         //Ashten's code, outfits activity is reused in the dashboard with slight modifications!
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null){
+        if (isSetDayOutfit) {
             String start  = "Choose ";
             setDashboard = true;
             addOutfitButton.setVisibility(View.INVISIBLE);
-            if (bundle.getBoolean("setTomorrow")) {
+            if (isTomorrow) {
                 String s = start + "Tomorrow's Outfit";
                 noOutfitsText.setText(s);
                 noOutfitsText.setVisibility(View.VISIBLE);
@@ -111,25 +123,25 @@ public class OutfitsActivity extends AppCompatActivity {
                 noOutfitsText.setText(s);
                 noOutfitsText.setVisibility(View.VISIBLE);
             }
-                //Clicking an outfit now sends that outfit ID to dashboard!
-                outfitsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            //Clicking an outfit now sends that outfit ID to dashboard!
+            outfitsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                        //Send outfit ID to main instead!
-                        long selectedId = outfitIds.get(position);
-                        if (noOutfitsText.getText().equals("Choose Tomorrow's Outfit")) {
-                            OutfitManager.saveTomorrowDailyOutfit(OutfitsActivity.this, selectedId);
-                        }
-                        else {
-                            OutfitManager.saveCurrentDailyOutfit(OutfitsActivity.this, selectedId);
-                            DashboardFragment.addWornToday(getApplicationContext(), selectedId);
-                        }
-
-                        Intent intent = new Intent(OutfitsActivity.this, MainActivity.class);
-                        startActivity(intent);
+                    //Send outfit ID to main instead!
+                    long selectedId = outfitIds.get(position);
+                    if (isTomorrow) {
+                        OutfitManager.saveTomorrowDailyOutfit(OutfitsActivity.this, selectedId);
                     }
-                });
+                    else {
+                        OutfitManager.saveCurrentDailyOutfit(OutfitsActivity.this, selectedId);
+                        DashboardFragment.addWornToday(getApplicationContext(), selectedId);
+                    }
+
+                    Intent intent = new Intent(OutfitsActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
+            });
 
 
             }

@@ -15,11 +15,11 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="6dp"
-            android:layout_marginTop="115dp"
+            android:layout_marginTop="24dp"
             android:layout_marginBottom="16dp"
             app:layout_constraintBottom_toTopOf="@+id/cardView3"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView4"
             app:layout_constraintWidth_percent="0.48">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -43,10 +43,10 @@
                     android:id="@+id/outfitName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
                     android:layout_marginTop="16dp"
                     android:text="-Outift Name-"
                     android:textSize="18sp"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -54,10 +54,10 @@
                     android:id="@+id/todaysDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:text="-Today's Date-"
-                    android:textSize="14sp"
+                    android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
@@ -67,7 +67,7 @@
                     android:layout_height="250dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="24dp"
-                    android:layout_marginEnd="7dp"
+                    android:layout_marginEnd="8dp"
                     android:layout_marginBottom="16dp"
                     app:layout_constraintBottom_toTopOf="@+id/todaysDate"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -80,8 +80,8 @@
                     android:id="@+id/setTomorrowButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="33dp"
-                    android:layout_marginEnd="33dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
                     android:layout_marginBottom="16dp"
                     android:text="-tomorrow-"
                     android:textSize="16sp"
@@ -110,10 +110,10 @@
                     android:id="@+id/outfitStats"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
                     android:text="-Outfit Name- Insights"
                     android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -121,9 +121,8 @@
                     android:id="@+id/linearLayout7"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="1dp"
-                    android:layout_marginEnd="1dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="4dp"
                     android:orientation="vertical"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -140,7 +139,8 @@
                         android:id="@+id/wornCount"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="-count-" />
+                        android:text="-count-"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/warmPrompt"
@@ -152,7 +152,8 @@
                     <TextView
                         android:id="@+id/outfitTotalCount"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/coldPrompt"
@@ -165,7 +166,8 @@
                         android:id="@+id/averageLowTemperature"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="-average-" />
+                        android:text="-average-"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/textView17"
@@ -178,10 +180,9 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="215dp"
-                    android:layout_marginTop="3dp"
-                    android:layout_marginBottom="1dp"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="8dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -207,7 +208,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="36dp"
+            android:layout_marginTop="32dp"
             android:text="Today's Wardrobe"
             android:textSize="30sp"
             android:textStyle="bold"
@@ -227,18 +228,18 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView3"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="100dp"
             android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
+            android:paddingEnd="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/leaderboardButton"
             app:layout_constraintStart_toStartOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:paddingEnd="16dp">
 
                 <TextView
                     android:id="@+id/textView23"
@@ -278,24 +279,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="16dp"
             android:text="Closetics Leaderboard"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cardView3"
+            app:layout_constraintTop_toBottomOf="@+id/userStatsButton" />
 
         <Button
             android:id="@+id/userStatsButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
             android:text="User Statistics"
             android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@+id/leaderboardButton"
-            app:layout_constraintEnd_toEndOf="@+id/leaderboardButton"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="@+id/leaderboardButton"
-            app:layout_constraintTop_toBottomOf="@+id/cardView"
-            app:layout_constraintVertical_bias="0.5" />
+            app:layout_constraintStart_toEndOf="@+id/cardView3"
+            app:layout_constraintTop_toBottomOf="@+id/cardView" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

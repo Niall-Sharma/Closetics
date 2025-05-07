@@ -62,8 +62,8 @@ public class StatisticsActivity extends AppCompatActivity {
     private CardView card1;
     private CardView card2;
 
-    private ArrayList<ClothingStatItem> allOutfitStatsObjects = new ArrayList<>();
-    private ArrayList<ClothingStatItem> allClothingStatsObjects = new ArrayList<>();
+    private ArrayList<ClothingStatItem> allOutfitStatsObjects;
+    private ArrayList<ClothingStatItem> allClothingStatsObjects;
 
     private final String CLOTHES_STATS_TAG = "Clothes Stats";
     private final String OUTFITS_STATS_TAG = "Outfit Stats";
@@ -123,6 +123,8 @@ public class StatisticsActivity extends AppCompatActivity {
         setWarmClothing();
         setColdOutfit();
         setWarmOutfit();
+
+
 
 
 
@@ -202,7 +204,7 @@ public class StatisticsActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONArray response) {
                totalOutfitCount.setText(String.valueOf(response.length()));
-                ArrayList<ClothingStatItem> statsObjects = new ArrayList<>();
+                allOutfitStatsObjects = new ArrayList<>();
 
                 for (int i =0; i < response.length(); i++){
                    try {
@@ -212,13 +214,19 @@ public class StatisticsActivity extends AppCompatActivity {
                        String name = object.getString("outfitName");
                        long outfitId = object.getLong("outfitId");
                        ClothingStatItem c = new ClothingStatItem(stats, name, outfitId);
-                       statsObjects.add(c);
+                       if (UserManager.getUserTier(getApplicationContext()) == 2){
+                           setOutfitCostPerWear(outfitId, c);
+                       }
+                       else{
+                           allOutfitStatsObjects.add(c);
+                       }
+                       //statsObjects.add(c);
                    } catch (JSONException e) {
                        Log.e("exception", e.toString());
                    }
 
                }
-                setAllOutfitStatsObjects(statsObjects);
+                //allOutfitStatsObjects = statsObjects;
             }
         }, new Response.ErrorListener() {
             @Override
@@ -237,30 +245,34 @@ public class StatisticsActivity extends AppCompatActivity {
 
                 int totalClosetValue =0;
 
-                if (allClothingStatsObjects != null){
-                    allClothingStatsObjects.clear();
-                }
+                allClothingStatsObjects = new ArrayList<>();
                 for (int i =0; i<response.length(); i++){
+                    JSONObject object = response.optJSONObject(i);
                     try {
+                        if (object == null){
+                            continue;
+                        }
 
-                        JSONObject object = response.getJSONObject(i);
+                        JSONObject statObject = object.optJSONObject("clothingStats");
+                        if (statObject == null){
+                            continue;
+                        }
+
                         Log.d("object", object.toString());
 
                         /*
                         Grab the numberOfOutfitsIn field
                          */
-                        JSONObject statObject = object.getJSONObject("clothingStats");
                         String name = object.getString("itemName");
                         long clothesId = object.getLong("clothesId");
 
 
 
                         ClothingStatItem statItem = new ClothingStatItem(statObject, name, clothesId);
-                        getImage(context,clothesId, i);
+                        getImage(context,clothesId, statItem);
 
-                        setNumberOfOutfitsIn(clothesId, statItem);
                         //Add the json object to the arrayList
-                        Log.d("statObject", statObject.toString());
+                        Log.d("statObject", object.toString());
 
                         /*
                         Check if price is not null
@@ -287,41 +299,30 @@ public class StatisticsActivity extends AppCompatActivity {
         });
     }
 
-    private void getImage(Context context, long clothesId, int i){
+    private void getImage(Context context, long clothesId, ClothingStatItem statItem){
         ClothesManager.getImageByClothing(context, clothesId, MainActivity.SERVER_URL, new Response.Listener<byte[]>() {
             @Override
             public void onResponse(byte[] response) {
-                if (allClothingStatsObjects.size() < i + 1) {
-                    boolean b = true;
-                    while (b) {
-                        try{
-                            allClothingStatsObjects.get(i).setImage(response);
-                            b= false;
-                        } catch (IndexOutOfBoundsException e) {
+                statItem.setImage(response);
+                setNumberOfOutfitsIn(clothesId, statItem);
 
-                        }
-                    }
-                }else{
-                    allClothingStatsObjects.get(i).setImage(response);
-                }
+
+                //allClothingStatsObjects.add(statItem);
+
+
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                allClothingStatsObjects.get(i).setImage(null);
+                statItem.setImage(null);
+                setNumberOfOutfitsIn(clothesId, statItem);
+                //allClothingStatsObjects.add(statItem);
                 Log.d("Error", error.toString());
 
             }
         });
     }
 
-    /**
-     * Changes the object in which the allOutfitStatsObjects is referring to
-     * @param objects
-     */
-    private void setAllOutfitStatsObjects(ArrayList<ClothingStatItem> objects){
-        allOutfitStatsObjects = objects;
-    }
 
     /**
      * Sets the activities two cards invisible
@@ -375,7 +376,8 @@ public class StatisticsActivity extends AppCompatActivity {
             public void onResponse(JSONObject response) {
                 try {
                     Log.d("outfit", response.toString());
-                    String s = "Name: " + response.getString("outfitName") +"\nPrice: " + price;
+                    String formattedPrice = String.format("%.5s", price);  // Ensure max 5 characters
+                    String s = "Name: " + response.getString("outfitName") +"\nPrice: " + formattedPrice;
                     mostExpensiveOutfit.setText(s);
                 } catch (JSONException e) {
                     Log.e("exception", e.toString());
@@ -492,17 +494,22 @@ public class StatisticsActivity extends AppCompatActivity {
         StatisticsManager.coldestAverageClothingRequest(this, UserManager.getUserID(this), MainActivity.SERVER_URL, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.d("CC check", response.toString());
-                String s;
-                if (response.equals("")){
-                    s = "none";
+                try {
+                    JSONObject statItem = response.getJSONObject("clothingStats");
+                    String itemName = response.getString("itemName");
+                    if (itemName.equals("null")){
+                        itemName = "None";
+                    }
+                    Long highTemp = statItem.getLong("avgLowTemp");
+                    String s = itemName + "\n" + String.valueOf(highTemp);
                     coldClothing.setText(s);
-                }
-                else{
-                    coldClothing.setText(response.toString());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
                 }
 
             }
+
+
 
         }, new Response.ErrorListener() {
             @Override
@@ -522,13 +529,17 @@ public class StatisticsActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response) {
                 Log.d("CW check", response.toString());
-                String s;
-                if (response.equals("")){
-                    s = "none";
+                try {
+                    JSONObject statItem = response.getJSONObject("clothingStats");
+                    String itemName = response.getString("itemName");
+                    if (itemName.equals("null")){
+                        itemName = "None";
+                    }
+                    Long highTemp = statItem.getLong("avgHighTemp");
+                    String s = itemName + "\n" + String.valueOf(highTemp);
                     warmClothing.setText(s);
-                }
-                else{
-                    warmClothing.setText(response.toString());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
                 }
 
             }
@@ -553,7 +564,7 @@ public class StatisticsActivity extends AppCompatActivity {
                 Log.d("OW check", response.toString());
                 try {
                     JSONObject object = response.getJSONObject("outfitStats");
-                    String high = object.getString("avgHighTemp");
+                    String high = object.getString("avgHighTemp") + " °F";
                     warmOutfit.setText(high);
 
                 } catch (JSONException e) {
@@ -583,7 +594,7 @@ public class StatisticsActivity extends AppCompatActivity {
                 Log.d("OC", response.toString());
                 try {
                     JSONObject object = response.getJSONObject("outfitStats");
-                    String high = object.getString("avgLowTemp");
+                    String high = object.getString("avgLowTemp") + " °F";
                     coldOutfit.setText(high);
 
                 } catch (JSONException e) {
@@ -600,6 +611,39 @@ public class StatisticsActivity extends AppCompatActivity {
             }
         });
     }
+    private void setClothingCostPerWear(Long clothingId, ClothingStatItem clothingStatItem){
+        StatisticsManager.getCostPerWearClothing(this, clothingId, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                clothingStatItem.setWornCount(response);
+                allClothingStatsObjects.add(clothingStatItem);
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                allClothingStatsObjects.add(clothingStatItem);
+            }
+        });
+    }
+
+    private void setOutfitCostPerWear(Long outfitId, ClothingStatItem clothingStatItem){
+        StatisticsManager.getCostPerWearOutfit(this, outfitId, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                clothingStatItem.setWornCount(response);
+                allOutfitStatsObjects.add(clothingStatItem);
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                allOutfitStatsObjects.add(clothingStatItem);
+
+            }
+        });
+
+    }
 
     /**
      * Fetches and sets the number of outfits a particular clothing item is apart of.
@@ -612,7 +656,15 @@ public class StatisticsActivity extends AppCompatActivity {
             public void onResponse(String response) {
                 Log.d("response", response);
                 statItem.setNumberOfOutfitsIn(response);
-                allClothingStatsObjects.add(statItem);
+
+                if (UserManager.getUserTier(getApplicationContext()) == 2){
+                    //Premium tier additional clothing stat!
+                    setClothingCostPerWear(clothingId, statItem);
+                }
+                else{
+                    allClothingStatsObjects.add(statItem);
+                }
+
 
 
             }

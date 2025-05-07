@@ -220,5 +220,62 @@ public class ClothingStatController {
         clothingStats.setAvgHighTemp((float) avgHighTemp);
         clothingStats.setAvgLowTemp((float) avgLowTemp);
     }
+
+    @Operation(summary = "Calculate Cost Per Wear for a clothing item", description = "Calculates the cost per wear (price / timesWorn) for a given clothing item on demand. Premium users only.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully calculated cost per wear (can be null if price is unavailable or timesWorn is 0)",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Float.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden: This feature is for Premium users only.", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Clothing item or its statistics not found", content = @Content)
+    })
+    @GetMapping(path = "/getCostPerWear/{clothingId}")
+    public ResponseEntity<Float> getCostPerWear(@Parameter(description = "ID of the clothing item") @PathVariable long clothingId) {
+        Optional<Clothing> clothingOpt = clothingRepository.findById(clothingId);
+        
+        if (clothingOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        Clothing clothingItem = clothingOpt.get();
+        User user = clothingItem.getUser();
+
+        if (user == null) { // Should not happen if data integrity is maintained
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // Or a more specific error
+        }
+
+        if ("Free".equalsIgnoreCase(user.getUserTier()) == false && "Basic".equalsIgnoreCase(user.getUserTier()) == false) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
+
+        Optional<ClothingStats> statsOpt = clothingStatRepository.findById(clothingId);
+        if (statsOpt.isEmpty()) {
+            // If stats are missing for a premium user's item, this might be a data issue or an item never worn.
+            // Depending on desired behavior, could return 404 for stats or null for CPW.
+            // For now, let's assume stats should exist if clothing exists and user is premium, 
+            // so 404 for stats is consistent with "not found" meaning for stats part of the calculation.
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); 
+        }
+        ClothingStats clothingStats = statsOpt.get();
+
+        String priceString = clothingItem.getPrice();
+        long timesWorn = clothingStats.getTimesWorn();
+        Float priceValue = null;
+
+        if (priceString != null && !priceString.isBlank()) {
+            try {
+                priceValue = Float.parseFloat(priceString);
+            } catch (NumberFormatException e) {
+                // Price is not a valid float, so costPerWear cannot be calculated.
+                System.err.println("Error parsing price string for clothing ID " + clothingId + ": " + priceString);
+                return ResponseEntity.ok(null);
+            }
+        }
+
+        if (priceValue != null && timesWorn > 0) {
+            return ResponseEntity.ok(priceValue / timesWorn);
+        } else {
+            // If price is null or timesWorn is 0, cost per wear is null.
+            return ResponseEntity.ok(null);
+        }
+    }
 }
 

@@ -37,13 +37,13 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
     Baseline clothes stats adapter
      */
     ArrayList<ClothingStatItem> objects;
-    boolean which;
+    int which;
     Context context;
 
 
-    public StatisticsRecyclerViewAdapter(ArrayList<ClothingStatItem> objects, boolean b, Context context){
+    public StatisticsRecyclerViewAdapter(ArrayList<ClothingStatItem> objects, int type, Context context){
         this.objects = objects;
-        which = b;
+         which= type;
         this.context = context;
     }
 
@@ -61,22 +61,35 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
 
         ClothingStatItem item = objects.get(realPosition);
 
+        if (item.getWornCount() != null){
+            holder.costPerWearValue.setText(item.getWornCount());
+        }
+        else{
+            holder.costPerWear.setVisibility(View.GONE);
+            holder.costPerWearValue.setVisibility(View.GONE);
+        }
 
-        if (which){
+        if (which == 0){
             holder.image.setVisibility(View.GONE);
             getClothingItems(context, item.getOutfitId(), holder);
 
             try {
+
                 holder.timesWorn.setText(item.getTimesWorn());
-                holder.highTemp.setText(item.getAvgHighTemp());
-                holder.lowTemp.setText(item.getAvgLowTemp());
+                if (item.getTimesWorn().equals("0")) {
+                    holder.highTemp.setText("-");
+                    holder.lowTemp.setText("-");
+                } else {
+                    holder.highTemp.setText(item.getAvgHighTemp() + " °F");
+                    holder.lowTemp.setText(item.getAvgLowTemp() + " °F");
+                }
                 holder.name.setText(item.getName());
             } catch (JSONException e) {
                 Log.e("exception", e.toString());
             }
 
         }
-        else{
+        else if (which ==1){
             try {
                 //Set the text view in the recycler view
                 holder.image.setVisibility(View.VISIBLE);
@@ -91,11 +104,31 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 String s = "Number Of Outfits In: ";
                 holder.timesWorn.setText(item.getTimesWorn());
                 holder.outfitsIn.setText(item.getNumberOfOutfitsIn());
-                holder.highTemp.setText(item.getAvgHighTemp());
-                holder.lowTemp.setText(item.getAvgLowTemp());
+                if (item.getTimesWorn().equals("0")) {
+                    holder.highTemp.setText("-");
+                    holder.lowTemp.setText("-");
+                } else {
+                    holder.highTemp.setText(item.getAvgHighTemp() + " °F");
+                    holder.lowTemp.setText(item.getAvgLowTemp() + " °F");
+                }
                 holder.prompt.setText(s);
                 holder.name.setText(item.getName());
             } catch (JSONException e) {
+                Log.e("exception", e.toString());
+            }
+
+        }
+        else{
+            try {
+                holder.image.setVisibility(View.GONE);
+                String s = "Number Of Outfits In: ";
+                holder.timesWorn.setText(item.getTimesWorn());
+                holder.outfitsIn.setText(item.getNumberOfOutfitsIn());
+                holder.highTemp.setText(item.getAvgHighTemp() + " °F");
+                holder.lowTemp.setText(item.getAvgLowTemp() + " °F");
+                holder.prompt.setText(s);
+                holder.name.setText(item.getName());
+            } catch (Exception e) {
                 Log.e("exception", e.toString());
             }
 
@@ -159,8 +192,10 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
 
 
 
+
     public class MyViewHolder extends RecyclerView.ViewHolder{
         private TextView timesWorn;
+        private TextView costPerWear;
         private TextView lowTemp;
         private TextView highTemp;
         private TextView outfitsIn;
@@ -169,6 +204,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
         private ImageView image;
         private ViewPager2 viewPager;
         private ArrayList<byte[]> images;
+        private TextView costPerWearValue;
 
 
 
@@ -182,6 +218,8 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
             prompt = itemView.findViewById(R.id.numberOutfitsPrompt);
             image = itemView.findViewById(R.id.imageView);
             viewPager = itemView.findViewById(R.id.viewPager);
+            costPerWear = itemView.findViewById(R.id.costPerWear);
+            costPerWearValue = itemView.findViewById(R.id.costPerWearValue);
 
         }
     }

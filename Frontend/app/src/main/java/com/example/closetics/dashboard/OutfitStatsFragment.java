@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,6 +30,7 @@ public class OutfitStatsFragment extends Fragment {
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
     StatisticsRecyclerViewAdapter adapter;
+    private Button back;
 
     /*
     Recycler view fields
@@ -49,8 +51,11 @@ public class OutfitStatsFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_view);
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new StatisticsRecyclerViewAdapter(objects ,true, getActivity());
+        adapter = new StatisticsRecyclerViewAdapter(objects ,0, getActivity());
         recyclerView.setAdapter(adapter);
+        back = view.findViewById(R.id.button2);
+        back.setVisibility(View.GONE);
+
 
 
 

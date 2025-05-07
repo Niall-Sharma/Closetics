@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.example.closetics.DashboardFragment;
 import com.example.closetics.MainActivity;
 import com.example.closetics.PublicProfileActivity;
 import com.example.closetics.R;
@@ -34,11 +35,21 @@ public class OutfitsListAdapter  extends ArrayAdapter<OutfitsListItem> {
 
     private Context context;
     private Activity activity;
+    private boolean isSetDayOutfit, isTomorrow;
 
     public OutfitsListAdapter(Context context, List<OutfitsListItem> items, Activity activity) {
         super(context, 0, items);
         this.context = context;
         this.activity = activity;
+        this.isSetDayOutfit = false;
+    }
+
+    public OutfitsListAdapter(Context context, List<OutfitsListItem> items, Activity activity, boolean isTomorrow) {
+        super(context, 0, items);
+        this.context = context;
+        this.activity = activity;
+        this.isSetDayOutfit = true;
+        this.isTomorrow = isTomorrow;
     }
 
     @Override
@@ -56,6 +67,7 @@ public class OutfitsListAdapter  extends ArrayAdapter<OutfitsListItem> {
         TextView clothesText = convertView.findViewById(R.id.outfit_list_item_clothes_text);
         ImageButton editButton = convertView.findViewById(R.id.outfit_list_item_edit_button);
         ImageButton favoriteButton = convertView.findViewById(R.id.outfit_list_item_favorite_button);
+        ImageButton chooseButton = convertView.findViewById(R.id.outfit_list_item_choose_button);
         RecyclerView clothesRecycler = convertView.findViewById(R.id.outfit_list_item_clothes_recycler);
 
         nameText.setText(item.getName());
@@ -85,20 +97,48 @@ public class OutfitsListAdapter  extends ArrayAdapter<OutfitsListItem> {
             clothesRecycler.setAdapter(clothesAdapter);
         }
 
-        editButton.setOnClickListener(v -> {
-            Intent intent = new Intent(activity, EditOutfitActivity.class);
-            intent.putExtra("OUTFIT_ID", item.getId());
-            activity.startActivity(intent);
-        });
+        // buttons
+        if (isSetDayOutfit) { // if choosing outfit for the day, show checkmark
+            chooseButton.setVisibility(TextView.VISIBLE);
+            favoriteButton.setVisibility(TextView.GONE);
+            editButton.setVisibility(TextView.GONE);
 
-        if (item.isFavorite()) {
-            favoriteButton.setImageResource(R.drawable.star);
-        } else {
-            favoriteButton.setImageResource(R.drawable.star_outline);
+            chooseButton.setOnClickListener(v -> {
+                // send outfitId to main
+                long selectedId = item.getId();
+                if (isTomorrow) {
+                    OutfitManager.saveTomorrowDailyOutfit(context, selectedId);
+                }
+                else {
+                    OutfitManager.saveCurrentDailyOutfit(context, selectedId);
+                    DashboardFragment.addWornToday(context, selectedId);
+                }
+
+                Intent intent = new Intent(activity, MainActivity.class);
+                activity.startActivity(intent);
+            });
+
+        } else { // otherwise show normal buttons
+            chooseButton.setVisibility(TextView.GONE);
+            favoriteButton.setVisibility(TextView.VISIBLE);
+            editButton.setVisibility(TextView.VISIBLE);
+
+            editButton.setOnClickListener(v -> {
+                Intent intent = new Intent(activity, EditOutfitActivity.class);
+                intent.putExtra("OUTFIT_ID", item.getId());
+                activity.startActivity(intent);
+            });
+
+            if (item.isFavorite()) {
+                favoriteButton.setImageResource(R.drawable.star);
+            } else {
+                favoriteButton.setImageResource(R.drawable.star_outline);
+            }
+            favoriteButton.setOnClickListener(v -> {
+                swapFavorite(favoriteButton, item);
+            });
+
         }
-        favoriteButton.setOnClickListener(v -> {
-            swapFavorite(favoriteButton, item);
-        });
 
         // Return the completed view to render on screen
         return convertView;
