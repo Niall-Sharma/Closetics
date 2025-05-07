@@ -128,6 +128,23 @@ public class DashboardFragment extends Fragment {
             todaysDate.setText(formattedDate);
 
         }
+        //Check user tier for permissions
+        if (UserManager.getUserTier(getActivity()) == 0){
+            //No access to stats
+            //15 outfits
+            //15 clothes
+
+
+        }
+        else if (UserManager.getUserTier(getActivity()) ==1){
+            //Statistics and 30, 30
+            
+
+        }
+        else{
+            //Premium
+            //All features, leaderboard, no limits on outfits or clothes
+        }
 
         //No set outfit for today
         if (current == -1){

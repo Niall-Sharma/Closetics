@@ -241,15 +241,23 @@ public class StatisticsActivity extends AppCompatActivity {
                     allClothingStatsObjects.clear();
                 }
                 for (int i =0; i<response.length(); i++){
-                    try {
+                    JSONObject object = response.optJSONObject(i);
 
-                        JSONObject object = response.getJSONObject(i);
+                    try {
+                        if (object == null){
+                            continue;
+                        }
+
+                        JSONObject statObject = object.optJSONObject("clothingStats");
+                        if (statObject == null){
+                            continue;
+                        }
+
                         Log.d("object", object.toString());
 
                         /*
                         Grab the numberOfOutfitsIn field
                          */
-                        JSONObject statObject = object.getJSONObject("clothingStats");
                         String name = object.getString("itemName");
                         long clothesId = object.getLong("clothesId");
 
@@ -260,7 +268,7 @@ public class StatisticsActivity extends AppCompatActivity {
 
                         setNumberOfOutfitsIn(clothesId, statItem);
                         //Add the json object to the arrayList
-                        Log.d("statObject", statObject.toString());
+                        Log.d("statObject", object.toString());
 
                         /*
                         Check if price is not null
@@ -308,6 +316,7 @@ public class StatisticsActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+
                 allClothingStatsObjects.get(i).setImage(null);
                 Log.d("Error", error.toString());
 
