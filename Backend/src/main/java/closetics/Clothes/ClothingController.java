@@ -2,6 +2,7 @@ package closetics.Clothes;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
@@ -215,7 +216,7 @@ public class ClothingController {
             }
     )
     @PutMapping("/addImage/{clothing_Id}")
-    public ResponseEntity<Clothing> addImage(
+    public ResponseEntity<?> addImage(
             @Parameter(description = "ID of the clothing item to modify") @PathVariable long clothing_Id,
             @org.springframework.web.bind.annotation.RequestBody MultipartFile imageFile){
         try {
@@ -238,11 +239,13 @@ public class ClothingController {
             clothingRepository.save(clothing);
 
             return ResponseEntity.ok().body(clothing);
-        }catch (IOException e){
+        }catch (AccessDeniedException e) {
             e.printStackTrace();
-            Clothing errorResponse = new Clothing();
-            errorResponse.setSize(e.toString());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: " + e.getMessage());
+        }
+        catch (IOException e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.toString());
         }
 
     }
