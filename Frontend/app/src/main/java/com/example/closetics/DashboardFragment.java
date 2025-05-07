@@ -304,13 +304,13 @@ public class DashboardFragment extends Fragment {
         });
     }
     private void setBasicVisibility(){
-        cardView.setVisibility(View.INVISIBLE);
-        userStatistics.setVisibility(View.GONE);
+        cardView.setVisibility(View.VISIBLE);
+        userStatistics.setVisibility(View.VISIBLE);
         leaderboard.setVisibility(View.GONE);
     }
     private void setFreeVisibility(){
-        cardView.setVisibility(View.VISIBLE);
-        userStatistics.setVisibility(View.VISIBLE);
+        cardView.setVisibility(View.INVISIBLE);
+        userStatistics.setVisibility(View.GONE);
         leaderboard.setVisibility(View.GONE);
 
     }
