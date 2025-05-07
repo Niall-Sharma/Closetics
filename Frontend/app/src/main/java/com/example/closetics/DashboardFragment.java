@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
@@ -39,6 +40,7 @@ import com.example.closetics.clothes.ClothesCreationBaseFragment;
 import com.example.closetics.clothes.ClothesManager;
 import com.example.closetics.clothes.ClothingItem;
 import com.example.closetics.clothes.CustomSlideAdapter;
+import com.example.closetics.dashboard.ClothingStatItem;
 import com.example.closetics.dashboard.ImagePagerAdapter;
 import com.example.closetics.dashboard.LeaderboardActivity;
 import com.example.closetics.dashboard.SetTodaysOutfitFragment;
@@ -72,6 +74,7 @@ public class DashboardFragment extends Fragment {
     private TextView outfitTotalCount;
     private TextView averageLowTemperature;
     private ArrayList<byte[]> images;
+    private ArrayList<ClothingStatItem> clothingStatItemArrayList;
     private CardView cardView;
 
     private ViewPager2 viewPager;
@@ -82,7 +85,7 @@ public class DashboardFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
-    private StatisticsRecyclerViewAdapter adapter;
+    private StatisticsRecyclerViewAdapter statsAdapter;
 
 
     /*
@@ -114,6 +117,7 @@ public class DashboardFragment extends Fragment {
         viewPager = view.findViewById(R.id.viewPager);
         todaysTemperature = view.findViewById(R.id.dashboard_temperature_text);
         todaysTemperatureImage = view.findViewById(R.id.dashboard_temperature_image);
+        recyclerView = view.findViewById(R.id.recyclerView);
 
 
 
@@ -122,6 +126,7 @@ public class DashboardFragment extends Fragment {
 
         Log.d("current", String.valueOf(OutfitManager.getCurrentDailyOutfit(getActivity())));
         Log.d("tommorow", String.valueOf(OutfitManager.getTomorrowDailyOutfit(getActivity())));
+
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -139,12 +144,10 @@ public class DashboardFragment extends Fragment {
             setFreeVisibility();
 
 
-
         }
         else if (UserManager.getUserTier(getActivity()) ==1){
             //Statistics and 30, 30
             setBasicVisibility();
-            
 
         }
         else{
@@ -169,6 +172,8 @@ public class DashboardFragment extends Fragment {
             String s1 = String.valueOf(current);
             outfitName.setText(s1);
             //Set the viewpager with images
+            //StatisticsRecyclerViewAdapter adapter = new StatisticsRecyclerViewAdapter();
+            //recyclerView
         }
 
 
@@ -224,9 +229,14 @@ public class DashboardFragment extends Fragment {
                 for (int i =0; i < response.length(); i++){
                     try {
                         JSONObject clothingItem = response.getJSONObject(i);
+                        Log.d("ClothingItem", clothingItem.toString());
                         Long clothesId = clothingItem.getLong("clothesId");
+                        JSONObject statItem = clothingItem.getJSONObject("clothingStats");
+                        String itemName = clothingItem.getString("itemName");
+                        ClothingStatItem clothingStatItem = new ClothingStatItem(statItem, itemName, clothesId);
+                        clothingStatItemArrayList = new ArrayList<>();
                         images = new ArrayList<>();
-                        getImage(context, clothesId, response.length());
+                        getImage(context, clothesId, response.length(), clothingStatItem);
 
 
                     } catch (JSONException e) {
@@ -243,14 +253,21 @@ public class DashboardFragment extends Fragment {
             }
         });
     }
-    private void getImage(Context context, Long clothesId, int size){
+    private void getImage(Context context, Long clothesId, int size, ClothingStatItem clothingStatItem){
         ClothesManager.getImageByClothing(context, clothesId, MainActivity.SERVER_URL, new Response.Listener<byte[]>() {
             @Override
             public void onResponse(byte[] response) {
                 images.add(response);
+                clothingStatItem.setImage(response);
+                clothingStatItemArrayList.add(clothingStatItem);
                 if (images.size() == size){
                     ImagePagerAdapter adapter = new ImagePagerAdapter(context, images);
                     viewPager.setAdapter(adapter);
+                    layoutManager = new LinearLayoutManager(context);
+                    recyclerView.setLayoutManager(layoutManager);
+                    statsAdapter = new StatisticsRecyclerViewAdapter(clothingStatItemArrayList, false, context);
+                    recyclerView.setAdapter(statsAdapter);
+
 
                 }
 
@@ -260,7 +277,17 @@ public class DashboardFragment extends Fragment {
             public void onErrorResponse(VolleyError error) {
                 //Assume there is no image, add null
                 images.add(null);
+                clothingStatItem.setImage(null);
+                clothingStatItemArrayList.add(clothingStatItem);
+                if (images.size() == size){
+                    ImagePagerAdapter adapter = new ImagePagerAdapter(context, images);
+                    viewPager.setAdapter(adapter);
+                    layoutManager = new LinearLayoutManager(context);
+                    recyclerView.setLayoutManager(layoutManager);
+                    statsAdapter = new StatisticsRecyclerViewAdapter(clothingStatItemArrayList, false, context);
+                    recyclerView.setAdapter(statsAdapter);
 
+                }
 
             }
         });
