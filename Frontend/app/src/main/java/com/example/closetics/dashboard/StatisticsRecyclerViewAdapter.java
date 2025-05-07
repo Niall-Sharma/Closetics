@@ -37,13 +37,13 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
     Baseline clothes stats adapter
      */
     ArrayList<ClothingStatItem> objects;
-    boolean which;
+    int which;
     Context context;
 
 
-    public StatisticsRecyclerViewAdapter(ArrayList<ClothingStatItem> objects, boolean b, Context context){
+    public StatisticsRecyclerViewAdapter(ArrayList<ClothingStatItem> objects, int type, Context context){
         this.objects = objects;
-        which = b;
+         which= type;
         this.context = context;
     }
 
@@ -62,7 +62,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
         ClothingStatItem item = objects.get(realPosition);
 
 
-        if (which){
+        if (which == 0){
             holder.image.setVisibility(View.GONE);
             getClothingItems(context, item.getOutfitId(), holder);
 
@@ -76,7 +76,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
             }
 
         }
-        else{
+        else if (which ==1){
             try {
                 //Set the text view in the recycler view
                 holder.image.setVisibility(View.VISIBLE);
@@ -96,6 +96,21 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
                 holder.prompt.setText(s);
                 holder.name.setText(item.getName());
             } catch (JSONException e) {
+                Log.e("exception", e.toString());
+            }
+
+        }
+        else{
+            try {
+                holder.image.setVisibility(View.GONE);
+                String s = "Number Of Outfits In: ";
+                holder.timesWorn.setText(item.getTimesWorn());
+                holder.outfitsIn.setText(item.getNumberOfOutfitsIn());
+                holder.highTemp.setText(item.getAvgHighTemp());
+                holder.lowTemp.setText(item.getAvgLowTemp());
+                holder.prompt.setText(s);
+                holder.name.setText(item.getName());
+            } catch (Exception e) {
                 Log.e("exception", e.toString());
             }
 
@@ -156,6 +171,7 @@ public class StatisticsRecyclerViewAdapter extends RecyclerView.Adapter<Statisti
             }
         });
     }
+
 
 
 

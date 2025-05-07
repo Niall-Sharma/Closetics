@@ -62,8 +62,8 @@ public class StatisticsActivity extends AppCompatActivity {
     private CardView card1;
     private CardView card2;
 
-    private ArrayList<ClothingStatItem> allOutfitStatsObjects = new ArrayList<>();
-    private ArrayList<ClothingStatItem> allClothingStatsObjects = new ArrayList<>();
+    private ArrayList<ClothingStatItem> allOutfitStatsObjects;
+    private ArrayList<ClothingStatItem> allClothingStatsObjects;
 
     private final String CLOTHES_STATS_TAG = "Clothes Stats";
     private final String OUTFITS_STATS_TAG = "Outfit Stats";
@@ -218,7 +218,7 @@ public class StatisticsActivity extends AppCompatActivity {
                    }
 
                }
-                setAllOutfitStatsObjects(statsObjects);
+                allOutfitStatsObjects = statsObjects;
             }
         }, new Response.ErrorListener() {
             @Override
@@ -237,12 +237,9 @@ public class StatisticsActivity extends AppCompatActivity {
 
                 int totalClosetValue =0;
 
-                if (allClothingStatsObjects != null){
-                    allClothingStatsObjects.clear();
-                }
+                allClothingStatsObjects = new ArrayList<>();
                 for (int i =0; i<response.length(); i++){
                     JSONObject object = response.optJSONObject(i);
-
                     try {
                         if (object == null){
                             continue;
@@ -266,7 +263,6 @@ public class StatisticsActivity extends AppCompatActivity {
                         ClothingStatItem statItem = new ClothingStatItem(statObject, name, clothesId);
                         getImage(context,clothesId, statItem);
 
-                        setNumberOfOutfitsIn(clothesId, statItem);
                         //Add the json object to the arrayList
                         Log.d("statObject", object.toString());
 
@@ -300,7 +296,10 @@ public class StatisticsActivity extends AppCompatActivity {
             @Override
             public void onResponse(byte[] response) {
                 statItem.setImage(response);
-                allClothingStatsObjects.add(statItem);
+                setNumberOfOutfitsIn(clothesId, statItem);
+
+
+                //allClothingStatsObjects.add(statItem);
 
 
             }
@@ -308,20 +307,14 @@ public class StatisticsActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 statItem.setImage(null);
-                allClothingStatsObjects.add(statItem);
+                setNumberOfOutfitsIn(clothesId, statItem);
+                //allClothingStatsObjects.add(statItem);
                 Log.d("Error", error.toString());
 
             }
         });
     }
 
-    /**
-     * Changes the object in which the allOutfitStatsObjects is referring to
-     * @param objects
-     */
-    private void setAllOutfitStatsObjects(ArrayList<ClothingStatItem> objects){
-        allOutfitStatsObjects = objects;
-    }
 
     /**
      * Sets the activities two cards invisible
@@ -375,7 +368,8 @@ public class StatisticsActivity extends AppCompatActivity {
             public void onResponse(JSONObject response) {
                 try {
                     Log.d("outfit", response.toString());
-                    String s = "Name: " + response.getString("outfitName") +"\nPrice: " + price;
+                    String formattedPrice = String.format("%.5s", price);  // Ensure max 5 characters
+                    String s = "Name: " + response.getString("outfitName") +"\nPrice: " + formattedPrice;
                     mostExpensiveOutfit.setText(s);
                 } catch (JSONException e) {
                     Log.e("exception", e.toString());

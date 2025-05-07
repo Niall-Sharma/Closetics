@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -34,6 +35,7 @@ public class ViewClothesFragment extends Fragment {
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
     ClothesByTypeAdapter adapter;
+    Button backButton;
 
 
 
@@ -44,6 +46,7 @@ public class ViewClothesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_view_clothes, container, false);
 
         recyclerView = view.findViewById(R.id.recycler_view);
+        backButton = view.findViewById(R.id.button2);
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         super.onCreate(savedInstanceState);
@@ -75,7 +78,16 @@ public class ViewClothesFragment extends Fragment {
                  }
             }
         });
+
         recyclerView.setAdapter(adapter);
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), ClothesActivity.class);
+                startActivity(intent);
+            }
+        });
         //recyclerView.setHasFixedSize(true);
 
         return view;

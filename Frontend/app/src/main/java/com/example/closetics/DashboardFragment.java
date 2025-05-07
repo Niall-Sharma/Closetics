@@ -265,7 +265,7 @@ public class DashboardFragment extends Fragment {
                     viewPager.setAdapter(adapter);
                     layoutManager = new LinearLayoutManager(context);
                     recyclerView.setLayoutManager(layoutManager);
-                    statsAdapter = new StatisticsRecyclerViewAdapter(clothingStatItemArrayList, false, context);
+                    statsAdapter = new StatisticsRecyclerViewAdapter(clothingStatItemArrayList, 2, context);
                     recyclerView.setAdapter(statsAdapter);
 
 
@@ -284,7 +284,7 @@ public class DashboardFragment extends Fragment {
                     viewPager.setAdapter(adapter);
                     layoutManager = new LinearLayoutManager(context);
                     recyclerView.setLayoutManager(layoutManager);
-                    statsAdapter = new StatisticsRecyclerViewAdapter(clothingStatItemArrayList, false, context);
+                    statsAdapter = new StatisticsRecyclerViewAdapter(clothingStatItemArrayList, 2, context);
                     recyclerView.setAdapter(statsAdapter);
 
                 }
