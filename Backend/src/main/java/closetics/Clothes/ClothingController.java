@@ -239,7 +239,9 @@ public class ClothingController {
             return ResponseEntity.ok().body(clothing);
         }catch (IOException e){
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            Clothing errorResponse = new Clothing();
+            errorResponse.setSize(e.toString());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
 
     }
