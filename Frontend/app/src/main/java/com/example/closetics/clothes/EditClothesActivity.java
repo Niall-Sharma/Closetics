@@ -209,7 +209,8 @@ public class EditClothesActivity extends AppCompatActivity {
         ClothesManager.nullCheck("material", material, response);
         ClothesManager.nullCheck("price", price, response);
         ClothesManager.nullCheck("clothingType", clothingType,response);
-        ClothesManager.nullCheck("specialType", ClothingItem.typeConnections[Integer.valueOf(clothingType) - 1][Integer.valueOf(specialType)], response);
+        //ClothesManager.nullCheck("specialType", ClothingItem.typeConnections[Integer.valueOf(clothingType) - 1][Integer.valueOf(specialType)], response);
+        ClothesManager.nullCheck("specialType", specialType, response);
 
         response.put("clothingId", clothingId);
 

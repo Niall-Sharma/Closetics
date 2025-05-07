@@ -108,7 +108,8 @@ public class ClothesManager {
             nullCheck("material", material, saveClothing);
             nullCheck("price", price, saveClothing);
             nullCheck("clothingType", clothingType,saveClothing);
-            nullCheck("specialType", ClothingItem.typeConnections[Integer.valueOf(clothingType) - 1][Integer.valueOf(specialType)], saveClothing);
+            //nullCheck("specialType", ClothingItem.typeConnections[Integer.valueOf(clothingType) - 1][Integer.valueOf(specialType)], saveClothing);
+            nullCheck("specialType", specialType, saveClothing);
 
 
             saveClothing.put("userId", userId);

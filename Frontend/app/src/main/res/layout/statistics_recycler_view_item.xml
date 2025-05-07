@@ -64,8 +64,8 @@
 
             <ImageView
                 android:id="@+id/imageView"
-                android:layout_width="160dp"
-                android:layout_height="160dp"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
                 android:layout_marginStart="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -74,8 +74,8 @@
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/viewPager"
-                android:layout_width="160dp"
-                android:layout_height="160dp"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
                 android:layout_marginStart="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -103,7 +103,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Times Worn: "
-                        android:textSize="16sp" />
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/specialType"
@@ -125,7 +125,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Average Low\nTemperature: "
-                        android:textSize="16sp" />
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/low_temp"
@@ -148,7 +148,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Average High\nTemperature: "
-                        android:textSize="16sp" />
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/high_temp"
@@ -195,8 +195,8 @@
                         android:id="@+id/costPerWearValue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="TextView" />
+                        android:text="TextView"
+                        android:textSize="16sp" />
                 </LinearLayout>
 
             </LinearLayout>
