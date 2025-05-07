@@ -1,10 +1,11 @@
 package closetics.Users;
 
+import closetics.Outfits.Outfit;
 import jakarta.persistence.*;
 import org.mindrot.jbcrypt.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import closetics.Users.UserProfile.UserProfile;
-
+import java.util.List;
 
 @Entity(name = "users_table")
 @Table(uniqueConstraints = {
@@ -31,6 +32,18 @@ public class User {
     @JoinColumn(name = "userProfile_id")
     @JsonIgnore
     private UserProfile userProfile;
+
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    @JsonIgnore
+    private List<Outfit> outfits;
+
+    @PreRemove
+    private void prepareForDelete() {
+        if (this.userProfile != null && this.userProfile.getOutfits() != null) {
+            this.userProfile.getOutfits().clear();
+        }
+        
+    }
 
     public User(long userId, String name, String email, String username, String password, String userTier, String sQA1,
                 long sQID1, String sQA2, long sQID2, String sQA3, long sQID3) {
@@ -152,4 +165,12 @@ Regex explanataion:
     return userProfile;
   }
     public void SetUserProfile(UserProfile userProfile){this.userProfile = userProfile;}
+
+    public List<Outfit> getOutfits() {
+        return outfits;
+    }
+
+    public void setOutfits(List<Outfit> outfits) {
+        this.outfits = outfits;
+    }
 }

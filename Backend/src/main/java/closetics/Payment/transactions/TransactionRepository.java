@@ -24,4 +24,8 @@ public interface TransactionRepository extends JpaRepository<TransactionHistory,
     @Query(value = "DELETE FROM transaction_history_table WHERE payment_intent_id=?", nativeQuery = true)
     void deleteByPaymentIntentId(String Id);
 
+    @Transactional
+    @Modifying
+    void deleteByUserUserId(long userId);
+
 }

@@ -1,8 +1,13 @@
 package closetics.Users;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import closetics.Outfits.OutfitRepository;
+import closetics.Outfits.Outfit;
+import closetics.Clothes.Clothing;
+import closetics.Clothes.ClothingRepository;
+import closetics.Payment.transactions.TransactionRepository;
 import closetics.Users.Auth.AuthService;
 import closetics.Users.Tokens.Token;
 import closetics.Users.Tokens.TokenRepository;
@@ -26,10 +31,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.HashMap;
+import org.springframework.transaction.annotation.Transactional;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 @RestController
 @Tag(name = "Users", description = "Endpoints for user management, authentication, and account operations")
 public class UserController {
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     private UserRepository userRepository;
@@ -50,6 +61,11 @@ public class UserController {
     @Autowired
     private OutfitRepository outfitRepository;
 
+    @Autowired
+    private ClothingRepository clothingRepository;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
 
     //This error is meant to trigger whenever a duplicate entry is added into the MySql database
     @ResponseStatus(value = HttpStatus.CONFLICT,
@@ -167,12 +183,58 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User deleted successfully", content = @Content),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
-            // Consider response codes for deletion failure
     })
     @DeleteMapping(path = "/users/{id}")
-    public void deleteUser(@Parameter(description = "ID of the user to delete") @PathVariable int id) {
+    @Transactional
+    public ResponseEntity<Void> deleteUser(@Parameter(description = "ID of the user to delete") @PathVariable long id) {
+        User user = userRepository.findById(id).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        Long userProfileIdToDelete = null; // Variable to store the ID
+
+        // --- Step 0: Break the User -> UserProfile FK Link ---
+        UserProfile userProfileRef = user.GetUserProfile(); 
+        if (userProfileRef != null) {
+            userProfileIdToDelete = userProfileRef.getId(); // Store ID
+            user.SetUserProfile(null); // Set FK reference to null in the entity
+            userRepository.save(user); // Tell JPA to update the user
+            entityManager.flush();    // Force the UPDATE SQL to DB
+        }
+
+        // 1. Fetch Outfits for later deletion
+        List<Outfit> outfitsToDelete = outfitRepository.findAllByUserId(id);
+
+        // 2. Fetch Clothing for later deletion
+        List<Clothing> clothesToDelete = clothingRepository.findByUserId(id);
+        
+        // 3. Explicitly delete users_outfits join table entries
+        if (userProfileIdToDelete != null) {
+             userProfileRepository.deleteUserOutfitAssociations(userProfileIdToDelete);
+        }
+
+        // 4. Manually delete the User's Outfits
+        if (outfitsToDelete != null && !outfitsToDelete.isEmpty()) {
+            outfitRepository.deleteAll(outfitsToDelete);
+        }
+        
+        // 5. Manually delete the User's Clothing items
+        if (clothesToDelete != null && !clothesToDelete.isEmpty()) {
+             clothingRepository.deleteAll(clothesToDelete);
+        }
+        
+        // 6. Manually delete the User's Transaction History
+        transactionRepository.deleteByUserUserId(id);
+
+        // 7. Delete Tokens
         tokenRepository.deleteByUserId(id);
+
+        // 9. Delete User itself LAST (will cascade to UserProfile)
         userRepository.deleteById(id);
+        
+        return ResponseEntity.ok().build();
     }
 
 

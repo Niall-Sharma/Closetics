@@ -26,7 +26,7 @@ public class UserProfile{
   private boolean isPublic;
   private String username;
 
-  @OneToMany(fetch = FetchType.EAGER)
+  @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
   @JoinTable(
           name = "users_outfits",
           joinColumns = @JoinColumn(name = "UID"),
@@ -37,7 +37,7 @@ public class UserProfile{
   @ManyToMany(mappedBy = "userProfileLikes")
   private List<Outfit> likedOutfits = new ArrayList<>();
 
-  @ManyToMany(fetch = FetchType.EAGER)
+  @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
   @JoinTable(
           name = "user_following",
           joinColumns = @JoinColumn(name = "UID", referencedColumnName = "id"),
@@ -45,7 +45,7 @@ public class UserProfile{
   )
   private List<UserProfile> following_id = new ArrayList<>();;
 
-  @ManyToMany(fetch = FetchType.EAGER)
+  @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
   @JoinTable(
           name = "user_followers",
           joinColumns = @JoinColumn(name = "UID", referencedColumnName = "id"),
