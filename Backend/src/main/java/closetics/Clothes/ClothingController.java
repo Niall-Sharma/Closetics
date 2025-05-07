@@ -2,6 +2,7 @@ package closetics.Clothes;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
@@ -238,7 +239,11 @@ public class ClothingController {
             clothingRepository.save(clothing);
 
             return ResponseEntity.ok().body(clothing);
-        }catch (IOException e){
+        }catch (AccessDeniedException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: " + e.getMessage());
+        }
+        catch (IOException e){
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.toString());
         }
