@@ -159,6 +159,28 @@ public class StatisticsManager {
         );
         VolleySingleton.getInstance(context).addToRequestQueue(request);
     }
+    public static void getCostPerWearClothing(Context context, long clothingId,  Response.Listener<String> responseListener,
+                                              Response.ErrorListener errorListener){
+        String getUrl = MainActivity.SERVER_URL + "/getCostPerWear/" + clothingId;
+
+        StringRequest request = new StringRequest(Request.Method.GET,
+                getUrl, responseListener, errorListener);
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+
+
+    }
+    public static void getCostPerWearOutfit(Context context, long outfitId,  Response.Listener<String> responseListener,
+                                              Response.ErrorListener errorListener){
+        String getUrl = MainActivity.SERVER_URL + "/getOutfitCostPerWear/" + outfitId;
+
+        StringRequest request = new StringRequest(Request.Method.GET,
+                getUrl, responseListener, errorListener);
+        VolleySingleton.getInstance(context).addToRequestQueue(request);
+
+
+    }
+
+
 
     public static void coldestAverageClothingRequest(Context context, long userId, String URL, Response.Listener<JSONObject> responseListener,
                                                      Response.ErrorListener errorListener){

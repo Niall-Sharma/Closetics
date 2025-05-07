@@ -127,6 +127,8 @@ public class StatisticsActivity extends AppCompatActivity {
 
 
 
+
+
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -212,13 +214,14 @@ public class StatisticsActivity extends AppCompatActivity {
                        String name = object.getString("outfitName");
                        long outfitId = object.getLong("outfitId");
                        ClothingStatItem c = new ClothingStatItem(stats, name, outfitId);
-                       statsObjects.add(c);
+                       setOutfitCostPerWear(outfitId, c);
+                       //statsObjects.add(c);
                    } catch (JSONException e) {
                        Log.e("exception", e.toString());
                    }
 
                }
-                allOutfitStatsObjects = statsObjects;
+                //allOutfitStatsObjects = statsObjects;
             }
         }, new Response.ErrorListener() {
             @Override
@@ -603,6 +606,38 @@ public class StatisticsActivity extends AppCompatActivity {
             }
         });
     }
+    private void setClothingCostPerWear(Long clothingId, ClothingStatItem clothingStatItem){
+        StatisticsManager.getCostPerWearClothing(this, clothingId, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                clothingStatItem.setWornCount(response);
+                allClothingStatsObjects.add(clothingStatItem);
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+    }
+
+    private void setOutfitCostPerWear(Long outfitId, ClothingStatItem clothingStatItem){
+        StatisticsManager.getCostPerWearOutfit(this, outfitId, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                clothingStatItem.setWornCount(response);
+                allOutfitStatsObjects.add(clothingStatItem);
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+    }
 
     /**
      * Fetches and sets the number of outfits a particular clothing item is apart of.
@@ -615,7 +650,15 @@ public class StatisticsActivity extends AppCompatActivity {
             public void onResponse(String response) {
                 Log.d("response", response);
                 statItem.setNumberOfOutfitsIn(response);
-                allClothingStatsObjects.add(statItem);
+
+                if (UserManager.getUserTier(getApplicationContext()) == 2){
+                    //Premium tier additional clothing stat!
+                    setClothingCostPerWear(clothingId, statItem);
+                }
+                else{
+                    allClothingStatsObjects.add(statItem);
+                }
+
 
 
             }
