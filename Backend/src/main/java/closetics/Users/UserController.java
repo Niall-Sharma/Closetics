@@ -44,11 +44,9 @@ public class UserController {
     private AuthService authService;
     
 
-    //Maybe move this in the future so that User doesn't have to deal with it and only makes a call towards UserProfile
     @Autowired
     private UserProfileRepository userProfileRepository;
 
-    //Maybe move this in the future so that User doesn't have to deal with it and only makes a call towards UserProfile
     @Autowired
     private OutfitRepository outfitRepository;
 

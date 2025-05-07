@@ -46,6 +46,9 @@ public class ClothingController {
     @Autowired
     ImageRepository imageRepository;
 
+    @Autowired
+    OutfitRepository outfitRepository;
+
     @Operation(summary = "Get all clothing items (globally)", description = "Retrieves a list of all clothing items across all users. Use with caution, potentially large response.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved list of all clothing",
