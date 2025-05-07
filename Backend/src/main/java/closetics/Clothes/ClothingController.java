@@ -100,7 +100,7 @@ public class ClothingController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-
+ 
     }
 
     @PutMapping("/swapFavoriteOnClothing/{clothing_Id}")
