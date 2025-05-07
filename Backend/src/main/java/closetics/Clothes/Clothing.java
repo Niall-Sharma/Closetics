@@ -1,5 +1,6 @@
 package closetics.Clothes;
 
+import closetics.Clothes.ClothingImages.Image;
 import closetics.Users.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import closetics.Statistics.ClothingStats;
@@ -21,7 +22,12 @@ public class Clothing {
     private String color;
     private String dateBought;
     private String brand;
-    private String imagePath;
+
+    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JoinColumn(name = "image_id")
+    private Image image;
+
+
     private String itemName;
     private String material;
     private String price;
@@ -41,14 +47,13 @@ public class Clothing {
     @JsonIgnoreProperties("datesWorn")
     private ClothingStats clothingStats;
 
-    public Clothing(long itemId, boolean favorite, String size, String color, String dateBought, String brand, String imagePath, String itemName, String material, String price, long specialType, long type, User user ) {
+    public Clothing(long itemId, boolean favorite, String size, String color, String dateBought, String brand, String itemName, String material, String price, long specialType, long type, User user ) {
         this.clothesId = itemId;
         this.favorite = favorite;
         this.size = size;
         this.color = color;
         this.dateBought = dateBought;
         this.brand = brand;
-        this.imagePath = imagePath;
         this.itemName = itemName;
         this.material = material;
         this.specialType = specialType;
@@ -123,11 +128,11 @@ public class Clothing {
         this.brand = brand;
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public Image getImagePath() {
+        return image;
     }
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+    public void setImage(Image imagePath) {
+        this.image = imagePath;
     }
 
     public String getItemName() {
