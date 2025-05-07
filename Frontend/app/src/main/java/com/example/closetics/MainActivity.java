@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         // DEBUG Set user
         UserManager.saveUsername(getApplicationContext(), "user1");
         UserManager.saveUserID(getApplicationContext(), 1);
-        UserManager.saveUserTier(getApplicationContext(), 1);
+        UserManager.saveUserTier(getApplicationContext(), 0);
 
         // start websocket if person is logged in
         if (UserManager.getUsername(getApplicationContext()) != null) {
