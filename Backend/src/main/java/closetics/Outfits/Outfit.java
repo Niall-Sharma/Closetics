@@ -27,7 +27,7 @@ public class Outfit {
     private OutfitStats outfitStats;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
+    @JoinTable( 
             name = "outfit_items",
             joinColumns = @JoinColumn(name = "outfit_id"),
             inverseJoinColumns = @JoinColumn(name = "clothing_id")
