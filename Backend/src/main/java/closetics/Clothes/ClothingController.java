@@ -2,6 +2,7 @@ package closetics.Clothes;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
@@ -210,17 +211,18 @@ public class ClothingController {
             value = {
                     @ApiResponse(responseCode = "200", description = "Image succesfully saved"),
                     @ApiResponse(responseCode = "404", description = "Clothing not found"),
+                    @ApiResponse(responseCode = "400", description = "Bad Request")
 
             }
     )
     @PutMapping("/addImage/{clothing_Id}")
-    public ResponseEntity<Clothing> addImage(
+    public ResponseEntity<?> addImage(
             @Parameter(description = "ID of the clothing item to modify") @PathVariable long clothing_Id,
             @org.springframework.web.bind.annotation.RequestBody MultipartFile imageFile){
         try {
             Clothing clothing = clothingRepository.findById(clothing_Id).orElseThrow(() -> new RuntimeException("Clothing not found"));
 
-            File destinationFile = new File("/images/"+File.separator + clothing_Id + "_" + clothing.getUser().getUserId() + "_" + imageFile.getOriginalFilename());
+            File destinationFile = new File("/images/uploads"+File.separator + clothing_Id + "_" + clothing.getUser().getUserId() + "_" + imageFile.getOriginalFilename());
             if(!Files.exists(destinationFile.toPath().getParent())){
                 Files.createDirectories(destinationFile.toPath().getParent());
             }
@@ -237,9 +239,13 @@ public class ClothingController {
             clothingRepository.save(clothing);
 
             return ResponseEntity.ok().body(clothing);
-        }catch (IOException e){
+        }catch (AccessDeniedException e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: " + e.getMessage());
+        }
+        catch (IOException e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.toString());
         }
 
     }
