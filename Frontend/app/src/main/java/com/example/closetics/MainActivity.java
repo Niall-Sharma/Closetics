@@ -32,8 +32,8 @@ import java.util.Map;
  */
 public class MainActivity extends AppCompatActivity {
 
-    private static final String SERVER_ADDRESS = "10.0.2.2:8080";
-    //public static final String SERVER_ADDRESS = "coms-3090-008.class.las.iastate.edu:8080";
+    //private static final String SERVER_ADDRESS = "10.0.2.2:8080";
+    public static final String SERVER_ADDRESS = "coms-3090-008.class.las.iastate.edu:8080";
     public static final String SERVER_URL = "http://" + SERVER_ADDRESS;
     public static final String SERVER_WS_URL = "ws://" + SERVER_ADDRESS;
 
@@ -84,9 +84,9 @@ public class MainActivity extends AppCompatActivity {
 //        editor.commit();
         
         // DEBUG Set user
-        UserManager.saveUsername(getApplicationContext(), "user1");
-        UserManager.saveUserID(getApplicationContext(), 1);
-        UserManager.saveUserTier(getApplicationContext(), 1);
+//        UserManager.saveUsername(getApplicationContext(), "user1");
+//        UserManager.saveUserID(getApplicationContext(), 1);
+//        UserManager.saveUserTier(getApplicationContext(), 1);
 
         // start websocket if person is logged in
         if (UserManager.getUsername(getApplicationContext()) != null) {
