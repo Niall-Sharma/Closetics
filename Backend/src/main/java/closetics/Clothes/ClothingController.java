@@ -215,7 +215,7 @@ public class ClothingController {
             }
     )
     @PutMapping("/addImage/{clothing_Id}")
-    public ResponseEntity<Clothing> addImage(
+    public ResponseEntity<?> addImage(
             @Parameter(description = "ID of the clothing item to modify") @PathVariable long clothing_Id,
             @org.springframework.web.bind.annotation.RequestBody MultipartFile imageFile){
         try {
@@ -240,7 +240,7 @@ public class ClothingController {
             return ResponseEntity.ok().body(clothing);
         }catch (IOException e){
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.toString());
         }
 
     }
