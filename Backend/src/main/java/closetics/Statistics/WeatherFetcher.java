@@ -1,6 +1,8 @@
 package closetics.Statistics;
 
 import org.json.JSONObject;
+import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties.Env;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -11,7 +13,7 @@ import java.util.stream.Collectors;
 public class WeatherFetcher {
     public static WornRecord fetchWeatherData(LocalDate date) {
         try {
-            String API_KEY = "36e16da93d8e48219b123107250204";
+            String API_KEY = null;
             String LATITUDE = "42.0347";
             String LONGITUDE = "-93.6199";
             String urlString = String.format(
