@@ -2,7 +2,7 @@
 
 
 
-**Closetics** is a unique mobile app that blends clothes wearing statistics with social media. Designed for fashion enthusiasts, it helps you track your clothing habits, discover outfit trends, and share your style with a community of like-minded users.
+**Closetics** is a unique Android app that blends clothes wearing statistics with social media. Designed for fashion enthusiasts, it helps you track your clothing habits, discover outfit trends, and share your style with a community of like-minded users.
 
 
 ## Features
@@ -60,7 +60,16 @@
 
 ## Screenshots
 
-(Add screenshots)
+<img src="Documents/screenshots/dashboard.jpg" width="200" style="border-radius: 15px;">
+<img src="Documents/screenshots/public-profile.jpg" width="200" style="border-radius: 15px;">
+<img src="Documents/screenshots/recommendations.jpg" width="200" style="border-radius: 15px;">
+<img src="Documents/screenshots/select-clothes.jpg" width="200" style="border-radius: 15px;">
+<img src="Documents/screenshots/outfits-list.jpg" width="200" style="border-radius: 15px;">
+<img src="Documents/screenshots/login.jpg" width="200" style="border-radius: 15px;">
+<img src="Documents/screenshots/user-tiers.jpg" width="200" style="border-radius: 15px;">
+<img src="Documents/screenshots/dashboard-dark.jpg" width="200" style="border-radius: 15px;">
+<img src="Documents/screenshots/recommendations-dark.jpg" width="200" style="border-radius: 15px;">
+
 
 
 ## Authors
