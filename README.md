@@ -60,15 +60,7 @@
 
 ## Screenshots
 
-<img src="Documents/screenshots/dashboard.jpg" width="200" style="border-radius: 15px;">
-<img src="Documents/screenshots/public-profile.jpg" width="200" style="border-radius: 15px;">
-<img src="Documents/screenshots/recommendations.jpg" width="200" style="border-radius: 15px;">
-<img src="Documents/screenshots/select-clothes.jpg" width="200" style="border-radius: 15px;">
-<img src="Documents/screenshots/outfits-list.jpg" width="200" style="border-radius: 15px;">
-<img src="Documents/screenshots/login.jpg" width="200" style="border-radius: 15px;">
-<img src="Documents/screenshots/user-tiers.jpg" width="200" style="border-radius: 15px;">
-<img src="Documents/screenshots/dashboard-dark.jpg" width="200" style="border-radius: 15px;">
-<img src="Documents/screenshots/recommendations-dark.jpg" width="200" style="border-radius: 15px;">
+<img src="Documents/screenshots/dashboard.jpg" width="200" style="border-radius: 15px;"> <img src="Documents/screenshots/public-profile.jpg" width="200" style="border-radius: 15px;"> <img src="Documents/screenshots/recommendations.jpg" width="200" style="border-radius: 15px;"> <img src="Documents/screenshots/select-clothes.jpg" width="200" style="border-radius: 15px;"> <img src="Documents/screenshots/outfits-list.jpg" width="200" style="border-radius: 15px;"> <img src="Documents/screenshots/login.jpg" width="200" style="border-radius: 15px;"> <img src="Documents/screenshots/user-tiers.jpg" width="200" style="border-radius: 15px;"> <img src="Documents/screenshots/dashboard-dark.jpg" width="200" style="border-radius: 15px;"> <img src="Documents/screenshots/recommendations-dark.jpg" width="200" style="border-radius: 15px;">
 
 
 
